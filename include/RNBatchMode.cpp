@@ -50,7 +50,13 @@ int main(int argc, char*argv[]){
       std::cin>>enter;
       if(enter)run_numbers.push_back(enter);
     }
-    a->Convert(run_numbers,argv[1],argv[2]);//1:data dir,2:output file    
+    std::string option="a";
+    while(1){
+      std::cout<<"split branches? (y/n)"<<std::endl;
+      std::cin>>option;
+      if (option=="y" || option=="n")break;
+    }
+    a->Convert(run_numbers,argv[1],argv[2],option);//1:data dir,2:output file    
   }
   else
     std::cout<<"invalid number of arguments: \n"<<"RNBatchMode dir output config"<<std::endl;

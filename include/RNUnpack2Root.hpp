@@ -57,7 +57,6 @@ public:
   RN_module(){
     fCh=new Short_t[32];//default value
   }
-  virtual ~RN_module(){delete [] fCh;}
   RN_module(std::string name,int geo, int num,int type):fGeoAddress(geo),
 							fNumOfCh(num),
 							fType(type),
@@ -95,7 +94,7 @@ public:
 
   RNUnpack2Root(){}
 
-  int Convert(std::vector<int>&run_number,std::string data_dir,std::string output_file);
+  int Convert(std::vector<int>&run_number,std::string data_dir,std::string output_file, std::string splitoption);
   bool init(const std::string& config);
   int GetMesyNum(){return mesy_num;}
   int GetCaenNum(){return caen_num;}

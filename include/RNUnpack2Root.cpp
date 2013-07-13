@@ -64,7 +64,7 @@ void RNUnpack2Root::Reset(){
 // File converter, from .evt to .root. Arguments:
 // - files_list: used to specify the 
 ///////////////////////////////////////////////////////////////////////////////////
-int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std::string output_file){
+int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std::string output_file, std::string splitoption="n"){
   
   TFile* RootFile;
   TTree* DataTree;
@@ -91,10 +91,12 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
   DataTree = new TTree("DataTree","DataTree");
  
   for(unsigned int i=0;i<caen_stack.size();i++){
-    DataTree->Branch(Form("%s.",caen_stack[i].Name().c_str()),"RN_module",&(caen_stack[i]));
+    if(splitoption=="y") DataTree->Branch(Form("%s.",caen_stack[i].Name().c_str()),"RN_module",&(caen_stack[i]));
+    else DataTree->Branch(caen_stack[i].Name().c_str(),"RN_module",&(caen_stack[i]),16000,0);
   }
   for(unsigned int i=0;i<mesy_stack.size();i++){
-    DataTree->Branch(Form("%s.",mesy_stack[i].Name().c_str()),"RN_module",&(mesy_stack[i]));
+    if(splitoption=="y")DataTree->Branch(Form("%s.",mesy_stack[i].Name().c_str()),"RN_module",&(mesy_stack[i]));
+    else DataTree->Branch(mesy_stack[i].Name().c_str(),"RN_module",&(mesy_stack[i]),16000,0);
   } 
  
   //Loop over files in the data file list.

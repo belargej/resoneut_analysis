@@ -1,5 +1,5 @@
 CXX=g++
-SOURCES_RN=RNUnpack2Root.cpp
+SOURCES_RN=RNUnpack2Root.cpp RN_BaseDetector.cpp
 HEADERS_RN=${SOURCES_RN:.cpp=.hpp}
 
 SOURCES_OTHER=sakReadBuffer.cpp
