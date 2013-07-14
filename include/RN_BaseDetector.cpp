@@ -11,7 +11,8 @@ void RN_BaseDetector::Reset(){
 }
 
 
-void RN_BaseDetector::Init(){
+void RN_BaseDetector::Init(const double& num){
+  fNumOfCh=num;
   fChlist.resize(fNumOfCh,double(0));
   fE.resize(fNumOfCh,double(0));
   fT.resize(fNumOfCh,double(0));
@@ -20,6 +21,9 @@ void RN_BaseDetector::Init(){
 
 
 void RN_BaseDetector::InsertHit(const double& e,const double& t,const double& ch){
+
+  if(e < lowlimit || e > highlimit) 
+    return;
   int i,j;
   if (sorted_by_channel){ 
     /* insert into list sorted by channel */

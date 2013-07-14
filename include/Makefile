@@ -1,8 +1,9 @@
 CXX=g++
-SOURCES_RN=RNUnpack2Root.cpp RN_BaseDetector.cpp
+SOURCES_RN=RN_Unpack2Root.cpp RN_BaseDetector.cpp RN_NeutDetectorArray.cpp \
+	RN_VariableMap.cpp
 HEADERS_RN=${SOURCES_RN:.cpp=.hpp}
 
-SOURCES_OTHER=sakReadBuffer.cpp
+SOURCES_OTHER=sak_ReadBuffer.cpp
 HEADERS_OTHER=${SOURCES_OTHER:.cpp=.hpp}
 
 SOURCES=$(SOURCES_RN) $(SOURCES_OTHER)
@@ -12,7 +13,7 @@ OBJECTS=${SOURCES:.cpp=.o}
 LIBS=${addprefix -l,${SOURCES:.cpp=}}
 OPTIONS=-lMinuit
 
-EXE=RNBatchMode
+EXE=RN_BatchMode
 
 ifndef OPTIMIZE
 DEBUG=-g -Wall
@@ -32,22 +33,22 @@ LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} -I${ROOTSYS}/include
 
 all: ${EXE}	
 
-RNBatchMode: RNBatchMode.o libRNeut.so
-	${CXX} -o ../bin/RNBatchMode $< ${OBJECTS} RNRootDict.cpp ${LFLAGS}
+RN_BatchMode: RN_BatchMode.o libRNeut.so
+	${CXX} -o ../bin/RNBatchMode $< ${OBJECTS} RN_RootDict.cpp ${LFLAGS}
 
 ####################################################################
 ###Framework Dependencies###########################################
 ####################################################################
-RNBatchMode.o: RNBatchMode.cpp
+RN_BatchMode.o: RN_BatchMode.cpp
 	${CXX} ${CFLAGS} $<
 
-RNRootDict.cpp: ${HEADERS} my_LinkDef.h
-	rootcint RNRootDict.cpp -c `root-config --cflags` -p $^
+RN_RootDict.cpp: ${HEADERS} my_LinkDef.h
+	rootcint RN_RootDict.cpp -c `root-config --cflags` -p $^
 
 %.o: %.cpp
 	${CXX} ${CFLAGS} $< 
 
-libRNeut.so: ${OBJECTS} RNRootDict.cpp 
+libRNeut.so: ${OBJECTS} RN_RootDict.cpp 
 	 g++ -shared -o ${addprefix ../lib/,$@} $^ `root-config --ldflags --libs --cflags`${DEBUG} -I$(ROOTSYS)/include
 
 
@@ -56,10 +57,10 @@ libRNeut.so: ${OBJECTS} RNRootDict.cpp
 #####################################################################
 
 clean: 
-	rm  ../bin/RNBatchMode ${OBJECTS} RNRootDict.* ${addsuffix .o,${EXE}} ../lib/libRNeut.so
+	rm  ../bin/RNBatchMode ${OBJECTS} RN_RootDict.* ${addsuffix .o,${EXE}} ../lib/libRNeut.so
 
 newdict:
-	rm RNRootDict.*
+	rm RN_RootDict.*
 
 install:
 	ln -s ${PWD}/../bin/RNBatchMode ${HOME}/bin
