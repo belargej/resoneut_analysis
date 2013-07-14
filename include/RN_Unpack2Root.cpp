@@ -81,6 +81,8 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
   ofstream logfile;
   unsigned short * buffer;
   int timer=0;
+  TRandom3 Rnd;
+
 
   // ROOT output file
   RootFile = new TFile(output_file.c_str(),"RECREATE");  
@@ -228,7 +230,7 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
 	      for (short jj=0;jj<ch_hits;jj++){
 		dat =  *gpointer++ & 0xfff;
 		chan = *gpointer++ & 0x1f;
-		caen_stack[i].fCh[chan] = dat;
+		caen_stack[i].fCh[chan] = (float)dat+Rnd.Rndm();
 	      }
 	    }
 	    adc_counter= *gpointer++;
@@ -261,7 +263,7 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
 		dat = *zpointer++ & 0xfff;
 		chan = *zpointer++ & 0x1f;
 		
-		mesy_stack[i].fCh[chan]=dat;
+		mesy_stack[i].fCh[chan]=(float)dat+Rnd.Rndm();
 	      }
 	    }
 	    mes_counter = *zpointer++;

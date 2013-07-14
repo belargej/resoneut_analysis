@@ -13,9 +13,9 @@ void RN_BaseDetector::Reset(){
 
 void RN_BaseDetector::Init(const double& num){
   fNumOfCh=num;
-  fChlist.resize(fNumOfCh,double(0));
-  fE.resize(fNumOfCh,double(0));
-  fT.resize(fNumOfCh,double(0));
+  //  fChlist.resize(fNumOfCh,double(0));
+  //fE.resize(fNumOfCh,double(0));
+  //fT.resize(fNumOfCh,double(0));
 
 }
 

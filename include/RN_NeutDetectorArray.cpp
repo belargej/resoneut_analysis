@@ -12,14 +12,14 @@ void RN_NeutDetector::SetCalibrations(double elin, double eshift, double tlin, d
 
 void RN_NeutDetector::SetCalibrations(RNVariableMap& detvar){
   double temp;
-  detvar.GetParam(Form("%s.elin",Name()),elin);
-  detvar.GetParam(Form("%s.eshift",Name()),eshift);
-  detvar.GetParam(Form("%s.tlin",Name()),tlin);
-  detvar.GetParam(Form("%s.tshift",Name()),tshift);
-  detvar.GetParam(Form("%s.z_off",Name()),zero_off);
+  detvar.GetParam(Form("%s.elin",Name().c_str()),elin);
+  detvar.GetParam(Form("%s.eshift",Name().c_str()),eshift);
+  detvar.GetParam(Form("%s.tlin",Name().c_str()),tlin);
+  detvar.GetParam(Form("%s.tshift",Name().c_str()),tshift);
+  detvar.GetParam(Form("%s.z_off",Name().c_str()),zero_off);
   if(detvar.GetParam("neutarray.zpos",temp))
     fPos.SetZ(temp);
-  if(detvar.GetParam(Form("%s.apos",Name()),temp)){
+  if(detvar.GetParam(Form("%s.apos",Name().c_str()),temp)){
     apos=(int)temp;
     DeterminePosition(apos);
   }

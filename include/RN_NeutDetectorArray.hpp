@@ -45,11 +45,13 @@ class RN_NeutDetector:public RN_BaseDetector{
  
  public:
   RN_NeutDetector(){}
-  RN_NeutDetector(char* name,int num,int ap):RN_BaseDetector(name,num),
-					     apos(ap)
+  RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetector(name,num),
+						   apos(ap)
   {
     DeterminePosition(apos);
   } 
+
+  ~RN_NeutDetector(){}
 
   //NeutDetector Specific Parameterss 
   Double_t fQ_long;

@@ -55,16 +55,16 @@ private:
 
 public:
   RN_module(){
-    fCh=new Short_t[32];//default value
+    fCh=new Float_t[32];//default value
   }
   RN_module(std::string name,int geo, int num,int type):fGeoAddress(geo),
 							fNumOfCh(num),
 							fType(type),
 							fName(name){
-    fCh=new Short_t[fNumOfCh];
+    fCh=new Float_t[fNumOfCh];
   }
 
-  Short_t* fCh; //[fNumOfCh]
+  Float_t* fCh; //[fNumOfCh]
 
   std::string Name(){return fName;}
   Int_t GeoAddress(){return fGeoAddress;}
