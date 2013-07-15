@@ -31,16 +31,16 @@
 #include "RN_IonChamber.hpp"
 #include "RN_VariableMap.hpp"
 
-TFile newfile("neutrons2.root","RECREATE");
-TTree newtree("rawpar","rawpar");
+TFile* newfile= new TFile("calpar.root","RECREATE");
+TTree* newtree= new TTree("calpar","calpar");
 
 RN_NeutDetector neut0("neut0",4,0);
 RN_NeutDetector neut1("neut1",4,1);
 RN_NeutDetector neut2("neut2",4,2);
 RN_NeutDetector neut3("neut3",4,3);
-RN_IonChamber ic("ion_chamber");
+
 RN_S2Detector si_a("si_a",16,16);
-RN_BaseDetector rftime("rftime",5);
+RN_RFTime rftime("rftime");
 
 
 
@@ -49,21 +49,28 @@ void calpar::Begin(TTree * /*tree*/)
    // The Begin() function is called at the start of the query.
    // When running with PROOF Begin() is only called on the client.
    // The tree argument is deprecated (on PROOF 0 is passed).
-  newtree.Branch(Form("%s",neut0.Name().c_str()),"RN_NeutDetector",&neut0,32000,0);
-  newtree.Branch(Form("%s",neut1.Name().c_str()),"RN_NeutDetector",&neut1,32000,0);
-  newtree.Branch(Form("%s",neut2.Name().c_str()),"RN_NeutDetector",&neut2,32000,0);
-  newtree.Branch(Form("%s",neut3.Name().c_str()),"RN_NeutDetector",&neut3,32000,0);
-  newtree.Branch(Form("%s",si_a.Name().c_str()),"RN_S2Detector",&si_a,32000,0);
-  newtree.Branch(Form("%s",ic.Name().c_str()),"RN_IonChamber",&ic,32000,0);
-  newtree.Branch(Form("%s",rftime.Name().c_str()),"RN_BaseDetector",&rftime,32000,0);
+  newtree->Branch(Form("%s",neut0.Name().c_str()),"RN_NeutDetector",&neut0,32000,0);
+  newtree->Branch(Form("%s",neut1.Name().c_str()),"RN_NeutDetector",&neut1,32000,0);
+  newtree->Branch(Form("%s",neut2.Name().c_str()),"RN_NeutDetector",&neut2,32000,0);
+  newtree->Branch(Form("%s",neut3.Name().c_str()),"RN_NeutDetector",&neut3,32000,0);
+  newtree->Branch(Form("%s",si_a.Name().c_str()),"RN_S2Detector",&si_a,32000,0);
+
+  newtree->Branch(Form("%s",rftime.Name().c_str()),"RN_RFTime",&rftime,32000,0);
    TString option = GetOption();
 
    RN_VariableMap DetVar;
-   DetVar.LoadParams("si_a_b2f.in");
-   DetVar.LoadParams("si_a_f2b.in");
+   DetVar.LoadParams("../config/si_a_b2f.in");
+   DetVar.LoadParams("../config/si_a_f2b.in");
+   DetVar.LoadParams("../config/neut_config.in");
+   DetVar.LoadParams("../config/rftime_config.in");
    si_a.front.SetELimits(60,3000);
    si_a.back.SetELimits(60,3000);
    si_a.SetCalibrations(DetVar);
+   neut0.SetCalibrations(DetVar);
+   neut1.SetCalibrations(DetVar);
+   neut2.SetCalibrations(DetVar);
+   neut3.SetCalibrations(DetVar);
+   rftime.SetCalibrations(DetVar);
 
 
 }
@@ -103,7 +110,6 @@ Bool_t calpar::Process(Long64_t entry)
   neut2.Reset();
   neut3.Reset();
   si_a.Reset();
-  ic.Reset();
   rftime.Reset();
   GetEntry(entry);
    if(QDC1->fCh[3]>0)neut0.InsertHit(QDC1->fCh[3],QDC1->fCh[19]);
@@ -114,15 +120,19 @@ Bool_t calpar::Process(Long64_t entry)
     if(ADC1->fCh[i]>0)si_a.front.InsertHit(ADC1->fCh[i],0,i);
     if(ADC1->fCh[i+16]>0)si_a.back.InsertHit(ADC1->fCh[i+16],0,i);
   }
-   if(TDC1->fCh[16]>0)rftime.InsertHit(0,TDC1->fCh[16],0);
-  
+   if(TDC1->fCh[16]>0)rftime.InsertHit(TDC1->fCh[16]);
+   neut0.ApplyCalibrations();
+   neut1.ApplyCalibrations();
+   neut2.ApplyCalibrations();
+   neut3.ApplyCalibrations();
    si_a.ApplyCalibrations();
+   rftime.ApplyCalibrations();
   
 
 
 
   if(entry%30000==0)std::cout<<entry<<std::endl;
-  newtree.Fill();
+  newtree->Fill();
    return kTRUE;
 }
 
@@ -139,7 +149,7 @@ void calpar::Terminate()
    // The Terminate() function is the last function to be called during
    // a query. It always runs on the client, it can be used to present
    // the results graphically or save the results to file.
-  newtree.Write();
-  newfile.Close();
+  newtree->Write();
+  newfile->Close();
   
 }

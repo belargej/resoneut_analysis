@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <math.h>
 #include <fstream>
+#include <cstdlib>
 #include <string>
 #include <sstream>
 #include <map>
@@ -11,6 +12,10 @@
 #include <memory>
 #include <TObject.h>
 #include <TMath.h>
+#include <TString.h>
+#include "RN_VariableMap.hpp"
+
+
 
 class RN_BaseDetector:public TObject{
 private:
@@ -62,5 +67,8 @@ public:
 
   ClassDef(RN_BaseDetector,1);
 };
+
+
+
 
 #endif
