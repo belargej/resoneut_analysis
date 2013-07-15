@@ -61,7 +61,7 @@ class RN_IonChamber:public TObject{
   void Reset();
   void ApplyCalibrations(){}
   void SetCalibrations(float, float, float, float);
-  void SetCalibrations(RNVariableMap& detvar);
+  void SetCalibrations(RN_VariableMap& detvar);
  
   ClassDef(RN_IonChamber,1);
   

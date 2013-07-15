@@ -10,7 +10,7 @@ void RN_NeutDetector::SetCalibrations(double elin, double eshift, double tlin, d
   this->zero_off=zero_off;
 }
 
-void RN_NeutDetector::SetCalibrations(RNVariableMap& detvar){
+void RN_NeutDetector::SetCalibrations(RN_VariableMap& detvar){
   double temp;
   detvar.GetParam(Form("%s.elin",Name().c_str()),elin);
   detvar.GetParam(Form("%s.eshift",Name().c_str()),eshift);
@@ -75,11 +75,12 @@ void RN_NeutDetector::ApplyCalibrations(){
 void RN_NeutDetector::InsertHit(const double& q_long,const double& q_short){
   fQ_long=q_long;
   fQ_short=q_short;
+ 
 }
 
 
-Double_t RN_NeutDetector::PSD() const{if (fE[0]>0) return fE[1]/fE[0];}
-Double_t RN_NeutDetector::Q() const{return fE[0];}
+Double_t RN_NeutDetector::PSD() const{if (fQ_long>0) return fQ_short/fQ_long;}
+Double_t RN_NeutDetector::Q() const{return fQ_long;}
 
 
 double RN_NeutDetector::CalculateTRel(const std::vector<RN_NeutDetector>& ndet, double &tfirst){

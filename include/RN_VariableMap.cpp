@@ -1,6 +1,6 @@
 #include "RN_VariableMap.hpp"
 #include "sak_ReadBuffer.hpp"
-void RNVariableMap::LoadParams(std::string filename){
+void RN_VariableMap::LoadParams(std::string filename){
 
   std::ifstream cal;
   std::string key;double value;
@@ -24,7 +24,7 @@ void RNVariableMap::LoadParams(std::string filename){
 
 }
 
-int RNVariableMap::GetParam(std::string param,float& var){
+int RN_VariableMap::GetParam(std::string param,float& var){
 
   it=vmap.begin();
   it=vmap.find(param);
@@ -36,7 +36,7 @@ int RNVariableMap::GetParam(std::string param,float& var){
   
 }
 
-int RNVariableMap::GetParam(std::string param,double& var){
+int RN_VariableMap::GetParam(std::string param,double& var){
 
   it=vmap.begin();
   it=vmap.find(param);
@@ -49,6 +49,6 @@ int RNVariableMap::GetParam(std::string param,double& var){
 }
 
 
-int RNVariableMap::AddParam(std::string param,double var){
+int RN_VariableMap::AddParam(std::string param,double var){
   vmap.insert(std::pair<std::string,double>(param,var));
 }

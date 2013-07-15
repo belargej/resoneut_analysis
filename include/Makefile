@@ -1,6 +1,7 @@
 CXX=g++
 SOURCES_RN=RN_Unpack2Root.cpp RN_BaseDetector.cpp RN_NeutDetectorArray.cpp \
-	RN_VariableMap.cpp RN_IonChamber.cpp RN_SiliconDetectors.cpp
+	RN_VariableMap.cpp RN_IonChamber.cpp RN_SiliconDetectors.cpp\
+	RN_Calibrator.cpp
 
 HEADERS_RN=${SOURCES_RN:.cpp=.hpp}
 
@@ -14,7 +15,7 @@ OBJECTS=${SOURCES:.cpp=.o}
 LIBS=${addprefix -l,${SOURCES:.cpp=}}
 OPTIONS=-lMinuit
 
-EXE=RN_BatchMode
+EXE=RN_BatchMode RN_RootDebug
 
 ifndef OPTIMIZE
 DEBUG=-g -Wall
@@ -33,6 +34,10 @@ LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} -I${ROOTSYS}/include
  
 
 all: ${EXE}	
+
+
+RN_RootDebug: RN_RootDebug.o libRNeut.so
+	${CXX} -o ../bin/RNRootDebug $< ${OBJECTS} RN_RootDict.cpp ${LFLAGS}
 
 RN_BatchMode: RN_BatchMode.o libRNeut.so
 	${CXX} -o ../bin/RNBatchMode $< ${OBJECTS} RN_RootDict.cpp ${LFLAGS}
@@ -58,7 +63,7 @@ libRNeut.so: ${OBJECTS} RN_RootDict.cpp
 #####################################################################
 
 clean: 
-	rm  ../bin/RNBatchMode ${OBJECTS} RN_RootDict.* ${addsuffix .o,${EXE}} ../lib/libRNeut.so
+	rm  ../bin/RNBatchMode RNRootDebug ${OBJECTS} RN_RootDict.* ${addsuffix .o,${EXE}} ../lib/libRNeut.so
 
 newdict:
 	rm RN_RootDict.*

@@ -40,8 +40,10 @@ private:
   double eshift;//!
   double tlin;//!
   double tshift;//! 
-  std::vector<double> a0;//!
-  std::vector<double> a1;//!
+  std::vector<double> fronta0;//!
+  std::vector<double> fronta1;//!
+  std::vector<double> backa0;//!
+  std::vector<double> backa1;//!
   TVector3 normv_;//!
   TVector3 shiftv_;//!
   TVector3 posv_;//!
@@ -55,18 +57,20 @@ public:
   RN_S2Detector(){}
   ~RN_S2Detector(){}
   RN_S2Detector(std::string name,const int& fnum, const int& bnum):fName(name),
-							    elin(1),
-							    eshift(0),
-							    tlin(1),
-							    tshift(0),
-							    a0(fnum+bnum,double(0)),
-							    a1(fnum+bnum,double(1)),
-							    normv_(0,0,0),
-							    shiftv_(0,0,0),
-							    posv_(0,0,0),
-							    rotv_(0,0,0),
-							    front("front",fnum),
-							    back("back",bnum)
+								   elin(1),
+								   eshift(0),
+								   tlin(1),
+								   tshift(0),
+								   fronta0(fnum,double(0)),
+								   fronta1(fnum,double(1)),
+								   backa0(bnum,double(0)),
+								   backa1(bnum,double(1)),
+								   normv_(0,0,0),
+								   shiftv_(0,0,0),
+								   posv_(0,0,0),
+								   rotv_(0,0,0),
+								   front("front",fnum),
+								   back("back",bnum)
 
   {
     ring_pitch_ = (S2OUTERRAD - S2INNERRAD) / static_cast<double>(front.NumOfCh());
@@ -84,9 +88,9 @@ public:
   bool inDet(const TVector3&);
   bool Vect_to_ch(const TVector3&, double&, double&);
   void Reset();
-  void SetCalibrations(const std::vector<double>&,const std::vector<double>&,double,double,double,double); 
+  void SetCalibrations(double,double,double,double); 
   void ApplyCalibrations();
-  void SetCalibrations(RNVariableMap& detvar);
+  void SetCalibrations(RN_VariableMap& detvar);
   std::string Name()const{return fName;} 
   ClassDef(RN_S2Detector,1);
  

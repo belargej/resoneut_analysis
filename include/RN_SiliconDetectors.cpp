@@ -14,12 +14,7 @@ void RN_S2Detector::Reset(){
   back.Reset();
 
 }
-void RN_S2Detector::SetCalibrations(const std::vector<double>&a0,const std::vector<double>& a1,double elin,double eshift,double tlin, double tshift){
-  for (int i=0;i<front.NumOfCh();i++){
-    this->a0[i]=a0[i];
-    this->a1[i]=a1[i];
-  }
-
+void RN_S2Detector::SetCalibrations(double elin,double eshift,double tlin, double tshift){
   this->elin=elin;
   this->eshift=eshift;
   this->tlin=tlin;
@@ -28,11 +23,14 @@ void RN_S2Detector::SetCalibrations(const std::vector<double>&a0,const std::vect
 }
 
 
-void RN_S2Detector::SetCalibrations(RNVariableMap& detvar){
-  int numofch=front.NumOfCh()+back.NumOfCh();
-  for (int i=0;i<numofch;i++){
-    detvar.GetParam(Form("%s.a0[%d]",Name().c_str(),i),a0[i]);  
-    detvar.GetParam(Form("%s.a1[%d]",Name().c_str(),i),a1[i]);
+void RN_S2Detector::SetCalibrations(RN_VariableMap& detvar){
+  for (int i=0;i<front.NumOfCh();i++){
+    detvar.GetParam(Form("%s.front.a0[%d]",Name().c_str(),i),fronta0[i]);  
+    detvar.GetParam(Form("%s.front.a1[%d]",Name().c_str(),i),fronta1[i]);
+  }
+  for (int i=0;i<back.NumOfCh();i++){
+    detvar.GetParam(Form("%s.back.a0[%d]",Name().c_str(),i),backa0[i]);  
+    detvar.GetParam(Form("%s.back.a1[%d]",Name().c_str(),i),backa1[i]);
   }
   detvar.GetParam(Form("%s.elin",Name().c_str()),elin);
   detvar.GetParam(Form("%s.eshift",Name().c_str()),eshift);
@@ -73,11 +71,11 @@ void RN_S2Detector::Calcnormv(){
 
 void RN_S2Detector::ApplyCalibrations(){
   for(int i=0;i<front.fMult;i++){
-    front.fE[i]=((a1[i]*front.fE[i])+a0[i])*elin+eshift;   
+    front.fE[i]=((fronta1[(int)front.fChlist[i]]*front.fE[i])+fronta0[(int)front.fChlist[i]])*elin+eshift;   
     front.fT[i]=tlin*front.fT[i]+tshift;
   }
   for(int i=0;i<back.fMult;i++){
-    back.fE[i]=((a1[i]*back.fE[i])+a0[i])*elin+eshift;   
+    back.fE[i]=((backa1[(int)back.fChlist[i]]*back.fE[i])+backa0[(int)back.fChlist[i]])*elin+eshift;   
     back.fT[i]=tlin*back.fT[i]+tshift;
   }
   

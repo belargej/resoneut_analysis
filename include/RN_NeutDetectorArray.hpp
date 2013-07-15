@@ -13,6 +13,7 @@
 
 //ROOT libraties
 #include <TString.h>
+#include <TH2.h>
 #include <TFile.h>
 #include <TMath.h>
 #include <TRandom3.h>
@@ -42,11 +43,12 @@ class RN_NeutDetector:public RN_BaseDetector{
   int apos;
   TVector3 pos_vect;//!
   TVector3 fPos;
- 
+  
  public:
   RN_NeutDetector(){}
   RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetector(name,num),
 						   apos(ap)
+						   
   {
     DeterminePosition(apos);
   } 
@@ -69,7 +71,7 @@ class RN_NeutDetector:public RN_BaseDetector{
 		       double tlin,
 		       double tshift,
 		       double zero_off);
-  void SetCalibrations(RNVariableMap& detvar);
+  void SetCalibrations(RN_VariableMap& detvar);
   void ApplyCalibrations();
   double CalculateTRel(const std::vector<RN_NeutDetector>&ndet,double &tfirst);
 

@@ -31,9 +31,9 @@
 
 
 
-class RNVariableMap{
+class RN_VariableMap{
 public:
-  
+  RN_VariableMap(){}
   std::map<std::string,double>vmap;
   std::map<std::string,double>::iterator it;
   int GetParam(std::string,float&);

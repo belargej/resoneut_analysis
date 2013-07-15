@@ -19,6 +19,11 @@ void RN_BaseDetector::Init(const double& num){
 
 }
 
+void RN_BaseDetector::SetELimits(const double& elow,const double& ehigh){
+  lowlimit=elow;
+  highlimit=ehigh;
+}
+
 
 void RN_BaseDetector::InsertHit(const double& e,const double& t,const double& ch){
 
