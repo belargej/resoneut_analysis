@@ -1,0 +1,7 @@
+caen ADC1 2 32
+caen ADC2 3 32
+caen ADC3 4 32
+caen ADC4 5 32
+caen TDC1 11 32
+caen TDC2 12 32
+mesy QDC1 14 32
