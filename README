@@ -1,0 +1,41 @@
+This code was developed for analysis of the RESONEUT detector array at FSU.
+
+Some Methods and functions have been adapted from the methods used in our SpecTcl analysis program developed by Ingo Wiedenhoever,Patrick Peplowski, Alex Rojas, Jessica Baker, and myself.  SpecTcl was developed by Ron Fox at NSCL.
+
+Daniel Santiago provided help with understanding ROOT functionality as well as providing examples of his scripts which I have integrated into my classes.  (primarily in the detector classes and ChannelMap)
+
+The RNUnpack2Root included here unpacks from the new RING_MASTER (NSCL) method of data buffering wheras the evt2root, used by Daniel, uses the older 'Fixed Buffer' method.  This older method was (and is still being used) for experiments with ANASEN.  As of 5/15 only ResoNeut has been upgraded to the newer firmware. 
+
+Setups i've tested these modules on:
+on my laptop:i686 linux mint 14 
+compiles with gcc v4.7.2
+root 5.34/patch 03
+
+on fabulous:i386 linux Red-Hat
+compiles with gcc v4.1.2
+root 5.34/patch 04
+
+
+After cloning from the repo,
+add 2 directories to resoneut_analysis_hc/
+mkdir bin
+mkdir lib
+
+typing 'make' while in resoneut_analysis_hc/include will install RN_BatchMode to the bin/ folder and the libRNneut.so library to the lib/ folder
+
+Load->("libRNneut.so") into your root session to run interactively.
+
+or execute ~/path_to_resoneut_analysis_hc/bin/RNBatchMode <data dir> <output.root file> <e2rconfig.in>
+
+where e2rconfig.in is the input file which properly configures the "stack" for unpack2root.
+
+the e2rconfig.in for the C12 beam data taken in July is in the folder C12/
+
+
+The program will then prompt you for the run numbers you want to convert.
+The program will also ask if you want to split the tree branches.  choosing to split the tree branches improves interactivity.  choosing not to split them allows for the data to be read back into "RN_modules". 
+
+ie) /path_to/RNBatchMode /data/LSU/ run2008.root /path_to_configs/e2rconfig.in 
+    2008 (to unpack from run 2008)
+    0 (to finish entering run numbers)
+    "y" (to split the tree branches)
