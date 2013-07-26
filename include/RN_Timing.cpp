@@ -6,7 +6,7 @@ ClassImp(RN_RFTime);
 RN_RFTime::RN_RFTime(std::string name):fName(name),
 				       tlin(1),
 				       tshift(0),
-				       fTo(1)
+				       fTo(0)
 { 
   
 }
