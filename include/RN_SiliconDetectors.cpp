@@ -36,18 +36,22 @@ void RN_S2Detector::SetCalibrations(RN_VariableMap& detvar){
   detvar.GetParam(Form("%s.eshift",Name().c_str()),eshift);
   detvar.GetParam(Form("%s.tlin",Name().c_str()),tlin);
   detvar.GetParam(Form("%s.tshift",Name().c_str()),tshift);
-  double tempx,tempy,tempz;
+  double tempx=0,tempy=0,tempz=0,temp=0;
   detvar.GetParam(Form("%s.xpos",Name().c_str()),tempx);
   detvar.GetParam(Form("%s.ypos",Name().c_str()),tempy);
   detvar.GetParam(Form("%s.zpos",Name().c_str()),tempz);
   SetPosVect(TVector3(tempx,tempy,tempz));
+  tempx=0,tempy=0,tempz=0,temp=0;
   detvar.GetParam(Form("%s.shiftx",Name().c_str()),tempx);
   detvar.GetParam(Form("%s.shifty",Name().c_str()),tempy);
   detvar.GetParam(Form("%s.shiftz",Name().c_str()),tempz);
   SetShiftVect(TVector3(tempx,tempy,tempz));
+  tempx=0,tempy=0,tempz=0,temp=0;
   detvar.GetParam(Form("%s.rot_theta",Name().c_str()),tempx);
   detvar.GetParam(Form("%s.rot_phi",Name().c_str()),tempy);
-  
+
+
+
   Calcnormv();
 
 }
@@ -78,7 +82,8 @@ void RN_S2Detector::ApplyCalibrations(){
     back.fE[i]=((backa1[(int)back.fChlist[i]]*back.fE[i])+backa0[(int)back.fChlist[i]])*elin+eshift;   
     back.fT[i]=tlin*back.fT[i]+tshift;
   }
-  
+
+ 
 }
 
 bool RN_S2Detector::inDet(const TVector3& v){
@@ -157,9 +162,9 @@ bool RN_S2Detector::Vect_to_ch(const TVector3& v,double& cf,double& cb){
 }
 
 
-TVector3 RN_S2Detector::chVect(const double& cf,const double& cb){
+TVector3 RN_S2Detector::chVect(const double& cf,const double& cb) const{
   //First make a vector to the channel for a detector at the origin
-  TRandom3 myRnd;
+  TRandom3 myRnd(0);//!
   double s;
   double phi;
   if((cf < static_cast<double>(front.NumOfCh())) 
@@ -191,4 +196,218 @@ TVector3 RN_S2Detector::chVect(const double& cf,const double& cb){
   resultv = resultv + posv_;
     
   return resultv;
+}
+
+
+
+RN_S2Cluster::RN_S2Cluster(std::string name,Int_t NumOfCh):RN_BaseDetector(name,NumOfCh),fChlist_b(NumOfCh,-1.){
+  
+  Reset();
+  match_enefromback=1.0;
+  match_epsilon=0.0;
+  match_delta=0.1;
+  match_maxene=4096;
+  addback_front=0.0; 
+  addback_back=0.0;
+  
+}
+
+int RN_S2Cluster::SetMatchParameters(float match_enefromback,
+				     float match_epsilon,
+				     float match_delta,
+				     float match_maxene,
+				     float addback_front, 
+				     float addback_back){
+  this->match_enefromback=match_enefromback;
+  this->match_epsilon=match_epsilon;
+  this->match_delta=match_delta;
+  this->match_maxene=match_maxene;
+  this->addback_front=addback_front;
+  this->addback_back=addback_back;
+
+  return 1;
+
+}
+void RN_S2Cluster::SetCalibrations(RN_VariableMap& detvar){
+  detvar.GetParam(Form("%s.match_enefromback",Name().c_str()),match_enefromback);
+  detvar.GetParam(Form("%s.match_epsilon",Name().c_str()),match_epsilon);
+  detvar.GetParam(Form("%s.match_delta",Name().c_str()),match_delta);
+  detvar.GetParam(Form("%s.match_maxene",Name().c_str()),match_maxene);
+  detvar.GetParam(Form("%s.addback_front",Name().c_str()),addback_front);
+  detvar.GetParam(Form("%s.addback_back",Name().c_str()),addback_back);
+}
+
+int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
+  RNTempList FrontClusters(in.front.NumOfCh()), BackClusters(in.back.NumOfCh());
+  if(!in.back.fMult) return 0;
+  int i,front_match;
+  unsigned int frontstatus=0;
+  unsigned int backstatus=0;
+  float efronttotal=0.;
+  float ebacktotal=0.;
+
+  // first add-back neighboring hits
+  // in the back
+  for (i=0;i<in.back.fMult;i++){
+    backstatus |= (((unsigned int)in.back.fChlist[i]));
+    ebacktotal = ebacktotal+in.back.fE[i];
+    if (addback_back&&
+	(i+1<in.back.fMult)&&(in.back.fChlist[i+1]==in.back.fChlist[i]+1)){
+      float ecluster=in.back.fE[i]+in.back.fE[i+1];
+      float tcluster=(in.back.fT[i+1]+in.back.fT[i])/2;
+      float chnew=(in.back.fChlist[i+1]+in.back.fChlist[i])/2.0;
+      BackClusters.InsertHit(ecluster,tcluster,chnew);
+      // we analyzed the i+1 hit along with the i, so 
+      i++;
+    }
+    else{
+      int ch=in.back.fChlist[i];
+      float ecluster=in.back.fE[i];
+      float tcluster=in.back.fT[i];
+      
+      BackClusters.InsertHit(ecluster,tcluster,ch);
+    }
+  }
+  //in the front
+  for (i=0;i<in.front.fMult;i++){
+    efronttotal = efronttotal+in.front.fE[i];
+  }
+  for (i=0;i<in.front.fMult;i++){
+    frontstatus |= (((unsigned int)in.front.fChlist[i]));
+    if (addback_front&&
+	(i+1<in.front.fMult)&&(in.front.fChlist[i+1]==in.front.fChlist[i]+1)){
+ 
+ 
+      float ecluster=in.front.fE[i+1]+in.front.fE[i];
+      float tcluster=(in.front.fT[i+1]+in.front.fT[i])/2;
+      float chnew=(in.front.fChlist[i+1]+in.front.fChlist[i])/2.0;
+      FrontClusters.InsertHit(ecluster,tcluster,chnew);
+      // we analyzed the i+1 hit along with the i, so 
+      i++;
+    }
+    else{
+      int ch=in.front.fChlist[i];
+      float ecluster=in.front.fE[i];
+      float tcluster=in.front.fT[i];
+      FrontClusters.InsertHit(ecluster,tcluster,ch);
+    }
+  }
+  front_match=0;i=0;
+  efrontmatch=0.;ebackmatch=0.;
+  // Front and Backclusters are sorted by energy, high first
+  while ((i<BackClusters.mult)&&(front_match<FrontClusters.mult)){
+    float eps = FrontClusters.elist[front_match]-BackClusters.elist[i];
+    float delta = match_epsilon+match_delta*BackClusters.elist[i];
+    float back_e=BackClusters.elist[i];
+    if (back_e>match_maxene || (fabs(eps)<=delta)){
+      // we have a match
+      float match_e= FrontClusters.elist[front_match];
+      float match_ch= FrontClusters.chlist[front_match];
+      float cb=BackClusters.chlist[i];
+      float back_t=BackClusters.tlist[i];
+      fPos = in.chVect(match_ch,cb);
+      fChlist[fMult]=match_ch;
+      fChlist_b[fMult]=cb;
+      if (match_enefromback){
+	fE[fMult]=back_e;
+	fT[fMult]=back_t;
+       }
+      else{
+	fE[fMult]=match_e;
+	fT[fMult]=back_t;
+
+      }// end if "match_enefromback"
+      (fMult)++;
+      {	
+	// sum up matched energies front and back
+	efrontmatch += match_e;
+	ebackmatch += back_e;
+      }
+    }// end found match
+    else if (eps>delta){
+      // front energy is larger than back energy+delta , 
+      // so we won't ever match 
+      // this one in the future, drop it, pick next front, keep the back
+      frontstatus|=128; // flags "unmatched" 
+      front_match++;
+      continue;
+    }
+    else if (eps< (-delta)){
+      // back energy is larger than front energy-delta , 
+      // so we won't ever match 
+      // this one in the future, drop it, pick next back, keep the front
+      backstatus|=128; // flags "unmatched" 
+      i++;
+      continue;
+    }
+
+    front_match++;
+    i++;
+  }
+  frontmatchstat=frontstatus;
+  backmatchstat=backstatus;
+  return(0);
+}
+
+
+
+void RN_S2Cluster::Reset(){
+  RN_BaseDetector::Reset();
+  for(int i=0;i<fMult;i++){
+    fPos.SetXYZ(0,0,0);
+    fChlist_b[i]=-1;
+  }
+   
+ 
+
+}
+
+
+
+/////////////////////////////////////////////////////////////////
+///RNTempList functions
+////////////////////////////////////////////////////////////////
+
+
+RNTempList::RNTempList(const unsigned short no_channels){
+  mult=0;
+  no_channels_=no_channels;
+  chlist = new float[no_channels];
+  elist = new float[no_channels];
+  tlist = new float[no_channels];
+}
+
+
+RNTempList::RNTempList(){
+}
+
+RNTempList::~RNTempList(){
+  delete[] chlist;
+  delete[] elist;
+  delete[] tlist;
+}
+void RNTempList::InsertHit(float e,float t, float ch){
+ 
+  int i,j;
+  /* enough space ? */
+  if (mult>=no_channels_){
+    return;
+  }
+  /* insert into list sorted by energy */
+  for (i=(int)mult-1;i>=0;i--){
+    if (e<elist[i])
+      break;
+  }
+  // element i+1 is at the position for ch 
+  // so make room for it
+  for (j=(int)mult-1;j>i;j--){
+    chlist[j+1]=(float)chlist[j];
+    elist[j+1]=(float)elist[j];
+    tlist[j+1]=(float)tlist[j];
+  }
+  // and shove it in
+  chlist[i+1]=ch;
+  elist[i+1]=e;
+  tlist[i+1]=t;
+  mult++;
 }

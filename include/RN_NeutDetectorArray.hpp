@@ -31,8 +31,6 @@
 #include "RN_BaseDetector.hpp"
 
 
-
-
 class RN_NeutDetector:public RN_BaseDetector{
  private:
   double elin;//!
@@ -79,6 +77,30 @@ class RN_NeutDetector:public RN_BaseDetector{
   ClassDef(RN_NeutDetector,1);
 };
 
+typedef std::vector<RN_NeutDetector> NeutCollection;
+typedef std::vector<RN_NeutDetector>::iterator NeutCollectionRef;
 
+
+
+
+class RN_NeutDetectorArray:public RN_BaseDetector{
+private:
+public:
+  std::vector<TVector3>fPos;//[fMult]
+  std::vector<double>fQ_long;//[fMult]
+  std::vector<double>fQ_short;//[fMult]
+
+  RN_NeutDetectorArray();
+  void ReconstructHits(NeutCollection& in);
+  
+
+
+
+
+  ClassDef(RN_NeutDetectorArray,1);
+};
+
+
+}
 
 #endif

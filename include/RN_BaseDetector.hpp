@@ -62,7 +62,7 @@ public:
   void Reset();
   Int_t NumOfCh()const{return fNumOfCh;}
   std::string Name()const {return fName;} 
-  void InsertHit(const double&, const double&, const double&);
+  int InsertHit(const double&, const double&, const double&);
   void SetSortByChannel(){sorted_by_channel=1;}
 
   ClassDef(RN_BaseDetector,1);

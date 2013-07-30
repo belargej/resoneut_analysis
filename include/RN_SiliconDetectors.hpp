@@ -27,10 +27,10 @@
 
 #include "RN_VariableMap.hpp"
 #include "RN_BaseDetector.hpp"
-
 #define S2INNERRAD 11.0
 #define S2OUTERRAD 35.0
 #define S2MATCHTHRESHOLD 0.1
+
 
 
 class RN_S2Detector:public TObject{
@@ -50,9 +50,12 @@ private:
   TVector3 rotv_;//!
   double ring_pitch_;//!
   double delta_phi_;//!
+  
+
 public:
   RN_BaseDetector front;
   RN_BaseDetector back;
+  
 
   RN_S2Detector(){}
   ~RN_S2Detector(){}
@@ -71,6 +74,7 @@ public:
 								   rotv_(0,0,0),
 								   front("front",fnum),
 								   back("back",bnum)
+						  
 
   {
     ring_pitch_ = (S2OUTERRAD - S2INNERRAD) / static_cast<double>(front.NumOfCh());
@@ -83,7 +87,7 @@ public:
   void SetShiftVect(TVector3 shiftv){shiftv_=shiftv;}
   void SetRotVect(TVector3 rotv){rotv_=rotv;}
 
-  TVector3 chVect(const double&cf,const double& cb);
+  TVector3 chVect(const double&cf,const double& cb) const;
   void Calcnormv();
   bool inDet(const TVector3&);
   bool Vect_to_ch(const TVector3&, double&, double&);
@@ -95,6 +99,79 @@ public:
   ClassDef(RN_S2Detector,1);
  
 };
+
+
+
+
+class RN_S2Cluster:public RN_BaseDetector{
+private:
+  float efrontmatch;//!
+  float ebackmatch;//!
+  unsigned int frontmatchstat;//!
+  unsigned int backmatchstat;//!
+  float match_enefromback;//!
+  float match_epsilon;//!
+  float match_delta;//!
+  float match_maxene;//!
+  float addback_front; //!
+  float addback_back;//!
+  TVector3 fPos;
+
+public:
+  std::vector<double>fChlist_b;
+
+
+  RN_S2Cluster(int i=0):RN_BaseDetector("si.cluster",16),
+			fChlist_b(16,-1.){
+  Reset();
+  match_enefromback=1.0;
+  match_epsilon=0.0;
+  match_delta=0.1;
+  match_maxene=4096;
+  addback_front=0.0; 
+  addback_back=0.0;
+  
+}
+  ~RN_S2Cluster(){};
+  RN_S2Cluster(std::string name,Int_t NumOfch);
+
+  int ReconstructClusters(RN_S2Detector& in);
+  int SetMatchParameters(float match_enefromback,
+			 float match_epsilon,
+			 float match_delta,
+			 float match_maxene,
+			 float addback_front, 
+			 float addback_back);
+  void Reset();
+  void SetCalibrations(RN_VariableMap&);
+    
+  ClassDef(RN_S2Cluster,1);
+};
+
+
+/////////////////////////////////////////////////////////////////
+///TempList functions
+////////////////////////////////////////////////////////////////
+
+
+
+class RNTempList{
+public:
+  RNTempList();
+  RNTempList(const unsigned short no_channels);
+  ~RNTempList();
+  
+  int mult;
+  unsigned short no_channels_;
+  float *chlist;
+  float *elist;
+  float *tlist;
+ 
+  void InsertHit(float e, float t, float ch);
+};
+
+
+
 
 
 #endif

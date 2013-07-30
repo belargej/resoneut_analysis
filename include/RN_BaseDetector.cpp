@@ -5,7 +5,7 @@ void RN_BaseDetector::Reset(){
   for(unsigned int i=0;i<fMult;i++){
     fE[i]=0;
     fT[i]=0;
-    fChlist[i]=0;
+    fChlist[i]=-1;
  }
   fMult=0;
 }
@@ -25,10 +25,10 @@ void RN_BaseDetector::SetELimits(const double& elow,const double& ehigh){
 }
 
 
-void RN_BaseDetector::InsertHit(const double& e,const double& t,const double& ch){
+int RN_BaseDetector::InsertHit(const double& e,const double& t,const double& ch){
 
-  if(e < lowlimit || e > highlimit) 
-    return;
+  if(e <= lowlimit || e > highlimit) 
+    return -1;
   int i,j;
   if (sorted_by_channel){ 
     /* insert into list sorted by channel */
@@ -56,5 +56,5 @@ void RN_BaseDetector::InsertHit(const double& e,const double& t,const double& ch
   fT[i+1]=t;
   fMult += 1.;
 
-  
+  return (i+1);
 }
