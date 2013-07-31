@@ -66,10 +66,10 @@ public:
 
   Float_t* fCh; //[fNumOfCh]
 
-  std::string Name(){return fName;}
-  Int_t GeoAddress(){return fGeoAddress;}
-  Int_t NumOfCh(){return fNumOfCh;}
-  Int_t Type(){return fType;}
+  std::string Name()const{return fName;}
+  Int_t GeoAddress()const {return fGeoAddress;}
+  Int_t NumOfCh()const {return fNumOfCh;}
+  Int_t Type()const {return fType;}
   void Reset(){
     for(int i=0;i<fNumOfCh;i++)
       fCh[i]=0;
@@ -83,7 +83,7 @@ public:
 class RNUnpack2Root{
 private:
   int mesy_num;
-  int caen_num;
+  Int_t caen_num;
   int adc_counter;
   int mes_counter;
  
@@ -100,6 +100,8 @@ public:
   int GetCaenNum(){return caen_num;}
   void Reset();
 
+
+  
 };
 
 

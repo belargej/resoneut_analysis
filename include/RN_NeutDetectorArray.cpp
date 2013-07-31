@@ -107,11 +107,11 @@ double RN_NeutDetector::CalculateTRel(const std::vector<RN_NeutDetector>& ndet, 
 
 RN_NeutDetectorArray::RN_NeutDetectorArray(){}
 
-void RN_NeutDetectorArray::ReconstructHits(NeutCollection&in){
+void RN_NeutDetectorArray::ReconstructHits(RN_NeutCollection&in){
 
   double tfirst=-1;
   //calculate TRel for all detectors(only important for coincidence data(ie source)
-  for(NeutCollectionRef it = in.begin(); it != in.end();it++){
+  for(RN_NeutCollectionRef it = in.begin(); it != in.end();it++){
     (*it).CalculateTRel(in,tfirst);
   }
 

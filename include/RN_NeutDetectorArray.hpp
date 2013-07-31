@@ -77,8 +77,8 @@ class RN_NeutDetector:public RN_BaseDetector{
   ClassDef(RN_NeutDetector,1);
 };
 
-typedef std::vector<RN_NeutDetector> NeutCollection;
-typedef std::vector<RN_NeutDetector>::iterator NeutCollectionRef;
+typedef std::vector<RN_NeutDetector> RN_NeutCollection;
+typedef std::vector<RN_NeutDetector>::iterator RN_NeutCollectionRef;
 
 
 
@@ -91,7 +91,7 @@ public:
   std::vector<double>fQ_short;//[fMult]
 
   RN_NeutDetectorArray();
-  void ReconstructHits(NeutCollection& in);
+  void ReconstructHits(RN_NeutCollection& in);
   
 
 
@@ -101,6 +101,6 @@ public:
 };
 
 
-}
+
 
 #endif

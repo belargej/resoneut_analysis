@@ -88,10 +88,13 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
   RootFile = new TFile(output_file.c_str(),"RECREATE");  
   string logger = Form("%s.log",output_file.c_str());
   logfile.open(logger.c_str(),ios::out);
+ 
 
   // Data Tree
   DataTree = new TTree("DataTree","DataTree");
  
+
+
   for(unsigned int i=0;i<caen_stack.size();i++){
     if(splitoption=="y") DataTree->Branch(Form("%s.",caen_stack[i].Name().c_str()),"RN_module",&(caen_stack[i]));
     else DataTree->Branch(caen_stack[i].Name().c_str(),"RN_module",&(caen_stack[i]),16000,0);
