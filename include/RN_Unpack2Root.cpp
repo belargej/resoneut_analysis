@@ -10,6 +10,8 @@ using namespace std;
 
 
 bool RNUnpack2Root::init(const std::string& config){
+  caen_num=0;
+  mesy_num=0;
   ifstream cfg(config.c_str());
   if (!cfg.is_open()){
     cout<<"could not load init file: "<<config<<endl;

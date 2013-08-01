@@ -92,7 +92,7 @@ public:
   std::vector<RN_module> caen_stack;
   std::vector<RN_module> mesy_stack;
 
-  RNUnpack2Root(){}
+  RNUnpack2Root():mesy_num(0),caen_num(0){}
 
   int Convert(std::vector<int>&run_number,std::string data_dir,std::string output_file, std::string splitoption);
   bool init(const std::string& config);
