@@ -30,6 +30,16 @@ void PSD_Analyzer::LoadGates(const char *a){
   hrftime_allneut->ApplyGate(n7_neuts);
   hrftime_allneut->ApplyGate(n8_neuts);
   hrftime_allneut->ApplyGate(n9_neuts);
+  pEde_ngated->ApplyGate(n0_neuts);
+  pEde_ngated->ApplyGate(n1_neuts);
+  pEde_ngated->ApplyGate(n2_neuts);
+  pEde_ngated->ApplyGate(n3_neuts);
+  pEde_ngated->ApplyGate(n4_neuts);
+  pEde_ngated->ApplyGate(n5_neuts);
+  pEde_ngated->ApplyGate(n6_neuts);
+  pEde_ngated->ApplyGate(n7_neuts);
+  pEde_ngated->ApplyGate(n8_neuts);
+  pEde_ngated->ApplyGate(n9_neuts);
   hTrel_n0->ApplyGate(n0_neuts);
   hTrel_n1->ApplyGate(n1_neuts);
   hTrel_n2->ApplyGate(n2_neuts);
@@ -40,7 +50,7 @@ void PSD_Analyzer::LoadGates(const char *a){
   hTrel_n7->ApplyGate(n7_neuts);
   hTrel_n8->ApplyGate(n8_neuts);
   hTrel_n9->ApplyGate(n9_neuts);
- 
+  
 
 
 }
@@ -87,6 +97,11 @@ void PSD_Analyzer::initHists(std::string output){
   hTrel_n8=new sak::Histogram2D("hTrel_n8","Trel","E",512,2,2500,512,50,2500);
   hTrel_n9=new sak::Histogram2D("hTrel_n9","Trel","E",512,2,2500,512,50,2500);
 
+  rootfile->mkdir("ede");
+  rootfile->cd("ede");
+  pEde=new sak::Histogram2D("pede","e[arb. units]","de[arb. units]",512,0,4096,512,0,4096);
+  pEde_ngated=new sak::Histogram2D("pede_ngated","e[arb. units]","de[arb. units]",512,0,4096,512,0,4096);
+
   rootfile->cd();
   
   
@@ -94,6 +109,8 @@ void PSD_Analyzer::initHists(std::string output){
 
 void PSD_Analyzer::Process(){
   //fill histograms
+  ApplyCalibrations();
+
   hPSD_n0->Fill(neut[0].fQ_long,neut[0].fQ_short);
   hPSD_n1->Fill(neut[1].fQ_long,neut[1].fQ_short);
   hPSD_n2->Fill(neut[2].fQ_long,neut[2].fQ_short);
@@ -115,7 +132,12 @@ void PSD_Analyzer::Process(){
   if(hTrel_n7->Check())hTrel_n7->Fill(neut[7].fTrel,neut[7].fQ_long);
   if(hTrel_n8->Check())hTrel_n8->Fill(neut[8].fTrel,neut[8].fQ_long);
   if(hTrel_n9->Check())hTrel_n9->Fill(neut[9].fTrel,neut[9].fQ_long);
-
+  
+  if(si_cluster_[1].fMult>0 && si_[0].front.fMult>0){
+    pEde->Fill(si_cluster_[1].fE[0]+si_[0].front.fE[0],si_cluster_[1].fE[0]);
+    if(pEde_ngated->OrCheck())pEde_ngated->Fill(si_cluster_[1].fE[0]+si_[0].front.fE[0],si_cluster_[1].fE[0]);
+    
+  }
   hrftime->Fill(rftime[0].fT);
   if(hrftime_allneut->OrCheck())hrftime_allneut->Fill(rftime[0].fT);
 }

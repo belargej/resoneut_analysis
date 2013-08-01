@@ -29,6 +29,9 @@ public:
   sak::Histogram2D *hPSD_n8;
   sak::Histogram2D *hPSD_n9;
   
+  sak::Histogram2D *pEde;
+  sak::Histogram2D *pEde_ngated;
+
   sak::Histogram2D *  hTrel_n0;
   sak::Histogram2D *  hTrel_n1;
   sak::Histogram2D *  hTrel_n2;

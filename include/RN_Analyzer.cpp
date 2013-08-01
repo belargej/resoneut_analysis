@@ -20,6 +20,50 @@ RN_Analyzer::RN_Analyzer():calibrated(0)//,
 
 }
 
+void RN_Analyzer::SetCalibrations(){
+
+
+  for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
+    (*it).SetCalibrations(DetVar);
+  }
+
+  for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
+    (*it).SetCalibrations(DetVar);
+  }
+  
+  for(RN_S2ClusterCollectionRef it=si_cluster_.begin();it!=si_cluster_.end();it++){
+    (*it).SetCalibrations(DetVar);
+  }
+  for(RN_RFCollectionRef it=rftime.begin();it!=rftime.end();it++){
+    (*it).SetCalibrations(DetVar);
+  }
+  
+
+
+}
+
+void RN_Analyzer::ApplyCalibrations(){
+
+
+  for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
+    (*it).ApplyCalibrations();
+  }
+
+  int cref=0;
+  for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
+    (*it).ApplyCalibrations();
+    if(cref<si_cluster_.size())
+      si_cluster_[cref].ReconstructClusters(*it);
+    cref++;
+  }
+  for(RN_RFCollectionRef it=rftime.begin();it!=rftime.end();it++){
+    (*it).ApplyCalibrations();
+  }
+  
+  
+
+}
+
 void RN_Analyzer::Init(TString rootfile)
 {
    // The Init() function is called when the selector needs to initialize
