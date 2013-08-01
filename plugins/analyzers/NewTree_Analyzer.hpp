@@ -5,8 +5,8 @@
 #include <string>
 #include <new>
 #include "RN_Analyzer.hpp"
-#include "RNHistograms.cpp"
-#include "RNGates.cpp"
+#include "RNHistograms.hpp"
+#include "RNGates.hpp"
 
 
 class NewTree_Analyzer:public RN_Analyzer{
@@ -16,7 +16,6 @@ public:
   TFile *rootfile;
   TTree *rawtree;
   TTree *caltree;
-  Int_t calibrated;
   NewTree_Analyzer();
   virtual ~NewTree_Analyzer(){};
 

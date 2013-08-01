@@ -48,12 +48,18 @@ public:
   virtual ~RN_Analyzer();
 
   //Detectors 
+  RN_NeutDetectorArray Narray;
   RN_NeutCollection neut;
-  RN_S2Detector si_a;
-  RN_S2Detector si_b;
-  RN_S2Cluster si_cluster_b;
-  RN_RFTime rftime;
+  RN_S2Collection si_;
+  RN_S2ClusterCollection si_cluster_;
+  RN_RFCollection rftime;
+  //  RN_S2Detector si_a;
+  //RN_S2Detector si_b;
+  //RN_S2Cluster si_cluster_b;
+  //RN_RFTime rftime;
   RN_VariableMap DetVar;
+
+  Int_t calibrated;
 
 
   // Declaration of leaf types
@@ -91,8 +97,8 @@ public:
   Long64_t TotEntries() const{return fChain->GetEntries();} 
   void AddTree(TString a){fChain->Add(a);}
   virtual void Init(TString rootfile);
-  virtual Int_t   GetEntry(Long64_t entry, Int_t getall = 0) { return fChain ? fChain->GetTree()->GetEntry(entry, getall) : 0; }
-  virtual void GetDetectorEntry(Long64_t entry,Int_t getall=0);
+  virtual Int_t   GetEntry(Long64_t entry, Int_t getall = 0) { return fChain ? fChain->GetEntry(entry, getall) : 0; }
+  virtual int GetDetectorEntry(Long64_t entry,Int_t getall=0);
 
 
 

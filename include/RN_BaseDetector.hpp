@@ -69,6 +69,10 @@ public:
 };
 
 
+typedef std::vector<RN_BaseDetector> RN_BaseCollection;
+typedef std::vector<RN_BaseDetector>::iterator RN_BaseCollectionRef;
+
+
 
 
 #endif

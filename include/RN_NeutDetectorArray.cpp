@@ -72,7 +72,7 @@ void RN_NeutDetector::ApplyCalibrations(){
 
 }
 
-void RN_NeutDetector::InsertHit(const double& q_long,const double& q_short){
+void RN_NeutDetector::InsertPSDHit(const double& q_long,const double& q_short){
   fQ_long=q_long;
   fQ_short=q_short;
  

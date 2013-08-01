@@ -28,23 +28,23 @@ void NewTree_Analyzer::InitTree(std::string filename,Int_t calibrate){
     }
   }
   if(split=="y"){
-    rawtree->Branch(Form("%s.",si_a.Name().c_str()),"RN_S2Detector",&si_a);
-    rawtree->Branch(Form("%s.",si_b.Name().c_str()),"RN_S2Detector",&si_b);
-    rawtree->Branch(Form("%s.",rftime.Name().c_str()),"RN_RFTime",&rftime);
+    rawtree->Branch(Form("%s.",si_[0].Name().c_str()),"RN_S2Detector",&si_[0]);
+    rawtree->Branch(Form("%s.",si_[1].Name().c_str()),"RN_S2Detector",&si_[1]);
+    rawtree->Branch(Form("%s.",rftime[0].Name().c_str()),"RN_RFTime",&rftime[0]);
     if(calibrated){
-      caltree->Branch(Form("%s.",si_a.Name().c_str()),"RN_S2Detector",&si_a);
-      caltree->Branch(Form("%s.",si_b.Name().c_str()),"RN_S2Detector",&si_b);
-      caltree->Branch(Form("%s.",rftime.Name().c_str()),"RN_RFTime",&rftime);
+      caltree->Branch(Form("%s.",si_[0].Name().c_str()),"RN_S2Detector",&si_[0]);
+      caltree->Branch(Form("%s.",si_[1].Name().c_str()),"RN_S2Detector",&si_[1]);
+      caltree->Branch(Form("%s.",rftime[0].Name().c_str()),"RN_RFTime",&rftime[0]);
     }
   }
   else{
-    rawtree->Branch(Form("%s",si_a.Name().c_str()),"RN_S2Detector",&si_a,16000,0);
-    rawtree->Branch(Form("%s",si_b.Name().c_str()),"RN_S2Detector",&si_b,16000,0);
-    rawtree->Branch(Form("%s",rftime.Name().c_str()),"RN_RFTime",&rftime,16000,0);
+    rawtree->Branch(Form("%s",si_[0].Name().c_str()),"RN_S2Detector",&si_[0],16000,0);
+    rawtree->Branch(Form("%s",si_[1].Name().c_str()),"RN_S2Detector",&si_[1],16000,0);
+    rawtree->Branch(Form("%s",rftime[0].Name().c_str()),"RN_RFTime",&rftime[0],16000,0);
     if(calibrated){
-      caltree->Branch(Form("%s",si_a.Name().c_str()),"RN_S2Detector",&si_a,16000,0);
-      caltree->Branch(Form("%s",si_b.Name().c_str()),"RN_S2Detector",&si_b,16000,0);
-      caltree->Branch(Form("%s",rftime.Name().c_str()),"RN_RFTime",&rftime,16000,0);
+      caltree->Branch(Form("%s",si_[0].Name().c_str()),"RN_S2Detector",&si_[0],16000,0);
+      caltree->Branch(Form("%s",si_[1].Name().c_str()),"RN_S2Detector",&si_[1],16000,0);
+      caltree->Branch(Form("%s",rftime[0].Name().c_str()),"RN_RFTime",&rftime[0],16000,0);
 
     }
   }
@@ -68,10 +68,17 @@ void NewTree_Analyzer::Process(){
     for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
       (*it).ApplyCalibrations();
     }
-    si_a.ApplyCalibrations();
-    si_b.ApplyCalibrations();
-    rftime.ApplyCalibrations();
-    
+    int cref=0;
+    for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
+      (*it).ApplyCalibrations();
+      if(cref<si_.size())
+	si_cluster_[cref].ReconstructClusters(*it);
+      cref++;
+    }
+    for(RN_RFCollectionRef it=rftime.begin();it!=rftime.end();it++){
+      (*it).ApplyCalibrations();
+    }
+	
     caltree->Fill();
   }
   

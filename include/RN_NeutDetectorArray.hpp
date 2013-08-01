@@ -59,7 +59,7 @@ class RN_NeutDetector:public RN_BaseDetector{
   Double_t fPSD;
   Double_t fTrel;
 
-  void InsertHit(const double&,const double&);
+  void InsertPSDHit(const double&,const double&);
   Double_t PSD() const ;
   Double_t Q() const ;
   bool DeterminePosition(int apos); 

@@ -11,10 +11,11 @@
 using namespace std;
 
 
-RN_Analyzer::RN_Analyzer():si_a("si_a",16,16),
-			   si_b("si_b",16,16),
-			   si_cluster_b("si_cluster_b",16),
-			   rftime("rftime")
+RN_Analyzer::RN_Analyzer():calibrated(0)//,
+			   //si_a("si_a",16,16),
+			   // si_b("si_b",16,16),
+			   //si_cluster_b("si_cluster_b",16),
+			   //rftime("rftime")
 {
 
 }
@@ -28,7 +29,11 @@ void RN_Analyzer::Init(TString rootfile)
    // code, but the routine can be extended by the user if needed.
    // Init() will be called many times when running on PROOF
    // (once per file to be processed).
-
+  si_.push_back(RN_S2Detector("si_a",16,16));
+  si_.push_back(RN_S2Detector("si_b",16,16));
+  si_cluster_.push_back(RN_S2Cluster("si_cluster_a",16));
+  si_cluster_.push_back(RN_S2Cluster("si_cluster_b",16));
+  rftime.push_back(RN_RFTime("rftime"));
   neut.push_back(RN_NeutDetector("neut0",4,1));
   neut.push_back(RN_NeutDetector("neut1",4,4));
   neut.push_back(RN_NeutDetector("neut2",4,5));
@@ -109,37 +114,56 @@ RN_Analyzer::~RN_Analyzer(){
 }
 
 
-void RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
+int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
 
   for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
     (*it).Reset();
   }
-  si_a.Reset();
-  si_b.Reset();
-  si_cluster_b.Reset();
-  rftime.Reset();
- 
 
-      GetEntry(entry,getall);
+  for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
+    (*it).Reset();
+  }
+  
+  for(RN_S2ClusterCollectionRef it=si_cluster_.begin();it!=si_cluster_.end();it++){
+    (*it).Reset();
+  }
+  for(RN_RFCollectionRef it=rftime.begin();it!=rftime.end();it++){
+    (*it).Reset();
+  }
+  
+  
+  if(!GetEntry(entry,getall)){
+    
+    return 0;
+
+  }
   if(entry%30000==0)std::cout<<entry<<std::endl;
   //ChanneltoDetector
   
   int idx=1; //neut detectors start from channel 1 in QDC
   for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
-    if(QDC1->fCh[idx]>0)
-      (*it).InsertHit(QDC1->fCh[idx],QDC1->fCh[idx+16]);
+    if(QDC1->fCh[idx]>0){
+      (*it).InsertPSDHit(QDC1->fCh[idx],QDC1->fCh[idx+16]);
+      if(TDC1->fCh[idx]>0)
+	(*it).InsertHit(QDC1->fCh[idx],TDC1->fCh[idx+16],0.);
+    }
     idx++;
+    
+    
 
   }
   
   for(int j=0;j<16;j++){
-    if(ADC1->fCh[j+16]>0)si_a.front.InsertHit(ADC1->fCh[j+16],0,j);
-    if(ADC2->fCh[j+16]>0)si_b.front.InsertHit(ADC2->fCh[j+16],0,j);
-    if(ADC1->fCh[j]>0)si_a.back.InsertHit(ADC1->fCh[j],0,j);
-    if(ADC2->fCh[j]>0)si_b.back.InsertHit(ADC2->fCh[j],0,j);
+    if(ADC1->fCh[j+16]>0)si_[0].front.InsertHit(ADC1->fCh[j+16],0,j);
+    if(ADC2->fCh[j+16]>0)si_[1].front.InsertHit(ADC2->fCh[j+16],0,j);
+    if(ADC1->fCh[j]>0)si_[0].back.InsertHit(ADC1->fCh[j],0,j);
+    if(ADC2->fCh[j]>0)si_[1].back.InsertHit(ADC2->fCh[j],0,j);
   }
-  if(TDC1->fCh[0]>0)rftime.InsertHit(TDC1->fCh[0]);
+  if(TDC1->fCh[0]>0)rftime[0].InsertHit(TDC1->fCh[0]);
   
-    
-    
+  
+  Narray.ReconstructHits(neut);
+
+  
 }
+

@@ -85,6 +85,10 @@ public:
 };
 
 
+typedef std::vector<RN_RFTime> RN_RFCollection;
+typedef std::vector<RN_RFTime>::iterator RN_RFCollectionRef;
+
+
 
 
 #endif

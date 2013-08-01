@@ -101,6 +101,11 @@ public:
 };
 
 
+typedef std::vector<RN_S2Detector> RN_S2Collection;
+typedef std::vector<RN_S2Detector>::iterator RN_S2CollectionRef;
+
+
+
 
 
 class RN_S2Cluster:public RN_BaseDetector{
@@ -147,6 +152,13 @@ public:
     
   ClassDef(RN_S2Cluster,1);
 };
+
+
+
+typedef std::vector<RN_S2Cluster> RN_S2ClusterCollection;
+typedef std::vector<RN_S2Cluster>::iterator RN_S2ClusterCollectionRef;
+
+
 
 
 /////////////////////////////////////////////////////////////////
