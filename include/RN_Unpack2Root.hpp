@@ -86,13 +86,14 @@ private:
   Int_t caen_num;
   int adc_counter;
   int mes_counter;
+  Int_t Event[2];//stores RunNum/flag
  
 public:
 
   std::vector<RN_module> caen_stack;
   std::vector<RN_module> mesy_stack;
 
-  RNUnpack2Root():mesy_num(0),caen_num(0){}
+  RNUnpack2Root():mesy_num(0),caen_num(0),Event(){}
 
   int Convert(std::vector<int>&run_number,std::string data_dir,std::string output_file, std::string splitoption);
   bool init(const std::string& config);
@@ -101,7 +102,7 @@ public:
   void Reset();
 
 
-  
+ 
 };
 
 

@@ -52,6 +52,7 @@ bool RNUnpack2Root::init(const std::string& config){
 
 
 void RNUnpack2Root::Reset(){
+  Event[1]=0;
   for(int i=0;i<caen_num;i++){
     caen_stack[i].Reset();
   }
@@ -95,7 +96,8 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
   // Data Tree
   DataTree = new TTree("DataTree","DataTree");
  
-
+  //flag is used to notify the user of any issues seen during unpacking
+  DataTree->Branch("Event",&Event,"RunNum/I:flag/I");
 
   for(unsigned int i=0;i<caen_stack.size();i++){
     if(splitoption=="y") DataTree->Branch(Form("%s.",caen_stack[i].Name().c_str()),"RN_module",&(caen_stack[i]));
@@ -109,6 +111,7 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
   //Loop over files in the data file list.
   for(int b=0;b<run_number.size();b++){
     //this section to properly format the evt number to buffer run number with zeroes.
+    Event[0]=run_number[b];
     stringstream ss;
     ss<<run_number[b];
     string run_string;
@@ -276,12 +279,15 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
 	    gpointer = zpointer; //move gpointer to end of this zpointer
 	  }
 
-
+	  if(*gpointer!=0xffff)
+	    Event[1]=1;
+	  gpointer = gpointer + 2; //end of buffer ffffs
 	  // this is a check to make sure the buffer is properly formatted.
 	  // gpointer should, at this moment, point to the endpointer which has an
 	  //an address dictated by buffer words at the beginning.
 	  if (gpointer!=endpointer){
 	    gpointer=endpointer;
+	    Event[1]+=2;//flag
 	    // int diff = endpointer-gpointer;
 	    //logfile<<"Item Header(Length, Type): "<< BufferBytes<<" "<<ItemType<<std::endl;
 	    //logfile<<diff<<" words went unread out of "<<BufferWords<<std::endl;
