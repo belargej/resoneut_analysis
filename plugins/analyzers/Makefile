@@ -1,5 +1,5 @@
 CXX=g++
-SOURCES=PSD_Analyzer.cpp NewTree_Analyzer.cpp S2_Analyzer.cpp
+SOURCES=PSD_Analyzer.cpp NewTree_Analyzer.cpp S2_Analyzer.cpp RN_Analyzer.cpp
 OBJECTS=${SOURCES:.cpp=.o}
 HEADERS=${SOURCES:.cpp=.hpp}
 LIBS=${addprefix -l,${SOURCES:.cpp=}}
@@ -23,13 +23,13 @@ LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} -I${ROOTSYS}/include
 all: libanalyzers.so	
 
 libanalyzers.so: ${OBJECTS} analyzers_d.cpp 
-	 g++ -shared -o ${addprefix ../../lib/,$@} $^ `root-config --ldflags --libs --cflags` ${DEBUG} -I$(ROOTSYS)/include -I$(PWD)/../../include -I$(PWD)/../sak
+	 g++ -shared -o ${addprefix ../../lib/,$@} $^ `root-config --ldflags --libs --cflags` ${DEBUG} -I$(PWD)/../../include -I$(PWD)/../sak -I$(PWD)
 
 analyzers_d.cpp: ${HEADERS} my_LinkDef.h
-	rootcint analyzers_d.cpp -c `root-config --cflags` -I$(PWD)/../../include -I$(PWD)/../sak -p $^
+	rootcint analyzers_d.cpp -c `root-config --cflags` -I$(PWD)/../../include -I$(PWD)/../sak -I$(PWD) -p $^
 
 %.o: %.cpp
-	${CXX} ${CFLAGS} $< -I$(PWD)/../../include -I$(PWD)/../sak
+	${CXX} ${CFLAGS} $< -I$(PWD)/../../include -I$(PWD)/../sak -I$(PWD)
 
 
 #####################################################################

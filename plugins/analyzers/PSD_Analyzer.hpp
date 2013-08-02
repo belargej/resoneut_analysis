@@ -18,30 +18,21 @@ public:
   //declare histograms here
   sak::Histogram1D *hrftime;
   sak::Hist1D *hrftime_allneut;
-  sak::Histogram2D *hPSD_n0;
-  sak::Histogram2D *hPSD_n1;
-  sak::Histogram2D *hPSD_n2;
-  sak::Histogram2D *hPSD_n3;
-  sak::Histogram2D *hPSD_n4;
-  sak::Histogram2D *hPSD_n5;
-  sak::Histogram2D *hPSD_n6;
-  sak::Histogram2D *hPSD_n7;
-  sak::Histogram2D *hPSD_n8;
-  sak::Histogram2D *hPSD_n9;
+  sak::Histogram1D *hrftime_cal;
+  sak::Hist1D *hrftime_allneut_cal;
+  sak::Histogram2D *hPSDq_n[10];
+
   
+  sak::Histogram2D *hPSD_n_[10];
+
   sak::Histogram2D *pEde;
   sak::Histogram2D *pEde_ngated;
 
-  sak::Histogram2D *  hTrel_n0;
-  sak::Histogram2D *  hTrel_n1;
-  sak::Histogram2D *  hTrel_n2;
-  sak::Histogram2D *  hTrel_n3;
-  sak::Histogram2D *  hTrel_n4;
-  sak::Histogram2D *  hTrel_n5;
-  sak::Histogram2D *  hTrel_n6;
-  sak::Histogram2D *  hTrel_n7;
-  sak::Histogram2D *  hTrel_n8;
-  sak::Histogram2D *  hTrel_n9;
+  sak::Histogram2D *  hTrel_n[10];
+
+
+  //declare extra parameters here, these can be then retrieved properly by gates
+
 
 
 

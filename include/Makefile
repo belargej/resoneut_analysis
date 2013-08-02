@@ -1,7 +1,7 @@
 CXX=g++
 SOURCES_RN=RN_Unpack2Root.cpp RN_BaseDetector.cpp RN_NeutDetectorArray.cpp \
 	RN_VariableMap.cpp RN_IonChamber.cpp RN_SiliconDetectors.cpp\
-	RN_Calibrator.cpp RN_Timing.cpp RN_Analyzer.cpp
+	RN_Calibrator.cpp RN_Timing.cpp
 
 HEADERS_RN=${SOURCES_RN:.cpp=.hpp}
 

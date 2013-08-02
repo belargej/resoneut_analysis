@@ -102,22 +102,6 @@ void S2_Analyzer::Loop(){
 
 void S2_Analyzer::initHists(std::string output){ 
   rootfile=new TFile(output.c_str(),"RECREATE");
-  //front0=new sak::Hist1D("fc0_corr","channel",17,0,16);
-  //front1=new sak::Hist1D("fc1_corr","channel",17,0,16);
-  //front2=new sak::Hist1D("fc2_corr","channel",17,0,16);
-  //front3=new sak::Hist1D("fc3_corr","channel",17,0,16);
-  //front4=new sak::Hist1D("fc4_corr","channel",17,0,16);
-  //front5=new sak::Hist1D("fc5_corr","channel",17,0,16);
-  //front6=new sak::Hist1D("fc6_corr","channel",17,0,16);  
-  //front7=new sak::Hist1D("fc7_corr","channel",17,0,16);
-  //front8=new sak::Hist1D("fc8_corr","channel",17,0,16);
-  //front9=new sak::Hist1D("fc9_corr","channel",17,0,16);
-  //front10=new sak::Hist1D("fc10_corr","channel",17,0,16);
-  //front11=new sak::Hist1D("fc11_corr","channel",17,0,16);
-  //front12=new sak::Hist1D("fc12_corr","channel",17,0,16);
-  //front13=new sak::Hist1D("fc13_corr","channel",17,0,16);
-  //front14=new sak::Hist1D("fc14_corr","channel",17,0,16);
-  //front15=new sak::Hist1D("fc15_corr","channel",17,0,16);
   for(int i=0;i<16;i++){
     front[i]=new sak::Hist2D(Form("fc%d_corr",i),"channel","ratio",17,0,16,512,0,2);
   }

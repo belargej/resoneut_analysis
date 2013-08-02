@@ -60,4 +60,8 @@ public:
  
  
 };
+
+typedef std::vector<RN_S2Calibrator> RN_S2CalCollection;
+typedef std::vector<RN_S2Calibrator>::iterator RN_S2CalCollectionRef;
+
 #endif
