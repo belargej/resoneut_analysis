@@ -90,17 +90,19 @@ public:
   std::vector<double>fQ_long;//[fMult]
   std::vector<double>fQ_short;//[fMult]
 
-  RN_NeutDetectorArray();
-  void ReconstructHits(RN_NeutCollection& in);
-  
-
+  RN_NeutDetectorArray(){};
 
 
 
   ClassDef(RN_NeutDetectorArray,1);
 };
 
+namespace RNArray{
 
+  void ReconstructHits(RN_NeutCollection& in);
+  int PositionMap(int slot,TVector3 & pos);
+
+}
 
 
 #endif

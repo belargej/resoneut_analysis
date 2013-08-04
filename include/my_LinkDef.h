@@ -8,7 +8,8 @@
 #pragma link C++ defined_in "RN_IonChamber.hpp";
 #pragma link C++ defined_in "RN_Calibrator.hpp";
 #pragma link C++ defined_in "RN_Timing.hpp";
-
+#pragma link C++ defined_in "RN_Particle.hpp";
+#pragma link C++ defined_in "RN_MassTable.hpp";
 
 
 
@@ -17,6 +18,7 @@
 #pragma link C++ class std::vector<RN_BaseDetector>;
 #pragma link C++ class std::vector<RN_IonChamber>;
 #pragma link C++ class std::vector<RN_S2Detector>;
+#pragma link C++ class std::vector<RN_Particle>;
 #pragma link C++ class std::vector<RN_RFTime>;
 #pragma link C++ class std::vector<double>;
 

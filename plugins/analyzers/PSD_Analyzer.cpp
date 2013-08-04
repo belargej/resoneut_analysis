@@ -12,8 +12,11 @@ void PSD_Analyzer::LoadGates(const char *a){
   sak::Gate* neuts_n[10];
   
   for(int i=0;i<10;i++){
-    neuts_n[i]=new sak::Gate(&neut[i].fQ_long,&neut[i].fQ_short,*in.getCut(Form("n%d_neuts",i)));
+    // neuts_n[i]=new sak::Gate(&neut[i].fQ_long,&neut[i].fQ_short,*in.getCut(Form("n%d_neuts",i)));
+    neuts_n[i]=new sak::Gate(&neut[i].fPSD,&neut[i].fQ_long,*in.getCut(Form("n%d_neuts",i)));
   }
+  sak::Gate prots(&prot_E,&si_cluster_[1].fE[0],*in.getCut("prots"));
+
   
   hrftime_allneut->ApplyGate(*neuts_n[0]);
   hrftime_allneut->ApplyGate(*neuts_n[1]);
@@ -35,6 +38,7 @@ void PSD_Analyzer::LoadGates(const char *a){
   hrftime_allneut_cal->ApplyGate(*neuts_n[7]);
   hrftime_allneut_cal->ApplyGate(*neuts_n[8]);
   hrftime_allneut_cal->ApplyGate(*neuts_n[9]);
+  hrftime_allneut_cal_p->ApplyGate(prots);
   pEde_ngated->ApplyGate(*neuts_n[0]);
   pEde_ngated->ApplyGate(*neuts_n[1]);
   pEde_ngated->ApplyGate(*neuts_n[2]);
@@ -77,6 +81,7 @@ void PSD_Analyzer::initHists(std::string output){
   hrftime_allneut=new sak::Histogram1D("hrftime_allneut","rftime[ns]",512,2050,2650);
   hrftime_cal=new sak::Histogram1D("hrftime_cal","rftime[ns]",512,640,820);
   hrftime_allneut_cal=new sak::Histogram1D("hrftime_allneut_cal","rftime[ns]",512,640,820);
+  hrftime_allneut_cal_p=new sak::Histogram1D("hrftime_allneut_cal_p","rftime[ns]",512,640,820);
 
   for(int i=0;i<10;i++){  
     rootfile->cd("neut_PSD");
@@ -102,10 +107,7 @@ void PSD_Analyzer::Process(){
   if(hrftime_allneut->OrCheck())hrftime_allneut->Fill(rftime[0].fT);
 
 
-  //fill histograms
-  ApplyCalibrations();
 
-  
 
 
   for (int i=0;i<10;i++){
@@ -116,14 +118,25 @@ void PSD_Analyzer::Process(){
   }
 
 
+  //fill histograms
+  ApplyCalibrations();
+
+  
+  prot_E=si_cluster_[1].fE[0]+si_[0].front.fE[0];
   if(si_cluster_[1].fMult>0 && si_[0].front.fMult>0){
-    pEde->Fill(si_cluster_[1].fE[0]+si_[0].front.fE[0],si_cluster_[1].fE[0]);
+    pEde->Fill(prot_E,si_cluster_[1].fE[0]);
     if(pEde_ngated->OrCheck())pEde_ngated->Fill(si_cluster_[1].fE[0]+si_[0].front.fE[0],si_cluster_[1].fE[0]);
     
   }
   hrftime_cal->Fill(rftime[0].fT);
-  if(hrftime_allneut_cal->OrCheck())hrftime_allneut_cal->Fill(rftime[0].fT);
+  if(hrftime_allneut_cal->OrCheck()){
+    hrftime_allneut_cal->Fill(rftime[0].fT);
+    if(hrftime_allneut_cal_p->Check()){
+      hrftime_allneut_cal_p->Fill(rftime[0].fT);
+    }
+  }
 
+  
   for(int i=0;i<10;i++){
     if(i>=neut.size())
       break;

@@ -2,7 +2,7 @@
 
 namespace sak{
   
-  const char* ReadLine(std::ifstream& a,std::vector<std::string>& b,const int& ent = 0){
+  const char* ReadLine(std::ifstream& a,std::vector<std::string>& b,const int& ent){
     std::string c;
     std::getline(a,c);
     std::istringstream d(c);

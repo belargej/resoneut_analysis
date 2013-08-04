@@ -20,6 +20,7 @@ public:
   sak::Hist1D *hrftime_allneut;
   sak::Histogram1D *hrftime_cal;
   sak::Hist1D *hrftime_allneut_cal;
+  sak::Hist1D *hrftime_allneut_cal_p;
   sak::Histogram2D *hPSDq_n[10];
 
   
@@ -29,10 +30,10 @@ public:
   sak::Histogram2D *pEde_ngated;
 
   sak::Histogram2D *  hTrel_n[10];
-
+  
 
   //declare extra parameters here, these can be then retrieved properly by gates
-
+  double prot_E;
 
 
 

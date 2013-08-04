@@ -14,12 +14,12 @@ private:
 
 public:
   TFile *rootfile;
-  TTree *rawtree;
-  TTree *caltree;
+  TTree *tree;
+  
   NewTree_Analyzer();
   virtual ~NewTree_Analyzer(){};
 
-  void InitTree(std::string filename,Int_t calibrate=0);
+  void InitTree(std::string filename,std::string treename);
   virtual void Loop();
   virtual void Process();
   virtual void Clear(){};

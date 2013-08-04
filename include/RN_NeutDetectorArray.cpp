@@ -104,15 +104,43 @@ double RN_NeutDetector::CalculateTRel(const std::vector<RN_NeutDetector>& ndet, 
   
 }
 
-
-RN_NeutDetectorArray::RN_NeutDetectorArray(){}
-
-void RN_NeutDetectorArray::ReconstructHits(RN_NeutCollection&in){
-
-  double tfirst=-1;
-  //calculate TRel for all detectors(only important for coincidence data(ie source)
-  for(RN_NeutCollectionRef it = in.begin(); it != in.end();it++){
-    (*it).CalculateTRel(in,tfirst);
+namespace RNArray{
+  
+  void ReconstructHits(RN_NeutCollection&in){
+    
+    double tfirst=-1;
+    //calculate TRel for all detectors(only important for coincidence data(ie source)
+    for(RN_NeutCollectionRef it = in.begin(); it != in.end();it++){
+      (*it).CalculateTRel(in,tfirst);
+    }
+    
   }
-
+  
+  
+  int PositionMap(int slot,TVector3 & pos){
+    int z=pos.Z();
+    
+    if(slot==1)pos.SetXYZ(38.1,-152.4,z);
+    else if(slot==2)pos.SetXYZ(-38.1,-152.4,z);
+    else if(slot==3)pos.SetXYZ(114.3,-76.2,z);
+    else if(slot==4)pos.SetXYZ(38.1,-76.2,z);
+    else if(slot==5)pos.SetXYZ(-38.1,-76.2,z);
+    else if(slot==6)pos.SetXYZ(-114.3,-76.2,z);
+    else if(slot==7)pos.SetXYZ(150.622,0,z);
+    else if(slot==8)pos.SetXYZ(74.422,0,z);
+    else if(slot==9)pos.SetXYZ(-74.422,0,z);
+    else if(slot==10)pos.SetXYZ(-150.622,0,z);
+    else if(slot==11)pos.SetXYZ(114.3,76.2,z);
+    else if(slot==12)pos.SetXYZ(38.1,76.2,z);
+    else if(slot==13)pos.SetXYZ(-38.1,76.2,z);
+    else if(slot==14)pos.SetXYZ(-114.3,76.2,z);
+    else if(slot==15)pos.SetXYZ(38.1,152.4,z);
+    else if(slot==16)pos.SetXYZ(-38.1,-152.4,z);
+    else return 0;
+    
+    
+    pos.RotateZ(45*3.14/180);
+    return 1;
+  
+  }
 }
