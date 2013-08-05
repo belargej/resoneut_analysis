@@ -27,9 +27,12 @@ public:
   TFile * rootfile;
   int def;
   //declare histograms here
-  TH1D* hn_t;
+  TH1D* hn_tof;
+  TH2D* htof_n;
+  TH2D* hE_n;
+  TH2D* hE_v_theta;
+  TH2D* hT_v_theta;
   
-
 
 
 

@@ -171,7 +171,7 @@ RN_PTerph::RN_PTerph(std::string name,int apos):fName(name),
 {
   
   RNArray::PositionMap(apos,fPos);
- 
+  Reset();
 }
 
 

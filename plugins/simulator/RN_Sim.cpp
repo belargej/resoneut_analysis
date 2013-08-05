@@ -10,7 +10,7 @@ void RN_Sim::Init(){
   plist.push_back(RN_Particle("13N"));
   plist.push_back(RN_Particle("p"));
   plist.push_back(RN_Particle("12C"));
-  
+  //////////////////////////"neut",slotnumber
   pterph.push_back(RN_PTerph("neut0",1));
   pterph.push_back(RN_PTerph("neut1",4));
   pterph.push_back(RN_PTerph("neut2",5));
@@ -63,7 +63,8 @@ void RN_Sim::SetVariables(){
 }
 
 int RN_Sim::GenerateEvents(Long64_t evnum,std::string options=""){
-  
+  Reset();
+
   beam_e = beam_energy - myRnd.Rndm() * beam_eloss;
   
   RN_SimEvent evt1(beam_e,plist[0].mass,plist[1].mass,plist[2].mass,plist[3].mass);

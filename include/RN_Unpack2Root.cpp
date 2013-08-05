@@ -84,7 +84,7 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
   ofstream logfile;
   unsigned short * buffer;
   int timer=0;
-  TRandom3 Rnd;
+  TRandom3 Rnd(0);
 
 
   // ROOT output file

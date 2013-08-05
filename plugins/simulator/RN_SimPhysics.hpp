@@ -74,16 +74,18 @@ private:
   std::string fName;
   double fRadius;
   double fThickness;
-  double fDt;
-  double fT;
   double fThreshold;
   int fCounter;
   TVector3 fPos;
   TRandom3 rnd;//!
   double z_pos;//!
-  double fEsum;
+  
   
 public:
+  double fEsum;
+  double fDt;
+  double fT;
+
   RN_PTerph(std::string,int apos);
   RN_PTerph();
   int NeutIn(TLorentzVector nlv,double& t,double& e);

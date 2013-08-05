@@ -8,27 +8,40 @@ void RN_SimRun::Loop(Long64_t evnum,std::string options){
   SetVariables();
   Long64_t evcount=0;
   while(evcount<evnum){
-    Reset();
     if(GenerateEvents(evcount,options))
       evcount++;
     else
       continue;
-
+    
     if(def)FillHistograms();
-
+    if(evcount%30000==0)std::cout<<evcount<<std::endl;
   }  
 }
 
 void RN_SimRun::initHists(){
   def=1;
-  hn_t=new TH1D("hN_t","hN_t",512,0,128);
+  hn_tof=new TH1D("hn_tof","hn_tof",512,1,128);
+  htof_n=new TH2D("htof_n0","htof_n0",17,0,16,512,1,128);
+  hE_n=new TH2D("hE_n","hE_n",17,0,16,512,0,5);
+  hE_v_theta=new TH2D("hE_v_theta","hE_v_theta",180,0,179,512,0,20);
+  hT_v_theta=new TH2D("hT_v_theta","hT_v_theta",180,0,179,512,1,128);
 
 }
 
 
 void RN_SimRun::FillHistograms(){
-  hn_t->Fill(n_tof);
-
+  hn_tof->Fill(n_tof);
+  hE_v_theta->Fill(plist[2].LV.Theta()*180/3.14,plist[2].LV.E()-plist[2].LV.M());
+  int cref=0;
+  for(RN_PTerphCollectionRef it=pterph.begin();it!=pterph.end();it++){ 
+    if((*it).fT>0){
+      htof_n->Fill(cref,(*it).fT);
+      hE_n->Fill(cref,(*it).fEsum);
+      hT_v_theta->Fill(plist[2].LV.Theta()*180/3.14,(*it).fT);
+    }
+    cref++;
+  }
+ 
 }
 
 void RN_SimRun::StartRun(std::string input){
