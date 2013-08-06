@@ -27,7 +27,7 @@
 #include <TVector3.h>
 
 
-#include "RN_VariableMap.hpp"
+#include "core/RN_VariableMap.hpp"
 #include "RN_BaseDetector.hpp"
 
 

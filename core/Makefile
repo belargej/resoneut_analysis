@@ -1,5 +1,5 @@
 CXX=g++
-SOURCES=PSD_Analyzer.cpp NewTree_Analyzer.cpp S2_Analyzer.cpp RN_Analyzer.cpp
+SOURCES=RN_VariableMap.cpp RN_MassTable.cpp sak_ReadBuffer.cpp
 OBJECTS=${SOURCES:.cpp=.o}
 HEADERS=${SOURCES:.cpp=.hpp}
 LIBS=${addprefix -l,${SOURCES:.cpp=}}
@@ -22,13 +22,13 @@ LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG}
 INC_DIR=-I$(PWD)/../ -I$(PWD)/../sak -I$(PWD) -I${ROOTSYS}/include 
 
 
-all: libRNanalyzers.so	
+all: libRNcore.so	
 
-libRNanalyzers.so: ${OBJECTS} RNanalyzers_d.cpp 
+libRNcore.so: ${OBJECTS} RNcore_d.cpp 
 	 g++ -shared -o ${addprefix ../lib/,$@} $^ `root-config --ldflags --libs --cflags` ${DEBUG} $(INC_DIR)
 
-RNanalyzers_d.cpp: ${HEADERS} my_LinkDef.h
-	rootcint RNanalyzers_d.cpp -c $(INC_DIR) `root-config --cflags` -p $^
+RNcore_d.cpp: ${HEADERS} my_LinkDef.h
+	rootcint RNcore_d.cpp -c $(INC_DIR) `root-config --cflags` -p $^
 
 %.o: %.cpp
 	${CXX} ${CFLAGS} $< $(INC_DIR)
@@ -39,16 +39,16 @@ RNanalyzers_d.cpp: ${HEADERS} my_LinkDef.h
 #####################################################################
 
 clean: 
-	rm ${OBJECTS} RNanalyzers_d.* ../lib/libRNanalyzers.so
+	rm ${OBJECTS} RNcore_d.* ../lib/libRNcore.so
 
 newdict:
-	rm RNanalyzers_d.*
+	rm RNcore_d.*
 
 install:	
-	ln -s ${PWD}/../lib/libRNanalyzers.so ${HOME}/lib
+	ln -s ${PWD}/../lib/libRNcore.so ${HOME}/lib
 
 uninstall:	
-	rm ${HOME}/lib/libRNanalyzers.so
+	rm ${HOME}/lib/libRNcore.so
 
 
 help:

@@ -25,8 +25,9 @@
 #include <TPolyLine3D.h>
 #include <TVector3.h>
 
-#include "RN_VariableMap.hpp"
+#include "core/RN_VariableMap.hpp"
 #include "RN_BaseDetector.hpp"
+
 #define S2INNERRAD 11.0
 #define S2OUTERRAD 35.0
 #define S2MATCHTHRESHOLD 0.1

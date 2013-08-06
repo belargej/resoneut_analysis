@@ -1,9 +1,13 @@
 CXX=g++
-SOURCES=PSD_Analyzer.cpp NewTree_Analyzer.cpp S2_Analyzer.cpp RN_Analyzer.cpp
-OBJECTS=${SOURCES:.cpp=.o}
+SOURCES=RN_BaseDetector.cpp RN_NeutDetectorArray.cpp RN_IonChamber.cpp\
+	 RN_SiliconDetectors.cpp RN_Timing.cpp 
+
 HEADERS=${SOURCES:.cpp=.hpp}
+
+OBJECTS=${SOURCES:.cpp=.o}
 LIBS=${addprefix -l,${SOURCES:.cpp=}}
 OPTIONS=-lMinuit
+
 
 ifndef OPTIMIZE
 DEBUG=-g -Wall
@@ -22,16 +26,18 @@ LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG}
 INC_DIR=-I$(PWD)/../ -I$(PWD)/../sak -I$(PWD) -I${ROOTSYS}/include 
 
 
-all: libRNanalyzers.so	
+all: libRNdetectors.so	
 
-libRNanalyzers.so: ${OBJECTS} RNanalyzers_d.cpp 
-	 g++ -shared -o ${addprefix ../lib/,$@} $^ `root-config --ldflags --libs --cflags` ${DEBUG} $(INC_DIR)
 
-RNanalyzers_d.cpp: ${HEADERS} my_LinkDef.h
-	rootcint RNanalyzers_d.cpp -c $(INC_DIR) `root-config --cflags` -p $^
+
+RNdetectors_d.cpp: ${HEADERS} my_LinkDef.h
+	rootcint RNdetectors_d.cpp -c $(INC_DIR) `root-config --cflags` -p $^
 
 %.o: %.cpp
 	${CXX} ${CFLAGS} $< $(INC_DIR)
+
+libRNdetectors.so: ${OBJECTS} RNdetectors_d.cpp 
+	 g++ -shared -o ${addprefix ../lib/,$@} $^ `root-config --ldflags --libs --cflags`${DEBUG} $(INC_DIR)
 
 
 #####################################################################
@@ -39,16 +45,16 @@ RNanalyzers_d.cpp: ${HEADERS} my_LinkDef.h
 #####################################################################
 
 clean: 
-	rm ${OBJECTS} RNanalyzers_d.* ../lib/libRNanalyzers.so
+	rm  ${OBJECTS} RNdetectors_d.*  ../lib/libRNdetectors.so
 
 newdict:
-	rm RNanalyzers_d.*
+	rm RNdetectors_d.*
 
-install:	
-	ln -s ${PWD}/../lib/libRNanalyzers.so ${HOME}/lib
+install:
+	ln -s ${PWD}/../lib/libRNdetectors.so ${HOME}/lib
 
 uninstall:	
-	rm ${HOME}/lib/libRNanalyzers.so
+	rm ${HOME}/lib/libRNdetectors.so
 
 
 help:

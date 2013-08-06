@@ -15,7 +15,7 @@
 #include <TTree.h>
 #include <TRandom3.h>
 
-#include "RN_NeutDetectorArray.hpp"
+#include "detectors/RN_NeutDetectorArray.hpp"
 
 class RN_AngularDistribution{
 

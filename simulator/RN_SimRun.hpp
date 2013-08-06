@@ -14,11 +14,11 @@
 #include <TH2.h>
 
 #include "RN_Sim.hpp"
-#include "RN_VariableMap.hpp"
+#include "core/RN_VariableMap.hpp"
 #include "RN_Particle.hpp"
 #include "RN_SimPhysics.hpp"
-#include "RN_SiliconDetectors.hpp"
-#include "sak_ReadBuffer.hpp"
+#include "detectors/RN_SiliconDetectors.hpp"
+#include "core/sak_ReadBuffer.hpp"
 
 class RN_SimRun:public RN_Sim{
 private:

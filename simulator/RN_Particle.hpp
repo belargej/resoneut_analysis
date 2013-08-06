@@ -23,7 +23,7 @@
 #include <TTree.h>
 #include <TRandom3.h>
 
-#include "RN_MassTable.hpp"
+#include "core/RN_MassTable.hpp"
 
 class RN_Particle:public TObject{
 private:

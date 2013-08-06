@@ -13,12 +13,12 @@
 #include <TLorentzVector.h>
 
 
-#include "RN_SiliconDetectors.hpp"
-
-#include "RN_VariableMap.hpp"
+#include "detectors/RN_SiliconDetectors.hpp"
+#include "core/RN_VariableMap.hpp"
 #include "RN_SimPhysics.hpp"
 #include "RN_Particle.hpp"
-#include "RN_MassTable.hpp"
+#include "core/RN_MassTable.hpp"
+
 class RN_Sim{
 
 private:

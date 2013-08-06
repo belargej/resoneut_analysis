@@ -1,5 +1,5 @@
 CXX=g++
-SOURCES=RN_Sim.cpp RN_SimPhysics.cpp RN_SimRun.cpp
+SOURCES=RN_Sim.cpp RN_SimPhysics.cpp RN_SimRun.cpp RN_Particle.cpp
 OBJECTS=${SOURCES:.cpp=.o}
 HEADERS=${SOURCES:.cpp=.hpp}
 LIBS=${addprefix -l,${SOURCES:.cpp=}}
@@ -18,18 +18,19 @@ endif
 CFLAGS=`root-config --cflags` -c ${DEBUG}
 GLIBS=`root-config --glibs`
 LINK_DIR=${PWD}/../lib
-LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} -I${ROOTSYS}/include 
+LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} 
+INC_DIR=-I$(PWD)/../ -I${ROOTSYS}/include 
 
 all: libsimulator.so	
 
 libsimulator.so: ${OBJECTS} simulator_d.cpp 
-	 g++ -shared -o ${addprefix ../lib/,$@} $^ `root-config --ldflags --libs --cflags` ${DEBUG} -I$(PWD)/../include -I$(PWD)/../sak -I$(PWD)
+	 g++ -shared -o ${addprefix ../lib/,$@} $^ `root-config --ldflags --libs --cflags` ${DEBUG} $(INC_DIR)
 
 simulator_d.cpp: ${HEADERS} my_LinkDef.h
-	rootcint simulator_d.cpp -c `root-config --cflags` -I$(PWD)/../../include -I$(PWD)/../sak -I$(PWD) -p $^
+	rootcint simulator_d.cpp -c $(INC_DIR) `root-config --cflags` -p $^
 
 %.o: %.cpp
-	${CXX} ${CFLAGS} $< -I$(PWD)/../include -I$(PWD)/../sak -I$(PWD)
+	${CXX} ${CFLAGS} $< $(INC_DIR)
 
 
 #####################################################################

@@ -42,11 +42,11 @@
 
 
 #include <map>
-#include "RN_Unpack2Root.hpp"
-#include "RN_NeutDetectorArray.hpp"
-#include "RN_SiliconDetectors.hpp"
-#include "RN_Timing.hpp"
-#include "RN_VariableMap.hpp"
+#include "unpacker/RN_Unpack2Root.hpp"
+#include "detectors/RN_NeutDetectorArray.hpp"
+#include "detectors/RN_SiliconDetectors.hpp"
+#include "detectors/RN_Timing.hpp"
+#include "core/RN_VariableMap.hpp"
 
 class RN_Analyzer {
 public:

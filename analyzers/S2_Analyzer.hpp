@@ -5,9 +5,9 @@
 #include <string>
 #include <new>
 #include "RN_Analyzer.hpp"
-#include "RNHistograms.hpp"
-#include "RNGates.hpp"
-#include "RN_Calibrator.hpp"
+#include "sak/RNHistograms.hpp"
+#include "sak/RNGates.hpp"
+#include "calibrator/RN_Calibrator.hpp"
 
 
 class S2_Analyzer:public RN_Analyzer{

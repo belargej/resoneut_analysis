@@ -4,9 +4,9 @@
 #include <cstdlib>
 #include <string>
 #include <new>
-#include "RN_Analyzer.hpp"
-#include "RNHistograms.hpp"
-#include "RNGates.hpp"
+#include "analyzers/RN_Analyzer.hpp"
+#include "sak/RNHistograms.hpp"
+#include "sak/RNGates.hpp"
 
 
 class PSD_Analyzer:public RN_Analyzer{

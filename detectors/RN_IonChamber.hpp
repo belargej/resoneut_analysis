@@ -25,7 +25,7 @@
 #include <TPolyLine3D.h>
 #include <TVector3.h>
 
-#include "RN_VariableMap.hpp"
+#include "core/RN_VariableMap.hpp"
 #include "RN_BaseDetector.hpp"
 
 #define I_CN 5 //ion chan num
