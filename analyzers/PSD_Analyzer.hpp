@@ -40,10 +40,10 @@ public:
   PSD_Analyzer();
   virtual ~PSD_Analyzer(){};
 
-  virtual void initHists(std::string);
-  virtual void Loop();
+  virtual void Begin();
+  //virtual void Loop();
   virtual void Process();
-  virtual void WriteOut();
+  virtual void Terminate();
   virtual void LoadGates(const char *a);
   virtual void Clear(){};
 

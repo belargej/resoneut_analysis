@@ -1,7 +1,7 @@
 CXX=g++
-SOURCES=RNGates.cpp RNHistograms.cpp 
-HEADERS=${SOURCES:.cpp=.hpp}
+SOURCES=RN_Sim.cpp RN_SimPhysics.cpp RN_SimRun.cpp
 OBJECTS=${SOURCES:.cpp=.o}
+HEADERS=${SOURCES:.cpp=.hpp}
 LIBS=${addprefix -l,${SOURCES:.cpp=}}
 OPTIONS=-lMinuit
 
@@ -17,19 +17,19 @@ endif
 
 CFLAGS=`root-config --cflags` -c ${DEBUG}
 GLIBS=`root-config --glibs`
-LINK_DIR=${PWD}/../../lib
+LINK_DIR=${PWD}/../lib
 LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} -I${ROOTSYS}/include 
 
-all: libSAK.so	
+all: libsimulator.so	
 
-libSAK.so: ${OBJECTS} sak_d.cpp 
-	 g++ -shared -o ${addprefix ../../lib/,$@} $^ `root-config --ldflags --libs --cflags`${DEBUG} -I$(ROOTSYS)/include -I$(PWD)/../../include
+libsimulator.so: ${OBJECTS} simulator_d.cpp 
+	 g++ -shared -o ${addprefix ../lib/,$@} $^ `root-config --ldflags --libs --cflags` ${DEBUG} -I$(PWD)/../include -I$(PWD)/../sak -I$(PWD)
 
-sak_d.cpp: ${HEADERS} my_LinkDef.h
-	rootcint sak_d.cpp -c `root-config --cflags` -I$(PWD)/../../include -p $^
+simulator_d.cpp: ${HEADERS} my_LinkDef.h
+	rootcint simulator_d.cpp -c `root-config --cflags` -I$(PWD)/../../include -I$(PWD)/../sak -I$(PWD) -p $^
 
 %.o: %.cpp
-	${CXX} ${CFLAGS} $< -I$(PWD)/../../include
+	${CXX} ${CFLAGS} $< -I$(PWD)/../include -I$(PWD)/../sak -I$(PWD)
 
 
 #####################################################################
@@ -37,16 +37,16 @@ sak_d.cpp: ${HEADERS} my_LinkDef.h
 #####################################################################
 
 clean: 
-	rm ${OBJECTS} sak_d.* ../../lib/libSAK.so
+	rm ${OBJECTS} simulator_d.* ../lib/libsimulator.so
 
 newdict:
-	rm sak_d.*
+	rm simulator_d.*
 
 install:	
-	ln -s ${PWD}/../../lib/libSAK.so ${HOME}/lib
+	ln -s ${PWD}/../lib/libsimulator.so ${HOME}/lib
 
 uninstall:	
-	rm ${HOME}/lib/libSAK.so
+	rm ${HOME}/lib/libsimulator.so
 
 
 help:

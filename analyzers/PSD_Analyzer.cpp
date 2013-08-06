@@ -57,6 +57,10 @@ void PSD_Analyzer::LoadGates(const char *a){
 
 }
 
+//override Loop to sort data in a fashion different from the method
+//in RN_Analyzer
+
+/*
 void PSD_Analyzer::Loop(){
   Long64_t totentries= TotEntries();
   for (Long64_t i=0;i<totentries;i++){
@@ -65,10 +69,10 @@ void PSD_Analyzer::Loop(){
     Process();
   }
 }
-
-void PSD_Analyzer::initHists(std::string output){
+*/
+void PSD_Analyzer::Begin(){
   int idx=0;
-  rootfile=new TFile(output.c_str(),"RECREATE");
+  rootfile=new TFile("psd_analysis.root","RECREATE");
   rootfile->mkdir("rftime");
   rootfile->mkdir("trel");
   rootfile->mkdir("neut_PSD");
@@ -85,15 +89,15 @@ void PSD_Analyzer::initHists(std::string output){
 
   for(int i=0;i<10;i++){  
     rootfile->cd("neut_PSD");
-    hPSDq_n[i]=new sak::Histogram2D(Form("hPSDq_n%d",i),"fQ_long","fQ_short",512,50,2500,512,50,2500);
-    hPSD_n_[i]=new sak::Histogram2D(Form("hPSD_neut%d",i),"fPSD","fQ_long",256,0.,1.,512,50,2500);
+    hPSDq_n[i]=new sak::Histogram2D(Form("hPSDq_n%d",i),"fQ_long","fQ_short",1024,50,4096,1024,50,4096);
+    hPSD_n_[i]=new sak::Histogram2D(Form("hPSD_neut%d",i),"fPSD","fQ_long",256,0.,1.,1024,50,4096);
     rootfile->cd("trel");
     hTrel_n[i]=new sak::Histogram2D(Form("hTrel_n%d",i),"Trel","E",512,2,2500,512,50,2500);
   }
   
 
   rootfile->cd("ede");
-  pEde=new sak::Histogram2D("pede","e[arb. units]","de[arb. units]",512,0,4096,512,0,4096);
+  pEde=new sak::Histogram2D("pede","e[arb. units]","de[arb. units]",64,0,4096,64,0,4096);
   pEde_ngated=new sak::Histogram2D("pede_ngated","e[arb. units]","de[arb. units]",512,0,4096,512,0,4096);
 
   rootfile->cd();
@@ -148,7 +152,7 @@ void PSD_Analyzer::Process(){
 }
 
 
-void PSD_Analyzer::WriteOut(){
+void PSD_Analyzer::Terminate(){
   rootfile->Write();
   rootfile->Close();
 

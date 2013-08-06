@@ -1,10 +1,19 @@
-////////////////////////////////////////////////////////////////////////
-///Originally Created by: Sean Kuvin- 2013                             
-////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+//** Analyzer class follows the form of a simple MakeClass designed to
+//** read the tree structure of data extracted by the Unpack2Root Method.
+//** Approach this class in two ways,first by overriding the Begin(),Process(), 
+//** and Terminate() methods to create, fill and write histograms or new
+//** trees. The second by instantiating an object of RN_Analyzer and calling the
+//** GetDetectorEntry() function   
+//** from a Loop function in a different application. 
+//
+//
+//                 Author: Sean Kuvin                             
+//***********************************************************************************/
 
 
-#ifndef RESONEUT_EVENT_H
-#define RESONEUT_EVENT_H
+#ifndef RESONEUT_ANALYZER_H
+#define RESONEUT_ANALYZER_H
 
 //Methods for the RNEvent class.
 
@@ -53,16 +62,19 @@ public:
   RN_S2Collection si_;
   RN_S2ClusterCollection si_cluster_;
   RN_RFCollection rftime;
-  //  RN_S2Detector si_a;
-  //RN_S2Detector si_b;
-  //RN_S2Cluster si_cluster_b;
-  //RN_RFTime rftime;
+
   RN_VariableMap DetVar;
 
   Int_t calibrated;
 
 
   // Declaration of leaf types
+
+  //Make more of these if more modules are added to the ResoNEUT setup
+  //even if you load an old file where these modules are not present
+  //if you refer to the Init(), the modules will not be aligned to a
+  //branch address in this case
+
   RN_module       *ADC1;
   RN_module       *ADC2;
   RN_module       *ADC3;
@@ -93,8 +105,10 @@ public:
   // Methods.
   void LoadVariableFile(const std::string& f){DetVar.LoadParams(f);}
   void SetCalibrations();
-  virtual void Loop(){};
+  virtual void Begin(){};
+  virtual void Loop();
   virtual void Process(){};
+  virtual void Terminate(){};
   Long64_t TotEntries() const{return fChain->GetEntries();} 
   void AddTree(TString a){fChain->Add(a);}
   virtual void Init(TString rootfile);
