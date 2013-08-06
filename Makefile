@@ -1,7 +1,7 @@
 CXX=g++
 OPTIONS=-lMinuit
 
-EXE=RN_Root
+EXE=RN_Root RN_BatchMode
 
 ifndef OPTIMIZE
 DEBUG=-g -Wall
@@ -17,16 +17,24 @@ CFLAGS=`root-config --cflags` -c ${DEBUG}
 GLIBS=`root-config --glibs`
 LINK_DIR=${PWD}/lib/
 LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} -I${ROOTSYS}/include
-DIRS=include plugins/sak plugins/analyzers plugins/simulator
-OBJLIBS=libRNeut.so libanalyzers.so libSAK.so libsimulator.so
-LIBS= -lRNeut -lanalyzers -lSAK -lsimulator
 
+DIRS=detectors calibrator core sak analyzers simulator unpacker
+
+OBJLIBS=libRNanalyzers.so libSAK.so libRNsimulator.so \
+	libRNcore.so libRNdetectors.so libRNunpacker.so\
+	libRNcalibrator.so
+
+LIBS= -lRNunpacker -lRNanalyzers -lSAK -lRNsimulator -lRNcore \
+	-lRNcalibrator -lRNdetectors
 
 all: ${EXE}	
 
 
 RN_Root: RN_Root.o ${OBJLIBS}
 	${CXX} -o bin/RNRoot $< ${LFLAGS} ${LIBS}
+
+RN_BatchMode: force_look
+	cd unpacker; ${MAKE}
 
 ####################################################################
 ###Framework Dependencies###########################################
@@ -35,19 +43,27 @@ RN_Root: RN_Root.o ${OBJLIBS}
 %.o: %.cpp
 	${CXX} ${CFLAGS} $< 
 
-
-libRNeut.so: force_look
-	cd include; ${MAKE}
-
+libRNcore.so:force_look
+	cd core; ${MAKE}
 
 libSAK.so: force_look
-	cd plugins/sak; ${MAKE}
+	cd sak; ${MAKE}
 
-libanalyzers.so: force_look
-	cd plugins/analyzers; ${MAKE}
+libRNanalyzers.so: force_look
+	cd analyzers; ${MAKE}
 
-libsimulator.so:force_look
-	cd plugins/simulator; ${MAKE}
+libRNsimulator.so:force_look
+	cd simulator; ${MAKE}
+
+libRNdetectors.so:force_look
+	cd detectors; ${MAKE}
+
+libRNcalibrator.so:force_look
+	cd calibrator; ${MAKE}
+
+libRNunpacker.so:force_look
+	cd unpacker; ${MAKE}
+
 
 force_look :
 	true
@@ -57,9 +73,8 @@ force_look :
 #####################################################################
 
 clean: 
-	#rm  bin/RNBatchMode bin/RNRoot RN_Root.o
 	-for d in ${DIRS}; do (cd $$d;$(MAKE) clean); done
-
+	rm  bin/RNBatchMode bin/RNRoot RN_Root.o
 
 help:
 	@echo "Optimization Flags:\n \

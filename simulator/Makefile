@@ -21,9 +21,9 @@ LINK_DIR=${PWD}/../lib
 LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} 
 INC_DIR=-I$(PWD)/../ -I${ROOTSYS}/include 
 
-all: libsimulator.so	
+all: libRNsimulator.so	
 
-libsimulator.so: ${OBJECTS} simulator_d.cpp 
+libRNsimulator.so: ${OBJECTS} simulator_d.cpp 
 	 g++ -shared -o ${addprefix ../lib/,$@} $^ `root-config --ldflags --libs --cflags` ${DEBUG} $(INC_DIR)
 
 simulator_d.cpp: ${HEADERS} my_LinkDef.h
@@ -38,16 +38,16 @@ simulator_d.cpp: ${HEADERS} my_LinkDef.h
 #####################################################################
 
 clean: 
-	rm ${OBJECTS} simulator_d.* ../lib/libsimulator.so
+	rm ${OBJECTS} simulator_d.* ../lib/libRNsimulator.so
 
 newdict:
 	rm simulator_d.*
 
 install:	
-	ln -s ${PWD}/../lib/libsimulator.so ${HOME}/lib
+	ln -s ${PWD}/../lib/libRNsimulator.so ${HOME}/lib
 
 uninstall:	
-	rm ${HOME}/lib/libsimulator.so
+	rm ${HOME}/lib/libRNsimulator.so
 
 
 help:
