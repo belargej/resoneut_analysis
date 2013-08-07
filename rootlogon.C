@@ -1,9 +1,6 @@
 {
-  gSystem->Load("libRNcore.so");
+  gSystem->Load("libRNeut.so");
   gSystem->Load("libSAK.so");
-  gSystem->Load("libRNunpacker.so");
-  gSystem->Load("libRNdetectors.so");
-  gSystem->Load("libRNcalibrator.so");
   gSystem->Load("libRNanalyzers.so");
   gSystem->Load("libRNsimulator.so");
  

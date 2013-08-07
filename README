@@ -21,15 +21,13 @@ add 2 directories to resoneut_analysis_hc/
 mkdir bin
 mkdir lib
 
-typing 'make' while in resoneut_analysis_hc  will attempt to recursively install RN_BatchMode to the bin/ folder and the all of the shared libraries to the lib/ folder
-
-If this does not work contact me but until I can fix it you may need to enter each directory individually and make the appropriate library.
+typing 'make' while in resoneut_analysis_hc/include  will install RN_BatchMode to the bin/ folder and the shared library to the lib/ folder
 
 be sure to add /path/to/this/folder/lib to your $LD_LIBRARY_PATH
 and next
-Load->("libRNCore.so") into your root session to run interactively.
-Load->("...") etc.
-I recommend adding them to your rootlogon.C so you don't have to repeat this process repeatedly.
+Load->("libRNeut.so") into your root session to run interactively.
+
+I recommend adding it to your rootlogon.C so you don't have to repeat this process repeatedly.
 
 for a quick use of the Unpacker
 execute ~/path_to_resoneut_analysis_hc/bin/RNBatchMode <data dir> <output.root file> <e2rconfig.in>
