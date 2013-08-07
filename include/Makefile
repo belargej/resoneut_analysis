@@ -2,7 +2,7 @@ CXX=g++
 SOURCES=RN_Unpack2Root.cpp RN_BaseDetector.cpp RN_NeutDetectorArray.cpp \
 	RN_VariableMap.cpp RN_IonChamber.cpp RN_SiliconDetectors.cpp\
 	RN_Calibrator.cpp RN_Timing.cpp RN_Analyzer.cpp sak_ReadBuffer.cpp\
-	RN_MassTable.hpp	
+	RN_MassTable.cpp	
 
 
 

@@ -7,6 +7,8 @@
 #pragma link C++ defined_in "RN_SiliconDetectors.hpp";
 #pragma link C++ defined_in "RN_IonChamber.hpp";
 #pragma link C++ defined_in "RN_Calibrator.hpp";
+#pragma link C++ defined_in "RN_MassTable.hpp";
+
 #pragma link C++ defined_in "RN_Timing.hpp";
 #pragma link C++ defined_in "RN_Analyzer.hpp";
 
