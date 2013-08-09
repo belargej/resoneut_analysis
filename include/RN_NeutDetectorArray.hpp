@@ -44,12 +44,7 @@ class RN_NeutDetector:public RN_BaseDetector{
   
  public:
   RN_NeutDetector(){}
-  RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetector(name,num),
-						   apos(ap)
-						   
-  {
-    DeterminePosition(apos);
-  } 
+  RN_NeutDetector(std::string name,int num,int ap);
 
   ~RN_NeutDetector(){}
 
@@ -62,7 +57,9 @@ class RN_NeutDetector:public RN_BaseDetector{
   void InsertPSDHit(const double&,const double&);
   Double_t PSD() const ;
   Double_t Q() const ;
-  bool DeterminePosition(int apos); 
+
+  TVector3 GetPosVect() const{return fPos;}
+
   void Reset();
   void SetCalibrations(double elin, 
 		       double eshift,
@@ -83,23 +80,33 @@ typedef std::vector<RN_NeutDetector>::iterator RN_NeutCollectionRef;
 
 
 
-class RN_NeutDetectorArray:public RN_BaseDetector{
+class RN_NeutDetectorArray{
 private:
 public:
+  int fMult;
   std::vector<TVector3>fPos;//[fMult]
   std::vector<double>fQ_long;//[fMult]
-  std::vector<double>fQ_short;//[fMult]
-
-  RN_NeutDetectorArray(){};
-
+  std::vector<double>fPSD;//[fMult]
+  std::vector<int>fDetlist;//[fMult]
 
 
+
+  RN_NeutDetectorArray();
+  int ReconstructHits(RN_NeutCollection& in);
+  int InsertHit(const double& q_long,const double& q_short,const TVector3& fPos,const int& index);
+  int Reset();
   ClassDef(RN_NeutDetectorArray,1);
 };
 
+
+
+
+
+
+
 namespace RNArray{
 
-  void ReconstructHits(RN_NeutCollection& in);
+  void ReconstructTREL(RN_NeutCollection& in);
   int PositionMap(int slot,TVector3 & pos);
 
 }

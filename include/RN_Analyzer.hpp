@@ -64,7 +64,6 @@ public:
   RN_RFCollection rftime;
 
   RN_VariableMap DetVar;
-
   Int_t calibrated;
 
 

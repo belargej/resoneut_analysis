@@ -5,8 +5,8 @@
 #include <string>
 #include <new>
 #include "RN_Analyzer.hpp"
-#include "plugins/sak/RNHistograms.hpp"
-#include "plugins/sak/RNGates.hpp"
+#include "plugins/sak/sak_Histograms.hpp"
+#include "plugins/sak/sak_Gates.hpp"
 
 
 class NewTree_Analyzer:public RN_Analyzer{

@@ -1,5 +1,5 @@
-#ifndef _RNGATES_
-#define _RNGATES_
+#ifndef _SAKGATES_
+#define _SAKGATES_
 #include <TCutG.h>
 #include <TFile.h>
 namespace sak{
@@ -13,10 +13,17 @@ namespace sak{
     ~Gate();
     Gate(double *a,double *b,TCutG cut);
        
-    bool Check();
+    bool Check() const;
 
     ClassDef(Gate,1);
   };
+
+
+  typedef std::vector<sak::Gate> GateList;
+  typedef std::vector<sak::Gate>::iterator GateListRef;
+  typedef std::vector<sak::Gate>::const_iterator GateListCRef;
+  bool OrCheck(const GateList& gl);
+  bool AndCheck(const GateList& gl);
 
 
 
@@ -38,7 +45,15 @@ namespace sak{
   };
 
 
+
+
 }
+
+
+
+
+
+
 /*
 namespace RNMemTest{
   bool TestGateValid(double *a,double *b,sak::Gate f){

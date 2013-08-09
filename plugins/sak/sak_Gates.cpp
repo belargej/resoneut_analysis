@@ -1,7 +1,7 @@
-#ifndef _RNGATES_cxx
-#define _RNGATES_cxx
+#ifndef _SAKGATES_cxx
+#define _SAKGATES_cxx
 
-#include "RNGates.hpp"
+#include "sak_Gates.hpp"
 namespace sak{
 
 
@@ -15,14 +15,31 @@ namespace sak{
     bptr=0;
   }
   
-  bool Gate::Check(){
+  bool Gate::Check() const{
     if(IsInside(*aptr,*bptr)) 
       return true;
     return false;
   }
   
+  bool AndCheck(const GateList& gl){
+    for(GateListCRef it=gl.begin();it!=gl.end();it++){
+      if ((*it).Check()==0)
+	return 0;
+    } 
+    return 1;
+  }
   
+  
+  bool OrCheck(const GateList& gl){
+    
+    for(GateListCRef it=gl.begin();it!=gl.end();it++){
+      if ((*it).Check()==1)
+	return 1;
+    } 
+    return 0;
+  }
 
+  
 
   LoadCuts::LoadCuts(const char* a):TFile(a){
   }

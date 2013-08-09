@@ -2,6 +2,15 @@
 
 ClassImp(RN_NeutDetector);
 
+
+RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetector(name,num),
+								  apos(ap)
+  
+{
+  RNArray::PositionMap(apos,fPos);
+} 
+
+
 void RN_NeutDetector::SetCalibrations(double elin, double eshift, double tlin, double tshift,double zero_off){
   this->elin=elin;
   this->eshift=eshift;
@@ -21,7 +30,7 @@ void RN_NeutDetector::SetCalibrations(RN_VariableMap& detvar){
     fPos.SetZ(temp);
   if(detvar.GetParam(Form("%s.apos",Name().c_str()),temp)){
     apos=(int)temp;
-    DeterminePosition(apos);
+    RNArray::PositionMap(apos,fPos);
   }
 }
 
@@ -33,36 +42,6 @@ void RN_NeutDetector::Reset(){
   fPSD=0;
 }
 
-
-bool RN_NeutDetector::DeterminePosition(int apos){
-
-  if(apos>=0 && apos < 4){
-    fPos.SetX(0);
-    fPos.SetY(150.622-(apos)*76.2);
-    if(apos>1)
-      fPos.SetY(fPos.Y()-72.644); //beamline through center
-  }
-  else if(apos >= 4 && apos < 8){
-    fPos.SetX(-76.2);
-    fPos.SetY(114.3-(apos-4)*76.2);
-  }
-  else if(apos >= 8 && apos < 10){
-    fPos.SetX(-152.4);
-    fPos.SetY(38.1-(apos-8)*76.2);
-  }
-  else if(apos >= 10 && apos < 12){
-    fPos.SetX(152.4);
-    fPos.SetY(38.1-(apos-10)*76.2);
-  }
-  else if(apos >= 12 && apos < 16){
-    fPos.SetX(76.2);
-    fPos.SetY(114.4-(apos-12)*76.2);
-  }
-  else return false;
-  
-  fPos.RotateZ(45*3.14/180);
-  return true;
-}
 
 void RN_NeutDetector::ApplyCalibrations(){
   fQ_short = fQ_short - zero_off;
@@ -104,9 +83,88 @@ double RN_NeutDetector::CalculateTRel(const std::vector<RN_NeutDetector>& ndet, 
   
 }
 
+RN_NeutDetectorArray::RN_NeutDetectorArray():fMult(0),
+					     fPos(16,0),
+					     fQ_long(16),
+					     fPSD(16),
+					     fDetlist(16){
+  
+}
+					     
+
+
+int RN_NeutDetectorArray::ReconstructHits(RN_NeutCollection& in){
+
+  int cref=0;
+  for(RN_NeutCollectionRef it=in.begin();it!=in.end();it++){
+    if((*it).fQ_long>0){
+      double ql=(*it).fQ_long;
+      double qs=(*it).fQ_short;
+      TVector3 pos=(*it).GetPosVect();
+	InsertHit(ql,qs,pos,cref);
+    }
+    
+      cref++;
+  }
+
+}
+
+
+int RN_NeutDetectorArray::Reset(){
+  for(unsigned int i=0;i<fMult;i++){
+    fQ_long[i]=0;
+    fPSD[i]=0;
+    fDetlist[i]=-1;
+ }
+  fMult=0;
+}
+
+
+
+
+
+int RN_NeutDetectorArray::InsertHit(const double& q_long,const double& q_short,const TVector3& pos,const int& index){
+  if (!q_long>0)
+    return -1;
+
+  int i,j;
+  double psd=(q_short/q_long);
+
+  /* sorted by energy, smallest fPSD ratio first */
+  for (i=(int)fMult-1;i>=0;i--){
+    if (psd>fPSD[i])
+      break;
+  }
+  
+  // element i+1 is at the position for ch 
+  // so make room for it
+  for (j=(int)fMult-1;j>i;j--){
+    fDetlist[j+1]=fDetlist[j];
+    fQ_long[j+1]=fQ_long[j];
+    fPSD[j+1]=fPSD[j];
+    fPos[j+1]=fPos[j];
+  }
+  // and shove it in
+  fDetlist[i+1]=index;
+  fQ_long[i+1]=q_long;
+  fPSD[i+1]=psd;
+  fPos[i+1]=pos;
+  fMult += 1;
+
+  return (i+1);
+}
+
+
+
+
+
+
+
+
+
 namespace RNArray{
   
-  void ReconstructHits(RN_NeutCollection&in){
+  void ReconstructTREL(RN_NeutCollection&in){
     
     double tfirst=-1;
     //calculate TRel for all detectors(only important for coincidence data(ie source)
@@ -118,7 +176,7 @@ namespace RNArray{
   
   
   int PositionMap(int slot,TVector3 & pos){
-    int z=pos.Z();
+    double z=pos.Z();
     
     if(slot==1)pos.SetXYZ(38.1,-152.4,z);
     else if(slot==2)pos.SetXYZ(-38.1,-152.4,z);

@@ -1,6 +1,6 @@
 CXX=g++
 
-SOURCES=RNGates.cpp RNHistograms.cpp
+SOURCES=sak_Gates.cpp sak_Histograms.cpp
 OBJECTS=${SOURCES:.cpp=.o}
 HEADERS=${SOURCES:.cpp=.hpp}
 LIBS=${addprefix -l,${SOURCES:.cpp=}}

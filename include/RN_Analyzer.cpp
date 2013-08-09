@@ -221,7 +221,7 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
   if(TDC1->fCh[0]>0)rftime[0].InsertHit(TDC1->fCh[0]);
   
   
-  RNArray::ReconstructHits(neut);
+  RNArray::ReconstructTREL(neut);
 
   
 }

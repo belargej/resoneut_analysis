@@ -1,7 +1,7 @@
 #ifdef __CINT__
 
-#pragma link C++ defined_in "RNGates.hpp";
-#pragma link C++ defined_in "RNHistograms.hpp";
+#pragma link C++ defined_in "sak_Gates.hpp";
+#pragma link C++ defined_in "sak_Histograms.hpp";
 
 
 
