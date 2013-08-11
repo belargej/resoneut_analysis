@@ -72,4 +72,25 @@ int RN_S2Calibrator::PrintCoefficients(std::string printfile){
 }
 
 
+void RN_S2Calibrator::Th228Fit(const double& peak1,
+			       const double& peak2,
+			       const double& peak3,
+			       const double& peak4,
+			       const double& peak5,
+			       const double& peak6,
+			       double& elin,
+			       double& eshift){
+
+  double xset[6]={peak1,peak2,peak3,peak4,peak5,peak6};
+  double yset[6]={5.42315,5.68537,6.05,6.28808,6.7783,8.78486};
+  TF1 *fitter2=new TF1("fitter2","pol1",0,4096);
+  TGraph peaks(6,xset,yset);
+  peaks.Fit(fitter2,"","",0,4096);
+  eshift=fitter2->GetParameter(0);
+  elin=fitter2->GetParameter(1);
+
+  
+  
+
+}
 

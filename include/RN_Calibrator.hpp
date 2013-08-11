@@ -59,7 +59,8 @@ public:
   void PerformFit();
   int PrintCoefficients(std::string);
   
-  
+  void Th228Fit(const double&,const double&,const double&,const double&,
+		const double&,const double&,double&, double&);
   
   
  
