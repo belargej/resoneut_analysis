@@ -1,7 +1,7 @@
 #include "S2_Analyzer.hpp"
 
 
-S2_Analyzer::S2_Analyzer()
+S2_Analyzer::S2_Analyzer():ind_(0)
 {
 
 }
@@ -100,22 +100,23 @@ void S2_Analyzer::Loop(){
   }
 }
 
-void S2_Analyzer::initHists(std::string output){ 
+void S2_Analyzer::initHists(std::string output,int ind){ 
+  ind_ = ind;
   rootfile=new TFile(output.c_str(),"RECREATE");
   for(int i=0;i<16;i++){
-    front[i]=new sak::Hist2D(Form("fc%d_corr",i),"channel","ratio",17,0,16,512,0,2);
+    front[i]=new sak::Hist2D(Form("si_fc%d_corr",i),"channel","ratio",17,0,16,512,0,2);
   }
+
   
   
 }
 
 void S2_Analyzer::Process(){
   ApplyCalibrations();
-  int idx=(int)si_[1].front.fChlist[0];
-  if(si_[1].front.fMult>0&&si_[1].back.fMult>0)
-    front[idx]->Fill(si_[1].back.fChlist[0],(si_[1].back.fE[0]/si_[1].front.fE[0]));
+  int idx=(int)si_[ind_].front.fChlist[0];
+  if(si_[ind_].front.fMult>0&&si_[ind_].back.fMult>0)
+    front[idx]->Fill(si_[ind_].back.fChlist[0],(si_[ind_].back.fE[0]/si_[ind_].front.fE[0]));
   
-
 
 }
 void S2_Analyzer::WriteOut(){

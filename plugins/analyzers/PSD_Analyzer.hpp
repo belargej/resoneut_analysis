@@ -26,6 +26,7 @@ public:
   sak::Gate* neuts_n7;
   sak::Gate* neuts_n8;
   sak::Gate* neuts_n9;
+  sak::Gate* prots1;
   sak::GateList allneuts;
 
   //declare histograms here
@@ -35,13 +36,18 @@ public:
   sak::Hist2D *hrftime_gated_n;
   sak::Histogram1D *hrftime_cal;
   sak::Hist1D *hrftime_allneut_cal;
+  sak::Hist1D *hrftime_allneut_cal_p;
+  sak::Hist1D *hrftime_prots;
+  sak::Hist2D *hPSD_n1_prots;
   sak::Histogram2D *hPSDq_n[10];
   sak::Histogram2D *hPSD_n_[10];
   sak::Histogram2D *  hTrel_n[10];
-  
+  sak::Hist2D* hpede;
+  sak::Hist2D* hpede_ngated;
 
   //declare extra parameters here, these can be then retrieved properly by gates
   double prot_E;
+  double prot_dE;
 
 
 

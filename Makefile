@@ -3,38 +3,27 @@ OPTIONS=-lMinuit
 
 EXE=RN_Root RN_BatchMode
 
-ifndef OPTIMIZE
-DEBUG=-g -Wall
-else ifeq (${OPTIMIZE},01)
-DEBUG=-O1
-else ifeq (${OPTIMIZE},02)
-DEBUG=-O2
-else ifeq (${OPTIMIZE},03)
-DEBUG=-O3
-endif
 
 CFLAGS=`root-config --cflags` -c ${DEBUG}
 GLIBS=`root-config --glibs`
 LINK_DIR=${PWD}/lib/
-LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} -I${ROOTSYS}/include
+LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG}
+INC_DIR=-I${ROOTSYS}/include -I.
 
-DIRS=detectors calibrator core sak analyzers simulator unpacker
+SUB_DIRS=include plugins/sak plugins/analyzers plugins/simulator
 
-OBJLIBS=libRNanalyzers.so libSAK.so libRNsimulator.so \
-	libRNcore.so libRNdetectors.so libRNunpacker.so\
-	libRNcalibrator.so
+OBJLIBS=libRNanalyzers.so libSAK.so libRNsimulator.so libRNeut.so
 
-LIBS= -lRNunpacker -lRNanalyzers -lSAK -lRNsimulator -lRNcore \
-	-lRNcalibrator -lRNdetectors
+LIBS= -lRNeut -lRNanalyzers -lSAK -lRNsimulator
 
-all: ${EXE}	
+all: ${EXE} ${OBJLIBS}	
 
 
-RN_Root: RN_Root.o ${OBJLIBS}
-	${CXX} -o bin/RNRoot $< ${LFLAGS} ${LIBS}
+RN_Root: force_look
+	cd include; $(MAKE)
 
 RN_BatchMode: force_look
-	cd unpacker; ${MAKE}
+	cd include; ${MAKE}
 
 ####################################################################
 ###Framework Dependencies###########################################
@@ -43,26 +32,18 @@ RN_BatchMode: force_look
 %.o: %.cpp
 	${CXX} ${CFLAGS} $< 
 
-libRNcore.so:force_look
-	cd core; ${MAKE}
+libRNeut.so:force_look
+	cd include; ${MAKE}
+
 
 libSAK.so: force_look
-	cd sak; ${MAKE}
+	cd plugins/sak; ${MAKE}
 
 libRNanalyzers.so: force_look
-	cd analyzers; ${MAKE}
+	cd plugins/analyzers; ${MAKE}
 
 libRNsimulator.so:force_look
-	cd simulator; ${MAKE}
-
-libRNdetectors.so:force_look
-	cd detectors; ${MAKE}
-
-libRNcalibrator.so:force_look
-	cd calibrator; ${MAKE}
-
-libRNunpacker.so:force_look
-	cd unpacker; ${MAKE}
+	cd plugins/simulator; ${MAKE}
 
 
 force_look :
@@ -73,8 +54,7 @@ force_look :
 #####################################################################
 
 clean: 
-	-for d in ${DIRS}; do (cd $$d;$(MAKE) clean); done
-	rm  bin/RNBatchMode bin/RNRoot RN_Root.o
+	-for d in ${SUB_DIRS}; do (cd $$d;$(MAKE) clean); done
 
 help:
 	@echo "Optimization Flags:\n \

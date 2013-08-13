@@ -10,7 +10,7 @@ SOURCES=RN_Unpack2Root.cpp RN_BaseDetector.cpp RN_NeutDetectorArray.cpp \
 HEADERS=${SOURCES:.cpp=.hpp}
 OBJECTS=${SOURCES:.cpp=.o}
 OPTIONS=-lMinuit
-EXE=RN_BatchMode
+EXE=RN_BatchMode RN_Root
 
 ifndef OPTIMIZE
 DEBUG=-g -Wall
@@ -33,6 +33,9 @@ all: ${EXE}
 RN_BatchMode: RN_BatchMode.o libRNeut.so
 	${CXX} -o ../bin/RNBatchMode $< ${OBJECTS} RN_RootDict.cpp ${LFLAGS}
 
+RN_Root: RN_Root.o $(OBJECTS)
+	${CXX} -o ../bin/RNRoot $^ RN_RootDict.cpp ${LFLAGS}
+
 ####################################################################
 ###Framework Dependencies###########################################
 ####################################################################
@@ -54,7 +57,7 @@ libRNeut.so: ${OBJECTS} RN_RootDict.cpp
 #####################################################################
 
 clean: 
-	rm  ../bin/RNBatchMode ${OBJECTS} RN_RootDict.* ${addsuffix .o,${EXE}} ../lib/libRNeut.so
+	rm  ../bin/RNBatchMode ../bin/RNRoot ${OBJECTS} RN_RootDict.* ${addsuffix .o,${EXE}} ../lib/libRNeut.so
 
 newdict:
 	rm RN_RootDict.*

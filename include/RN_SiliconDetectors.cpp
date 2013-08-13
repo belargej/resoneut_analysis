@@ -49,9 +49,16 @@ void RN_S2Detector::SetCalibrations(RN_VariableMap& detvar){
   tempx=0,tempy=0,tempz=0,temp=0;
   detvar.GetParam(Form("%s.rot_theta",Name().c_str()),tempx);
   detvar.GetParam(Form("%s.rot_phi",Name().c_str()),tempy);
-
-
-
+  double flowlimit=0,fhighlimit=0,blowlimit=0,bhighlimit=0;
+  detvar.GetParam(Form("%s.front.lowlimit",Name().c_str()),flowlimit);
+  detvar.GetParam(Form("%s.front.highlimit",Name().c_str()),fhighlimit);
+  detvar.GetParam(Form("%s.back.lowlimit",Name().c_str()),blowlimit);
+  detvar.GetParam(Form("%s.back.highlimit",Name().c_str()),bhighlimit);
+  if(flowlimit>0&&fhighlimit>0)
+    front.SetELimits(flowlimit,fhighlimit);
+  if(blowlimit>0&&bhighlimit>0)
+    back.SetELimits(blowlimit,bhighlimit);
+  
   Calcnormv();
 
 }
@@ -75,6 +82,7 @@ void RN_S2Detector::Calcnormv(){
 
 void RN_S2Detector::ApplyCalibrations(){
   for(int i=0;i<front.fMult;i++){
+    
     front.fE[i]=((fronta1[(int)front.fChlist[i]]*front.fE[i])+fronta0[(int)front.fChlist[i]])*elin+eshift;   
     front.fT[i]=tlin*front.fT[i]+tshift;
   }

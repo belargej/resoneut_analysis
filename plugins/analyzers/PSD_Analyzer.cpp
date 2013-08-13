@@ -52,6 +52,12 @@ void PSD_Analyzer::LoadGates(const std::string& input){
     neuts_n9=new sak::Gate(&neut[9].fPSD,&neut[9].fQ_long,*in.getCut("n9_neuts"));
     allneuts.push_back(*neuts_n9);    
   }
+  if(in.getCut("prots1") && !prots1){
+    prots1=new sak::Gate(&prot_E,&prot_dE,*in.getCut("prots1"));
+    }
+
+
+
 }
 
 
@@ -78,15 +84,22 @@ void PSD_Analyzer::Begin(){
   rootfile->mkdir("rftime");
   rootfile->mkdir("trel");
   rootfile->mkdir("neut_PSD");
+  rootfile->mkdir("protons");
 
   rootfile->cd("rftime");
   hrftime=new sak::Histogram1D("hrftime","rftime[arb. units]",512,2050,2650);
   hrftime_allneut=new sak::Histogram1D("hrftime_allneut","rftime[arb. units]",512,2050,2650);
   hrftime_cal=new sak::Histogram1D("hrftime_cal","rftime[ns]",512,640,820);
-  hrftime_allneut_cal=new sak::Histogram1D("hrftime_allneut_cal","rftime[ns]",512,640,820);
-  
+  hrftime_prots=new sak::Histogram1D("hrftime_prots","rftime[ns]",512,640,820);
+  hrftime_allneut_cal=new sak::Histogram1D("hrftime_allneut_cal","rftime[ns]",512,640,820); 
+  hrftime_allneut_cal_p=new sak::Histogram1D("hrftime_allneut_cal_p","rftime[ns]",256,640,820); 
   hrftime_n=new sak::Histogram2D("hrftime_n","Detector","rftime[ns]",17,0,16,512,640,820);
   hrftime_gated_n=new sak::Histogram2D("hrftime_gated_n","Detector","rftime[ns]",17,0,16,512,640,820);
+
+  rootfile->cd("protons");
+  hpede=new sak::Hist2D("hpEdE","E [MeV]","dE [MeV]",256,0,20,256,0,6);
+  hPSD_n1_prots=new sak::Hist2D("hPSD_n1_prots","fPSD","fQ_long",256,0.,1.,1024,50,4096);
+  hpede_ngated=new sak::Hist2D("hpEdE_ngated","E [MeV]","dE [MeV]",256,0,32,256,0,32);
 
 
   for(int i=0;i<10;i++){  
@@ -120,22 +133,41 @@ void PSD_Analyzer::Process(){
   ApplyCalibrations();//Fill calpar.Histograms below this line
   /*************************************************************/
   hrftime_cal->Fill(rftime[0].fT);
-  if(sak::OrCheck(allneuts))
+  if(sak::OrCheck(allneuts)){
     hrftime_allneut_cal->Fill(rftime[0].fT);
-  
+    if(si_[1].front.fMult>0 && si_[0].front.fMult>0){
+      hpede_ngated->Fill(prot_E,prot_dE);
+      hrftime_allneut_cal_p->Fill(rftime[0].fT);
+    }
+  }
+
   for(int i=0;i<10;i++){
     if(i>=neut.size())
       break;
     hPSD_n_[i]->Fill(neut[i].fPSD,neut[i].fQ_long);
     
   }
+  unsigned int i=0,j=0;
+  //for(i=0;i<si_cluster_[1].fMult;i++){
+  //for(j=0;j<si_[0].front.fMult;j++){
+  if(si_cluster_[1].fMult>0&&si_[0].front.fE[0]){
+      prot_dE=si_cluster_[1].fE[i];
+      prot_E=si_[0].front.fE[j]+prot_dE;
+      hpede->Fill(prot_E,prot_dE);
+  }
+  // }
+
+
+  if(prots1->Check()){
+    
+    hrftime_prots->Fill(rftime[0].fT);
+    hPSD_n1_prots->Fill(neut[1].fPSD,neut[1].fQ_long);
+  }
 }
 
- 
-
   
-  void PSD_Analyzer::Terminate(){
-    rootfile->Write();
+void PSD_Analyzer::Terminate(){
+  rootfile->Write();
   rootfile->Close();
   
 }

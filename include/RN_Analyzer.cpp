@@ -11,11 +11,13 @@
 using namespace std;
 
 
-RN_Analyzer::RN_Analyzer():calibrated(0)//,
+RN_Analyzer::RN_Analyzer():calibrated(0),
+			   ic("ic")
 			   //si_a("si_a",16,16),
 			   // si_b("si_b",16,16),
 			   //si_cluster_b("si_cluster_b",16),
 			   //rftime("rftime")
+
 {
 
 }
@@ -37,7 +39,8 @@ void RN_Analyzer::SetCalibrations(){
   for(RN_RFCollectionRef it=rftime.begin();it!=rftime.end();it++){
     (*it).SetCalibrations(DetVar);
   }
-  
+ 
+  ic.SetCalibrations(DetVar);
 
 
 }
@@ -60,7 +63,7 @@ void RN_Analyzer::ApplyCalibrations(){
     (*it).ApplyCalibrations();
   }
   
-  
+  ic.ApplyCalibrations();
 
 }
 
@@ -189,7 +192,8 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
   for(RN_RFCollectionRef it=rftime.begin();it!=rftime.end();it++){
     (*it).Reset();
   }
-  
+
+  ic.Reset();
   
   if(!GetEntry(entry,getall)){
     
@@ -220,6 +224,10 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
   }
   if(TDC1->fCh[0]>0)rftime[0].InsertHit(TDC1->fCh[0]);
   
+  
+
+
+
   
   RNArray::ReconstructTREL(neut);
 

@@ -47,6 +47,7 @@
 #include "RN_SiliconDetectors.hpp"
 #include "RN_Timing.hpp"
 #include "RN_VariableMap.hpp"
+#include "RN_IonChamber.hpp"
 
 class RN_Analyzer {
 public:
@@ -62,6 +63,7 @@ public:
   RN_S2Collection si_;
   RN_S2ClusterCollection si_cluster_;
   RN_RFCollection rftime;
+  RN_IonChamber ic;
 
   RN_VariableMap DetVar;
   Int_t calibrated;
