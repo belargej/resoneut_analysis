@@ -41,18 +41,20 @@ class RN_IonChamber:public TObject{
   float tshift;//!
  public:
   RN_IonChamber(){}
-  RN_IonChamber(std::string name,int num = 2):fName(name),
-					 elin(1),
-					 eshift(0),
-					 tlin(1),
-					 tshift(0),
-					 ede("ede",num),
-					 xgrid("xgrid",32),
-					 ygrid("ygrid",32)
+  RN_IonChamber(std::string name):fName(name),
+				  elin(1),
+				  eshift(0),
+				  tlin(1),
+				  tshift(0),
+				  fE(0),
+				  fdE(0),
+				  xgrid("xgrid",32),
+				  ygrid("ygrid",32)
 					 
   {
   }
-  RN_BaseDetector ede;
+  double fE;
+  double fdE;
   RN_BaseDetector xgrid;
   RN_BaseDetector ygrid;
 

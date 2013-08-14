@@ -43,6 +43,7 @@ public:
   sak::Histogram2D *hPSD_n_[10];
   sak::Histogram2D *  hTrel_n[10];
   sak::Hist2D* hpede;
+  sak::Hist2D* hpede_2;
   sak::Hist2D* hpede_ngated;
 
   //declare extra parameters here, these can be then retrieved properly by gates

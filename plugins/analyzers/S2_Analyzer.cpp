@@ -103,6 +103,11 @@ void S2_Analyzer::Loop(){
 void S2_Analyzer::initHists(std::string output,int ind){ 
   ind_ = ind;
   rootfile=new TFile(output.c_str(),"RECREATE");
+
+  
+  h_si_1=new sak::Hist1D("h_si_1","E[MeV]",2048,500,2000);
+  h_si_2=new sak::Hist1D("h_si_2","E[MeV]",128,1,20);
+
   for(int i=0;i<16;i++){
     front[i]=new sak::Hist2D(Form("si_fc%d_corr",i),"channel","ratio",17,0,16,512,0,2);
   }
@@ -114,8 +119,11 @@ void S2_Analyzer::initHists(std::string output,int ind){
 void S2_Analyzer::Process(){
   ApplyCalibrations();
   int idx=(int)si_[ind_].front.fChlist[0];
-  if(si_[ind_].front.fMult>0&&si_[ind_].back.fMult>0)
+  if(si_[ind_].front.fMult>0&&si_[ind_].back.fMult>0){
     front[idx]->Fill(si_[ind_].back.fChlist[0],(si_[ind_].back.fE[0]/si_[ind_].front.fE[0]));
+    h_si_1->Fill(si_[ind_].front.fE[0]);
+    h_si_2->Fill(si_[ind_].front.fE[0]);
+  }
   
 
 }

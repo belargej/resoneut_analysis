@@ -81,6 +81,7 @@ public:
   RN_module       *ADC3;
   RN_module       *ADC4;
   RN_module       *ADC5;
+  RN_module       *ADC6;
   RN_module       *TDC1;
   RN_module       *TDC2;
   RN_module       *TDC3;
@@ -93,6 +94,7 @@ public:
   TBranch        *b_ADC3;   //!
   TBranch        *b_ADC4;   //!
   TBranch        *b_ADC5;   //!
+  TBranch        *b_ADC6;   //!
   TBranch        *b_TDC1;   //!
   TBranch        *b_TDC2;   //!
   TBranch        *b_TDC3;   //!

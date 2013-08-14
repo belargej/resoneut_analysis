@@ -16,6 +16,11 @@ private:
 
 public:
   TFile *rootfile;
+  
+  sak::Histogram1D *h_si_1;
+  sak::Histogram1D *h_si_2;
+ 
+
   sak::Histogram2D *front[16];
   
   S2_Analyzer();

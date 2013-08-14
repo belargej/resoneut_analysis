@@ -87,17 +87,18 @@ void PSD_Analyzer::Begin(){
   rootfile->mkdir("protons");
 
   rootfile->cd("rftime");
-  hrftime=new sak::Histogram1D("hrftime","rftime[arb. units]",512,2050,2650);
-  hrftime_allneut=new sak::Histogram1D("hrftime_allneut","rftime[arb. units]",512,2050,2650);
-  hrftime_cal=new sak::Histogram1D("hrftime_cal","rftime[ns]",512,640,820);
-  hrftime_prots=new sak::Histogram1D("hrftime_prots","rftime[ns]",512,640,820);
-  hrftime_allneut_cal=new sak::Histogram1D("hrftime_allneut_cal","rftime[ns]",512,640,820); 
-  hrftime_allneut_cal_p=new sak::Histogram1D("hrftime_allneut_cal_p","rftime[ns]",256,640,820); 
-  hrftime_n=new sak::Histogram2D("hrftime_n","Detector","rftime[ns]",17,0,16,512,640,820);
+  hrftime=new sak::Histogram1D("hrftime","rftime[arb. units]",256,2050,2650);
+  hrftime_allneut=new sak::Histogram1D("hrftime_allneut","rftime[arb. units]",256,2050,2650);
+  hrftime_cal=new sak::Histogram1D("hrftime_cal","rftime[ns]",128,640,820);
+  hrftime_prots=new sak::Histogram1D("hrftime_prots","rftime[ns]",128,640,820);
+  hrftime_allneut_cal=new sak::Histogram1D("hrftime_allneut_cal","rftime[ns]",128,640,820); 
+  hrftime_allneut_cal_p=new sak::Histogram1D("hrftime_allneut_cal_p","rftime[ns]",128,640,820); 
+  hrftime_n=new sak::Histogram2D("hrftime_n","Detector","rftime[ns]",17,0,16,128,640,820);
   hrftime_gated_n=new sak::Histogram2D("hrftime_gated_n","Detector","rftime[ns]",17,0,16,512,640,820);
 
   rootfile->cd("protons");
-  hpede=new sak::Hist2D("hpEdE","E [MeV]","dE [MeV]",256,0,20,256,0,6);
+  hpede=new sak::Hist2D("hpEdE","E [MeV]","dE [MeV]",64,0,20,64,0,6);
+  hpede_2=new sak::Hist2D("hpEdE_2","E [MeV]","dE [MeV]",64,0,30,64,0,30);
   hPSD_n1_prots=new sak::Hist2D("hPSD_n1_prots","fPSD","fQ_long",256,0.,1.,1024,50,4096);
   hpede_ngated=new sak::Hist2D("hpEdE_ngated","E [MeV]","dE [MeV]",256,0,32,256,0,32);
 
@@ -154,15 +155,16 @@ void PSD_Analyzer::Process(){
       prot_dE=si_cluster_[1].fE[i];
       prot_E=si_[0].front.fE[j]+prot_dE;
       hpede->Fill(prot_E,prot_dE);
+      hpede_2->Fill(prot_E,prot_dE);
   }
   // }
 
-
-  if(prots1->Check()){
+  if(prots1)
+    if(prots1->Check()){
     
-    hrftime_prots->Fill(rftime[0].fT);
-    hPSD_n1_prots->Fill(neut[1].fPSD,neut[1].fQ_long);
-  }
+      hrftime_prots->Fill(rftime[0].fT);
+      hPSD_n1_prots->Fill(neut[1].fPSD,neut[1].fQ_long);
+    }
 }
 
   

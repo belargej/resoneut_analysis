@@ -99,6 +99,7 @@ void RN_Analyzer::Init(TString rootfile)
    ADC3 = 0;
    ADC4 = 0;
    ADC5 = 0;
+   ADC6 = 0;
    TDC1 = 0;
    TDC2 = 0;
    TDC3 = 0;
@@ -127,7 +128,10 @@ void RN_Analyzer::Init(TString rootfile)
    if(fChain->GetBranch("ADC5"))   
      fChain->SetBranchAddress("ADC5", &ADC5, &b_ADC5);
    else
-     std::cout<<"no ADC5 present, do not extract in channel mapping"<<std::endl;
+     std::cout<<"no ADC5 present, do not extract in channel mapping"<<std::endl;   if(fChain->GetBranch("ADC6"))   
+     fChain->SetBranchAddress("ADC6", &ADC6, &b_ADC6);
+   else
+     std::cout<<"no ADC6 present, do not extract in channel mapping"<<std::endl;
    if(fChain->GetBranch("TDC1"))  
      fChain->SetBranchAddress("TDC1", &TDC1, &b_TDC1);
    else
@@ -154,9 +158,7 @@ void RN_Analyzer::Init(TString rootfile)
 
 
 void RN_Analyzer::Loop(){
-
   Begin();
-
   Long64_t totentries= TotEntries();
   for (Long64_t i=0;i<totentries;i++){
     GetDetectorEntry(i);
@@ -217,16 +219,24 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
   }
   
   for(int j=0;j<16;j++){
-    if(ADC1->fCh[j+16]>0)si_[0].front.InsertHit(ADC1->fCh[j+16],0,j);
-    if(ADC2->fCh[j+16]>0)si_[1].front.InsertHit(ADC2->fCh[j+16],0,j);
-    if(ADC1->fCh[j]>0)si_[0].back.InsertHit(ADC1->fCh[j],0,j);
-    if(ADC2->fCh[j]>0)si_[1].back.InsertHit(ADC2->fCh[j],0,j);
+    if(ADC2->fCh[j+16]>0)si_[0].front.InsertHit(ADC2->fCh[j+16],0,j);
+    if(ADC3->fCh[j+16]>0)si_[1].front.InsertHit(ADC3->fCh[j+16],0,j);
+    if(ADC2->fCh[j]>0)si_[0].back.InsertHit(ADC2->fCh[j],TDC2->fCh[j],j);
+    if(ADC3->fCh[j]>0)si_[1].back.InsertHit(ADC3->fCh[j],TDC2->fCh[j+16],j);
   }
   if(TDC1->fCh[0]>0)rftime[0].InsertHit(TDC1->fCh[0]);
   
-  
-
-
+  for(int k=0;k<32;k++){
+    if(ADC5->fCh[k]>0){
+      ic.xgrid.InsertHit(ADC5->fCh[k],0,k);
+    }
+    if(ADC6->fCh[k]>0){
+      ic.ygrid.InsertHit(ADC6->fCh[k],0,k);
+    }
+  }
+  if(ADC4->fCh[13]>0){
+    ic.fdE=ADC4->fCh[13];
+  }
 
   
   RNArray::ReconstructTREL(neut);
