@@ -91,14 +91,14 @@ void PSD_Analyzer::Begin(){
   rootfile->cd("rftime");
   hrftime=new sak::Histogram1D("hrftime","rftime[arb. units]",256,2050,2650);
   hrftime_allneut=new sak::Histogram1D("hrftime_allneut","rftime[arb. units]",256,2050,2650);
-  hrftime_cal=new sak::Histogram1D("hrftime_cal","rftime[ns]",256,1,90);
-  hrftime_prots=new sak::Histogram1D("hrftime_prots","rftime[ns]",256,1,90);
-  hrftime_allneut_cal=new sak::Histogram1D("hrftime_allneut_cal","rftime[ns]",256,1,90); 
-  hrftime_allneut_cal_p=new sak::Histogram1D("hrftime_allneut_cal_p","rftime[ns]",256,1,90); 
-  hrftime_allneut_cal_proton=new sak::Histogram1D("hrftime_allneut_cal_protons","rftime[ns]",256,1,90); 
-  hrftime_allneut_cal_alphas=new sak::Histogram1D("hrftime_allneut_cal_alphas","rftime[ns]",256,1,90); 
-  hrftime_n=new sak::Histogram2D("hrftime_n","Detector","rftime[ns]",17,0,16,256,1,90);
-  hrftime_gated_n=new sak::Histogram2D("hrftime_gated_n","Detector","rftime[ns]",17,0,16,512,1,90);
+  hrftime_cal=new sak::Histogram1D("hrftime_cal","rftime[ns]",128,640,820);
+  hrftime_prots=new sak::Histogram1D("hrftime_prots","rftime[ns]",128,640,820);
+  hrftime_allneut_cal=new sak::Histogram1D("hrftime_allneut_cal","rftime[ns]",128,640,820); 
+  hrftime_allneut_cal_p=new sak::Histogram1D("hrftime_allneut_cal_p","rftime[ns]",128,640,820); 
+  hrftime_allneut_cal_proton=new sak::Histogram1D("hrftime_allneut_cal_protons","rftime[ns]",128,640,820); 
+  hrftime_allneut_cal_alphas=new sak::Histogram1D("hrftime_allneut_cal_alphas","rftime[ns]",128,640,820); 
+  hrftime_n=new sak::Histogram2D("hrftime_n","Detector","rftime[ns]",17,0,16,128,640,820);
+  hrftime_gated_n=new sak::Histogram2D("hrftime_gated_n","Detector","rftime[ns]",17,0,16,512,640,820);
 
   rootfile->cd("protons");
   hpede=new sak::Hist2D("hpEdE","E [MeV]","dE [MeV]",64,0,20,64,0,6);
@@ -106,8 +106,8 @@ void PSD_Analyzer::Begin(){
   hPSD_n1_prots=new sak::Hist2D("hPSD_n1_prots","fPSD","fQ_long",256,0.,1.,1024,50,4096);
   hpede_ngated=new sak::Hist2D("hpEdE_ngated","E [MeV]","dE [MeV]",256,0,32,256,0,32);
  
-  s2_tvrf_neut_gated=new sak::Hist2D("s2_tvrf_neut_gated","rftime[ns]","TDC2",128,640,820,256,1.,4096.);
-  s2_tvrf=new sak::Hist2D("s2_tvrf","rftime[ns]","TDC2",128,640,820,256,1.,4096.);
+  s2_tvrf_neut_gated=new sak::Hist2D("s2_tvrf_neut_gated","rftime[ns]","TDC2",128,640,820,128,1.,4096.);
+  s2_tvrf=new sak::Hist2D("s2_tvrf","rftime[ns]","TDC2",128,640,820,128,1.,4096.);
   s2_e_v_theta_ngated=new sak::Hist2D("s2_e_v_theta_neut_gated","Theta [deg]","E[MeV]",32,10,50,32,0.,15.);
   s2_e_v_theta =new sak::Hist2D("s2_e_v_theta","Theta","E ]MeV]",32,10,50,32,0.,15.);
   s2_e_v_theta_protons =new sak::Hist2D("s2_e_v_theta_protons","Theta","E ]MeV]",32,10,50,32,0.,15.);

@@ -227,14 +227,14 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
   if(TDC1->fCh[0]>0)rftime[0].InsertHit(TDC1->fCh[0]);
   
   for(int k=0;k<32;k++){
-    if(ADC5->fCh[k]>0){
+    if(ADC5 && ADC5->fCh[k]>0){
       ic.xgrid.InsertHit(ADC5->fCh[k],0,k);
     }
-    if(ADC6->fCh[k]>0){
+    if(ADC6 && ADC6->fCh[k]>0){
       ic.ygrid.InsertHit(ADC6->fCh[k],0,k);
     }
   }
-  if(ADC4->fCh[13]>0){
+  if(ADC4 && ADC4->fCh[13]>0){
     ic.fdE=ADC4->fCh[13];
   }
 

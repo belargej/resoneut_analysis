@@ -121,14 +121,16 @@ private:
   float match_maxene;//!
   float addback_front; //!
   float addback_back;//!
-  TVector3 fPos;
+  
 
 public:
   std::vector<double>fChlist_b;
-
+  std::vector<TVector3> fPos;
 
   RN_S2Cluster(int i=0):RN_BaseDetector("si.cluster",16),
-			fChlist_b(16,-1.){
+			fChlist_b(16,-1.),
+			fPos(16)
+  {
   Reset();
   match_enefromback=1.0;
   match_epsilon=0.0;

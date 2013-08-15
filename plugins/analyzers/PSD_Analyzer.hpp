@@ -27,6 +27,7 @@ public:
   sak::Gate* neuts_n8;
   sak::Gate* neuts_n9;
   sak::Gate* prots1;
+  sak::Gate* alphas;
   sak::GateList allneuts;
 
   //declare histograms here
@@ -37,6 +38,13 @@ public:
   sak::Histogram1D *hrftime_cal;
   sak::Hist1D *hrftime_allneut_cal;
   sak::Hist1D *hrftime_allneut_cal_p;
+  sak::Hist1D *hrftime_allneut_cal_proton;
+  sak::Hist1D *hrftime_allneut_cal_alphas;
+  sak::Hist2D *s2_tvrf;
+  sak::Hist2D *s2_tvrf_neut_gated;
+  sak::Hist2D *s2_e_v_theta;
+  sak::Hist2D *s2_e_v_theta_ngated;
+  sak::Hist2D *s2_e_v_theta_protons;
   sak::Hist1D *hrftime_prots;
   sak::Hist2D *hPSD_n1_prots;
   sak::Histogram2D *hPSDq_n[10];
@@ -49,7 +57,7 @@ public:
   //declare extra parameters here, these can be then retrieved properly by gates
   double prot_E;
   double prot_dE;
-
+  double prot_theta;
 
 
   PSD_Analyzer();

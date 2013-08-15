@@ -208,7 +208,9 @@ TVector3 RN_S2Detector::chVect(const double& cf,const double& cb) const{
 
 
 
-RN_S2Cluster::RN_S2Cluster(std::string name,Int_t NumOfCh):RN_BaseDetector(name,NumOfCh),fChlist_b(NumOfCh,-1.){
+RN_S2Cluster::RN_S2Cluster(std::string name,Int_t NumOfCh):RN_BaseDetector(name,NumOfCh),
+							   fChlist_b(NumOfCh,-1.),
+							   fPos(NumOfCh){
   
   Reset();
   match_enefromback=1.0;
@@ -313,7 +315,7 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
       float match_ch= FrontClusters.chlist[front_match];
       float cb=BackClusters.chlist[i];
       float back_t=BackClusters.tlist[i];
-      fPos = in.chVect(match_ch,cb);
+      fPos[fMult] = in.chVect(match_ch,cb);
       fChlist[fMult]=match_ch;
       fChlist_b[fMult]=cb;
       if (match_enefromback){
@@ -360,12 +362,12 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
 
 
 void RN_S2Cluster::Reset(){
-  RN_BaseDetector::Reset();
   for(int i=0;i<fMult;i++){
-    fPos.SetXYZ(0,0,0);
+    fPos[i].SetXYZ(0,0,0);
     fChlist_b[i]=-1;
   }
    
+  RN_BaseDetector::Reset();
  
 
 }

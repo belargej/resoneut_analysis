@@ -11,12 +11,14 @@ RN_RFTime::RN_RFTime(std::string name):fName(name),
   
 }
 void RN_RFTime::ApplyCalibrations(){
-  fT=(fT*tlin)+tshift;
-  if(fTo){
-     fT = fmod((fT - fTo),82.417);
-     if (fT < 0)
-       fT+=82.417;
-     fT=fabs(82.417-fT);
+  if(fT>0){
+    fT=(fT*tlin)+tshift;
+    if(fTo){
+      fT = fmod((fT - fTo),82.417);
+      if (fT < 0)
+	fT+=82.417;
+      fT=fabs(82.417-fT);
+    }
   }
 }
 
