@@ -1,5 +1,5 @@
 fOutput		simC12_gs.root
-fDWBA		dwbal0.dat
+fDWBA		config/dwbal0.dat
 fEvents		100000
 
 fParam		sim.beam_energy	48

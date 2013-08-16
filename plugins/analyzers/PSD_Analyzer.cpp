@@ -184,9 +184,19 @@ void PSD_Analyzer::Process(){
     if(i>=neut.size())
       break;
     hPSD_n_[i]->Fill(neut[i].fPSD,neut[i].fQ_long);
-    
+    if(neut[i].fQ_long>0){
+      hrftime_n->Fill(i,rftime[0].fT);
+      if(sak::OrCheck(allneuts)){
+	hrftime_gated_n->Fill(i,rftime[0].fT);
+      }
+
+
+    }
   }
+
  
+
+
 
   if(prots1)
     if(prots1->Check()){
