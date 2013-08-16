@@ -109,7 +109,7 @@ public:
   void LoadVariableFile(const std::string& f){DetVar.LoadParams(f);}
   void SetCalibrations();
   virtual void Begin(){};
-  virtual void Loop();
+  virtual void Loop(Long64_t start=0,Long64_t evnum=0);
   virtual void Process(){};
   virtual void Terminate(){};
   Long64_t TotEntries() const{return fChain->GetEntries();} 

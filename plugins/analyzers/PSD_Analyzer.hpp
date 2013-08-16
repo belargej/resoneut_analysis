@@ -34,6 +34,7 @@ public:
   sak::Histogram1D *hrftime;
   sak::Hist1D *hrftime_allneut;
   sak::Hist2D *hrftime_n;
+  sak::Hist2D *hrftime_raw_n;
   sak::Hist2D *hrftime_gated_n;
   sak::Histogram1D *hrftime_cal;
   sak::Hist1D *hrftime_allneut_cal;

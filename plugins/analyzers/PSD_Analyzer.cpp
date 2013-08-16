@@ -91,15 +91,15 @@ void PSD_Analyzer::Begin(){
   rootfile->cd("rftime");
   hrftime=new sak::Histogram1D("hrftime","rftime[arb. units]",256,2050,2650);
   hrftime_allneut=new sak::Histogram1D("hrftime_allneut","rftime[arb. units]",256,2050,2650);
-  hrftime_cal=new sak::Histogram1D("hrftime_cal","rftime[ns]",256,1,90);
-  hrftime_prots=new sak::Histogram1D("hrftime_prots","rftime[ns]",256,1,90);
-  hrftime_allneut_cal=new sak::Histogram1D("hrftime_allneut_cal","rftime[ns]",256,1,90); 
-  hrftime_allneut_cal_p=new sak::Histogram1D("hrftime_allneut_cal_p","rftime[ns]",256,1,90); 
-  hrftime_allneut_cal_proton=new sak::Histogram1D("hrftime_allneut_cal_protons","rftime[ns]",256,1,90); 
-  hrftime_allneut_cal_alphas=new sak::Histogram1D("hrftime_allneut_cal_alphas","rftime[ns]",256,1,90); 
-  hrftime_n=new sak::Histogram2D("hrftime_n","Detector","rftime[ns]",17,0,16,256,1,90);
+  hrftime_cal=new sak::Histogram1D("hrftime_cal","rftime[ns]",128,1,90);
+  hrftime_prots=new sak::Histogram1D("hrftime_prots","rftime[ns]",128,1,90);
+  hrftime_allneut_cal=new sak::Histogram1D("hrftime_allneut_cal","rftime[ns]",128,1,90); 
+  hrftime_allneut_cal_p=new sak::Histogram1D("hrftime_allneut_cal_p","rftime[ns]",128,1,90); 
+  hrftime_allneut_cal_proton=new sak::Histogram1D("hrftime_allneut_cal_protons","rftime[ns]",128,1,90); 
+  hrftime_allneut_cal_alphas=new sak::Histogram1D("hrftime_allneut_cal_alphas","rftime[ns]",128,1,90); 
+  hrftime_n=new sak::Histogram2D("hrftime_n","Detector","rftime[ns]",17,0,16,128,1,90);
   hrftime_gated_n=new sak::Histogram2D("hrftime_gated_n","Detector","rftime[ns]",17,0,16,512,1,90);
-
+  hrftime_raw_n =new sak::Histogram2D("hrftime_raw_n","Detector","rftime[ns]",17,0,16,256,2050,2650);
   rootfile->cd("protons");
   hpede=new sak::Hist2D("hpEdE","E [MeV]","dE [MeV]",64,0,20,64,0,6);
   hpede_2=new sak::Hist2D("hpEdE_2","E [MeV]","dE [MeV]",64,0,30,64,0,30);
@@ -134,22 +134,25 @@ void PSD_Analyzer::Process(){
   //Fill raw parameter Histograms below this line
   /******************************************************/
   hrftime->Fill(rftime[0].fT);
-  if(sak::OrCheck(allneuts))hrftime_allneut->Fill(rftime[0].fT);
-  
   for (int i=0;i<10;i++){
     if(i>=neut.size())
       break;
     hTrel_n[i]->Fill(neut[i].fTrel,neut[i].fQ_long);
     hPSDq_n[i]->Fill(neut[i].fQ_long,neut[i].fQ_short);
+    
+    if(neut[i].fQ_long>0){
+      hrftime_raw_n->Fill(i,rftime[0].fT);
+    }
   }
 
 
   
-  ApplyCalibrations();//Fill calpar.Histograms below this line
+  ApplyCalibrations();
+  //Fill calpar.Histograms below this line
   /*************************************************************/
 
-  if(si_cluster_[1].fMult>0&&si_[0].front.fE[0]){
-      prot_dE=si_cluster_[1].fE[0];
+  if(si_[1].front.fMult>0&&si_[0].front.fE[0]){
+      prot_dE=si_[1].front.fE[0];
       prot_E=si_[0].front.fE[0]+prot_dE;
       hpede->Fill(prot_E,prot_dE);
       hpede_2->Fill(prot_E,prot_dE);
@@ -173,13 +176,12 @@ void PSD_Analyzer::Process(){
       if(prots1->Check())
 	hrftime_allneut_cal_proton->Fill(rftime[0].fT);
   
-    /*
+  
     if(alphas)
       if(alphas->Check())
 	hrftime_allneut_cal_alphas->Fill(rftime[0].fT);
-  
-    */
   }
+
   for(int i=0;i<10;i++){
     if(i>=neut.size())
       break;

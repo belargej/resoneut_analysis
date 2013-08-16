@@ -157,10 +157,14 @@ void RN_Analyzer::Init(TString rootfile)
 
 
 
-void RN_Analyzer::Loop(){
+void RN_Analyzer::Loop(Long64_t start,Long64_t evnum){
+  Long64_t totentries= TotEntries();    
+  if (start!=0&&evnum!=0)
+    if(start+evnum<totentries)
+      totentries=start+evnum;
+  
   Begin();
-  Long64_t totentries= TotEntries();
-  for (Long64_t i=0;i<totentries;i++){
+  for (Long64_t i=start;i<totentries;i++){
     GetDetectorEntry(i);
 
     Process();
@@ -169,8 +173,6 @@ void RN_Analyzer::Loop(){
   Terminate();
 
 }
-
-
 
 
 RN_Analyzer::~RN_Analyzer(){
