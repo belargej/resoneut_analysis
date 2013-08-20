@@ -39,67 +39,36 @@
 
 #include "sak_ReadBuffer.hpp"
 
-
-////////////////////////////////////////////////////////////////////////////////
-///This Class converts an EVT file to a ROOT File with the data structure of a
-///RNEvent.  These new root files are then used for data analysis.
-///////////////////////////////////////////////////////////////////////////////
-
-
-
-class RN_module:public TObject{
-private:
-  Int_t fGeoAddress;
-  Int_t fNumOfCh;
-  Int_t fType;
-  std::string fName;
-
-public:
-  RN_module(){
-    fCh=new Float_t[32];//default value
-  }
-  RN_module(std::string name,int geo, int num,int type):fGeoAddress(geo),
-							fNumOfCh(num),
-							fType(type),
-							fName(name){
-    fCh=new Float_t[fNumOfCh];
-  }
-
-  Float_t* fCh; //[fNumOfCh]
-
-  std::string Name()const{return fName;}
-  Int_t GeoAddress()const {return fGeoAddress;}
-  Int_t NumOfCh()const {return fNumOfCh;}
-  Int_t Type()const {return fType;}
-  void Reset(){
-    for(int i=0;i<fNumOfCh;i++)
-      fCh[i]=0;
-  }
-	
-  ClassDef(RN_module,1);
-};
-
-
-
 class RNUnpack2Root{
 private:
-  int mesy_num;
-  Int_t caen_num;
   int adc_counter;
   int mes_counter;
   Int_t Event[2];//stores RunNum/flag
  
 public:
+  float ADC1[32];
+  float ADC2[32];
+  float ADC3[32];
+  float ADC4[32];
+  float ADC5[32];
+  float ADC6[32];
+  float TDC1[32];
+  float TDC2[32];
+  float TDC3[32];
+  float QDC1[32];
+  float QDC2[32];
 
-  std::vector<RN_module> caen_stack;
-  std::vector<RN_module> mesy_stack;
+  std::vector<short> caen_stack;
+  std::vector<short> mesy_stack;
+  TRandom3 Rnd;
 
-  RNUnpack2Root():mesy_num(0),caen_num(0),Event(){}
+  RNUnpack2Root();
 
-  int Convert(std::vector<int>&run_number,std::string data_dir,std::string output_file, std::string splitoption);
-  bool init(const std::string& config);
-  int GetMesyNum(){return mesy_num;}
-  int GetCaenNum(){return caen_num;}
+  int Convert(std::vector<int>&run_number,std::string data_dir,std::string output_file);
+  bool init();
+  int GetMesyNum(){return mesy_stack.size();}
+  int GetCaenNum(){return caen_stack.size();}
+  int SortGeoChan(short geoaddress,short chan,short val);
   void Reset();
 
 

@@ -76,17 +76,17 @@ public:
   //if you refer to the Init(), the modules will not be aligned to a
   //branch address in this case
 
-  RN_module       *ADC1;
-  RN_module       *ADC2;
-  RN_module       *ADC3;
-  RN_module       *ADC4;
-  RN_module       *ADC5;
-  RN_module       *ADC6;
-  RN_module       *TDC1;
-  RN_module       *TDC2;
-  RN_module       *TDC3;
-  RN_module       *QDC1;
-  RN_module       *QDC2;
+  Float_t       ADC1[32];
+  Float_t       ADC2[32];
+  Float_t       ADC3[32];
+  Float_t       ADC4[32];
+  Float_t       ADC5[32];
+  Float_t       ADC6[32];
+  Float_t       TDC1[32];
+  Float_t       TDC2[32];
+  Float_t       TDC3[32];
+  Float_t       QDC1[32];
+  Float_t       QDC2[32];
   
   // List of branches
   TBranch        *b_ADC1;   //!

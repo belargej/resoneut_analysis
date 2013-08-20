@@ -94,6 +94,7 @@ public:
   RN_NeutDetectorArray();
   int ReconstructHits(RN_NeutCollection& in);
   int InsertHit(const double& q_long,const double& q_short,const TVector3& fPos,const int& index);
+  
   int Reset();
   ClassDef(RN_NeutDetectorArray,1);
 };

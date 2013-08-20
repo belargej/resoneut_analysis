@@ -47,10 +47,11 @@ void RN_Analyzer::SetCalibrations(){
 
 void RN_Analyzer::ApplyCalibrations(){
 
-
+  int nref;
   for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
     (*it).ApplyCalibrations();
   }
+  Narray.ReconstructHits(neut);
 
   int cref=0;
   for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
@@ -91,20 +92,6 @@ void RN_Analyzer::Init(TString rootfile)
   neut.push_back(RN_NeutDetector("neut7",4,10));
   neut.push_back(RN_NeutDetector("neut8",4,12));
   neut.push_back(RN_NeutDetector("neut9",4,15));
-
-
-   // Set object pointer
-   ADC1 = 0;
-   ADC2 = 0;
-   ADC3 = 0;
-   ADC4 = 0;
-   ADC5 = 0;
-   ADC6 = 0;
-   TDC1 = 0;
-   TDC2 = 0;
-   TDC3 = 0;
-   QDC1 = 0;
-   QDC2 = 0;
 
    fChain=new TChain("DataTree");
    fChain->Add(rootfile);
@@ -186,6 +173,8 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
     (*it).Reset();
   }
 
+  Narray.Reset();
+
   for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
     (*it).Reset();
   }
@@ -209,10 +198,10 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
   
   int idx=1; //neut detectors start from channel 1 in QDC
   for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
-    if(QDC1->fCh[idx]>0){
-      (*it).InsertPSDHit(QDC1->fCh[idx],QDC1->fCh[idx+16]);
-      if(TDC1->fCh[idx]>0)
-	(*it).InsertHit(QDC1->fCh[idx],TDC1->fCh[idx+16],0.);
+    if(QDC1[idx]>0){
+      (*it).InsertPSDHit(QDC1[idx],QDC1[idx+16]);
+      if(TDC1[idx]>0)
+	(*it).InsertHit(QDC1[idx],TDC1[idx+16],0.);
     }
     idx++;
     
@@ -221,23 +210,23 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
   }
   
   for(int j=0;j<16;j++){
-    if(ADC2->fCh[j+16]>0)si_[0].front.InsertHit(ADC2->fCh[j+16],0,j);
-    if(ADC3->fCh[j+16]>0)si_[1].front.InsertHit(ADC3->fCh[j+16],0,j);
-    if(ADC2->fCh[j]>0)si_[0].back.InsertHit(ADC2->fCh[j],TDC2->fCh[j],j);
-    if(ADC3->fCh[j]>0)si_[1].back.InsertHit(ADC3->fCh[j],TDC2->fCh[j+16],j);
+    if(ADC2[j+16]>0)si_[0].front.InsertHit(ADC2[j+16],0,j);
+    if(ADC3[j+16]>0)si_[1].front.InsertHit(ADC3[j+16],0,j);
+    if(ADC2[j]>0)si_[0].back.InsertHit(ADC2[j],TDC2[j],j);
+    if(ADC3[j]>0)si_[1].back.InsertHit(ADC3[j],TDC2[j+16],j);
   }
-  if(TDC1->fCh[0]>0)rftime[0].InsertHit(TDC1->fCh[0]);
+  if(TDC1[0]>0)rftime[0].InsertHit(TDC1[0]);
   
   for(int k=0;k<32;k++){
-    if(ADC5 && ADC5->fCh[k]>0){
-      ic.xgrid.InsertHit(ADC5->fCh[k],0,k);
+    if(ADC5 && ADC5[k]>0){
+      ic.xgrid.InsertHit(ADC5[k],0,k);
     }
-    if(ADC6 && ADC6->fCh[k]>0){
-      ic.ygrid.InsertHit(ADC6->fCh[k],0,k);
+    if(ADC6 && ADC6[k]>0){
+      ic.ygrid.InsertHit(ADC6[k],0,k);
     }
   }
-  if(ADC4 && ADC4->fCh[13]>0){
-    ic.fdE=ADC4->fCh[13];
+  if(ADC4 && ADC4[13]>0){
+    ic.fdE=ADC4[13];
   }
 
   

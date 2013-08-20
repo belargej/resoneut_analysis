@@ -9,65 +9,81 @@
 using namespace std;
 
 
-bool RNUnpack2Root::init(const std::string& config){
-  caen_num=0;
-  mesy_num=0;
-  ifstream cfg(config.c_str());
-  if (!cfg.is_open()){
-    cout<<"could not load init file: "<<config<<endl;
-    return 0;
-  }
- 
-  
-  std::string temp;
-  while(!cfg.eof()){
-    std::vector<std::string>input;
-    std::cout<<sak::ReadLine(cfg,input,4)<<std::endl;
-    if (input.size()!=4){
-      std::cout<<"config file has line with diff than 4 entries"<<std::endl;
-      return 0;
-    }
-    if(input[0]=="caen"){
-      caen_num++;
-      caen_stack.push_back(RN_module(input[1],sak::string_to_int(input[2]),sak::string_to_int(input[3]),0));
-   
-    }
-    else if(input[0]=="mesy"){
-      mesy_num++;
-      mesy_stack.push_back(RN_module(input[1],sak::string_to_int(input[2]),sak::string_to_int(input[3]),1));
-    }
-    else{
-      std::cout<<"undefined entry in config file"<<std::endl;
-      continue;
-    }
-   
+RNUnpack2Root::RNUnpack2Root():Rnd(0)
+{
+  Event[0]=0;
+  Event[1]=0;
+  for(int i=0;i<32;i++){
+    ADC1[i]=0;
+    ADC2[i]=0;
+    ADC3[i]=0;
+    ADC4[i]=0;
+    ADC5[i]=0;
+    ADC6[i]=0;
+    TDC1[i]=0;
+    TDC2[i]=0;
+    TDC3[i]=0;
+    QDC1[i]=0;
+    QDC2[i]=0;
 
-    
-    
-    
   }
-  
-  
+
 }
+ 
+bool RNUnpack2Root::init(){
 
+  short caen_geo[]={3,4,5,6,7,10,11};
+  short mesy_geo[]={14,16};
+  
+  caen_stack.insert(caen_stack.begin(),caen_geo,caen_geo+7);
+  mesy_stack.insert(mesy_stack.begin(),mesy_geo,mesy_geo+2);  
+
+  return 1;
+} 
 
 void RNUnpack2Root::Reset(){
   Event[1]=0;
-  for(int i=0;i<caen_num;i++){
-    caen_stack[i].Reset();
-  }
-  for(int i=0;i<mesy_num;i++){
-    mesy_stack[i].Reset();
+  for(int i=0;i<32;i++){
+    ADC1[i]=0;
+    ADC2[i]=0;
+    ADC3[i]=0;
+    ADC4[i]=0;
+    ADC5[i]=0;
+    ADC6[i]=0;
+    TDC1[i]=0;
+    TDC2[i]=0;
+    TDC3[i]=0;
+    QDC1[i]=0;
+    QDC2[i]=0;
   }
 }
 
 
+int RNUnpack2Root::SortGeoChan(short geoaddress,short chan, short val){
+  
+  if(geoaddress==2&&chan<32)ADC1[chan]=(float)val+Rnd.Rndm();
+  else if(geoaddress==3&&chan<32)ADC2[chan]=(float)val+Rnd.Rndm();
+  else if(geoaddress==4&&chan<32)ADC3[chan]=(float)val+Rnd.Rndm();
+  else if(geoaddress==5&&chan<32)ADC4[chan]=(float)val+Rnd.Rndm();
+  else if(geoaddress==6&&chan<32)ADC5[chan]=(float)val+Rnd.Rndm();
+  else if(geoaddress==7&&chan<32)ADC6[chan]=(float)val+Rnd.Rndm();
+  else if(geoaddress==10&&chan<32)TDC1[chan]=(float)val+Rnd.Rndm();
+  else if(geoaddress==11&&chan<32)TDC2[chan]=(float)val+Rnd.Rndm();
+  else if(geoaddress==12&&chan<32)TDC3[chan]=(float)val+Rnd.Rndm();
+  else if(geoaddress==14&&chan<32)QDC1[chan]=(float)val+Rnd.Rndm();
+  else if(geoaddress==16&&chan<32)QDC2[chan]=(float)val+Rnd.Rndm();
+  else return 0;
+  
+  return 1;
+
+
+}
 
 ///////////////////////////////////////////////////////////////////////////////////
 // File converter, from .evt to .root. Arguments:
 // - files_list: used to specify the 
 ///////////////////////////////////////////////////////////////////////////////////
-int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std::string output_file, std::string splitoption="n"){
+int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std::string output_file){
   
   TFile* RootFile;
   TTree* DataTree;
@@ -79,12 +95,14 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
   unsigned int NBuffers = 0; 
   unsigned short mem_counter=0,badcounter=0;
   int BufferPhysics = 0;
-  ifstream ListEVT;
   ifstream evtfile;
   ofstream logfile;
   unsigned short * buffer;
-  int timer=0;
-  TRandom3 Rnd(0);
+  int timer=0; 
+
+  //stacks initialized in init.  Necessary to read out the modules in the right order
+  unsigned int caen_num=caen_stack.size();
+  unsigned int mesy_num=mesy_stack.size();
 
 
   // ROOT output file
@@ -97,19 +115,21 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
   DataTree = new TTree("DataTree","DataTree");
  
   //flag is used to notify the user of any issues seen during unpacking
-  DataTree->Branch("Event",&Event,"RunNum/I:flag/I");
-
-  for(unsigned int i=0;i<caen_stack.size();i++){
-    if(splitoption=="y") DataTree->Branch(Form("%s.",caen_stack[i].Name().c_str()),"RN_module",&(caen_stack[i]));
-    else DataTree->Branch(caen_stack[i].Name().c_str(),"RN_module",&(caen_stack[i]),16000,0);
-  }
-  for(unsigned int i=0;i<mesy_stack.size();i++){
-    if(splitoption=="y")DataTree->Branch(Form("%s.",mesy_stack[i].Name().c_str()),"RN_module",&(mesy_stack[i]));
-    else DataTree->Branch(mesy_stack[i].Name().c_str(),"RN_module",&(mesy_stack[i]),16000,0);
-  } 
- 
+  DataTree->Branch("Event",&Event,"RunNum/I:flag/I"); 
+  DataTree->Branch("ADC1",&ADC1,"ADC1[32]/F");
+  DataTree->Branch("ADC2",&ADC2,"ADC2[32]/F");
+  DataTree->Branch("ADC3",&ADC3,"ADC3[32]/F");
+  DataTree->Branch("ADC4",&ADC4,"ADC4[32]/F");
+  DataTree->Branch("ADC5",&ADC5,"ADC5[32]/F");
+  DataTree->Branch("ADC6",&ADC6,"ADC6[32]/F");
+  DataTree->Branch("TDC1",&TDC1,"TDC1[32]/F");
+  DataTree->Branch("TDC2",&TDC2,"TDC2[32]/F");
+  DataTree->Branch("TDC3",&TDC3,"TDC3[32]/F");
+  DataTree->Branch("QDC1",&QDC1,"QDC1[32]/F");
+  DataTree->Branch("QDC2",&QDC2,"QDC2[32]/F");
+  
   //Loop over files in the data file list.
-  for(int b=0;b<run_number.size();b++){
+  for(unsigned int b=0;b<run_number.size();b++){
     //this section to properly format the evt number to buffer run number with zeroes.
     Event[0]=run_number[b];
     stringstream ss;
@@ -179,6 +199,7 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
 
       while(!evtfile.eof()){
 	NBuffers++;
+	if(NBuffers%30000==0)std::cout<<NBuffers<<std::endl;
 	//first we read in "Event Buffers or Item" header
 	//reading in 10 bytes reads the entire item header.
 
@@ -218,37 +239,37 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
 	  //first read in CAEN data, keep track of how many CAEN modules 
 	  //that are plugged in (not just the ones you are using.)
 
-	  for(int i=0; i<caen_num;i++){
+	  for(unsigned int i=0; i<caen_num;i++){
 	    short dat;
 	    short chan;
 	    short ch_hits;
 	    short geoaddress;
 	    if(*gpointer==0xffff){
 	      gpointer=gpointer+2;
-	   
 	      continue;}
 	    ch_hits = ( *gpointer++ & 0xff00 ) >> 8; //read high byte as low byte
 	    geoaddress = ( *gpointer++ & 0xf800) >> 11;
 	  
-	    if(geoaddress!=caen_stack[i].GeoAddress()){
-	      logfile<<geoaddress<<" different from geoaddress in stack: "<< caen_stack[i].GeoAddress()<<" at file pos: "<< evtfile.tellg()<<std::endl;
+	    if(geoaddress!=caen_stack[i]){
+	      logfile<<geoaddress<<" different from geoaddress in stack: "<< caen_stack[i]<<" at file pos: "<< evtfile.tellg()<<std::endl;
 	      gpointer+=ch_hits*2;
 	    }
 	    else{
 	      for (short jj=0;jj<ch_hits;jj++){
 		dat =  *gpointer++ & 0xfff;
 		chan = *gpointer++ & 0x1f;
-		caen_stack[i].fCh[chan] = (float)dat+Rnd.Rndm();
+		SortGeoChan(geoaddress,chan,dat);
+      
 	      }
 	    }
 	    adc_counter= *gpointer++;
 	    gpointer = gpointer + 3 ; //jump 3 words to skip rest of CAEN End of Block
-	    
+	   
 	  }
 	  
 	  //next comes MESYTEC modules.
 	  
-	  for(int i=0; i<mesy_num; i++){
+	  for(unsigned int i=0; i<mesy_num; i++){
 	    short dat, chan;
 	    short shortwords;
 	    short ModuleID;
@@ -262,8 +283,8 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
 	    shortwords = 2 * ( *zpointer++ & 0x0fff ); 
 	    ModuleID = *zpointer++ & 0x00ff;
 	 
-	    if(ModuleID!=mesy_stack[i].GeoAddress()){
-	      logfile<<ModuleID<<" different from geoaddress in stack: "<< mesy_stack[i].GeoAddress()<<" at file pos: "<< evtfile.tellg()<<std::endl;
+	    if(ModuleID!=mesy_stack[i]){
+	      logfile<<ModuleID<<" different from geoaddress in stack: "<< mesy_stack[i]<<" at file pos: "<< evtfile.tellg()<<std::endl;
 	      gpointer+=shortwords;
 	    }
 	    else{
@@ -271,7 +292,10 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
 		dat = *zpointer++ & 0xfff;
 		chan = *zpointer++ & 0x1f;
 		
-		mesy_stack[i].fCh[chan]=(float)dat+Rnd.Rndm();
+		SortGeoChan(ModuleID,chan,dat);
+		
+		
+  
 	      }
 	    }
 	    mes_counter = *zpointer++;

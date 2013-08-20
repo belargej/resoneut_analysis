@@ -14,7 +14,7 @@
 
 
 
-#pragma link C++ class std::vector<RN_module>;
+
 #pragma link C++ class std::vector<RN_NeutDetector>;
 #pragma link C++ class std::vector<RN_BaseDetector>;
 #pragma link C++ class std::vector<RN_IonChamber>;

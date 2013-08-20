@@ -120,9 +120,6 @@ int RN_NeutDetectorArray::Reset(){
 }
 
 
-
-
-
 int RN_NeutDetectorArray::InsertHit(const double& q_long,const double& q_short,const TVector3& pos,const int& index){
   if (!q_long>0)
     return -1;

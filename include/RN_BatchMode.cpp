@@ -39,9 +39,9 @@
 
 
 int main(int argc, char*argv[]){
-  if(argc==4){
+  if(argc==3){
     RNUnpack2Root* a=new RNUnpack2Root();
-    a->init(argv[3]);
+    a->init();
     std::vector<int>run_numbers;
     run_numbers.reserve(10);
     int enter=-1;
@@ -50,15 +50,9 @@ int main(int argc, char*argv[]){
       std::cin>>enter;
       if(enter)run_numbers.push_back(enter);
     }
-    std::string option="a";
-    while(1){
-      std::cout<<"split branches? (y/n)"<<std::endl;
-      std::cin>>option;
-      if (option=="y" || option=="n")break;
-    }
-    a->Convert(run_numbers,argv[1],argv[2],option);//1:data dir,2:output file    
+    a->Convert(run_numbers,argv[1],argv[2]);//1:data dir,2:output file    
   }
   else
     std::cout<<"invalid number of arguments: \n"<<"RNBatchMode dir output config"<<std::endl;
-
+  
 }
