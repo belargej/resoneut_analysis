@@ -1,3 +1,4 @@
+
 This code was developed for analysis of the RESONEUT detector array at FSU.
 
 Some Methods and functions have been adapted from the methods used in our SpecTcl analysis program developed by Ingo Wiedenhoever,Patrick Peplowski, Alex Rojas, Jessica Baker, and myself.  SpecTcl was developed by Ron Fox at NSCL.
@@ -35,21 +36,11 @@ Load->("libRNeut.so") into your root session to run interactively.
 I recommend adding it to your rootlogon.C so you don't have to repeat this process repeatedly.
 
 for a quick use of the Unpacker
-execute ~/path_to_resoneut_analysis_hc/bin/RNBatchMode <data dir> <output.root file> <e2rconfig.in>
+execute ~/path_to_resoneut_analysis_hc/bin/RNBatchMode <data dir> <output.root file>
 
-where e2rconfig.in is the input file which properly configures the "stack" for unpack2root.
-
-the e2rconfig.in for the O17 beam test data taken is in the folder RN001/config
-
-The program will then prompt you for the run numbers you want to convert.
-The program will also ask if you want to split the tree branches.  choosing to split the tree branches improves interactivity.  choosing not to split them allows for the data to be read back into "RN_modules". 
-
-ie) /path_to/RNBatchMode /data/LSU/ run2008.root /path_to_configs/e2rconfig.in 
+ie) /path_to/RNBatchMode /data/LSU/ run2008.root
     2008 (to unpack from run 2008)
     0 (to finish entering run numbers)
-    "y" (to split the tree branches)
-
-
 
 ************************************************************************************************************************
 

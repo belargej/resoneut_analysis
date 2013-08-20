@@ -5,7 +5,11 @@
 ///RING MASTER buffer structure.                             
 ////////////////////////////////////////////////////////////////////////
 
+/***************************************
+update 08/20: Got rid of the tree structure for the unpack2root 
+using RN_modules. also got rid of the need for a "config file".  Changes to the sorting method should just be coded into the init(),SortGeoChan() methods
 
+********************************************/
 
 #ifndef __CONVERT
 #define __CONVERT
