@@ -6,12 +6,6 @@ S2_Analyzer::S2_Analyzer():ind_(0)
 
 }
 
-void S2_Analyzer::LoadGates(const char *a){
- 
-
-
-}
-
 void S2_Analyzer::AutoCalibrate(int matchfront, int matchback){
   std::cout<<"calibrating back to front match channel : "<<matchfront<<std::endl;
   RN_S2CalCollection s2front;
@@ -87,19 +81,7 @@ void S2_Analyzer::AutoCalibrate(int matchfront, int matchback){
 
 
 }
-  
-
-
-
-void S2_Analyzer::Loop(){
-  Long64_t totentries= TotEntries();
-  for (Long64_t i=0;i<totentries;i++){
-    GetDetectorEntry(i);
-
-    Process();
-  }
-}
-
+ 
 void S2_Analyzer::initHists(std::string output,int ind){ 
   ind_ = ind;
   rootfile=new TFile(output.c_str(),"RECREATE");
@@ -127,8 +109,18 @@ void S2_Analyzer::Process(){
   
 
 }
-void S2_Analyzer::WriteOut(){
+void S2_Analyzer::Terminate(){
   rootfile->Write();
   rootfile->Close();
+
+}
+
+void S2_Analyzer::Clear(){
+  delete h_si_1;
+  delete h_si_2;
+  for (int i=0;i<16;i++){
+    delete front[i];
+  }
+
 
 }

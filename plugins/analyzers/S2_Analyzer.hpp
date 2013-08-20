@@ -28,11 +28,9 @@ public:
   void AutoCalibrate(int matchfront, int matchback);//auto calibrate all elements of Collection
  
   virtual void initHists(std::string,int ind=0);
-  virtual void Loop();
   virtual void Process();
-  virtual void WriteOut();
-  virtual void LoadGates(const char *a);
-  virtual void Clear(){};
+  virtual void Terminate();
+  virtual void Clear();
 
 
   ClassDef(S2_Analyzer,0);
