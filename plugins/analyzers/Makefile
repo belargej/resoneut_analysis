@@ -1,18 +1,18 @@
 CXX=g++
 
-SOURCES=PSD_Analyzer.cpp NewTree_Analyzer.cpp S2_Analyzer.cpp
+SOURCES=PSD_Analyzer.cpp PSD_Analyzer2.cpp NewTree_Analyzer.cpp S2_Analyzer.cpp
 OBJECTS=${SOURCES:.cpp=.o}
 HEADERS=${SOURCES:.cpp=.hpp}
 LIBS=${addprefix -l,${SOURCES:.cpp=}}
 
 CFLAGS=`root-config --cflags` -c ${DEBUG}
 GLIBS=`root-config --glibs`
-LINK_DIR=${PWD}/../lib
+LINK_DIR=${PWD}/../../lib
 
 LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} 
 INC_DIR=-I${ROOTSYS}/include -I$(PWD)/../../include -I$(PWD)/../../
 
-all: libRNanalyzers.so	
+all: libRNanalyzers.so
 
 libRNanalyzers.so: ${OBJECTS} RNanalyzers_d.cpp 
 	 g++ -shared -o ${addprefix ../../lib/,$@} $^ `root-config --ldflags --libs --cflags` ${DEBUG} $(INC_DIR)
@@ -20,7 +20,7 @@ libRNanalyzers.so: ${OBJECTS} RNanalyzers_d.cpp
 RNanalyzers_d.cpp: ${HEADERS} my_LinkDef.h
 	rootcint RNanalyzers_d.cpp -c $(INC_DIR) `root-config --cflags` -p $^
 
-%.o: %.cpp	
+%.o: %.cpp %.hpp	
 	${CXX} ${CFLAGS} $< $(INC_DIR)
 
  #####################################################################

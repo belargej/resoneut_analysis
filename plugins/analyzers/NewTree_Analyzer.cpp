@@ -9,37 +9,14 @@ NewTree_Analyzer::NewTree_Analyzer()
 void NewTree_Analyzer::InitTree(std::string filename,std::string treename){
   rootfile=new TFile(filename.c_str(),"RECREATE");
   tree=new TTree(treename.c_str(),treename.c_str());
-  std::string split="";
-  std::cout<<"split branches?(y/n)"<<std::endl;
-  std::cin>>split;
-  for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
-    if(split=="y")
-      tree->Branch(Form("%s.",(*it).Name().c_str()),"RN_NeutDetector",&(*it));
-    else
-      tree->Branch(Form("%s",(*it).Name().c_str()),"RN_NeutDetector",&(*it),16000,0);
-  }
-  
-  for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
-    if(split=="y")
-      tree->Branch(Form("%s.",(*it).Name().c_str()),"RN_S2Detector",&(*it));
-    else
-      tree->Branch(Form("%s",(*it).Name().c_str()),"RN_S2Detector",&(*it),16000,0);
-    
-  }
-  for(RN_S2ClusterCollectionRef it=si_cluster_.begin();it!=si_cluster_.end();it++){
-    if(split=="y")
-      tree->Branch(Form("%s.",(*it).Name().c_str()),"RN_S2Cluster",&(*it));
-    else
-      tree->Branch(Form("%s",(*it).Name().c_str()),"RN_S2Cluster",&(*it),16000,0);
-    
-  }
-
+  for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++)
+    tree->Branch(Form("%s.",(*it).Name().c_str()),"RN_NeutDetector",&(*it));
+  for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++)
+    tree->Branch(Form("%s.",(*it).Name().c_str()),"RN_S2Detector",&(*it),16000,0);
+  for(RN_S2ClusterCollectionRef it=si_cluster_.begin();it!=si_cluster_.end();it++)
+    tree->Branch(Form("%s.",(*it).Name().c_str()),"RN_S2Cluster",&(*it),16000,0);
   for(RN_RFCollectionRef it=rftime.begin();it!=rftime.end();it++)
-    if(split=="y")
-      tree->Branch(Form("%s.",(*it).Name().c_str()),"RN_RFTime",&(*it));
-    else 
-      tree->Branch(Form("%s",(*it).Name().c_str()),"RN_RFTime",&(*it),16000,0);
-
+    tree->Branch(Form("%s.",(*it).Name().c_str()),"RN_RFTime",&(*it),16000,0);
   
 }
 

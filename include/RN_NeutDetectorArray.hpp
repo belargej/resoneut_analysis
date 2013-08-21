@@ -25,7 +25,7 @@
 #include <TRandom3.h>
 #include <TPolyLine3D.h>
 #include <TVector3.h>
-
+#include <TCutG.h>
 
 #include "RN_VariableMap.hpp"
 #include "RN_BaseDetector.hpp"
@@ -58,6 +58,7 @@ class RN_NeutDetector:public RN_BaseDetector{
   Double_t PSD() const ;
   Double_t Q() const ;
 
+  int NPeak(const TCutG& psdcut);
   TVector3 GetPosVect() const{return fPos;}
 
   void Reset();

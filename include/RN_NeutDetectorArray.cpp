@@ -57,6 +57,10 @@ void RN_NeutDetector::InsertPSDHit(const double& q_long,const double& q_short){
  
 }
 
+int RN_NeutDetector::NPeak(const TCutG& psdcut){
+  return psdcut.IsInside(fPSD,fQ_long); 
+}
+
 
 Double_t RN_NeutDetector::PSD() const{if (fQ_long>0) return fQ_short/fQ_long;}
 Double_t RN_NeutDetector::Q() const{return fQ_long;}

@@ -33,7 +33,7 @@ void PSD_Analyzer2::LoadGates(const std::string& input){
     n9_neuts=new TCutG(*in.getCut("n9_neuts"));
   if(in.getCut("prots1") && !prots1)
     prots1=new TCutG(*in.getCut("prots1"));
-  if(in.getCut("n9_neuts") && !n9_neuts)
+  if(in.getCut("alphas") && !alphas)
     alphas=new TCutG(*in.getCut("alphas"));
 
 
@@ -94,7 +94,7 @@ void PSD_Analyzer2::Begin(){
 }
 
 void PSD_Analyzer2::Process(){
- 
+
 
   prot_E=0;
   prot_dE=0;
@@ -115,22 +115,22 @@ void PSD_Analyzer2::Process(){
   }
 
 
-  
   ApplyCalibrations();
   //Fill calpar.Histograms below this line
   /*************************************************************/
   h_ndetMult->Fill(Narray.fMult);
 
-  int orcheck=(neut[0].NPeak(*n0_neuts) || 
-	       neut[1].NPeak(*n1_neuts) ||
-	       neut[2].NPeak(*n2_neuts) ||
-	       neut[3].NPeak(*n3_neuts) ||
-	       neut[4].NPeak(*n4_neuts) ||
-	       neut[5].NPeak(*n5_neuts) ||
-	       neut[6].NPeak(*n6_neuts) ||
-	       neut[7].NPeak(*n7_neuts) ||
-	       neut[8].NPeak(*n8_neuts) ||
-	       neut[9].NPeak(*n9_neuts));
+  int orcheck=(n0_neuts->IsInside(neut[0].fPSD,neut[0].fQ_long) || 
+	       n1_neuts->IsInside(neut[1].fPSD,neut[1].fQ_long) ||
+	       n2_neuts->IsInside(neut[2].fPSD,neut[2].fQ_long) ||
+	       n3_neuts->IsInside(neut[3].fPSD,neut[3].fQ_long) ||
+	       n4_neuts->IsInside(neut[4].fPSD,neut[4].fQ_long) ||
+	       n5_neuts->IsInside(neut[5].fPSD,neut[5].fQ_long) ||
+	       n6_neuts->IsInside(neut[6].fPSD,neut[6].fQ_long) ||
+	       n7_neuts->IsInside(neut[7].fPSD,neut[7].fQ_long) ||
+	       n8_neuts->IsInside(neut[8].fPSD,neut[8].fQ_long) ||
+	       n9_neuts->IsInside(neut[9].fPSD,neut[9].fQ_long)
+	       );
   int protcheck=0;
   int alphacheck=0;
 
@@ -142,6 +142,7 @@ void PSD_Analyzer2::Process(){
       prot_theta=si_cluster_[1].fPos[0].Theta()*(180/3.14);
       s2_e_v_theta->Fill(prot_theta,prot_E);
   }
+
   if(prots1)
     protcheck=prots1->IsInside(prot_E,prot_dE);
   if(alphas)

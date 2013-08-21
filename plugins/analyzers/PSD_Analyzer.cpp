@@ -109,7 +109,7 @@ void PSD_Analyzer::Terminate(){
 }
 
 namespace sak{
-  void  psd_analysis(const char * infile, const char * config, const char * cuts){
+  void  psd_analysis(const char * infile, const char * config){
     PSD_Analyzer a;
     a.Init(infile);
     a.LoadVariableFile(config);
@@ -121,3 +121,25 @@ namespace sak{
   }
 
 }
+
+#if !defined (__CINT__) || !defined (_MAIN_CXX_)
+#define _MAIN_CXX_
+
+int main(int argc, char**argv){
+  if (argc!=3){
+    std::cout<<"Incorrect number of arguments, need: PSD_Analyzer <input tree> <config file>"<<std::endl;
+    return 0;
+  }
+  else{
+    PSD_Analyzer a;
+    a.Init(argv[1]);
+    a.LoadVariableFile(argv[2]);
+    a.SetCalibrations();
+    a.Loop();
+  }
+
+
+
+}
+
+#endif

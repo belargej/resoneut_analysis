@@ -41,8 +41,6 @@ using RN_modules. also got rid of the need for a "config file".  Changes to the 
 #include <TSelector.h>
 #include <map>
 
-#include "sak_ReadBuffer.hpp"
-
 class RNUnpack2Root{
 private:
   int adc_counter;

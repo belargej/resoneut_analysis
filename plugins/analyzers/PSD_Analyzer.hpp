@@ -48,10 +48,11 @@ public:
 
 
   ClassDef(PSD_Analyzer,0);
+
 };
 
 namespace sak{
-  void psd_analysis(const char* infile, const char* config, const char* cuts);
+  void psd_analysis(const char* infile, const char* config);
 
 
 }
