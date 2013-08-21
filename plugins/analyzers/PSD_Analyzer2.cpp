@@ -1,6 +1,54 @@
 #include "PSD_Analyzer2.hpp"
 namespace psd{
 
+  R__EXTERN TFile *rootfile;
+  
+  
+  //declare Gates
+  TCutG* n0_neuts;
+  TCutG* n1_neuts;
+  TCutG* n2_neuts;
+  TCutG* n3_neuts;
+  TCutG* n4_neuts;
+  TCutG* n5_neuts;
+  TCutG* n6_neuts;
+  TCutG* n7_neuts;
+  TCutG* n8_neuts;
+  TCutG* n9_neuts;
+  TCutG* prots1;
+  TCutG* alphas;
+  
+  //declare histograms here
+  
+  R__EXTERN sak::Histogram1D *hrftime;
+  sak::Hist1D *hrftime_allneut;
+  R__EXTERN sak::Hist2D *hrftime_n;
+  sak::Hist2D *hrftime_raw_n;
+  sak::Hist2D *hrftime_gated_n;
+  R__EXTERN sak::Histogram1D *hrftime_cal;
+  sak::Hist1D *hrftime_allneut_cal;
+  sak::Hist1D *hrftime_allneut_cal_p;
+  sak::Hist1D *hrftime_allneut_cal_proton;
+  sak::Hist1D *hrftime_allneut_cal_alphas;
+  R__EXTERN sak::Hist1D *h_ndetMult;
+  R__EXTERN sak::Hist1D *h_ndetMult_ngated;
+  R__EXTERN sak::Hist1D *h_ndetMult_npgated;
+  R__EXTERN sak::Hist2D *s2_tvrf;
+  sak::Hist2D *s2_tvrf_neut_gated;
+  R__EXTERN sak::Hist2D *s2_e_v_theta;
+  sak::Hist2D *s2_e_v_theta_ngated;
+  sak::Hist2D *s2_e_v_theta_protons;
+  sak::Hist1D *hrftime_prots;
+  sak::Hist2D *hPSD_n1_prots;
+  R__EXTERN sak::Histogram2D *hPSDq_n[10];
+  R__EXTERN sak::Histogram2D *hPSD_n_[10];
+  R__EXTERN sak::Histogram2D *hTrel_n[10];
+  sak::Histogram2D *hEvT_n[10];
+  R__EXTERN sak::Hist2D* hpede;
+  R__EXTERN sak::Hist2D* hpede_2;
+  sak::Hist2D* hpede_ngated;
+
+
 
 NeutAnalyzer2::NeutAnalyzer2()
 {

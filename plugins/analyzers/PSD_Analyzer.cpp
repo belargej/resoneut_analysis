@@ -3,6 +3,25 @@
 namespace psd{
 
 
+ TFile* rootfile;
+  
+  //declare histograms here
+  sak::Histogram1D *hrftime;
+  sak::Hist2D *hrftime_n;
+  sak::Histogram1D *hrftime_cal;
+  sak::Hist1D *h_ndetMult;
+  sak::Hist1D *h_ndetMult_ngated;
+  sak::Hist1D *h_ndetMult_npgated;
+  sak::Hist2D *s2_tvrf;
+  sak::Hist2D *s2_e_v_theta;
+  sak::Histogram2D *hPSDq_n[10];
+  sak::Histogram2D *hPSD_n_[10];
+  sak::Histogram2D *  hTrel_n[10];
+  sak::Hist2D* hpede;
+  sak::Hist2D* hpede_2;
+    
+
+
 
 NeutAnalyzer::NeutAnalyzer()
 {
