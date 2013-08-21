@@ -107,3 +107,17 @@ void PSD_Analyzer::Terminate(){
   rootfile->Close();
   
 }
+
+namespace sak{
+  void  psd_analysis(const char * infile, const char * config, const char * cuts){
+    PSD_Analyzer a;
+    a.Init(infile);
+    a.LoadVariableFile(config);
+    a.SetCalibrations();
+    a.Loop();
+
+    
+    
+  }
+
+}
