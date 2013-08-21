@@ -1,14 +1,17 @@
 #include "PSD_Analyzer.hpp"
 
+namespace psd{
 
-PSD_Analyzer::PSD_Analyzer()
+
+
+NeutAnalyzer::NeutAnalyzer()
 {
 
 }
 
 
 
-void PSD_Analyzer::Begin(){
+void NeutAnalyzer::Begin(){
   int idx=0;
 
   rootfile=new TFile("psd_analysis.root","RECREATE");
@@ -47,12 +50,10 @@ void PSD_Analyzer::Begin(){
   
 }
 
-void PSD_Analyzer::Process(){
-  int error=0;
-  
-  prot_E=0;
-  prot_dE=0;
-  prot_theta=0;
+void NeutAnalyzer::Process(){ 
+  double prot_E=0;
+  double prot_dE=0;
+  double prot_theta=0;
 
   //Fill raw parameter Histograms below this line
   /******************************************************/
@@ -102,44 +103,25 @@ void PSD_Analyzer::Process(){
 }
 
   
-void PSD_Analyzer::Terminate(){
+void NeutAnalyzer::Terminate(){
   rootfile->Write();
   rootfile->Close();
   
 }
 
-namespace sak{
-  void  psd_analysis(const char * infile, const char * config){
-    PSD_Analyzer a;
+
+  void  analysis(const char * infile, const char * config){
+    NeutAnalyzer a;
     a.Init(infile);
     a.LoadVariableFile(config);
     a.SetCalibrations();
     a.Loop();
-
     
     
+    
   }
-
+  
 }
 
-#if !defined (__CINT__) || !defined (_MAIN_CXX_)
-#define _MAIN_CXX_
-
-int main(int argc, char**argv){
-  if (argc!=3){
-    std::cout<<"Incorrect number of arguments, need: PSD_Analyzer <input tree> <config file>"<<std::endl;
-    return 0;
-  }
-  else{
-    PSD_Analyzer a;
-    a.Init(argv[1]);
-    a.LoadVariableFile(argv[2]);
-    a.SetCalibrations();
-    a.Loop();
-  }
 
 
-
-}
-
-#endif

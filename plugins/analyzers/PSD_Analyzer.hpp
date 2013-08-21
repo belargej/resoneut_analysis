@@ -1,43 +1,48 @@
+#if defined (__CINT__)||defined (__MAKECINT__)
+#define mEXTERN R__EXTERN
+#else
+#define mEXTERN extern
+#endif
+
+
 #ifndef _PSDANALYZER
 #define _PSDANALYZER
 #include <TH2.h>
+#include <TFile.h>
 #include <cstdlib>
 #include <string>
 #include <new>
 #include "RN_Analyzer.hpp"
 #include "plugins/sak/sak_Histograms.hpp"
+#include "plugins/sak/sak_Gates.hpp"
 
+namespace psd{
 
-
-class PSD_Analyzer:public RN_Analyzer{
-private:
-
-public:
-  TFile *rootfile;
-
+  mEXTERN TFile* rootfile;
+  
   //declare histograms here
-  sak::Histogram1D *hrftime;
-  sak::Hist2D *hrftime_n;
-  sak::Histogram1D *hrftime_cal;
-  sak::Hist1D *h_ndetMult;
-  sak::Hist1D *h_ndetMult_ngated;
-  sak::Hist1D *h_ndetMult_npgated;
-  sak::Hist2D *s2_tvrf;
-  sak::Hist2D *s2_e_v_theta;
-  sak::Histogram2D *hPSDq_n[10];
-  sak::Histogram2D *hPSD_n_[10];
-  sak::Histogram2D *  hTrel_n[10];
-  sak::Hist2D* hpede;
-  sak::Hist2D* hpede_2;
+  mEXTERN sak::Histogram1D *hrftime;
+  mEXTERN sak::Hist2D *hrftime_n;
+  mEXTERN sak::Histogram1D *hrftime_cal;
+  mEXTERN sak::Hist1D *h_ndetMult;
+  mEXTERN sak::Hist1D *h_ndetMult_ngated;
+  mEXTERN sak::Hist1D *h_ndetMult_npgated;
+  mEXTERN sak::Hist2D *s2_tvrf;
+  mEXTERN sak::Hist2D *s2_e_v_theta;
+  mEXTERN sak::Histogram2D *hPSDq_n[10];
+  mEXTERN sak::Histogram2D *hPSD_n_[10];
+  mEXTERN sak::Histogram2D *  hTrel_n[10];
+  mEXTERN sak::Hist2D* hpede;
+  mEXTERN sak::Hist2D* hpede_2;
+    
 
-  //declare extra parameters here, these can be then retrieved properly by gates
-  double prot_E;
-  double prot_dE;
-  double prot_theta;
-
-
-  PSD_Analyzer();
-  virtual ~PSD_Analyzer(){};
+  class NeutAnalyzer:public RN_Analyzer{
+  private:
+    
+  public:
+    
+  NeutAnalyzer();
+  virtual ~NeutAnalyzer(){};
 
   virtual void Begin();
   
@@ -47,14 +52,14 @@ public:
   virtual void Clear(){};
 
 
-  ClassDef(PSD_Analyzer,0);
+  ClassDef(NeutAnalyzer,0);
 
 };
 
-namespace sak{
-  void psd_analysis(const char* infile, const char* config);
 
-
+  void analysis(const char* infile, const char* config);
+  
+  
 }
 
 

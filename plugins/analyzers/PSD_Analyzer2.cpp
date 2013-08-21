@@ -1,12 +1,13 @@
 #include "PSD_Analyzer2.hpp"
+namespace psd{
 
 
-PSD_Analyzer2::PSD_Analyzer2()
+NeutAnalyzer2::NeutAnalyzer2()
 {
 
 }
 
-void PSD_Analyzer2::LoadGates(const std::string& input){
+void NeutAnalyzer2::LoadGates(const std::string& input){
   
   sak::LoadCuts in(input.c_str());
 
@@ -42,7 +43,7 @@ void PSD_Analyzer2::LoadGates(const std::string& input){
 }
 
 
-void PSD_Analyzer2::Begin(){
+void NeutAnalyzer2::Begin(){
   int idx=0;
 
   rootfile=new TFile("psd_analysis2.root","RECREATE");
@@ -93,12 +94,12 @@ void PSD_Analyzer2::Begin(){
   
 }
 
-void PSD_Analyzer2::Process(){
+void NeutAnalyzer2::Process(){
 
 
-  prot_E=0;
-  prot_dE=0;
-  prot_theta=0;
+  double prot_E=0;
+  double prot_dE=0;
+  double prot_theta=0;
 
   //Fill raw parameter Histograms below this line
   /******************************************************/
@@ -188,7 +189,7 @@ void PSD_Analyzer2::Process(){
 }
 
   
-void PSD_Analyzer2::Terminate(){
+void NeutAnalyzer2::Terminate(){
   rootfile->Write();
   rootfile->Close();
   
@@ -196,9 +197,9 @@ void PSD_Analyzer2::Terminate(){
 
 
 
-namespace sak{
-  void  psd_analysis2(const char * infile, const char * config, const char * cuts){
-    PSD_Analyzer2 a;
+
+  void  analysis2(const char * infile, const char * config, const char * cuts){
+    NeutAnalyzer2 a;
     a.Init(infile);
     a.LoadVariableFile(config);
     a.SetCalibrations();
