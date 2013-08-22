@@ -27,7 +27,7 @@ public:
   virtual ~S2_Analyzer(){};
   void AutoCalibrate(int matchfront, int matchback);//auto calibrate all elements of Collection
  
-  virtual void initHists(std::string,int ind=0);
+  virtual int initHists(std::string,int ind=0);
   virtual void Process();
   virtual void Terminate();
   virtual void Clear();
@@ -37,4 +37,10 @@ public:
 };
 
 
+namespace si_cal{
+
+  void producehists(const char * input,const char* output,int index,const char* config="");
+  void autocalibrate(const char* input,int fmatch,int bmatch);
+  
+}
 #endif

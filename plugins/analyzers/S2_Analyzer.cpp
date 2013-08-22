@@ -82,8 +82,13 @@ void S2_Analyzer::AutoCalibrate(int matchfront, int matchback){
 
 }
  
-void S2_Analyzer::initHists(std::string output,int ind){ 
+int S2_Analyzer::initHists(std::string output,int ind){ 
   ind_ = ind;
+  if(ind_>si_.size()){
+    std::cout<<"index out of bounds, taking appropriate measures"<<std::endl;
+    return 0;
+  }
+    
   rootfile=new TFile(output.c_str(),"RECREATE");
 
   
@@ -94,7 +99,7 @@ void S2_Analyzer::initHists(std::string output,int ind){
     front[i]=new sak::Hist2D(Form("si_fc%d_corr",i),"channel","ratio",17,0,16,512,0,2);
   }
 
-  
+  return 1;
   
 }
 
@@ -123,4 +128,29 @@ void S2_Analyzer::Clear(){
   }
 
 
+}
+
+
+namespace si_cal{
+
+  void producehists(const char * input,const char* output,int index,const char* config){
+    S2_Analyzer a;
+    a.Init(input);
+    if(!a.initHists(output,index))
+      return ;
+    if(config){
+      a.LoadVariableFile(config);
+      a.SetCalibrations();
+    }
+    a.Loop();
+    
+
+  }
+
+  void autocalibrate(const char* input,int fmatch,int bmatch){
+    S2_Analyzer a;
+    a.Init(input);
+    a.AutoCalibrate(fmatch,bmatch);
+  }
+  
 }
