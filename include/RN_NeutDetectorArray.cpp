@@ -4,7 +4,17 @@ ClassImp(RN_NeutDetector);
 
 
 RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetector(name,num),
-								  apos(ap)
+								  apos(ap),
+								  elin(1),
+								  eshift(0),
+								  tlin(1),
+								  tshift(0),
+								  zero_off(0),
+								  fQ_long(0),
+								  fQ_short(0),
+								  fPSD(0),
+								  fT_Q(0),
+								  fTrel(0)
   
 {
   RNArray::PositionMap(apos,fPos);
@@ -39,53 +49,36 @@ void RN_NeutDetector::Reset(){
   fQ_long=0;
   fQ_short=0;
   fTrel=0;
+  fT_Q=0;
   fPSD=0;
 }
 
 
 void RN_NeutDetector::ApplyCalibrations(){
   fQ_short = fQ_short - zero_off;
-  fT[0]=fT[0]*tlin;//from TDC
+  fT_Q=fT_Q*tlin;//from TDC
   if(fQ_short>0 && fQ_long>0) fPSD = fQ_short/fQ_long;
   
 
 }
 
-void RN_NeutDetector::InsertPSDHit(const double& q_long,const double& q_short){
+void RN_NeutDetector::InsertPSDHit(const double& q_long,const double& q_short,const double& t){
   fQ_long=q_long;
   fQ_short=q_short;
+  fT_Q=t;
  
 }
-
-int RN_NeutDetector::NPeak(const TCutG& psdcut){
-  return psdcut.IsInside(fPSD,fQ_long); 
-}
-
 
 Double_t RN_NeutDetector::PSD() const{if (fQ_long>0) return fQ_short/fQ_long;}
 Double_t RN_NeutDetector::Q() const{return fQ_long;}
 
 
-double RN_NeutDetector::CalculateTRel(const std::vector<RN_NeutDetector>& ndet, double &tfirst){
-  if(tfirst>0){
-    this->fTrel=this->fT[0]-tfirst;
-  }
-  else{
-    double t=10000;
-    for(unsigned int i=0;i<ndet.size();i++){
-      if(ndet[i].fE[0]>0&&ndet[i].fT[0]>0&&ndet[i].fT[0]<t)
-	t=ndet[i].fT[0];
-    }
-    if(t<10000){
-      tfirst=t;
-      this->fTrel=this->fT[0]-tfirst;
-
-    }
-  }
-  
-  return (this->fTrel);
+double RN_NeutDetector::CalculateTRel(const double &tfirst){
+  if(fT_Q)
+    fTrel=fT_Q-tfirst;
   
 }
+
 
 RN_NeutDetectorArray::RN_NeutDetectorArray():fMult(0),
 					     fPos(16,0),
@@ -166,11 +159,16 @@ int RN_NeutDetectorArray::InsertHit(const double& q_long,const double& q_short,c
 namespace RNArray{
   
   void ReconstructTREL(RN_NeutCollection&in){
-    
-    double tfirst=-1;
-    //calculate TRel for all detectors(only important for coincidence data(ie source)
-    for(RN_NeutCollectionRef it = in.begin(); it != in.end();it++){
-      (*it).CalculateTRel(in,tfirst);
+    double t=4096;
+    for(unsigned int i=0;i<in.size();i++){
+      if(in[i].fQ_long>0 &&in[i].fT_Q>0 &&in[i].fT_Q<t)
+	t=in[i].fT_Q;
+    }
+    if(t<4096){    
+      //calculate TRel for all detectors(only important for coincidence data(ie source)
+      for(RN_NeutCollectionRef it = in.begin(); it != in.end();it++){
+	(*it).CalculateTRel(t);
+      }
     }
     
   }

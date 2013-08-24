@@ -52,13 +52,13 @@ class RN_NeutDetector:public RN_BaseDetector{
   Double_t fQ_long;
   Double_t fQ_short;
   Double_t fPSD;
+  Double_t fT_Q;
   Double_t fTrel;
 
-  void InsertPSDHit(const double&,const double&);
+  void InsertPSDHit(const double& fql,const double& fqs,const double& t = 0.0);
   Double_t PSD() const ;
   Double_t Q() const ;
 
-  int NPeak(const TCutG& psdcut);
   TVector3 GetPosVect() const{return fPos;}
 
   void Reset();
@@ -69,7 +69,7 @@ class RN_NeutDetector:public RN_BaseDetector{
 		       double zero_off);
   void SetCalibrations(RN_VariableMap& detvar);
   void ApplyCalibrations();
-  double CalculateTRel(const std::vector<RN_NeutDetector>&ndet,double &tfirst);
+  double CalculateTRel(const double &tfirst);
 
   
   ClassDef(RN_NeutDetector,1);

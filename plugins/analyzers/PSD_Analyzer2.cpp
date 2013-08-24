@@ -129,7 +129,7 @@ void NeutAnalyzer2::Begin(){
     hPSDq_n[i]=new sak::Histogram2D(Form("hPSDq_n%d",i),"fQ_long","fQ_short",1024,50,4096,1024,50,4096);
     hPSD_n_[i]=new sak::Histogram2D(Form("hPSD_neut%d",i),"fPSD","fQ_long",256,0.,1.,1024,50,4096);
     rootfile->cd("neut_timing");
-    hTrel_n[i]=new sak::Histogram2D(Form("hTrel_n%d",i),"Trel","E",512,2,2500,512,50,2500);
+    hTrel_n[i]=new sak::Histogram2D(Form("hTrel_n%d",i),"Trel","E",64,0,128,512,50,2048);
     hEvT_n[i]=new sak::Histogram2D(Form("hEvT_n%d",i),"rftime[ns]","E[arb.units]",128,630,830,2048,50,1000);
   }
   
@@ -155,11 +155,9 @@ void NeutAnalyzer2::Process(){
   for (int i=0;i<10;i++){
     if(i>=neut.size())
       break;
-    hTrel_n[i]->Fill(neut[i].fTrel,neut[i].fQ_long);
-    hPSDq_n[i]->Fill(neut[i].fQ_long,neut[i].fQ_short);
-    
     if(neut[i].fQ_long>0){
       hrftime_raw_n->Fill(i,rftime[0].fT);
+      hPSDq_n[i]->Fill(neut[i].fQ_long,neut[i].fQ_short);
     }
   }
 
@@ -229,6 +227,7 @@ void NeutAnalyzer2::Process(){
     if(neut[i].fQ_long>0){
       hrftime_n->Fill(i,rftime[0].fT);
       if(orcheck){
+	hTrel_n[i]->Fill(neut[i].fTrel,neut[i].fQ_long);
 	hrftime_gated_n->Fill(i,rftime[0].fT);
 	hEvT_n[i]->Fill(rftime[0].fT,neut[i].fQ_long);
       }

@@ -51,7 +51,11 @@ void RN_Analyzer::ApplyCalibrations(){
   for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
     (*it).ApplyCalibrations();
   }
+  
   Narray.ReconstructHits(neut);
+  if(Narray.fMult>1)
+    RNArray::ReconstructTREL(neut);
+
 
   int cref=0;
   for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
@@ -199,9 +203,10 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
   int idx=1; //neut detectors start from channel 1 in QDC
   for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
     if(QDC1[idx]>0){
-      (*it).InsertPSDHit(QDC1[idx],QDC1[idx+16]);
-      if(TDC1[idx]>0)
-	(*it).InsertHit(QDC1[idx],TDC1[idx+16],0.);
+      if(TDC1[idx+16]>0)
+	(*it).InsertPSDHit(QDC1[idx],QDC1[idx+16],TDC1[idx+16]);
+      else
+	(*it).InsertPSDHit(QDC1[idx],QDC1[idx+16]);
     }
     idx++;
     
@@ -228,9 +233,6 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
   if(ADC4 && ADC4[13]>0){
     ic.fdE=ADC4[13];
   }
-
-  
-  RNArray::ReconstructTREL(neut);
 
   
 }
