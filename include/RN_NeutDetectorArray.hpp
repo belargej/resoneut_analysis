@@ -81,7 +81,7 @@ typedef std::vector<RN_NeutDetector>::iterator RN_NeutCollectionRef;
 
 
 
-class RN_NeutDetectorArray{
+class RN_NeutDetectorArray:public TObject{
 private:
 public:
   int fMult;
