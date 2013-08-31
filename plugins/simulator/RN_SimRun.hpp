@@ -25,6 +25,7 @@ private:
 
 public:
   TFile * rootfile;
+  TTree * tree;
   int def;
   //declare histograms here
   TH1D* hn_tof;
@@ -45,6 +46,7 @@ public:
   void Loop(Long64_t evnum,std::string options);
   void StartRun(std::string input);
   void initHists();
+  void initTree(const std::string& in);
   void FillHistograms();
 };
 

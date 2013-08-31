@@ -12,8 +12,8 @@ void RN_SimRun::Loop(Long64_t evnum,std::string options){
       evcount++;
     else
       continue;
-    
-    if(def)FillHistograms();
+    if(def==1)FillHistograms();
+    else if(def==2)tree->Fill();
     if(evcount%30000==0)std::cout<<evcount<<std::endl;
   }  
 }
@@ -28,6 +28,14 @@ void RN_SimRun::initHists(){
 
 }
 
+void RN_SimRun::initTree(const std::string & in){
+  def=2;
+  tree= new TTree("sim","sim");
+  for(unsigned int i=0;i<plist.size();i++)
+    tree->Branch(Form("%s.",plist[i].Name().c_str()),"RN_Particle",&plist[i]);
+  for(unsigned int i=0;i<pterph.size();i++)
+    tree->Branch(Form("%s.",pterph[i].Name().c_str()),"RN_PTerph",&pterph[i]);
+}
 
 void RN_SimRun::FillHistograms(){
   hn_tof->Fill(n_tof);
@@ -73,7 +81,12 @@ void RN_SimRun::StartRun(std::string input){
     else if(input[0]=="fOutput")
       {
 	rootfile=new TFile(input[1].c_str(),"RECREATE");
-	initHists();	
+	if(input.size()==2)
+	  initHists();
+	else if (input.size()==3)
+	  initTree(input[3]);
+	else 
+	  std::cout<<"invalid number of arguments for fOutput"<<std::endl;
       }
     else if(input[0]=="fEvents")
       {

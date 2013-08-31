@@ -21,12 +21,12 @@ void RN_Sim::Init(){
   pterph.push_back(RN_PTerph("neut7",10));
   pterph.push_back(RN_PTerph("neut8",12));
   pterph.push_back(RN_PTerph("neut9",15));
-  pterph.push_back(RN_PTerph("neut10",2));
-  pterph.push_back(RN_PTerph("neut11",3));
-  pterph.push_back(RN_PTerph("neut12",8));
-  pterph.push_back(RN_PTerph("neut13",9));
-  pterph.push_back(RN_PTerph("neut14",13));
-  pterph.push_back(RN_PTerph("neut15",16));
+  //pterph.push_back(RN_PTerph("neut10",2));
+  //pterph.push_back(RN_PTerph("neut11",3));
+  //pterph.push_back(RN_PTerph("neut12",8));
+  //pterph.push_back(RN_PTerph("neut13",9));
+  //pterph.push_back(RN_PTerph("neut14",13));
+  //pterph.push_back(RN_PTerph("neut15",16));
   
   s2_det.push_back(RN_S2Detector("si_a",16,16));
   s2_det.push_back(RN_S2Detector("si_b",16,16));
