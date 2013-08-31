@@ -47,7 +47,7 @@ namespace psd{
   R__EXTERN sak::Hist2D* hpede;
   R__EXTERN sak::Hist2D* hpede_2;
   sak::Hist2D* hpede_ngated;
-
+  sak::Hist1D* hTDC[32];
 
 
 NeutAnalyzer2::NeutAnalyzer2()
@@ -118,6 +118,9 @@ void NeutAnalyzer2::Begin(){
   hPSD_n1_prots=new sak::Hist2D("hPSD_n1_prots","fPSD","fQ_long",256,0.,1.,1024,50,4096);
   hpede_ngated=new sak::Hist2D("hpEdE_ngated","E [MeV]","dE [MeV]",256,0,32,256,0,32);
  
+  for(int i=0;i<32;i++){
+    hTDC[i]=new sak::Histogram1D(Form("hTDC%d",i),"t[arb]",4096,1,4095);
+  }
   s2_tvrf_neut_gated=new sak::Hist2D("s2_tvrf_neut_gated","rftime[ns]","TDC2",128,640,820,256,1.,4096.);
   s2_tvrf=new sak::Hist2D("s2_tvrf","rftime[ns]","TDC2",128,640,820,256,1.,4096.);
   s2_e_v_theta_ngated=new sak::Hist2D("s2_e_v_theta_neut_gated","Theta [deg]","E[MeV]",32,10,50,32,0.,15.);
@@ -215,6 +218,8 @@ void NeutAnalyzer2::Process(){
       s2_e_v_theta_protons->Fill(prot_theta,prot_E);
       hrftime_prots->Fill(rftime[0].fT);
       hPSD_n1_prots->Fill(neut[1].fPSD,neut[1].fQ_long);
+      for(int i=0;i<32;i++)
+	hTDC[i]->Fill(TDC2[i]);
     }
     if(alphacheck)
       hrftime_allneut_cal_alphas->Fill(rftime[0].fT);

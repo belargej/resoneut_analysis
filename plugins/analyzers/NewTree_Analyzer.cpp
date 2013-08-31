@@ -10,7 +10,7 @@ void NewTree_Analyzer::InitTree(std::string filename,std::string treename){
   rootfile=new TFile(filename.c_str(),"RECREATE");
   tree=new TTree(treename.c_str(),treename.c_str());
   for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++)
-    tree->Branch(Form("%s.",(*it).Name().c_str()),"RN_NeutDetector",&(*it));
+    tree->Branch(Form("%s.",(*it).Name().c_str()),"RN_NeutDetector",&(*it),16000,0);
   for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++)
     tree->Branch(Form("%s.",(*it).Name().c_str()),"RN_S2Detector",&(*it),16000,0);
   for(RN_S2ClusterCollectionRef it=si_cluster_.begin();it!=si_cluster_.end();it++)
