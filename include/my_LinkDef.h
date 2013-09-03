@@ -3,6 +3,7 @@
 #pragma link C++ defined_in "RN_Unpack2Root.hpp";
 #pragma link C++ defined_in "RN_BaseDetector.hpp";
 #pragma link C++ defined_in "RN_NeutDetectorArray.hpp";
+#pragma link C++ defined_in "RN_NaIArray.hpp";
 #pragma link C++ defined_in "RN_VariableMap.hpp";
 #pragma link C++ defined_in "RN_SiliconDetectors.hpp";
 #pragma link C++ defined_in "RN_IonChamber.hpp";

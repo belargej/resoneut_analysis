@@ -77,6 +77,7 @@ private:
   double fThreshold;
   int fCounter;
   TVector3 fPos;
+  TVector3 HitPos;
   TRandom3 rnd;//!
   double z_pos;//!
   
@@ -96,7 +97,9 @@ public:
   void Reset();
   void LoadVariables(RN_VariableMap&);
   std::string Name() const {return fName;}
+  int HitCounter() const {return fCounter;}
   TVector3 GetPosVect()const {return fPos;}
+  TVector3 GetHitPos()const {return HitPos;}
   float GetRadius()const {return fRadius;}
   float GetThickness()const {return fThickness;}
   float GetThreshold()const{return fThreshold;}

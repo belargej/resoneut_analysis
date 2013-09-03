@@ -4,12 +4,26 @@ RN_Sim::RN_Sim():myRnd(0){}
 
 void RN_Sim::Init(){
   
+  //25Al(d,n)26Si
+  /*
+  plist.push_back(RN_Particle("25Al"));
+  plist.push_back(RN_Particle("d"));
+  plist.push_back(RN_Particle("n"));
+  plist.push_back(RN_Particle("26Si"));
+  plist.push_back(RN_Particle("p"));
+  plist.push_back(RN_Particle("25Al"));
+  */
+  
+  //12C(d,n)13N
+  
   plist.push_back(RN_Particle("12C"));
   plist.push_back(RN_Particle("d"));
   plist.push_back(RN_Particle("n"));
   plist.push_back(RN_Particle("13N"));
   plist.push_back(RN_Particle("p"));
   plist.push_back(RN_Particle("12C"));
+  
+  
   //////////////////////////"neut",slotnumber
   pterph.push_back(RN_PTerph("neut0",1));
   pterph.push_back(RN_PTerph("neut1",4));
@@ -21,12 +35,12 @@ void RN_Sim::Init(){
   pterph.push_back(RN_PTerph("neut7",10));
   pterph.push_back(RN_PTerph("neut8",12));
   pterph.push_back(RN_PTerph("neut9",15));
-  //pterph.push_back(RN_PTerph("neut10",2));
-  //pterph.push_back(RN_PTerph("neut11",3));
-  //pterph.push_back(RN_PTerph("neut12",8));
-  //pterph.push_back(RN_PTerph("neut13",9));
-  //pterph.push_back(RN_PTerph("neut14",13));
-  //pterph.push_back(RN_PTerph("neut15",16));
+  pterph.push_back(RN_PTerph("neut10",2));
+  pterph.push_back(RN_PTerph("neut11",3));
+  pterph.push_back(RN_PTerph("neut12",8));
+  pterph.push_back(RN_PTerph("neut13",9));
+  pterph.push_back(RN_PTerph("neut14",13));
+  pterph.push_back(RN_PTerph("neut15",16));
   
   s2_det.push_back(RN_S2Detector("si_a",16,16));
   s2_det.push_back(RN_S2Detector("si_b",16,16));
@@ -71,6 +85,7 @@ int RN_Sim::GenerateEvents(Long64_t evnum,std::string options=""){
   RN_SimEvent evt2(plist[3].mass,plist[4].mass,plist[5].mass);
   
   double theta=M_PI*myRnd.Rndm();
+  n_cm=theta;
   double phi = 2.*M_PI*myRnd.Rndm();
   if (myRnd.Rndm()>nDWBA.GetAD(180.- (theta / M_PI * 180.)))
     return 0;
@@ -113,6 +128,17 @@ int RN_Sim::GenerateEvents(Long64_t evnum,std::string options=""){
   return 1;
 }   
 
+double RN_Sim::QValue(const double deltaz/*mm*/, const double tof /*ns*/,double& NKE, double& hiKE){
+  double beam_est = beam_energy - .5*beam_eloss;
+  double M_N=plist[2].mass;
+  double M1=plist[0].mass;
+  double M2=plist[3].mass;
+  NKE=.5*M_N*(deltaz*deltaz/(tof*tof*90000.0));
+  hiKE=(M1/M2)*beam_est+((M_N/M2)*NKE)+((2/M2)*sqrt((beam_est*NKE*M_N*M1)));
+
+  return NKE+hiKE-beam_est;
+
+}
 
 void RN_Sim::Reset(){
   E_deposited=0;

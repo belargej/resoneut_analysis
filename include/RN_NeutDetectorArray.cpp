@@ -192,7 +192,7 @@ namespace RNArray{
     else if(slot==13)pos.SetXYZ(-38.1,76.2,z);
     else if(slot==14)pos.SetXYZ(-114.3,76.2,z);
     else if(slot==15)pos.SetXYZ(38.1,152.4,z);
-    else if(slot==16)pos.SetXYZ(-38.1,-152.4,z);
+    else if(slot==16)pos.SetXYZ(-38.1,152.4,z);
     else return 0;
     
     

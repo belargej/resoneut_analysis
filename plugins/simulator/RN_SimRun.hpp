@@ -33,9 +33,13 @@ public:
   TH2D* hE_n;
   TH2D* hE_v_theta;
   TH2D* hT_v_theta;
+  TH1D* hn_CM;
+  TH2D* hn_CMvLab;
+  TH2D* hpos;
+  TH1D* hQ;
+  TH1D* h_nKE;
+  TH1D* h_hiKE;
   
-
-
 
 
 
@@ -46,7 +50,7 @@ public:
   void Loop(Long64_t evnum,std::string options);
   void StartRun(std::string input);
   void initHists();
-  void initTree(const std::string& in);
+  
   void FillHistograms();
 };
 

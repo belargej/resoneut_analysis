@@ -32,6 +32,7 @@ public:
   RN_MassTable mtable; 
   RN_VariableMap global;
   double E_deposited;
+  double n_cm;
   double n_tof;
   //variables
   double q1set,q2set,q3set,q4set;
@@ -53,7 +54,7 @@ public:
   void SetVariables();
   void SetAngularDistribution(std::string filename);
   int GenerateEvents(Long64_t evnum,std::string options);
-
+  double QValue(const double,const double,double&,double&);
 };
 
 

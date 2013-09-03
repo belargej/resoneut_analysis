@@ -167,13 +167,13 @@ RN_PTerph::RN_PTerph(std::string name,int apos):fName(name),
 						fRadius(34),
 						fThickness(25.4),
 						fThreshold(0.05),
-						rnd(0)
+						rnd(0),
+						HitPos(TVector3(0,0,0))
 {
   
   RNArray::PositionMap(apos,fPos);
   Reset();
 }
-
 
 void RN_PTerph::Reset(){
   fDt=0;
@@ -235,6 +235,7 @@ int RN_PTerph::NeutIn(TLorentzVector nLV,double& t,double& e){
   fDt=0;//time to first reaction
   double x_pos=(px*tof*300/(M_N))-fPos.X();
   double y_pos=(py*tof*300/(M_N))-fPos.Y();
+  HitPos.SetXYZ(x_pos+fPos.X(),y_pos+fPos.Y(),fPos.Z());
   double radial_pos=sqrt(x_pos*x_pos+y_pos*y_pos);
  
   
@@ -280,7 +281,7 @@ int RN_PTerph::H_hit(TLorentzVector& inLV){
   Before.Boost(boostv);
   neut_LVcopy.Boost(boostv);  //this is for getting neutron KE in CM
   double nKE=neut_LVcopy.E()-neut_LVcopy.M();
-  double Hprob=0.04508869*(3.76-3.69*log(nKE)*(fThickness/1000)); 
+  double Hprob=0.04508869*(3.76-3.69*log(nKE))*(fThickness/1000); 
 			   
   if(rnd.Rndm()<= Hprob){  //scatters off a proton
     fCounter++;
@@ -333,4 +334,3 @@ int RN_PTerph::C_hit(TLorentzVector& inLV){
   return false;
  
 }
-
