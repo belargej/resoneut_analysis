@@ -29,16 +29,13 @@
 
 class RN_BaseDetector:public TObject{
 private:
-  std::string fName;
-  int fNumOfCh;
-  int sorted_by_channel;
-  double lowlimit;
-  double highlimit;
+  std::string fName;//!
+  int fNumOfCh;//!
+  int sorted_by_channel;//!
+  double lowlimit;//!
+  double highlimit;//!
 public:
   RN_BaseDetector(){
-    /*fChlist=new double[32];
-    fE=new double[32];
-    fT=new double[32];*/
   }
   RN_BaseDetector(std::string name, int num):fName(name),
 					     fNumOfCh(num),
@@ -53,20 +50,13 @@ public:
 				       
 				       
   {
-    /*fChlist=new double[fNumOfCh];
-    fE=new double[fNumOfCh];
-    fT=new double[fNumOfCh];*/
   }
 
   int fMult;
   std::vector<double>fChlist;//[fMult]
   std::vector<double>fE;//[fMult]
   std::vector<double>fT;//[fMult]
-  /*
-  double* fChlist;//[fMult]
-  double* fE;//[fMult]
-  double* fT;//[fMult]
-  */
+
   void SetELimits(const double&,const double&);
   void Init(const double& num);
   void Reset();

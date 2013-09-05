@@ -28,9 +28,6 @@
 #include "RN_VariableMap.hpp"
 #include "RN_BaseDetector.hpp"
 
-#define I_CN 5 //ion chan num
-
-
 
 class RN_NaIArray:public RN_BaseDetector{
  private:

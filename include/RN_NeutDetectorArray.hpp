@@ -38,9 +38,9 @@ class RN_NeutDetector:public RN_BaseDetector{
   double tlin; //!
   double tshift;//!
   double zero_off;//!
-  int apos;
+  int apos;//!
   TVector3 pos_vect;//!
-  TVector3 fPos;
+  TVector3 fPos;//!
   
  public:
   RN_NeutDetector(){}
@@ -59,7 +59,7 @@ class RN_NeutDetector:public RN_BaseDetector{
   Double_t PSD() const ;
   Double_t Q() const ;
 
-  TVector3 GetPosVect() const{return fPos;}
+  TVector3 GetPosVect() const{return fPos;}//!
 
   void Reset();
   void SetCalibrations(double elin, 
@@ -85,7 +85,7 @@ class RN_NeutDetectorArray:public TObject{
 private:
 public:
   int fMult;
-  std::vector<TVector3>fPos;//[fMult]
+  std::vector<TVector3>fPos;//!
   std::vector<double>fQ_long;//[fMult]
   std::vector<double>fPSD;//[fMult]
   std::vector<int>fDetlist;//[fMult]

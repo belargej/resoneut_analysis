@@ -48,6 +48,9 @@
 #include "RN_Timing.hpp"
 #include "RN_VariableMap.hpp"
 #include "RN_IonChamber.hpp"
+#include "RN_NaIArray.hpp"
+
+
 
 class RN_Analyzer {
 public:
@@ -64,6 +67,7 @@ public:
   RN_S2ClusterCollection si_cluster_;
   RN_RFCollection rftime;
   RN_IonChamber ic;
+  //RN_NaIArray nai;
 
   RN_VariableMap DetVar;
   Int_t calibrated;

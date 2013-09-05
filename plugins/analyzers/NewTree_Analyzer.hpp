@@ -20,10 +20,10 @@ public:
   virtual ~NewTree_Analyzer(){};
 
   void InitTree(std::string filename,std::string treename);
-  virtual void Loop();
   virtual void Process();
   virtual void Clear(){};
-  virtual void WriteOut();
+  virtual void Terminate();
+
 
   ClassDef(NewTree_Analyzer,0);
 };

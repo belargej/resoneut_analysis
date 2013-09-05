@@ -28,8 +28,6 @@
 #include "RN_VariableMap.hpp"
 #include "RN_BaseDetector.hpp"
 
-#define I_CN 5 //ion chan num
-
 
 
 class RN_IonChamber:public TObject{
@@ -59,7 +57,7 @@ class RN_IonChamber:public TObject{
   RN_BaseDetector ygrid;
 
   
-  std::string Name()const{return fName;}
+  std::string Name()const{return fName;}//!
   void Reset();
   void ApplyCalibrations(){}
   void SetCalibrations(float, float, float, float);

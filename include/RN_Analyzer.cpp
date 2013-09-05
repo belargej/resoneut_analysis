@@ -13,6 +13,7 @@ using namespace std;
 
 RN_Analyzer::RN_Analyzer():calibrated(0),
 			   ic("ic")
+			   //nai("nai")
 			   //si_a("si_a",16,16),
 			   // si_b("si_b",16,16),
 			   //si_cluster_b("si_cluster_b",16),

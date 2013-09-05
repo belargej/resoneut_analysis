@@ -47,8 +47,8 @@ public:
   {
   }
   RN_RFTime(std::string name);
-  virtual ~RN_RFTime(){};
-  
+  ~RN_RFTime(){};
+  /*
   RN_RFTime(const RN_RFTime& old):TObject(old){
     fName=old.Name();
     fT=old.fT;
@@ -56,6 +56,8 @@ public:
     tshift=old.tshift;
     fTo=old.fTo;
   }
+  */
+  /*
   RN_RFTime& operator=(const RN_RFTime& other){
     if(this !=&other){
       fName=other.Name();
@@ -66,13 +68,13 @@ public:
     }
     return *this;
   }
-  
+  */
 
  //data variables 
-  Double_t fT;
+  double fT;
 
   
-  std::string Name() const{return fName;}
+  std::string Name() const{return fName;}//!
   void ApplyCalibrations();
   void SetCalibrations(RN_VariableMap&);
   void InsertHit(const double&);

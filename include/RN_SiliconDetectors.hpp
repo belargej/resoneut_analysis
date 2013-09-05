@@ -36,7 +36,7 @@
 
 class RN_S2Detector:public TObject{
 private:
-  std::string fName;
+  std::string fName;//!
   double elin;//!
   double eshift;//!
   double tlin;//!
@@ -96,7 +96,7 @@ public:
   void SetCalibrations(double,double,double,double); 
   void ApplyCalibrations();
   void SetCalibrations(RN_VariableMap& detvar);
-  std::string Name()const{return fName;} 
+  std::string Name()const{return fName;}//!
   ClassDef(RN_S2Detector,1);
  
 };

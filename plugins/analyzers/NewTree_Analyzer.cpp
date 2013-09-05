@@ -17,18 +17,11 @@ void NewTree_Analyzer::InitTree(std::string filename,std::string treename){
     tree->Branch(Form("%s.",(*it).Name().c_str()),"RN_S2Cluster",&(*it));
   for(RN_RFCollectionRef it=rftime.begin();it!=rftime.end();it++)
     tree->Branch(Form("%s.",(*it).Name().c_str()),"RN_RFTime",&(*it));
-  
   tree->Branch("Narray.","RN_NeutDetectorArray",&Narray);
+  tree->Branch("ic.","RN_IonChamber",&ic);
+  // tree->Branch("nai.","RN_NaIArray",&nai);
 }
 
-void NewTree_Analyzer::Loop(){
-  Long64_t totentries= TotEntries();
-  for (Long64_t i=0;i<totentries;i++){
-    GetDetectorEntry(i);
-
-    Process();
-  }
-}
 
 void NewTree_Analyzer::Process(){
   ApplyCalibrations();
@@ -38,7 +31,7 @@ void NewTree_Analyzer::Process(){
 
   
 
-void NewTree_Analyzer::WriteOut(){
+void NewTree_Analyzer::Terminate(){
   rootfile->Write();
   rootfile->Close();
   

@@ -82,9 +82,9 @@ double RN_NeutDetector::CalculateTRel(const double &tfirst){
 
 RN_NeutDetectorArray::RN_NeutDetectorArray():fMult(0),
 					     fPos(16,0),
-					     fQ_long(16),
-					     fPSD(16),
-					     fDetlist(16){
+					     fQ_long(16,0),
+					     fPSD(16,0),
+					     fDetlist(16,-1){
   
 }
 					     
