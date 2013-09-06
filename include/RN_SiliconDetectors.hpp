@@ -37,20 +37,20 @@
 class RN_S2Detector:public TObject{
 private:
   std::string fName;//!
-  double elin;//!
-  double eshift;//!
-  double tlin;//!
-  double tshift;//! 
-  std::vector<double> fronta0;//!
-  std::vector<double> fronta1;//!
-  std::vector<double> backa0;//!
-  std::vector<double> backa1;//!
+  Double32_t elin;//!
+  Double32_t eshift;//!
+  Double32_t tlin;//!
+  Double32_t tshift;//! 
+  std::vector<Double32_t> fronta0;//!
+  std::vector<Double32_t> fronta1;//!
+  std::vector<Double32_t> backa0;//!
+  std::vector<Double32_t> backa1;//!
   TVector3 normv_;//!
   TVector3 shiftv_;//!
   TVector3 posv_;//!
   TVector3 rotv_;//!
-  double ring_pitch_;//!
-  double delta_phi_;//!
+  Double32_t ring_pitch_;//!
+  Double32_t delta_phi_;//!
 
 public:
   RN_BaseDetector front;
@@ -124,7 +124,7 @@ private:
   
 
 public:
-  std::vector<double>fChlist_b;
+  std::vector<Double32_t>fChlist_b;
   std::vector<TVector3> fPos;
 
   RN_S2Cluster(int i=0):RN_BaseDetector("si.cluster",16),

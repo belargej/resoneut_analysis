@@ -51,8 +51,8 @@ class RN_IonChamber:public TObject{
 					 
   {
   }
-  double fE;
-  double fdE;
+  Double32_t fE;
+  Double32_t fdE;
   RN_BaseDetector xgrid;
   RN_BaseDetector ygrid;
 

@@ -169,18 +169,23 @@ void NeutAnalyzer2::Process(){
   //Fill calpar.Histograms below this line
   /*************************************************************/
   h_ndetMult->Fill(Narray.fMult);
-
-  int orcheck=(n0_neuts->IsInside(neut[0].fPSD,neut[0].fQ_long) || 
-	       n1_neuts->IsInside(neut[1].fPSD,neut[1].fQ_long) ||
-	       n2_neuts->IsInside(neut[2].fPSD,neut[2].fQ_long) ||
-	       n3_neuts->IsInside(neut[3].fPSD,neut[3].fQ_long) ||
-	       n4_neuts->IsInside(neut[4].fPSD,neut[4].fQ_long) ||
-	       n5_neuts->IsInside(neut[5].fPSD,neut[5].fQ_long) ||
-	       n6_neuts->IsInside(neut[6].fPSD,neut[6].fQ_long) ||
-	       n7_neuts->IsInside(neut[7].fPSD,neut[7].fQ_long) ||
-	       n8_neuts->IsInside(neut[8].fPSD,neut[8].fQ_long) ||
-	       n9_neuts->IsInside(neut[9].fPSD,neut[9].fQ_long)
-	       );
+  
+  int neutcheck[10]={0};
+  int orcheck=0;
+  neutcheck[0] = n0_neuts->IsInside(neut[0].fPSD,neut[0].fQ_long);
+  neutcheck[1] = n1_neuts->IsInside(neut[1].fPSD,neut[1].fQ_long);
+  neutcheck[2] = n2_neuts->IsInside(neut[2].fPSD,neut[2].fQ_long);
+  neutcheck[3] = n3_neuts->IsInside(neut[3].fPSD,neut[3].fQ_long);
+  neutcheck[4] = n4_neuts->IsInside(neut[4].fPSD,neut[4].fQ_long);
+  neutcheck[5] = n5_neuts->IsInside(neut[5].fPSD,neut[5].fQ_long);
+  neutcheck[6] = n6_neuts->IsInside(neut[6].fPSD,neut[6].fQ_long);
+  neutcheck[7] = n7_neuts->IsInside(neut[7].fPSD,neut[7].fQ_long);
+  neutcheck[8] = n8_neuts->IsInside(neut[8].fPSD,neut[8].fQ_long);
+  neutcheck[9] = n9_neuts->IsInside(neut[9].fPSD,neut[9].fQ_long);
+  
+  for (int i=0;i<10;i++)	    
+    orcheck = neutcheck[i] || orcheck;
+  
   int protcheck=0;
   int alphacheck=0;
 
@@ -231,7 +236,7 @@ void NeutAnalyzer2::Process(){
     hPSD_n_[i]->Fill(neut[i].fPSD,neut[i].fQ_long);
     if(neut[i].fQ_long>0){
       hrftime_n->Fill(i,rftime[0].fT);
-      if(orcheck){
+      if(neutcheck[i]){
 	hTrel_n[i]->Fill(neut[i].fTrel,neut[i].fQ_long);
 	hrftime_gated_n->Fill(i,rftime[0].fT);
 	hEvT_n[i]->Fill(rftime[0].fT,neut[i].fQ_long);

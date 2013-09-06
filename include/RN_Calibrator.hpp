@@ -48,7 +48,7 @@ public:
 														elowlimit(lowlimit),
 														ehighlimit(highlimit){
   }
-  std::vector<double> a0,a1;
+  std::vector<Double32_t> a0,a1;
   std::vector<int> point;
   std::vector<TGraph> Corr;//for matching all front to one back channel
   std::string detname;

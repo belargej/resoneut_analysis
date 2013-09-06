@@ -53,9 +53,9 @@ public:
   }
 
   int fMult;
-  std::vector<double>fChlist;//[fMult]
-  std::vector<double>fE;//[fMult]
-  std::vector<double>fT;//[fMult]
+  std::vector<Double32_t>fChlist;//[fMult]
+  std::vector<Double32_t>fE;//[fMult]
+  std::vector<Double32_t>fT;//[fMult]
 
   void SetELimits(const double&,const double&);
   void Init(const double& num);

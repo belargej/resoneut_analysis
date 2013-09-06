@@ -49,11 +49,11 @@ class RN_NeutDetector:public RN_BaseDetector{
   ~RN_NeutDetector(){}
 
   //NeutDetector Specific Parameterss 
-  Double_t fQ_long;
-  Double_t fQ_short;
-  Double_t fPSD;
-  Double_t fT_Q;
-  Double_t fTrel;
+  Double32_t fQ_long;
+  Double32_t fQ_short;
+  Double32_t fPSD;
+  Double32_t fT_Q;
+  Double32_t fTrel;
 
   void InsertPSDHit(const double& fql,const double& fqs,const double& t = 0.0);
   Double_t PSD() const ;
@@ -86,8 +86,8 @@ private:
 public:
   int fMult;
   std::vector<TVector3>fPos;//!
-  std::vector<double>fQ_long;//[fMult]
-  std::vector<double>fPSD;//[fMult]
+  std::vector<Double32_t>fQ_long;//[fMult]
+  std::vector<Double32_t>fPSD;//[fMult]
   std::vector<int>fDetlist;//[fMult]
 
 
