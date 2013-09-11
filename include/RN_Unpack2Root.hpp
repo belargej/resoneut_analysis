@@ -54,9 +54,11 @@ public:
   float ADC4[32];
   float ADC5[32];
   float ADC6[32];
+  float ADC7[32];
   float TDC1[32];
   float TDC2[32];
   float TDC3[32];
+  float TDC4[32];
   float QDC1[32];
   float QDC2[32];
 
@@ -65,7 +67,6 @@ public:
   TRandom3 Rnd;
 
   RNUnpack2Root();
-
   int Convert(std::vector<int>&run_number,std::string data_dir,std::string output_file);
   bool init();
   int GetMesyNum(){return mesy_stack.size();}

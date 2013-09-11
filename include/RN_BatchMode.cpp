@@ -35,9 +35,6 @@
 
 #include "RN_Unpack2Root.hpp"
 
-
-
-
 int main(int argc, char*argv[]){
   if(argc==3){
     RNUnpack2Root* a=new RNUnpack2Root();
@@ -56,3 +53,4 @@ int main(int argc, char*argv[]){
     std::cout<<"invalid number of arguments: \n"<<"RNBatchMode dir output config"<<std::endl;
   
 }
+

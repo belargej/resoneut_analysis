@@ -67,7 +67,7 @@ public:
   RN_S2ClusterCollection si_cluster_;
   RN_RFCollection rftime;
   RN_IonChamber ic;
-  //RN_NaIArray nai;
+  RN_NaICollection nai;
 
   RN_VariableMap DetVar;
   Int_t calibrated;
@@ -86,9 +86,11 @@ public:
   Float_t       ADC4[32];
   Float_t       ADC5[32];
   Float_t       ADC6[32];
+  Float_t       ADC7[32];
   Float_t       TDC1[32];
   Float_t       TDC2[32];
   Float_t       TDC3[32];
+  Float_t       TDC4[32];
   Float_t       QDC1[32];
   Float_t       QDC2[32];
   
@@ -99,9 +101,11 @@ public:
   TBranch        *b_ADC4;   //!
   TBranch        *b_ADC5;   //!
   TBranch        *b_ADC6;   //!
+  TBranch        *b_ADC7;   //!
   TBranch        *b_TDC1;   //!
   TBranch        *b_TDC2;   //!
   TBranch        *b_TDC3;   //!
+  TBranch        *b_TDC4;   //!
   TBranch        *b_QDC1;   //!
   TBranch        *b_QDC2;   //!
  

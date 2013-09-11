@@ -21,6 +21,7 @@
 #pragma link C++ class std::vector<RN_IonChamber>;
 #pragma link C++ class std::vector<RN_S2Detector>;
 #pragma link C++ class std::vector<RN_RFTime>;
+#pragma link C++ class std::vector<RN_NaIDetector>;
 #pragma link C++ class std::vector<Double32_t>;
 
 #endif

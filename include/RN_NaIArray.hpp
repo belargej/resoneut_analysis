@@ -28,6 +28,42 @@
 #include "RN_VariableMap.hpp"
 #include "RN_BaseDetector.hpp"
 
+class RN_NaIDetector:public TObject{
+private:  
+  std::string fName;
+  float elin;//!
+  float eshift;//!
+  float tlin;//!
+  float tshift;//!
+public:
+
+  Double32_t fE[2];
+  Double32_t fT[2];
+
+  RN_NaIDetector(){}
+  RN_NaIDetector(std::string name):fName(name),
+				   elin(1),
+				   eshift(0),
+				   tlin(1),
+				   tshift(0)
+  {
+    Reset();
+  }
+
+
+  std::string Name(){return fName;}
+  void Reset();
+  void ApplyCalibrations(){}
+  void SetCalibrations(float, float, float, float);
+  void SetCalibrations(RN_VariableMap& detvar);
+  double SumE() const{return fE[0]+fE[1];};
+
+  ClassDef(RN_NaIDetector,0);
+
+};
+
+typedef std::vector<RN_NaIDetector> RN_NaICollection;
+typedef std::vector<RN_NaIDetector>::iterator RN_NaICollectionRef;
 
 class RN_NaIArray:public RN_BaseDetector{
  private:
@@ -37,8 +73,7 @@ class RN_NaIArray:public RN_BaseDetector{
   float tshift;//!
  public:
   RN_NaIArray(){}
-  RN_NaIArray(std::string name):RN_BaseDetector(name,40),
-				  elin(1),
+  RN_NaIArray(std::string name):  elin(1),
 				  eshift(0),
 				  tlin(1),
 				  tshift(0)

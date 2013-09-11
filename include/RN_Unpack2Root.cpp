@@ -20,9 +20,11 @@ RNUnpack2Root::RNUnpack2Root():Rnd(0)
     ADC4[i]=0;
     ADC5[i]=0;
     ADC6[i]=0;
+    ADC7[i]=0;
     TDC1[i]=0;
     TDC2[i]=0;
     TDC3[i]=0;
+    TDC4[i]=0;
     QDC1[i]=0;
     QDC2[i]=0;
 
@@ -50,9 +52,11 @@ void RNUnpack2Root::Reset(){
     ADC4[i]=0;
     ADC5[i]=0;
     ADC6[i]=0;
+    ADC7[i]=0;
     TDC1[i]=0;
     TDC2[i]=0;
     TDC3[i]=0;
+    TDC4[i]=0;
     QDC1[i]=0;
     QDC2[i]=0;
   }
@@ -67,9 +71,11 @@ int RNUnpack2Root::SortGeoChan(short geoaddress,short chan, short val){
   else if(geoaddress==5&&chan<32)ADC4[chan]=(float)val+Rnd.Rndm();
   else if(geoaddress==6&&chan<32)ADC5[chan]=(float)val+Rnd.Rndm();
   else if(geoaddress==7&&chan<32)ADC6[chan]=(float)val+Rnd.Rndm();
+  else if(geoaddress==8&&chan<32)ADC7[chan]=(float)val+Rnd.Rndm();
   else if(geoaddress==10&&chan<32)TDC1[chan]=(float)val+Rnd.Rndm();
   else if(geoaddress==11&&chan<32)TDC2[chan]=(float)val+Rnd.Rndm();
   else if(geoaddress==12&&chan<32)TDC3[chan]=(float)val+Rnd.Rndm();
+  else if(geoaddress==13&&chan<32)TDC4[chan]=(float)val+Rnd.Rndm();
   else if(geoaddress==14&&chan<32)QDC1[chan]=(float)val+Rnd.Rndm();
   else if(geoaddress==16&&chan<32)QDC2[chan]=(float)val+Rnd.Rndm();
   else return 0;
@@ -122,9 +128,11 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
   DataTree->Branch("ADC4",&ADC4,"ADC4[32]/F");
   DataTree->Branch("ADC5",&ADC5,"ADC5[32]/F");
   DataTree->Branch("ADC6",&ADC6,"ADC6[32]/F");
+  DataTree->Branch("ADC7",&ADC7,"ADC7[32]/F");
   DataTree->Branch("TDC1",&TDC1,"TDC1[32]/F");
   DataTree->Branch("TDC2",&TDC2,"TDC2[32]/F");
   DataTree->Branch("TDC3",&TDC3,"TDC3[32]/F");
+  DataTree->Branch("TDC4",&TDC4,"TDC4[32]/F");
   DataTree->Branch("QDC1",&QDC1,"QDC1[32]/F");
   DataTree->Branch("QDC2",&QDC2,"QDC2[32]/F");
   
@@ -455,5 +463,4 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
   return 0;
 
 }
-
 
