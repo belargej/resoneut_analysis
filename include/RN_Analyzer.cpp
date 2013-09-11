@@ -218,6 +218,8 @@ RN_Analyzer::~RN_Analyzer(){
 
 int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
 
+
+  //Reset all detectors
   for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
     (*it).Reset();
   }
@@ -241,12 +243,20 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
     (*it).Reset();
   }
   
+
+
+
   if(!GetEntry(entry,getall)){
     
     return 0;
 
   }
+
+
   if(entry%30000==0)std::cout<<entry<<std::endl;
+
+
+
   //ChanneltoDetector
   
   int idx=1; //neut detectors start from channel 1 in QDC
@@ -271,17 +281,34 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
 
   int k=0;
   for(int j=0;j<8;j++){
-    if(ADC4[k+16]>0)nai[j].fE[0]=ADC4[j+16];
-    if(ADC4[k+17]>0)nai[j].fE[1]=ADC4[j+17];
+    if(ADC4[k+16]>0)nai[j].fE[0]=ADC4[k+16];
+    if(ADC4[k+17]>0)nai[j].fE[1]=ADC4[k+17];
+    if(TDC3[k+16]>0)nai[j+8].fT[0]=TDC3[k+16];
+    if(TDC3[k+17]>0)nai[j+8].fT[1]=TDC3[k+17];
+    
+    if(TDC3[k]>0)nai[j].fT[0]=TDC3[k];  //first 16 channels don't look good
+    if(TDC3[k+1]>0)nai[j].fT[1]=TDC3[k+1];//moving to TDC4 back 16
+
+   
+    //if(TDC4[k+16]>0)nai[j].fT[0]=TDC4[k+16];
+    //if(TDC4[k+17]>0)nai[j].fT[1]=TDC4[k+17];
+
+    while(j<4){
+      if(TDC4[k]>0)nai[j+16].fT[0]=TDC4[k];
+      if(TDC4[k+1]>0)nai[j+16].fT[1]=TDC4[k+1];
+    }
+    
     k+=2;
   }
 
   k=0;
   for(int j=0;j<12;j++){
-    if(ADC7[k]>0)nai[j+8].fE[0]=ADC5[j];
-    if(ADC7[k+1]>0)nai[j+8].fE[0]=ADC5[j];
+    if(ADC7[k]>0)nai[j+8].fE[0]=ADC5[k];
+    if(ADC7[k+1]>0)nai[j+8].fE[0]=ADC5[k];
     k+=2;
   }
+
+
 
 
 

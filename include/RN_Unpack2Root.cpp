@@ -34,10 +34,10 @@ RNUnpack2Root::RNUnpack2Root():Rnd(0)
  
 bool RNUnpack2Root::init(){
 
-  short caen_geo[]={3,4,5,6,7,10,11};
+  short caen_geo[]={3,4,5,6,7,8,10,11,12,13};
   short mesy_geo[]={14,16};
   
-  caen_stack.insert(caen_stack.begin(),caen_geo,caen_geo+7);
+  caen_stack.insert(caen_stack.begin(),caen_geo,caen_geo+10);
   mesy_stack.insert(mesy_stack.begin(),mesy_geo,mesy_geo+2);  
 
   return 1;

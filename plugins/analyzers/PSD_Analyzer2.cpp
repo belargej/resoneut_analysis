@@ -55,42 +55,6 @@ NeutAnalyzer2::NeutAnalyzer2()
 
 }
 
-void NeutAnalyzer2::LoadGates(const std::string& input){
-  
-  sak::LoadCuts in(input.c_str());
-
-
-  if(in.getCut("n0_neuts") && !n0_neuts)
-    n0_neuts=new TCutG(*in.getCut("n0_neuts"));
-  if(in.getCut("n1_neuts") && !n1_neuts)
-    n1_neuts=new TCutG(*in.getCut("n1_neuts"));
-  if(in.getCut("n2_neuts") && !n2_neuts)
-    n2_neuts=new TCutG(*in.getCut("n2_neuts"));   
-  if(in.getCut("n3_neuts") && !n3_neuts)
-    n3_neuts=new TCutG(*in.getCut("n3_neuts"));
-  if(in.getCut("n4_neuts") && !n4_neuts)
-    n4_neuts=new TCutG(*in.getCut("n4_neuts"));
-  if(in.getCut("n5_neuts") && !n5_neuts)
-    n5_neuts=new TCutG(*in.getCut("n5_neuts"));
-  if(in.getCut("n6_neuts") && !n6_neuts)
-    n6_neuts=new TCutG(*in.getCut("n6_neuts"));   
-  if(in.getCut("n7_neuts") && !n7_neuts)
-    n7_neuts=new TCutG(*in.getCut("n7_neuts"));
-  if(in.getCut("n8_neuts") && !n8_neuts)
-    n8_neuts=new TCutG(*in.getCut("n8_neuts"));
-  if(in.getCut("n9_neuts") && !n9_neuts)
-    n9_neuts=new TCutG(*in.getCut("n9_neuts"));
-  if(in.getCut("prots1") && !prots1)
-    prots1=new TCutG(*in.getCut("prots1"));
-  if(in.getCut("alphas") && !alphas)
-    alphas=new TCutG(*in.getCut("alphas"));
-
-
-
-
-}
-
-
 void NeutAnalyzer2::Begin(){
   int idx=0;
 
@@ -253,18 +217,56 @@ void NeutAnalyzer2::Terminate(){
 }
 
 
+  void LoadGates(const std::string& input){
+  
+    sak::LoadCuts in(input.c_str());
+    
+    
+    if(in.getCut("n0_neuts") && !n0_neuts)
+      n0_neuts=new TCutG(*in.getCut("n0_neuts"));
+    if(in.getCut("n1_neuts") && !n1_neuts)
+      n1_neuts=new TCutG(*in.getCut("n1_neuts"));
+    if(in.getCut("n2_neuts") && !n2_neuts)
+      n2_neuts=new TCutG(*in.getCut("n2_neuts"));   
+    if(in.getCut("n3_neuts") && !n3_neuts)
+      n3_neuts=new TCutG(*in.getCut("n3_neuts"));
+    if(in.getCut("n4_neuts") && !n4_neuts)
+      n4_neuts=new TCutG(*in.getCut("n4_neuts"));
+    if(in.getCut("n5_neuts") && !n5_neuts)
+      n5_neuts=new TCutG(*in.getCut("n5_neuts"));
+    if(in.getCut("n6_neuts") && !n6_neuts)
+      n6_neuts=new TCutG(*in.getCut("n6_neuts"));   
+    if(in.getCut("n7_neuts") && !n7_neuts)
+      n7_neuts=new TCutG(*in.getCut("n7_neuts"));
+    if(in.getCut("n8_neuts") && !n8_neuts)
+      n8_neuts=new TCutG(*in.getCut("n8_neuts"));
+    if(in.getCut("n9_neuts") && !n9_neuts)
+      n9_neuts=new TCutG(*in.getCut("n9_neuts"));
+    if(in.getCut("prots1") && !prots1)
+      prots1=new TCutG(*in.getCut("prots1"));
+    if(in.getCut("alphas") && !alphas)
+      alphas=new TCutG(*in.getCut("alphas"));
+    
+    
+    
+    
+  }
 
-
+  
   void  analysis2(const char * infile, const char * config, const char * cuts){
     NeutAnalyzer2 a;
     a.Init(infile);
     a.LoadVariableFile(config);
     a.SetCalibrations();
-    a.LoadGates(cuts);
+    LoadGates(cuts);
     a.Loop();
 
     
     
   }
+
+
+
+
 
 }
