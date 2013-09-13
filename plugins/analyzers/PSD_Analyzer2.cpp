@@ -65,16 +65,16 @@ void NeutAnalyzer2::Begin(){
   rootfile->mkdir("protons");
 
   rootfile->cd("rftime");
-  hrftime=new sak::Histogram1D("hrftime","rftime[arb. units]",256,2050,2650);
+  hrftime=new sak::Histogram1D("hrftime","rftime[arb. units]",4096,0,4095);
   hrftime_allneut=new sak::Histogram1D("hrftime_allneut","rftime[arb. units]",4096,0,4095);
-  hrftime_cal=new sak::Histogram1D("hrftime_cal","rftime[ns]",128,630,830);
-  hrftime_prots=new sak::Histogram1D("hrftime_prots","rftime[ns]",128,630,830);
-  hrftime_allneut_cal=new sak::Histogram1D("hrftime_allneut_cal","rftime[ns]",128,630,830); 
-  hrftime_allneut_cal_p=new sak::Histogram1D("hrftime_allneut_cal_p","rftime[ns]",128,630,830); 
-  hrftime_allneut_cal_proton=new sak::Histogram1D("hrftime_allneut_cal_protons","rftime[ns]",128,630,830); 
-  hrftime_allneut_cal_alphas=new sak::Histogram1D("hrftime_allneut_cal_alphas","rftime[ns]",128,630,830); 
-  hrftime_n=new sak::Histogram2D("hrftime_n","Detector","rftime[ns]",17,0,16,128,630,830);
-  hrftime_gated_n=new sak::Histogram2D("hrftime_gated_n","Detector","rftime[ns]",17,0,16,128,630,830);
+  hrftime_cal=new sak::Histogram1D("hrftime_cal","rftime[ns]",1200,0,1199);
+  hrftime_prots=new sak::Histogram1D("hrftime_prots","rftime[ns]",1200,0,1199);
+  hrftime_allneut_cal=new sak::Histogram1D("hrftime_allneut_cal","rftime[ns]",1200,0,1199); 
+  hrftime_allneut_cal_p=new sak::Histogram1D("hrftime_allneut_cal_p","rftime[ns]",1200,0,1199); 
+  hrftime_allneut_cal_proton=new sak::Histogram1D("hrftime_allneut_cal_protons","rftime[ns]",1200,0,1199); 
+  hrftime_allneut_cal_alphas=new sak::Histogram1D("hrftime_allneut_cal_alphas","rftime[ns]",1200,0,1199); 
+  hrftime_n=new sak::Histogram2D("hrftime_n","Detector","rftime[ns]",17,0,16,1200,0,1199);
+  hrftime_gated_n=new sak::Histogram2D("hrftime_gated_n","Detector","rftime[ns]",17,0,16,1200,0,1199);
   hrftime_raw_n =new sak::Histogram2D("hrftime_raw_n","Detector","rftime[ns]",17,0,16,4096,0,4095);
   rootfile->cd("protons");
   hpede=new sak::Hist2D("hpEdE","E [MeV]","dE [MeV]",64,0,20,64,0,6);
@@ -97,7 +97,7 @@ void NeutAnalyzer2::Begin(){
     hPSD_n_[i]=new sak::Histogram2D(Form("hPSD_neut%d",i),"fPSD","fQ_long",256,0.,1.,1024,50,4096);
     rootfile->cd("neut_timing");
     hTrel_n[i]=new sak::Histogram2D(Form("hTrel_n%d",i),"Trel","E",64,0,128,512,50,2048);
-    hEvT_n[i]=new sak::Histogram2D(Form("hEvT_n%d",i),"rftime[ns]","E[arb.units]",128,630,830,2048,50,1000);
+    hEvT_n[i]=new sak::Histogram2D(Form("hEvT_n%d",i),"rftime[ns]","E[arb.units]",1200,0,1199,2048,50,1000);
   }
   
   h_ndetMult=new sak::Hist1D("h_ndetmult","mult",11,0,10);

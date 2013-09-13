@@ -35,6 +35,19 @@ namespace psd{
   sak::Hist1D *nai_t_ru[10];
   sak::Hist1D *nai_t_rd[10];
 
+    
+  sak::Hist1D *hTDC3[32];
+  sak::Hist1D *hTDC4[32];
+  sak::Hist1D *hADC4[32];
+  sak::Hist1D *hADC7[32];
+
+  sak::Hist2D *nai_t_lu_v_neut1e[10];
+  sak::Hist2D *nai_t_ld_v_neut1e[10];
+  sak::Hist2D *nai_t_ru_v_neut1e[10];
+  sak::Hist2D *nai_t_rd_v_neut1e[10];
+
+  
+  R__EXTERN sak::Histogram2D *hPSD_n_[10];
 
 NaI_NeutAnalyzer::NaI_NeutAnalyzer()
 {
@@ -46,33 +59,53 @@ void NaI_NeutAnalyzer::Begin(){
 
   rootfile=new TFile("nai_neut_analysis.root","RECREATE");
   rootfile->mkdir("e");
+  rootfile->mkdir("e/left");
+  rootfile->mkdir("e/right");
   rootfile->mkdir("t");
+  rootfile->mkdir("t/left");
+  rootfile->mkdir("t/right");
   rootfile->mkdir("esum");
+  rootfile->mkdir("esum/left");
+  rootfile->mkdir("esum/right");
+  rootfile->mkdir("evt");
+  rootfile->mkdir("evt/neut1");
+  rootfile->mkdir("evt/neut1/left");
+  rootfile->mkdir("evt/neut1/right");
+  rootfile->mkdir("neut_PSD");
 
   
   for(int i=0;i<10;i++){
-    rootfile->cd("e");
-    nai_e_lu[i]=new sak::Hist1D(Form("nai_e_lu%d",i+1),"e[arb]",4096,0,4095);
-    nai_e_ld[i]=new sak::Hist1D(Form("nai_e_ld%d",i+1),"e[arb]",4096,0,4095);
-    nai_e_ru[i]=new sak::Hist1D(Form("nai_e_ru%d",i+1),"e[arb]",4096,0,4095);
-    nai_e_rd[i]=new sak::Hist1D(Form("nai_e_rd%d",i+1),"e[arb]",4096,0,4095);
-    rootfile->cd("t");
-    nai_t_lu[i]=new sak::Hist1D(Form("nai_t_lu%d",i+1),"e[arb]",4096,0,4095);
-    nai_t_ld[i]=new sak::Hist1D(Form("nai_t_ld%d",i+1),"e[arb]",4096,0,4095);
-    nai_t_ru[i]=new sak::Hist1D(Form("nai_t_ru%d",i+1),"e[arb]",4096,0,4095);
-    nai_t_rd[i]=new sak::Hist1D(Form("nai_t_rd%d",i+1),"e[arb]",4096,0,4095);
-    rootfile->cd("esum");
-    nai_sume_l[i]=new sak::Hist1D(Form("nai_sume_l%d",i+1),"e[arb]",4096,0,4095);
-    nai_sume_r[i]=new sak::Hist1D(Form("nai_sume_r%d",i+1),"e[arb]",4096,0,4095);
-
-
+    rootfile->cd("e/left");
+    nai_e_lu[i]=new sak::Hist1D(Form("nai_e_lu%d",i+1),"e[arb]",4096,1,4096);
+    nai_e_ld[i]=new sak::Hist1D(Form("nai_e_ld%d",i+1),"e[arb]",4096,1,4096);
+    rootfile->cd("e/right");    
+    nai_e_ru[i]=new sak::Hist1D(Form("nai_e_ru%d",i+1),"e[arb]",4096,1,4096);
+    nai_e_rd[i]=new sak::Hist1D(Form("nai_e_rd%d",i+1),"e[arb]",4096,1,4096);
+    rootfile->cd("t/left");
+    nai_t_lu[i]=new sak::Hist1D(Form("nai_t_lu%d",i+1),"e[arb]",4096,1,4096);
+    nai_t_ld[i]=new sak::Hist1D(Form("nai_t_ld%d",i+1),"e[arb]",4096,1,4096);
+    rootfile->cd("t/right");    
+    nai_t_ru[i]=new sak::Hist1D(Form("nai_t_ru%d",i+1),"e[arb]",4096,1,4096);
+    nai_t_rd[i]=new sak::Hist1D(Form("nai_t_rd%d",i+1),"e[arb]",4096,1,4096);
+    rootfile->cd("esum/left");
+    nai_sume_l[i]=new sak::Hist1D(Form("nai_sume_l%d",i+1),"e[arb]",4096,1,4096);
+    rootfile->cd("esum/right");
+    nai_sume_r[i]=new sak::Hist1D(Form("nai_sume_r%d",i+1),"e[arb]",4096,1,4096);
+    rootfile->cd("evt/neut1/left");
+    nai_t_lu_v_neut1e[i]=new sak::Hist2D(Form("nai_t_lu%dvneut1e",i+1),"t[arb]","e[arb]",1024,1,4096,512,0,1023);
+    nai_t_ld_v_neut1e[i]=new sak::Hist2D(Form("nai_t_ld%dvneut1e",i+1),"t[arb]","e[arb]",1024,1,4096,512,0,1023);
+    rootfile->cd("evt/neut1/right");
+    nai_t_ru_v_neut1e[i]=new sak::Hist2D(Form("nai_t_ru%dvneut1e",i+1),"t[arb]","e[arb]",1024,1,4096,512,0,1023);
+    nai_t_rd_v_neut1e[i]=new sak::Hist2D(Form("nai_t_rd%dvneut1e",i+1),"t[arb]","e[arb]",1024,1,4096,512,0,1023);
+    
 
   }
 
-
-  
+ for(int i=0;i<10;i++){  
+   rootfile->cd("neut_PSD");
+   hPSD_n_[i]=new sak::Histogram2D(Form("hPSD_neut%d",i),"fPSD","fQ_long",256,0.,1.,1024,50,4096);  
+ }
 }
-
 void NaI_NeutAnalyzer::Process(){
 
 
@@ -93,10 +126,7 @@ void NaI_NeutAnalyzer::Process(){
     nai_t_rd[i]->Fill(nai[i+10].fT[1]);
     nai_sume_l[i]->Fill(nai[i].SumE());
     nai_sume_r[i]->Fill(nai[i+10].SumE());
-
   }
-
-
 
   ApplyCalibrations();
   //Fill calpar.Histograms below this line
@@ -121,6 +151,18 @@ void NaI_NeutAnalyzer::Process(){
   
   int protcheck=0;
   int alphacheck=0;
+  int nai_delaycheck=0;
+
+  for(int i=0;i<20;i++){
+    if(nai[i].fT[0]>0&&nai[i].fT[0]<nai[i].TZero(0)){
+      nai_delaycheck=1;
+      break;
+    }
+    if(nai[i].fT[1]>0&&nai[i].fT[1]<nai[i].TZero(1)){
+      nai_delaycheck=1;
+      break;
+    }
+  }
 
   if(si_[1].front.fMult>0&&si_[0].front.fE[0]){
       prot_dE=si_[1].front.fE[0];
@@ -133,6 +175,20 @@ void NaI_NeutAnalyzer::Process(){
   if(alphas)
     alphacheck=alphas->IsInside(prot_E,prot_dE);
   
+  if(neutcheck[1]){
+    for(int i=0;i<10;i++){
+      nai_t_lu_v_neut1e[i]->Fill(nai[i].fT[0],neut[1].fQ_long);
+      nai_t_ld_v_neut1e[i]->Fill(nai[i].fT[1],neut[1].fQ_long);
+      nai_t_ru_v_neut1e[i]->Fill(nai[i+10].fT[0],neut[1].fQ_long);
+      nai_t_rd_v_neut1e[i]->Fill(nai[i+10].fT[1],neut[1].fQ_long);
+    }
+  }
+
+  if(nai_delaycheck && Narray.fMult==1){
+    for(int i=0;i<10;i++){
+      hPSD_n_[i]->Fill(neut[i].fPSD,neut[i].fQ_long);
+    }
+  }
 
 }
 

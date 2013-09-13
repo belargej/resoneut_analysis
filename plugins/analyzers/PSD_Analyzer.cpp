@@ -80,7 +80,6 @@ void NeutAnalyzer::Process(){
   for (int i=0;i<10;i++){
     if(i>=neut.size())
       break;
-    hTrel_n[i]->Fill(neut[i].fTrel,neut[i].fQ_long);
     hPSDq_n[i]->Fill(neut[i].fQ_long,neut[i].fQ_short);
     
 
@@ -110,6 +109,7 @@ void NeutAnalyzer::Process(){
   for(int i=0;i<10;i++){
     if(i>=neut.size())
       break;
+    hTrel_n[i]->Fill(neut[i].fTrel,neut[i].fQ_long);
     hPSD_n_[i]->Fill(neut[i].fPSD,neut[i].fQ_long);
     if(neut[i].fQ_long>0){
       hrftime_n->Fill(i,rftime[0].fT);

@@ -286,14 +286,14 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
     if(TDC3[k+16]>0)nai[j+8].fT[0]=TDC3[k+16];
     if(TDC3[k+17]>0)nai[j+8].fT[1]=TDC3[k+17];
     
-    if(TDC3[k]>0)nai[j].fT[0]=TDC3[k];  //first 16 channels don't look good
-    if(TDC3[k+1]>0)nai[j].fT[1]=TDC3[k+1];//moving to TDC4 back 16
+    //if(TDC3[k]>0)nai[j].fT[0]=TDC3[k];  //first 16 channels don't look good
+    //if(TDC3[k+1]>0)nai[j].fT[1]=TDC3[k+1];//moving to TDC4 back 16
 
    
-    //if(TDC4[k+16]>0)nai[j].fT[0]=TDC4[k+16];
-    //if(TDC4[k+17]>0)nai[j].fT[1]=TDC4[k+17];
+    if(TDC4[k+16]>0)nai[j].fT[0]=TDC4[k+16];
+    if(TDC4[k+17]>0)nai[j].fT[1]=TDC4[k+17];
 
-    while(j<4){
+    if(j<4){
       if(TDC4[k]>0)nai[j+16].fT[0]=TDC4[k];
       if(TDC4[k+1]>0)nai[j+16].fT[1]=TDC4[k+1];
     }
@@ -303,8 +303,8 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
 
   k=0;
   for(int j=0;j<12;j++){
-    if(ADC7[k]>0)nai[j+8].fE[0]=ADC5[k];
-    if(ADC7[k+1]>0)nai[j+8].fE[0]=ADC5[k];
+    if(ADC7[k]>0)nai[j+8].fE[0]=ADC7[k];
+    if(ADC7[k+1]>0)nai[j+8].fE[1]=ADC7[k+1];
     k+=2;
   }
 

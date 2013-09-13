@@ -35,6 +35,7 @@ private:
   float eshift;//!
   float tlin;//!
   float tshift;//!
+  float tzero[2];//!
 public:
 
   Double32_t fE[2];
@@ -46,11 +47,14 @@ public:
 				   eshift(0),
 				   tlin(1),
 				   tshift(0)
+				   
   {
+    tzero[0]=0;
+    tzero[1]=0;
     Reset();
   }
 
-
+  float TZero(int id){return tzero[id];}
   std::string Name(){return fName;}
   void Reset();
   void ApplyCalibrations(){}

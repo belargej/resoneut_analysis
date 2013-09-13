@@ -1,9 +1,6 @@
 CXX=g++
 OPTIONS=-lMinuit
 
-EXE=RN_Root RN_BatchMode
-
-
 CFLAGS=`root-config --cflags` -c ${DEBUG}
 GLIBS=`root-config --glibs`
 LINK_DIR=${PWD}/lib/
@@ -12,18 +9,12 @@ INC_DIR=-I${ROOTSYS}/include -I.
 
 SUB_DIRS=include plugins/sak plugins/analyzers plugins/simulator
 
-OBJLIBS=libRNanalyzers.so libSAK.so libRNsimulator.so libRNeut.so
+OBJLIBS= libRNeut.so libRNanalyzers.so libSAK.so libRNsimulator.so
 
 LIBS= -lRNeut -lRNanalyzers -lSAK -lRNsimulator
 
-all: ${EXE} ${OBJLIBS}	
+all: ${OBJLIBS}	
 
-
-RN_Root: force_look
-	cd include; $(MAKE)
-
-RN_BatchMode: force_look
-	cd include; ${MAKE}
 
 ####################################################################
 ###Framework Dependencies###########################################
@@ -55,6 +46,9 @@ force_look :
 
 clean: 
 	-for d in ${SUB_DIRS}; do (cd $$d;$(MAKE) clean); done
+
+newdict: 
+	-for d in ${SUB_DIRS}; do (cd $$d;$(MAKE) newdict); done
 
 help:
 	@echo "Optimization Flags:\n \

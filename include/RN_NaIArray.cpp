@@ -31,7 +31,8 @@ void RN_NaIDetector::SetCalibrations(RN_VariableMap& detvar){
   detvar.GetParam(Form("%s.eshift",Name().c_str()),eshift);
   detvar.GetParam(Form("%s.tlin",Name().c_str()),tlin);
   detvar.GetParam(Form("%s.tshift",Name().c_str()),tshift);
-  
+  detvar.GetParam(Form("%s.tzero[0]",Name().c_str()),tzero[0]);
+  detvar.GetParam(Form("%s.tzero[1]",Name().c_str()),tzero[1]);
 
 }
 
