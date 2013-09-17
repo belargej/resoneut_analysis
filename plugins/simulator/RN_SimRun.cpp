@@ -43,6 +43,7 @@ void RN_SimRun::FillHistograms(){
   hE_v_theta->Fill(plist[2].LV.Theta()*180/3.14,plist[2].LV.E()-plist[2].LV.M());
   hn_CM->Fill(n_cm*180/3.14);
   hn_CMvLab->Fill(n_cm*180/3.14,plist[2].LV.Theta()*180/3.14);
+ 
   int cref=0;
   for(RN_PTerphCollectionRef it=pterph.begin();it!=pterph.end();it++){ 
     if((*it).fT>0){
