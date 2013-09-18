@@ -2,6 +2,8 @@
 ///Originally Created by: Sean Kuvin- 2013                             
 ////////////////////////////////////////////////////////////////////////
 
+#ifndef __RESCALIBRATOR_CXX
+#define __RESCALIBRATOR_CXX
 
 
 //C and C++ libraries.
@@ -94,3 +96,6 @@ void RN_S2Calibrator::Th228Fit(const double& peak1,
 
 }
 
+
+
+#endif

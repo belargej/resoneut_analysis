@@ -1,8 +1,11 @@
+#ifndef __BaseDetector__CXX
+#define __BaseDetector__CXX
+
 #include "RN_BaseDetector.hpp"
 
 
 void RN_BaseDetector::Reset(){
-  for(unsigned int i=0;i<fMult;i++){
+  for(int i=0;i<fMult;i++){
     fE[i]=0;
     fT[i]=0;
     fChlist[i]=-1;
@@ -58,3 +61,5 @@ int RN_BaseDetector::InsertHit(const double& e,const double& t,const double& ch)
 
   return (i+1);
 }
+
+#endif

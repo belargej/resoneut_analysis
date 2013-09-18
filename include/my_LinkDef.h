@@ -12,7 +12,7 @@
 #pragma link C++ defined_in "RN_Particle.hpp";
 #pragma link C++ defined_in "RN_Timing.hpp";
 #pragma link C++ defined_in "RN_Analyzer.hpp";
-
+#pragma link C++ defined_in "RN_Root.hpp";
 
 
 

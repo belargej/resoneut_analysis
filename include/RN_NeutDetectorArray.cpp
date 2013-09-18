@@ -1,15 +1,18 @@
+#ifndef __NEUTARRAY_CXX
+#define __NEUTARRAY_CXX
 #include "RN_NeutDetectorArray.hpp"
 
 ClassImp(RN_NeutDetector);
 
 
 RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetector(name,num),
-								  apos(ap),
+								 
 								  elin(1),
 								  eshift(0),
 								  tlin(1),
 								  tshift(0),
 								  zero_off(0),
+								  apos(ap),
 								  fQ_long(0),
 								  fQ_short(0),
 								  fPSD(0),
@@ -76,7 +79,7 @@ Double_t RN_NeutDetector::Q() const{return fQ_long;}
 double RN_NeutDetector::CalculateTRel(const double &tfirst){
   if(fT_Q)
     fTrel=fT_Q-tfirst;
-  
+  return fTrel;
 }
 
 
@@ -201,3 +204,6 @@ namespace RNArray{
   
   }
 }
+
+
+#endif

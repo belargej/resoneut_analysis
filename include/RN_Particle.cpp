@@ -1,3 +1,6 @@
+#ifndef __RNPARTICLE_CXX
+#define __RNPARTICLE_CXX
+
 #include "RN_Particle.hpp"
 
 ///////////////////////////////////////////////////////////////////////
@@ -17,3 +20,6 @@ RN_Particle::RN_Particle(std::string n):fName(n),
 void RN_Particle::Reset(){
   LV.SetPxPyPzE(0.0,0.0,0.0,mass);
 }
+
+
+#endif

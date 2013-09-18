@@ -1,3 +1,7 @@
+#ifndef __RNVARIABLEMAP_CXX
+#define __RNVARIABLEMAP_CXX
+
+
 #include "RN_VariableMap.hpp"
 #include "sak_ReadBuffer.hpp"
 void RN_VariableMap::LoadParams(std::string filename){
@@ -52,3 +56,5 @@ int RN_VariableMap::GetParam(std::string param,double& var){
 int RN_VariableMap::AddParam(std::string param,double var){
   vmap.insert(std::pair<std::string,double>(param,var));
 }
+
+#endif

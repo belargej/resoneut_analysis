@@ -1,3 +1,6 @@
+#ifndef RN_MASSTABLE_CXX
+#define RN_MASSTABLE_CXX
+
 #include "RN_MassTable.hpp"
 
 
@@ -19,3 +22,5 @@ RN_MassTable::RN_MassTable(){
 
 
 }
+
+#endif

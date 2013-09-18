@@ -1,5 +1,15 @@
 #include "S2_Analyzer.hpp"
 
+namespace si_cal{
+  TFile *rootfile;
+  
+  sak::Histogram1D *h_si_1;
+  sak::Histogram1D *h_si_2;
+ 
+
+  sak::Histogram2D *front[16];
+  
+
 
 S2_Analyzer::S2_Analyzer():ind_(0)
 {
@@ -120,19 +130,16 @@ void S2_Analyzer::Terminate(){
 
 }
 
-void S2_Analyzer::Clear(){
-  delete h_si_1;
-  delete h_si_2;
-  for (int i=0;i<16;i++){
-    delete front[i];
+  void S2_Analyzer::Clear(){
+    delete h_si_1;
+    delete h_si_2;
+    for (int i=0;i<16;i++){
+      delete front[i];
+    }
+    
+    
   }
-
-
-}
-
-
-namespace si_cal{
-
+  
   void producehists(const char * input,const char* output,int index,const char* config){
     S2_Analyzer a;
     a.Init(input);

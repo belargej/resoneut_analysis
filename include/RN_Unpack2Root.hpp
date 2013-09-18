@@ -41,6 +41,8 @@ using RN_modules. also got rid of the need for a "config file".  Changes to the 
 #include <TSelector.h>
 #include <map>
 
+#include "sak_ReadBuffer.hpp"
+
 class RNUnpack2Root{
 private:
   int adc_counter;
@@ -64,11 +66,13 @@ public:
 
   std::vector<short> caen_stack;
   std::vector<short> mesy_stack;
+
   TRandom3 Rnd;
 
   RNUnpack2Root();
   int Convert(std::vector<int>&run_number,std::string data_dir,std::string output_file);
   bool init();
+  bool init(const std::string& configfile);
   int GetMesyNum(){return mesy_stack.size();}
   int GetCaenNum(){return caen_stack.size();}
   int SortGeoChan(short geoaddress,short chan,short val);

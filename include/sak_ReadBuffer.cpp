@@ -1,3 +1,7 @@
+#ifndef sak_READ_CXX
+#define sak_READ_CXX
+
+
 #include "sak_ReadBuffer.hpp"
 
 namespace sak{
@@ -40,3 +44,5 @@ namespace sak{
 
 
 }
+
+#endif

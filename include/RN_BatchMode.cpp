@@ -49,6 +49,23 @@ int main(int argc, char*argv[]){
     }
     a->Convert(run_numbers,argv[1],argv[2]);//1:data dir,2:output file    
   }
+
+  //same as above but with the optional config file given (this is to go back to old setups)
+  else if(argc==4){
+    RNUnpack2Root* a=new RNUnpack2Root();
+    a->init(argv[3]);
+    std::vector<int>run_numbers;
+    run_numbers.reserve(10);
+    int enter=-1;
+    while(enter!=0){
+      std::cout<<"enter run number (0 to finish entering)"<<std::endl;
+      std::cin>>enter;
+      if(enter)run_numbers.push_back(enter);
+    }
+    a->Convert(run_numbers,argv[1],argv[2]);//1:data dir,2:output file    
+  }
+
+
   else
     std::cout<<"invalid number of arguments: \n"<<"RNBatchMode dir output config"<<std::endl;
   

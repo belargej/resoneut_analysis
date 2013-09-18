@@ -49,7 +49,7 @@
 #include "RN_VariableMap.hpp"
 #include "RN_IonChamber.hpp"
 #include "RN_NaIArray.hpp"
-
+#include "RN_Root.hpp"
 
 
 class RN_Analyzer {
@@ -59,19 +59,6 @@ public:
   
   RN_Analyzer();
   virtual ~RN_Analyzer();
-
-  //Detectors 
-  RN_NeutDetectorArray Narray;
-  RN_NeutCollection neut;
-  RN_S2Collection si_;
-  RN_S2ClusterCollection si_cluster_;
-  RN_RFCollection rftime;
-  RN_IonChamber ic;
-  RN_NaICollection nai;
-
-  RN_VariableMap DetVar;
-  Int_t calibrated;
-
 
   // Declaration of leaf types
 

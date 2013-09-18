@@ -1,3 +1,5 @@
+#ifndef __RNNAI__CXX
+#define __RNNAI__CXX
 #include "RN_NaIArray.hpp"
 
 
@@ -63,3 +65,5 @@ void RN_NaIArray::SetCalibrations(RN_VariableMap& detvar){
   
 
 }
+
+#endif

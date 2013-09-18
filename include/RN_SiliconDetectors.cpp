@@ -1,3 +1,5 @@
+#ifndef __RN_SILICON_CXX
+#define __RN_SILICON_CXX
 #include "RN_SiliconDetectors.hpp"
 
 
@@ -421,3 +423,5 @@ void RNTempList::InsertHit(float e,float t, float ch){
   tlist[i+1]=t;
   mult++;
 }
+
+#endif

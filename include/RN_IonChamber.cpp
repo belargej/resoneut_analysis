@@ -1,3 +1,6 @@
+#ifndef __RNIONC_CXX
+#define __RNIONC_CXX
+
 #include "RN_IonChamber.hpp"
 
 
@@ -28,3 +31,5 @@ void RN_IonChamber::SetCalibrations(RN_VariableMap& detvar){
   
 
 }
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef __RFTIME_CXX
+#define __RFTIME_CXX
+
 #include "RN_Timing.hpp"
 #include <TCanvas.h>
 
@@ -36,3 +39,5 @@ void RN_RFTime::InsertHit(const double&t){
 void RN_RFTime::Reset(){
   fT=0;
 }
+
+#endif

@@ -1,7 +1,8 @@
 ////////////////////////////////////////////////////////////////////////
 ///Originally Created by: Sean Kuvin- 2013                             
 ////////////////////////////////////////////////////////////////////////
-
+#ifndef __RNUNPACKER_CXX
+#define __RNUNPACKER_CXX
 
 
 #include "RN_Unpack2Root.hpp"
@@ -32,6 +33,30 @@ RNUnpack2Root::RNUnpack2Root():Rnd(0)
 
 }
  
+bool RNUnpack2Root::init(const std::string & configfile){
+  std::ifstream cfg;
+  cfg.open(configfile.c_str());
+  if (!cfg.is_open()){
+    std::cout << "  Could not open " << configfile << std::endl;
+    return 0;
+  }
+  do{
+    std::vector<std::string>input;
+    sak::ReadLine(cfg,input);
+    if(input[0]=="caen_stack")
+      for(unsigned int i=1;i<input.size();i++){
+	caen_stack.push_back(sak::string_to_int(input[i]));
+      }
+    else if(input[0]=="mesy_stack")
+      for(unsigned int i=1;i<input.size();i++){
+	mesy_stack.push_back(sak::string_to_int(input[i]));
+      }
+  }while(!cfg.eof());
+  
+
+  return 1;
+}
+
 bool RNUnpack2Root::init(){
 
   short caen_geo[]={3,4,5,6,7,8,10,11,12,13};
@@ -464,3 +489,4 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
 
 }
 
+#endif
