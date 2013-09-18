@@ -15,14 +15,14 @@ void RN_Sim::Init(){
   */
   
   //12C(d,n)13N
-  
+  /*
   plist.push_back(RN_Particle("12C"));
   plist.push_back(RN_Particle("d"));
   plist.push_back(RN_Particle("n"));
   plist.push_back(RN_Particle("13N"));
   plist.push_back(RN_Particle("p"));
   plist.push_back(RN_Particle("12C"));
-  
+  */
 
   //24Mg(d,n)25Al
   /*

@@ -43,14 +43,16 @@ bool RNUnpack2Root::init(const std::string & configfile){
   do{
     std::vector<std::string>input;
     sak::ReadLine(cfg,input);
-    if(input[0]=="caen_stack")
-      for(unsigned int i=1;i<input.size();i++){
-	caen_stack.push_back(sak::string_to_int(input[i]));
-      }
-    else if(input[0]=="mesy_stack")
-      for(unsigned int i=1;i<input.size();i++){
-	mesy_stack.push_back(sak::string_to_int(input[i]));
-      }
+    if(input.size()>0){
+      if(input[0]=="caen_stack")
+	for(unsigned int i=1;i<input.size();i++){
+	  caen_stack.push_back(sak::string_to_int(input[i]));
+	}
+      else if(input[0]=="mesy_stack")
+	for(unsigned int i=1;i<input.size();i++){
+	  mesy_stack.push_back(sak::string_to_int(input[i]));
+	}
+    }
   }while(!cfg.eof());
   
 

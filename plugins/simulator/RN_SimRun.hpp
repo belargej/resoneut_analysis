@@ -50,7 +50,7 @@ public:
   void Loop(Long64_t evnum,std::string options);
   void StartRun(std::string input);
   void initHists();
-  
+  void WriteOut();
   void FillHistograms();
 };
 

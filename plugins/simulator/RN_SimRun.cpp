@@ -89,6 +89,13 @@ void RN_SimRun::StartRun(std::string input){
 	SetAngularDistribution(input[1]);
 	
       }
+    else if(input[0]=="fReaction")
+      {
+	if (input.size()==7)
+	  for(unsigned int i=1;i<7;i++)
+	    plist.push_back(RN_Particle(input[i]));
+	else std::cout<<"incorrect number of entries to fReaction: "<< input.size()-1<<"but needed 6"<<std::endl;
+      }
     else if(input[0]=="fOutput")
       {
 	rootfile=new TFile(input[1].c_str(),"RECREATE");
@@ -113,5 +120,13 @@ void RN_SimRun::StartRun(std::string input){
   Loop(totevents,option);
 
     
+
+}
+
+
+void RN_SimRun::WriteOut(){
+
+  rootfile->Write();
+  rootfile->Close();
 
 }
