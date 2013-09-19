@@ -27,10 +27,10 @@ void RN_SimRun::initHists(){
   */
   hn_CM=new TH1D("h_nCM","h_nCM",512,1,180);
   hn_CMvLab=new TH2D("hn_CMvLAB","n_CMvLAB",512,1,180,512,1,180);
-  hn_tof=new TH1D("hn_tof","hn_tof",512,1,128);
+  hn_tof=new TH1D("hn_tof","hn_tof",4096,1,128);
   htof_n=new TH2D("htof_n0","htof_n0",17,0,16,512,1,128);
   hE_n=new TH2D("hE_n","hE_n",17,0,16,512,0,5);
-  hQ=new TH1D("hQ","hQ",96,-4,0);
+  hQ=new TH1D("hQ","hQ",4096,-4,0);
   h_nKE=new TH1D("h_nKE","h_nKE",1024,0,1);
   h_hiKE=new TH1D("h_hiKE","h_hiKE",1024,0,100);
   hE_v_theta=new TH2D("hE_v_theta","hE_v_theta",180,0,179,512,0,20);

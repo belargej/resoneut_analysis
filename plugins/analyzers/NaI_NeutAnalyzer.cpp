@@ -48,6 +48,10 @@ namespace psd{
 
   
   R__EXTERN sak::Histogram2D *hPSD_n_[10];
+  R__EXTERN sak::Histogram1D *hrftime_cal;
+  sak::Hist1D *hrftime_allneut_gamma_cal;
+  sak::Hist1D *hrftime_allneut_gamma_gamma_cal;
+  sak::Hist1D *hnai_delay;
 
 NaI_NeutAnalyzer::NaI_NeutAnalyzer()
 {
@@ -72,6 +76,7 @@ void NaI_NeutAnalyzer::Begin(){
   rootfile->mkdir("evt/neut1/left");
   rootfile->mkdir("evt/neut1/right");
   rootfile->mkdir("neut_PSD");
+  rootfile->mkdir("rftime");
 
   
   for(int i=0;i<10;i++){
@@ -105,6 +110,12 @@ void NaI_NeutAnalyzer::Begin(){
    rootfile->cd("neut_PSD");
    hPSD_n_[i]=new sak::Histogram2D(Form("hPSD_neut%d",i),"fPSD","fQ_long",256,0.,1.,1024,50,4096);  
  }
+ rootfile->cd("rftime");
+ hrftime_cal=new sak::Histogram1D("hrftime_cal","rftime[ns]",1200,0,1199);
+ hrftime_allneut_gamma_cal=new sak::Histogram1D("hrftime_allneut_gamma_cal","rftime[ns]",1200,0,1199);
+ hrftime_allneut_gamma_gamma_cal=new sak::Histogram1D("hrftime_allneut_gamma_gamma_cal","rftime[ns]",1200,0,1199);
+ hnai_delay=new sak::Hist1D("hnai_delay","mult",20,0,19);
+ 
 }
 void NaI_NeutAnalyzer::Process(){
 
@@ -155,15 +166,15 @@ void NaI_NeutAnalyzer::Process(){
 
   for(int i=0;i<20;i++){
     if(nai[i].fT[0]>0&&nai[i].fT[0]<nai[i].TZero(0)){
-      nai_delaycheck=1;
-      break;
+      nai_delaycheck++;
+      //break;
     }
-    if(nai[i].fT[1]>0&&nai[i].fT[1]<nai[i].TZero(1)){
-      nai_delaycheck=1;
-      break;
-    }
+    //if(nai[i].fT[1]>0&&nai[i].fT[1]<nai[i].TZero(1)){
+    //nai_delaycheck=1;
+    // break;
+    //}
   }
-
+  
   if(si_[1].front.fMult>0&&si_[0].front.fE[0]){
       prot_dE=si_[1].front.fE[0];
       prot_E=si_[0].front.fE[0]+prot_dE;
@@ -186,9 +197,18 @@ void NaI_NeutAnalyzer::Process(){
 
   if(nai_delaycheck && Narray.fMult==1){
     for(int i=0;i<10;i++){
-      hPSD_n_[i]->Fill(neut[i].fPSD,neut[i].fQ_long);
+      if(neut[i].fQ_long>0)
+	hPSD_n_[i]->Fill(neut[i].fPSD,neut[i].fQ_long);
     }
   }
+  if(nai_delaycheck>1 &&orcheck)
+    hrftime_allneut_gamma_gamma_cal->Fill(rftime[0].fT);
+
+  hnai_delay->Fill(nai_delaycheck);
+
+  hrftime_cal->Fill(rftime[0].fT);
+  if(orcheck&&nai_delaycheck)
+    hrftime_allneut_gamma_cal->Fill(rftime[0].fT);
 
 }
 

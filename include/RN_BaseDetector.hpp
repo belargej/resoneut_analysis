@@ -5,11 +5,8 @@
 //                 Author: Sean Kuvin                             
 //***********************************************************************************/
 
-
-
-
-#ifndef __BaseDetector__
-#define __BaseDetector__
+#ifndef __BaseDetector__h
+#define __BaseDetector__h
 #include <iostream>
 #include <iomanip>
 #include <math.h>

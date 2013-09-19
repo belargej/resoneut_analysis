@@ -167,6 +167,8 @@ void NeutAnalyzer2::Process(){
   if(alphas)
     alphacheck=alphas->IsInside(prot_E,prot_dE);
   
+  if(protcheck)
+    hrftime_prots->Fill(rftime[0].fT);
   
   hrftime_cal->Fill(rftime[0].fT);
   s2_tvrf->Fill(rftime[0].fT,si_cluster_[1].fT[0]);
@@ -185,7 +187,6 @@ void NeutAnalyzer2::Process(){
       hrftime_allneut_cal_proton->Fill(rftime[0].fT);
       h_ndetMult_npgated->Fill(Narray.fMult);
       s2_e_v_theta_protons->Fill(prot_theta,prot_E);
-      hrftime_prots->Fill(rftime[0].fT);
       hPSD_n1_prots->Fill(neut[1].fPSD,neut[1].fQ_long);
       for(int i=0;i<32;i++)
 	hTDC[i]->Fill(TDC2[i]);

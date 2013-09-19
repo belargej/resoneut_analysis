@@ -10,15 +10,7 @@
 #include "RN_Analyzer.hpp"
 
 using namespace std;
-
-R__EXTERN  RN_NeutDetectorArray Narray;	     
-R__EXTERN  RN_NeutCollection neut;	     
-R__EXTERN  RN_S2Collection si_;		     
-R__EXTERN  RN_S2ClusterCollection si_cluster_;
-R__EXTERN  RN_RFCollection rftime;	     
-R__EXTERN  RN_IonChamber ic;		     
-R__EXTERN  RN_NaICollection nai;		     
-R__EXTERN  RN_VariableMap DetVar;             
+            
 
 RN_Analyzer::RN_Analyzer()
 {
