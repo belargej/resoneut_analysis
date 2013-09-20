@@ -18,7 +18,10 @@ namespace psd{
   R__EXTERN TCutG* n8_neuts;
   R__EXTERN TCutG* n9_neuts;
   R__EXTERN TCutG* prots1;
+  R__EXTERN TCutG* prots3;
+  R__EXTERN TCutG* prots4;
   R__EXTERN TCutG* alphas;
+  R__EXTERN TCutG* n3_evt;
   
   //declare histograms here
   
@@ -49,9 +52,16 @@ namespace psd{
   
   R__EXTERN sak::Histogram2D *hPSD_n_[10];
   R__EXTERN sak::Histogram1D *hrftime_cal;
+  sak::Hist1D *hrftime_allneut_gamma_cal_delay;
+  sak::Hist1D *hrftime_allneut_gamma_gamma_cal_delay;
   sak::Hist1D *hrftime_allneut_gamma_cal;
   sak::Hist1D *hrftime_allneut_gamma_gamma_cal;
+  sak::Hist1D *hrftime_allneut_gamma_prot_cal;
   sak::Hist1D *hnai_delay;
+  sak::Hist1D *hnai_hit;
+  sak::Hist1D* hn3_rftime_evtgate_gamma_gamma;
+  sak::Hist1D* hn3_rftime_gamma;
+  sak::Hist1D* hn3_rftime_evtgate_gamma;
 
 NaI_NeutAnalyzer::NaI_NeutAnalyzer()
 {
@@ -112,9 +122,16 @@ void NaI_NeutAnalyzer::Begin(){
  }
  rootfile->cd("rftime");
  hrftime_cal=new sak::Histogram1D("hrftime_cal","rftime[ns]",1200,0,1199);
+ hrftime_allneut_gamma_cal_delay=new sak::Histogram1D("hrftime_allneut_gamma_cal_delay","rftime[ns]",1200,0,1199);
+ hrftime_allneut_gamma_gamma_cal_delay=new sak::Histogram1D("hrftime_allneut_gamma_gamma_cal_delay","rftime[ns]",1200,0,1199);
  hrftime_allneut_gamma_cal=new sak::Histogram1D("hrftime_allneut_gamma_cal","rftime[ns]",1200,0,1199);
  hrftime_allneut_gamma_gamma_cal=new sak::Histogram1D("hrftime_allneut_gamma_gamma_cal","rftime[ns]",1200,0,1199);
+ hrftime_allneut_gamma_prot_cal=new sak::Histogram1D("hrftime_allneut_gamma_prot_cal","rftime[ns]",1200,0,1199);
+ hn3_rftime_evtgate_gamma=new sak::Histogram1D("hrftime_allneut_cal_n3_evt_gamma","rftime[ns]",1200,0,1199);    
+ hn3_rftime_gamma=new sak::Histogram1D("hn3_rftime_cal_gamma","rftime[ns]",1200,0,1199);    
+ hn3_rftime_evtgate_gamma_gamma=new sak::Histogram1D("hrftime_allneut_cal_n3_evt_gamma_gamma","rftime[ns]",1200,0,1199);    
  hnai_delay=new sak::Hist1D("hnai_delay","mult",20,0,19);
+ hnai_hit=new sak::Hist1D("hnai_hit","mult",20,0,19);
  
 }
 void NaI_NeutAnalyzer::Process(){
@@ -163,16 +180,17 @@ void NaI_NeutAnalyzer::Process(){
   int protcheck=0;
   int alphacheck=0;
   int nai_delaycheck=0;
-
+  int nai_hitcheck=0;
   for(int i=0;i<20;i++){
-    if(nai[i].fT[0]>0&&nai[i].fT[0]<nai[i].TZero(0)){
-      nai_delaycheck++;
-      //break;
-    }
-    //if(nai[i].fT[1]>0&&nai[i].fT[1]<nai[i].TZero(1)){
-    //nai_delaycheck=1;
-    // break;
-    //}
+    if((nai[i].fE[0]>300&&nai[i].fE[0]<4000)
+       ||(nai[i].fE[1]>300&&nai[i].fE[1]<4000))
+      nai_hitcheck++;
+    if((nai[i].fT[0]>0&&nai[i].fT[0]<nai[i].TZero(0))||
+       (nai[i].fT[1]>0&&nai[i].fT[1]<nai[i].TZero(1)))
+      {
+	nai_delaycheck++;
+      }
+    
   }
   
   if(si_[1].front.fMult>0&&si_[0].front.fE[0]){
@@ -181,8 +199,17 @@ void NaI_NeutAnalyzer::Process(){
       prot_theta=si_cluster_[1].fPos[0].Theta()*(180/3.14);
   }
 
-  if(prots1)
-    protcheck=prots1->IsInside(prot_E,prot_dE);
+  //if(prots1)
+  //protcheck=prots1->IsInside(prot_E,prot_dE);
+
+  //if(prots3)
+  // protcheck=prots3->IsInside(prot_E,prot_dE);
+
+
+  if(prots4)
+    protcheck=prots4->IsInside(prot_E,prot_dE);
+
+
   if(alphas)
     alphacheck=alphas->IsInside(prot_E,prot_dE);
   
@@ -195,6 +222,9 @@ void NaI_NeutAnalyzer::Process(){
     }
   }
 
+  if(Narray.fMult>1)
+    return;
+
   if(nai_delaycheck && Narray.fMult==1){
     for(int i=0;i<10;i++){
       if(neut[i].fQ_long>0)
@@ -202,14 +232,37 @@ void NaI_NeutAnalyzer::Process(){
     }
   }
   if(nai_delaycheck>1 &&orcheck)
-    hrftime_allneut_gamma_gamma_cal->Fill(rftime[0].fT);
+    hrftime_allneut_gamma_gamma_cal_delay->Fill(rftime[0].fT);
 
+  if(nai_hitcheck>1 &&orcheck)
+    hrftime_allneut_gamma_gamma_cal->Fill(rftime[0].fT);
+  
   hnai_delay->Fill(nai_delaycheck);
+  hnai_hit->Fill(nai_hitcheck);
+
+
+  if(neutcheck[3]){
+    if (n3_evt && nai_hitcheck)
+      hn3_rftime_gamma->Fill(rftime[0].fT);
+    if(n3_evt->IsInside(rftime[0].fT,neut[3].fQ_long)){
+      hn3_rftime_evtgate_gamma->Fill(rftime[0].fT);
+      
+      if(nai_hitcheck>1)
+	hn3_rftime_evtgate_gamma_gamma->Fill(rftime[0].fT);
+    }
+    
+  }
 
   hrftime_cal->Fill(rftime[0].fT);
   if(orcheck&&nai_delaycheck)
+    hrftime_allneut_gamma_cal_delay->Fill(rftime[0].fT);
+  if(orcheck&&nai_hitcheck){
     hrftime_allneut_gamma_cal->Fill(rftime[0].fT);
+    if(protcheck)
+      hrftime_allneut_gamma_prot_cal->Fill(rftime[0].fT);
 
+
+  }
 }
 
   

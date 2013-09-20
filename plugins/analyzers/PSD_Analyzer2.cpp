@@ -16,7 +16,11 @@ namespace psd{
   TCutG* n8_neuts;
   TCutG* n9_neuts;
   TCutG* prots1;
+  TCutG* prots2;
+  TCutG* prots3;
+  TCutG* prots4;
   TCutG* alphas;
+  TCutG* n3_evt;
   
   //declare histograms here
   
@@ -35,6 +39,8 @@ namespace psd{
   R__EXTERN sak::Hist1D *h_ndetMult_npgated;
   R__EXTERN sak::Hist2D *s2_tvrf;
   sak::Hist2D *s2_tvrf_neut_gated;
+  sak::Hist2D *s1_tvrf;
+  sak::Hist2D *s1_tvrf_neut_gated;
   R__EXTERN sak::Hist2D *s2_e_v_theta;
   sak::Hist2D *s2_e_v_theta_ngated;
   sak::Hist2D *s2_e_v_theta_protons;
@@ -48,7 +54,8 @@ namespace psd{
   R__EXTERN sak::Hist2D* hpede_2;
   sak::Hist2D* hpede_ngated;
   sak::Hist1D* hTDC[32];
-
+  sak::Hist1D* hn3_rftime_evtgate;
+  sak::Hist1D* hn3_rftime;
 
 NeutAnalyzer2::NeutAnalyzer2()
 {
@@ -76,6 +83,8 @@ void NeutAnalyzer2::Begin(){
   hrftime_n=new sak::Histogram2D("hrftime_n","Detector","rftime[ns]",17,0,16,1200,0,1199);
   hrftime_gated_n=new sak::Histogram2D("hrftime_gated_n","Detector","rftime[ns]",17,0,16,1200,0,1199);
   hrftime_raw_n =new sak::Histogram2D("hrftime_raw_n","Detector","rftime[ns]",17,0,16,4096,0,4095);
+  hn3_rftime_evtgate=new sak::Histogram1D("hrftime_allneut_cal_n3_evt","rftime[ns]",1200,0,1199);   
+  hn3_rftime=new sak::Histogram1D("hrftime_n3","rftime[ns]",1200,0,1199);   
   rootfile->cd("protons");
   hpede=new sak::Hist2D("hpEdE","E [MeV]","dE [MeV]",64,0,20,64,0,6);
   hpede_2=new sak::Hist2D("hpEdE_2","E [MeV]","dE [MeV]",64,0,30,64,0,30);
@@ -85,8 +94,10 @@ void NeutAnalyzer2::Begin(){
   for(int i=0;i<32;i++){
     hTDC[i]=new sak::Histogram1D(Form("hTDC%d",i),"t[arb]",4096,1,4095);
   }
-  s2_tvrf_neut_gated=new sak::Hist2D("s2_tvrf_neut_gated","rftime[ns]","TDC2",128,640,820,256,1.,4096.);
-  s2_tvrf=new sak::Hist2D("s2_tvrf","rftime[ns]","TDC2",128,640,820,256,1.,4096.);
+  s2_tvrf_neut_gated=new sak::Hist2D("s2_tvrf_neut_gated","rftime[ns]","TDC2",1200,0,1199,256,1.,4096.);
+  s2_tvrf=new sak::Hist2D("s2_tvrf","rftime[ns]","TDC2",1200,0,1199,256,1.,4096.);
+  s1_tvrf_neut_gated=new sak::Hist2D("s1_tvrf_neut_gated","rftime[ns]","TDC2",1200,0,1199,256,1.,4096.);
+  s1_tvrf=new sak::Hist2D("s1_tvrf","rftime[ns]","TDC2",1200,0,1199,256,1.,4096.);
   s2_e_v_theta_ngated=new sak::Hist2D("s2_e_v_theta_neut_gated","Theta [deg]","E[MeV]",32,10,50,32,0.,15.);
   s2_e_v_theta =new sak::Hist2D("s2_e_v_theta","Theta","E ]MeV]",32,10,50,32,0.,15.);
   s2_e_v_theta_protons =new sak::Hist2D("s2_e_v_theta_protons","Theta","E ]MeV]",32,10,50,32,0.,15.);
@@ -133,7 +144,10 @@ void NeutAnalyzer2::Process(){
   //Fill calpar.Histograms below this line
   /*************************************************************/
   h_ndetMult->Fill(Narray.fMult);
-  
+  if(Narray.fMult>1)
+    return;
+
+
   int neutcheck[10]={0};
   int orcheck=0;
   neutcheck[0] = n0_neuts->IsInside(neut[0].fPSD,neut[0].fQ_long);
@@ -149,11 +163,10 @@ void NeutAnalyzer2::Process(){
   
   for (int i=0;i<10;i++)	    
     orcheck = neutcheck[i] || orcheck;
-  
   int protcheck=0;
   int alphacheck=0;
 
-  if(si_[1].front.fMult>0&&si_[0].front.fE[0]){
+  if(si_[0].front.fMult>0&&si_[1].front.fMult>0){
       prot_dE=si_[1].front.fE[0];
       prot_E=si_[0].front.fE[0]+prot_dE;
       hpede->Fill(prot_E,prot_dE);
@@ -162,8 +175,12 @@ void NeutAnalyzer2::Process(){
       s2_e_v_theta->Fill(prot_theta,prot_E);
   }
 
-  if(prots1)
-    protcheck=prots1->IsInside(prot_E,prot_dE);
+  //if(prots1)
+  // protcheck=prots1->IsInside(prot_E,prot_dE);
+  //if(prots3)
+  // protcheck=prots3->IsInside(prot_E,prot_dE);
+  if(prots4)
+    protcheck=prots4->IsInside(prot_E,prot_dE);
   if(alphas)
     alphacheck=alphas->IsInside(prot_E,prot_dE);
   
@@ -171,17 +188,19 @@ void NeutAnalyzer2::Process(){
     hrftime_prots->Fill(rftime[0].fT);
   
   hrftime_cal->Fill(rftime[0].fT);
-  s2_tvrf->Fill(rftime[0].fT,si_cluster_[1].fT[0]);
+  s2_tvrf->Fill(rftime[0].fT,si_[1].back.fT[0]);
+  s1_tvrf->Fill(rftime[0].fT,si_[0].back.fT[0]);
+
   if(orcheck){
     hrftime_allneut_cal->Fill(rftime[0].fT);
-    s2_tvrf_neut_gated->Fill(rftime[0].fT,si_cluster_[1].fT[0]);
+    s2_tvrf_neut_gated->Fill(rftime[0].fT,si_[1].back.fT[0]);
+    s1_tvrf_neut_gated->Fill(rftime[0].fT,si_[0].back.fT[0]);
     s2_e_v_theta_ngated->Fill(prot_theta,prot_E);
     h_ndetMult_ngated->Fill(Narray.fMult);
     if(si_[1].front.fMult>0 && si_[0].front.fMult>0){
       hpede_ngated->Fill(prot_E,prot_dE);
       hrftime_allneut_cal_p->Fill(rftime[0].fT);
     }
-
   
     if(protcheck){
       hrftime_allneut_cal_proton->Fill(rftime[0].fT);
@@ -193,6 +212,14 @@ void NeutAnalyzer2::Process(){
     }
     if(alphacheck)
       hrftime_allneut_cal_alphas->Fill(rftime[0].fT);
+  }
+
+
+  if(neutcheck[3]){
+    hn3_rftime->Fill(rftime[0].fT);
+    if (n3_evt)
+      if(n3_evt->IsInside(rftime[0].fT,neut[3].fQ_long))
+	hn3_rftime_evtgate->Fill(rftime[0].fT);
   }
 
   for(int i=0;i<10;i++){
@@ -247,9 +274,12 @@ void NeutAnalyzer2::Terminate(){
       prots1=new TCutG(*in.getCut("prots1"));
     if(in.getCut("alphas") && !alphas)
       alphas=new TCutG(*in.getCut("alphas"));
-    
-    
-    
+    if(in.getCut("n3_evt") && !n3_evt)
+      n3_evt=new TCutG(*in.getCut("n3_evt"));
+    if(in.getCut("prots3") && !prots3)
+      prots3=new TCutG(*in.getCut("prots3"));
+    if(in.getCut("prots4") && !prots4)
+      prots4=new TCutG(*in.getCut("prots4"));
     
   }
 

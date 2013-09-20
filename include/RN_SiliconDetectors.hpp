@@ -79,8 +79,8 @@ public:
   {
     ring_pitch_ = (S2OUTERRAD - S2INNERRAD) / static_cast<double>(front.NumOfCh());
     delta_phi_ = 360. / static_cast<double>(back.NumOfCh());
-    front.SetELimits(100,3500);
-    back.SetELimits(100,3500);
+    front.SetELimits(0,3500);
+    back.SetELimits(0,3500);
   }
 
   TVector3 GetPosVect(){return posv_+shiftv_;}
