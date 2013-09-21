@@ -121,15 +121,15 @@ void NaI_NeutAnalyzer::Begin(){
    hPSD_n_[i]=new sak::Histogram2D(Form("hPSD_neut%d",i),"fPSD","fQ_long",256,0.,1.,1024,50,4096);  
  }
  rootfile->cd("rftime");
- hrftime_cal=new sak::Histogram1D("hrftime_cal","rftime[ns]",1200,0,1199);
- hrftime_allneut_gamma_cal_delay=new sak::Histogram1D("hrftime_allneut_gamma_cal_delay","rftime[ns]",1200,0,1199);
- hrftime_allneut_gamma_gamma_cal_delay=new sak::Histogram1D("hrftime_allneut_gamma_gamma_cal_delay","rftime[ns]",1200,0,1199);
- hrftime_allneut_gamma_cal=new sak::Histogram1D("hrftime_allneut_gamma_cal","rftime[ns]",1200,0,1199);
- hrftime_allneut_gamma_gamma_cal=new sak::Histogram1D("hrftime_allneut_gamma_gamma_cal","rftime[ns]",1200,0,1199);
- hrftime_allneut_gamma_prot_cal=new sak::Histogram1D("hrftime_allneut_gamma_prot_cal","rftime[ns]",1200,0,1199);
- hn3_rftime_evtgate_gamma=new sak::Histogram1D("hrftime_allneut_cal_n3_evt_gamma","rftime[ns]",1200,0,1199);    
- hn3_rftime_gamma=new sak::Histogram1D("hn3_rftime_cal_gamma","rftime[ns]",1200,0,1199);    
- hn3_rftime_evtgate_gamma_gamma=new sak::Histogram1D("hrftime_allneut_cal_n3_evt_gamma_gamma","rftime[ns]",1200,0,1199);    
+ hrftime_cal=new sak::Histogram1D("hrftime_cal","rftime[ns]",4096,0,1023);
+ hrftime_allneut_gamma_cal_delay=new sak::Histogram1D("hrftime_allneut_gamma_cal_delay","rftime[ns]",4096,0,1023);
+ hrftime_allneut_gamma_gamma_cal_delay=new sak::Histogram1D("hrftime_allneut_gamma_gamma_cal_delay","rftime[ns]",4096,0,1023);
+ hrftime_allneut_gamma_cal=new sak::Histogram1D("hrftime_allneut_gamma_cal","rftime[ns]",4096,0,1023);
+ hrftime_allneut_gamma_gamma_cal=new sak::Histogram1D("hrftime_allneut_gamma_gamma_cal","rftime[ns]",4096,0,1023);
+ hrftime_allneut_gamma_prot_cal=new sak::Histogram1D("hrftime_allneut_gamma_prot_cal","rftime[ns]",4096,0,1023);
+ hn3_rftime_evtgate_gamma=new sak::Histogram1D("hrftime_allneut_cal_n3_evt_gamma","rftime[ns]",4096,0,1023);    
+ hn3_rftime_gamma=new sak::Histogram1D("hn3_rftime_cal_gamma","rftime[ns]",4096,0,1023);    
+ hn3_rftime_evtgate_gamma_gamma=new sak::Histogram1D("hrftime_allneut_cal_n3_evt_gamma_gamma","rftime[ns]",4096,0,1023);    
  hnai_delay=new sak::Hist1D("hnai_delay","mult",20,0,19);
  hnai_hit=new sak::Hist1D("hnai_hit","mult",20,0,19);
  
