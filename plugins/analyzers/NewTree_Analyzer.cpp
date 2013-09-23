@@ -24,7 +24,7 @@ void NewTree_Analyzer::InitTree(std::string filename,std::string treename){
 
 
 void NewTree_Analyzer::Process(){
-  ApplyCalibrations();
+
   tree->Fill();
   
 }

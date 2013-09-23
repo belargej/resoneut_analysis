@@ -65,14 +65,13 @@ void S2_Analyzer::AutoCalibrate(int matchfront, int matchback){
 
   for (Long64_t i=0;i<totentries;i++){
     GetDetectorEntry(i);
-    ApplyCalibrations();
     idx=0;
     for(RN_S2CalCollectionRef it=s2front.begin();it!=s2front.end();it++){
       
       if(idx<si_.size()){
 	if(si_[idx].back.fMult>0&&si_[idx].back.fChlist[0]==matchback){
 	  if(si_[idx].front.fMult>0)
-	    (*it).AddHit(si_[idx].back.fE[0],si_[idx].front.fE[0],si_[idx].front.fChlist[0]);
+	    (*it).AddHit(si_[idx].Back_E(0),si_[idx].Front_E(0),si_[idx].front.fChlist[0]);
 	}
       }
       idx++;
@@ -114,12 +113,11 @@ int S2_Analyzer::initHists(std::string output,int ind){
 }
 
 void S2_Analyzer::Process(){
-  ApplyCalibrations();
   int idx=(int)si_[ind_].front.fChlist[0];
   if(si_[ind_].front.fMult>0&&si_[ind_].back.fMult>0){
-    front[idx]->Fill(si_[ind_].back.fChlist[0],(si_[ind_].back.fE[0]/si_[ind_].front.fE[0]));
-    h_si_1->Fill(si_[ind_].front.fE[0]);
-    h_si_2->Fill(si_[ind_].front.fE[0]);
+    front[idx]->Fill(si_[ind_].back.fChlist[0],(si_[ind_].back.fE[0]/si_[ind_].Front_E(0)));
+    h_si_1->Fill(si_[ind_].Front_E(0));
+    h_si_2->Fill(si_[ind_].Front_E(0));
   }
   
 
