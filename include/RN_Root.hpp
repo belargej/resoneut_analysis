@@ -33,6 +33,7 @@
 #include "RN_VariableMap.hpp"
 #include "RN_IonChamber.hpp"
 #include "RN_NaIArray.hpp"
+#include "RN_MassTable.hpp"
 
 
 
@@ -45,10 +46,25 @@ R__EXTERN RN_RFCollection rftime;
 R__EXTERN RN_IonChamber ic;		     
 R__EXTERN RN_NaICollection nai;		     
 R__EXTERN RN_VariableMap DetVar;
+R__EXTERN RN_MassTable MassTable;
 
 R__EXTERN int RN_DetectorSet;
 
 void RN_RootInit();
+void LoadGlobalParams();
+
+namespace global{
+  extern double beam_e;
+  extern double beam_eloss;
+  extern double beam_est;
+  extern double m_beam;
+  extern double m_target;
+  extern double m_frag;
+  extern double m_recoil;
+
+
+
+}
 
 
 

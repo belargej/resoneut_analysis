@@ -81,19 +81,30 @@ void RN_S2Detector::Calcnormv(){
   normv_ = resultv;
 }
 
+Double_t RN_S2Detector::Front_E(int i) const{
+  if(i>front.fMult)
+    return -1;
+  
+  return ((fronta1[(int)front.fChlist[i]]*front.fE[i])+fronta0[(int)front.fChlist[i]])*elin+eshift;
+}
 
-void RN_S2Detector::ApplyCalibrations(){
-  for(int i=0;i<front.fMult;i++){
-    
-    front.fE[i]=((fronta1[(int)front.fChlist[i]]*front.fE[i])+fronta0[(int)front.fChlist[i]])*elin+eshift;   
-    front.fT[i]=tlin*front.fT[i]+tshift;
-  }
-  for(int i=0;i<back.fMult;i++){
-    back.fE[i]=((backa1[(int)back.fChlist[i]]*back.fE[i])+backa0[(int)back.fChlist[i]])*elin+eshift;   
-    back.fT[i]=tlin*back.fT[i]+tshift;
-  }
+Double_t RN_S2Detector::Front_T(int i) const{
+  if(i>front.fMult)
+    return -1;
+  return tlin*front.fT[i]+tshift;
 
- 
+}
+
+Double_t RN_S2Detector::Back_E(int i) const{
+  if(i>back.fMult)
+    return -1;
+  return (((backa1[(int)back.fChlist[i]] * back.fE[i] )+backa0[(int)back.fChlist[i]])*elin+eshift);   
+}
+
+Double_t RN_S2Detector::Back_T(int i) const{
+  if (i>back.fMult)
+    return -1;
+  return (tlin * back.fT[i] + tshift);
 }
 
 bool RN_S2Detector::inDet(const TVector3& v){
@@ -262,11 +273,11 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
   // in the back
   for (i=0;i<in.back.fMult;i++){
     backstatus |= (((unsigned int)in.back.fChlist[i]));
-    ebacktotal = ebacktotal+in.back.fE[i];
+    ebacktotal = ebacktotal+in.Back_E(i);
     if (addback_back&&
 	(i+1<in.back.fMult)&&(in.back.fChlist[i+1]==in.back.fChlist[i]+1)){
-      float ecluster=in.back.fE[i]+in.back.fE[i+1];
-      float tcluster=(in.back.fT[i+1]+in.back.fT[i])/2;
+      float ecluster=in.Back_E(i)+in.Back_E(i+1);
+      float tcluster=(in.Back_T(i+1)+in.Back_T(i))/2;
       float chnew=(in.back.fChlist[i+1]+in.back.fChlist[i])/2.0;
       BackClusters.InsertHit(ecluster,tcluster,chnew);
       // we analyzed the i+1 hit along with the i, so 
@@ -274,15 +285,15 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
     }
     else{
       int ch=in.back.fChlist[i];
-      float ecluster=in.back.fE[i];
-      float tcluster=in.back.fT[i];
+      float ecluster=in.Back_E(i);
+      float tcluster=in.Back_T(i);
       
       BackClusters.InsertHit(ecluster,tcluster,ch);
     }
   }
   //in the front
   for (i=0;i<in.front.fMult;i++){
-    efronttotal = efronttotal+in.front.fE[i];
+    efronttotal = efronttotal+in.Front_E(i);
   }
   for (i=0;i<in.front.fMult;i++){
     frontstatus |= (((unsigned int)in.front.fChlist[i]));
@@ -290,8 +301,8 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
 	(i+1<in.front.fMult)&&(in.front.fChlist[i+1]==in.front.fChlist[i]+1)){
  
  
-      float ecluster=in.front.fE[i+1]+in.front.fE[i];
-      float tcluster=(in.front.fT[i+1]+in.front.fT[i])/2;
+      float ecluster=in.Front_E(i+1)+in.Front_E(i);
+      float tcluster=(in.Front_T(i+1)+in.Front_T(i))/2;
       float chnew=(in.front.fChlist[i+1]+in.front.fChlist[i])/2.0;
       FrontClusters.InsertHit(ecluster,tcluster,chnew);
       // we analyzed the i+1 hit along with the i, so 
@@ -299,8 +310,8 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
     }
     else{
       int ch=in.front.fChlist[i];
-      float ecluster=in.front.fE[i];
-      float tcluster=in.front.fT[i];
+      float ecluster=in.Front_E(i);
+      float tcluster=in.Front_T(i);
       FrontClusters.InsertHit(ecluster,tcluster,ch);
     }
   }

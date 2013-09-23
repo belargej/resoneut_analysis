@@ -18,12 +18,12 @@ RN_Analyzer::RN_Analyzer()
 }
 
 void RN_Analyzer::SetCalibrations(){
-
-
+  LoadGlobalParams();
+  
   for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
     (*it).SetCalibrations(DetVar);
   }
-
+  
   for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
     (*it).SetCalibrations(DetVar);
   }
@@ -39,38 +39,6 @@ void RN_Analyzer::SetCalibrations(){
   
   for(RN_NaICollectionRef it=nai.begin();it!=nai.end();it++){
     (*it).SetCalibrations(DetVar);
-  }
-
-
-}
-
-void RN_Analyzer::ApplyCalibrations(){
-
-  int nref;
-  for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
-    (*it).ApplyCalibrations();
-  }
-  
-  Narray.ReconstructHits(neut);
-  if(Narray.fMult>1)
-    RNArray::ReconstructTREL(neut);
-
-
-  int cref=0;
-  for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
-    (*it).ApplyCalibrations();
-    if(cref<si_cluster_.size())
-      si_cluster_[cref].ReconstructClusters(*it);
-    cref++;
-  }
-  for(RN_RFCollectionRef it=rftime.begin();it!=rftime.end();it++){
-    (*it).ApplyCalibrations();
-  }
-  
-  ic.ApplyCalibrations();
-
-  for(RN_NaICollectionRef it=nai.begin();it!=nai.end();it++){
-    (*it).ApplyCalibrations();
   }
 
 
@@ -282,7 +250,21 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
     ic.fdE=ADC4[13];
   }
 
+ 
+  Narray.ReconstructHits(neut);
+  if(Narray.fMult>1)
+    RNArray::ReconstructTREL(neut);
   
+  
+  int cref=0;
+  for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
+    if(cref<si_cluster_.size())
+      si_cluster_[cref].ReconstructClusters(*it);
+    cref++;
+    
+  }
+  
+ 
 }
 
 

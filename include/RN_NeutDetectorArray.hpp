@@ -56,8 +56,20 @@ class RN_NeutDetector:public RN_BaseDetector{
   Double32_t fTrel;
 
   void InsertPSDHit(const double& fql,const double& fqs,const double& t = 0.0);
+ 
   Double_t PSD() const ;
-  Double_t Q() const ;
+  Double_t Q_Long() const ;
+  Double_t Q_Short_Off() const;
+  Double_t E_est() const;
+  Double_t T() const;
+  Double_t nKE(Double_t tof) const;
+
+  Double_t Q_value_est(double tof,
+		       double m1,
+		       double m2,
+		       double beam_e,
+		       double& hi_KE,
+		       double& Q_val);
 
   TVector3 GetPosVect() const{return fPos;}//!
 
@@ -68,7 +80,6 @@ class RN_NeutDetector:public RN_BaseDetector{
 		       double tshift,
 		       double zero_off);
   void SetCalibrations(RN_VariableMap& detvar);
-  void ApplyCalibrations();
   double CalculateTRel(const double &tfirst);
 
   

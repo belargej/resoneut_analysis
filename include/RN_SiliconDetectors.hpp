@@ -87,6 +87,12 @@ public:
   void SetPosVect(TVector3 posv){posv_=posv;}
   void SetShiftVect(TVector3 shiftv){shiftv_=shiftv;}
   void SetRotVect(TVector3 rotv){rotv_=rotv;}
+  Double_t Front_E(int i=0)const;
+  Double_t Back_E(int i=0)const;
+  Double_t Front_T(int i=0)const;
+  Double_t Back_T(int i=0)const;
+ 
+
 
   TVector3 chVect(const double&cf,const double& cb) const;
   void Calcnormv();
@@ -94,7 +100,7 @@ public:
   bool Vect_to_ch(const TVector3&, double&, double&);
   void Reset();
   void SetCalibrations(double,double,double,double); 
-  void ApplyCalibrations();
+ 
   void SetCalibrations(RN_VariableMap& detvar);
   std::string Name()const{return fName;}//!
   ClassDef(RN_S2Detector,1);

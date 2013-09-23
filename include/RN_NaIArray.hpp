@@ -57,7 +57,6 @@ public:
   float TZero(int id){return tzero[id];}
   std::string Name(){return fName;}
   void Reset();
-  void ApplyCalibrations(){}
   void SetCalibrations(float, float, float, float);
   void SetCalibrations(RN_VariableMap& detvar);
   double SumE() const{return fE[0]+fE[1];};
@@ -84,14 +83,12 @@ class RN_NaIArray:public RN_BaseDetector{
   {
   } 
   void Reset();
-  void ApplyCalibrations(){}
   void SetCalibrations(float, float, float, float);
   void SetCalibrations(RN_VariableMap& detvar);
  
   ClassDef(RN_NaIArray,1);
   
 };
-
 
 
 

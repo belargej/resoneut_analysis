@@ -17,9 +17,33 @@ RN_RFCollection rftime;
 RN_IonChamber ic("ic");		     
 RN_NaICollection nai;		     
 RN_VariableMap DetVar;
+RN_MassTable MassTable;
 int RN_DetectorSet(0);
 
+namespace global{
+  double beam_e(0);
+  double beam_eloss(0);
+  double beam_est(0);
+  double m_beam(0);
+  double m_target(0);
+  double m_frag(0);
+  double m_recoil(0);
+  
+}
 
+void LoadGlobalParams(){
+  DetVar.GetParam("global.beam_e",global::beam_e);
+  DetVar.GetParam("global.beam_eloss",global::beam_eloss);
+  
+  //Set Up Experiment Reaction Here
+  MassTable.GetParam("24Mg",global::m_beam);
+  MassTable.GetParam("d",global::m_target);
+  MassTable.GetParam("25Al",global::m_frag);
+  MassTable.GetParam("n",global::m_recoil);
+ 
+  global::beam_est = global::beam_e - global::beam_eloss*.5;
+
+}
 
 
 void RN_RootInit(){

@@ -112,8 +112,6 @@ public:
   virtual void Init(TString rootfile);
   virtual Int_t   GetEntry(Long64_t entry, Int_t getall = 0) { return fChain ? fChain->GetEntry(entry, getall) : 0; }
   virtual int GetDetectorEntry(Long64_t entry,Int_t getall=0);
-  virtual void ApplyCalibrations();
-
 
   ClassDef(RN_Analyzer,0);
 };

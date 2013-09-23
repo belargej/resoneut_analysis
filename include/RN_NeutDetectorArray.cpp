@@ -20,7 +20,8 @@ RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetecto
 								  fTrel(0)
   
 {
-  RNArray::PositionMap(apos,fPos);
+  fPos.SetXYZ(0,0,-228.7);//set default zpos
+  RNArray::PositionMap(apos,fPos);//set xpos and ypos
 } 
 
 
@@ -56,12 +57,39 @@ void RN_NeutDetector::Reset(){
   fPSD=0;
 }
 
+Double_t RN_NeutDetector::E_est() const{
+  return fQ_long*elin+eshift; 
+}
 
-void RN_NeutDetector::ApplyCalibrations(){
-  fQ_short = fQ_short - zero_off;
-  fT_Q=fT_Q*tlin;//from TDC
-  if(fQ_short>0 && fQ_long>0) fPSD = fQ_short/fQ_long;
+Double_t RN_NeutDetector::Q_Long() const{
+  return fQ_long*elin+eshift;
+}
+
+Double_t RN_NeutDetector::Q_Short_Off() const{
+  return (fQ_short-zero_off);
+}
+
+Double_t RN_NeutDetector::T() const{
+  return fT_Q * tlin + tshift;//from TDC
+}
+
+Double_t RN_NeutDetector::nKE(double tof) const{
+  return ((.5*939.565*fPos.Z()*fPos.Z())/(90000*tof*tof));
+}
+
+Double_t RN_NeutDetector::Q_value_est(double tof,
+				      double mass1,
+				      double mass2,
+				      double beam_e,
+				      double& hi_KE,
+				      double& Q_val
+				      )
+{
+  double ne=nKE(tof);
+  hi_KE=((mass1*beam_e/mass2)+(939.565*ne/mass2)+((2/mass2)*sqrt(beam_e*ne*mass1*939.565)));
+  Q_val=ne+hi_KE-beam_e;
   
+  return Q_val;
 
 }
 
@@ -69,11 +97,13 @@ void RN_NeutDetector::InsertPSDHit(const double& q_long,const double& q_short,co
   fQ_long=q_long;
   fQ_short=q_short;
   fT_Q=t;
- 
+
+  if(fQ_short>0 && fQ_long>0) 
+    fPSD = Q_Short_Off()/fQ_long;
+
 }
 
 Double_t RN_NeutDetector::PSD() const{if (fQ_long>0) return fQ_short/fQ_long;}
-Double_t RN_NeutDetector::Q() const{return fQ_long;}
 
 
 double RN_NeutDetector::CalculateTRel(const double &tfirst){
@@ -98,10 +128,10 @@ int RN_NeutDetectorArray::ReconstructHits(RN_NeutCollection& in){
   int cref=0;
   for(RN_NeutCollectionRef it=in.begin();it!=in.end();it++){
     if((*it).fQ_long>0){
-      double ql=(*it).fQ_long;
-      double qs=(*it).fQ_short;
+      double ql=(*it).Q_Long();
+      double qs=(*it).Q_Short_Off();
       TVector3 pos=(*it).GetPosVect();
-	InsertHit(ql,qs,pos,cref);
+      InsertHit(ql,qs,pos,cref);
     }
     
       cref++;
@@ -164,8 +194,8 @@ namespace RNArray{
   void ReconstructTREL(RN_NeutCollection&in){
     double t=4096;
     for(unsigned int i=0;i<in.size();i++){
-      if(in[i].fQ_long>0 &&in[i].fT_Q>0 &&in[i].fT_Q<t)
-	t=in[i].fT_Q;
+      if(in[i].fQ_long>0 &&in[i].T()>0 &&in[i].T()<t)
+	t=in[i].T();
     }
     if(t<4096){    
       //calculate TRel for all detectors(only important for coincidence data(ie source)

@@ -63,7 +63,6 @@ class RN_IonChamber:public TObject{
   
   std::string Name()const{return fName;}//!
   void Reset();
-  void ApplyCalibrations(){}
   void SetCalibrations(float, float, float, float);
   void SetCalibrations(RN_VariableMap& detvar);
  

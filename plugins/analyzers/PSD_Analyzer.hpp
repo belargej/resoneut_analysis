@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <string>
 #include <new>
-#include "RN_Analyzer.hpp"
+#include "../include/RN_Analyzer.hpp"
 #include "plugins/sak/sak_Histograms.hpp"
 #include "plugins/sak/sak_Gates.hpp"
 
@@ -33,7 +33,7 @@ namespace psd{
 };
 
 
-  void analysis(const char* infile, const char* config);
+  void LoadGates(const std::string&);
   
   
 }

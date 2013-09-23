@@ -74,8 +74,12 @@ public:
   double fT;
 
   
-  std::string Name() const{return fName;}//!
-  void ApplyCalibrations();
+  std::string Name() const{return fName;}
+  Double_t T()const;
+  Double_t T_Wrapped()const;
+
+
+
   void SetCalibrations(RN_VariableMap&);
   void InsertHit(const double&);
   void Reset();

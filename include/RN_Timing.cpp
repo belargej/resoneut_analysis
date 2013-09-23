@@ -13,16 +13,25 @@ RN_RFTime::RN_RFTime(std::string name):fName(name),
 { 
   
 }
-void RN_RFTime::ApplyCalibrations(){
-  if(fT>0){
-    fT=(fT*tlin)+tshift;
-    if(fTo){
-      fT = fmod((fT - fTo),82.417);
-      if (fT < 0)
-	fT+=82.417;
-      fT=fabs(82.417-fT);
-    }
+
+Double_t RN_RFTime::T() const{
+  if(fT>0)
+    return ((fT * tlin) + tshift);
+  else
+    return -1;
+}
+
+Double_t RN_RFTime::T_Wrapped() const{
+  double time=T();
+  if(fT>0 && fTo){
+    time = fmod((time - fTo),82.417);
+    if (time < 0)
+      time+=82.417;
+    time=fabs(82.417-time);  
+    return time;
   }
+  else return -1;
+  
 }
 
 void RN_RFTime::SetCalibrations(RN_VariableMap&detvar){
