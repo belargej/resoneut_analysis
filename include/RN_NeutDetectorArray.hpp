@@ -93,9 +93,9 @@ class RN_NeutDetector:public RN_BaseDetector{
 
   TVector3 GetPosVect() const{return fPos;}//!
   bool inDet(const TVector3& v);
-  int H_hit(TLorentzVector& inLV);
+  int H_hit(TLorentzVector& inLV,double step);
   int NeutIn(TLorentzVector nLV,double& t,double& e);
-  int C_hit(TLorentzVector& inLV);
+  int C_hit(TLorentzVector& inLV,double step);
   void Reset();
   void SetCalibrations(double elin, 
 		       double eshift,

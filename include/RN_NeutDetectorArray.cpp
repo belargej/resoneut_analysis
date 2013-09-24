@@ -170,6 +170,8 @@ int RN_NeutDetectorArray::Reset(){
     fDetlist[i]=-1;
  }
   fMult=0;
+
+  return 1;
 }
 
 
@@ -255,12 +257,13 @@ int RN_NeutDetector::NeutIn(TLorentzVector nLV,double& t,double& e){
     if (nKE<0.010)
       break;
     //step is fThickness/100 (mm)
-    double dx=(fThickness/100)*px/(sqrt(psqr));
-    double dy=(fThickness/100)*py/(sqrt(psqr));
-    double dz=(fThickness/100)*pz/(sqrt(psqr));
+    double step=(fThickness/1000);
+    double dx=step*px/(sqrt(psqr));
+    double dy=step*py/(sqrt(psqr));
+    double dz=step*pz/(sqrt(psqr));
     
-    if(!H_hit(inLV))
-      C_hit(inLV);
+    if(!H_hit(inLV,step))
+      C_hit(inLV,step);
     
     px = inLV.Px();
     py = inLV.Py();
@@ -286,7 +289,7 @@ int RN_NeutDetector::NeutIn(TLorentzVector nLV,double& t,double& e){
 
 }	  
 
-int RN_NeutDetector::H_hit(TLorentzVector& inLV){
+int RN_NeutDetector::H_hit(TLorentzVector& inLV,double step/*mm*/){
   double KE = inLV.E()-inLV.M();
   TLorentzVector neut_LVcopy(inLV);
   TLorentzVector Target(0.,0.,0.,M_P);
@@ -296,20 +299,20 @@ int RN_NeutDetector::H_hit(TLorentzVector& inLV){
   neut_LVcopy.Boost(boostv);  //this is for getting neutron KE in CM
   double nKE=neut_LVcopy.E()-neut_LVcopy.M();
   
-  if(nKE>.010 && nKE<.400){
-    if(global::myRnd.Rndm()>(0.004508869*exp(2.91109-3.12513*nKE)*fThickness/100))
+  if(nKE>.005 && nKE<.400){
+    if(global::myRnd.Rndm()>(0.004508869*exp(2.91109-3.12513*nKE)*step))
       return 0;
   }
   else if(nKE>=.400&& nKE<1.4){
-    if(global::myRnd.Rndm()>(0.004508869*exp(2.1646-.67*nKE)*fThickness/100))
+    if(global::myRnd.Rndm()>(0.004508869*exp(2.1646-.67*nKE)*step))
       return 0;
   }
-  else if(nKE<0.010 || nKE>1.4){
+  else if(nKE<0.005 || nKE>1.4){
     return 0;
   }
   
   fCounter++;
-  if(fCounter==1){fDt=(z_pos-fThickness)*M_N/(neut_LVcopy.Pz()*3*100);}
+  if(fCounter==1){fDt=(z_pos-fThickness)*M_N/(inLV.Pz()*3*100);}
   double theta = 3.14 * global::myRnd.Rndm(); 
   double phi = 2.* 3.14 * global::myRnd.Rndm(); //isotropic CM
   double psqr=2*M_P*M_N*(Before.E()-M_N-M_P)/(M_P+M_N);
@@ -324,7 +327,7 @@ int RN_NeutDetector::H_hit(TLorentzVector& inLV){
   
 }
 
-int RN_NeutDetector::C_hit(TLorentzVector& inLV){
+int RN_NeutDetector::C_hit(TLorentzVector& inLV,double step/*mm*/){
   double KE = inLV.E()-inLV.M();
   TLorentzVector neut_LVcopy(inLV);
   TLorentzVector Target(0.,0.,0.,M_C);
@@ -333,16 +336,16 @@ int RN_NeutDetector::C_hit(TLorentzVector& inLV){
   Before.Boost(boostv);
   neut_LVcopy.Boost(boostv);
   double nKE=neut_LVcopy.E()-neut_LVcopy.M();
-  if(nKE>=.010&& nKE<1.4){
-    if(global::myRnd.Rndm()>(0.005798*(4.6126-1.77378*nKE)*fThickness/100))
+  if(nKE>=.01&& nKE<1.4){
+    if(global::myRnd.Rndm()>(0.005798*(4.6126-1.77378*nKE)*step))
       return 0;
   }
-  else if(nKE<0.010 || nKE>1.4){
+  else if(nKE<0.01 || nKE>1.4){
     return 0;
   }  
   
   fCounter++;
-  if(fCounter==1){fDt=(z_pos-fThickness)*939.56404/(neut_LVcopy.Pz()*3*100);}
+  if(fCounter==1){fDt=(z_pos-fThickness)*939.56404/(inLV.Pz()*3*100);}
   double theta = 3.14 * global::myRnd.Rndm(); 
   double phi = 2.* 3.14 * global::myRnd.Rndm(); //isotropic CM
   double psqr=2*M_C*M_N*(Before.E()-M_N-M_C)/(M_C+M_N);
