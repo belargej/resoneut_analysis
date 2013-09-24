@@ -43,6 +43,14 @@ void RN_SimRun::Loop(Long64_t evnum,std::string options){
 
 void RN_SimRun::initHists(){
   def=1;
+  for(unsigned int i=0;i<particle.size();i++){
+    tree->Branch(Form("%s.",particle[i].Name().c_str()),"RN_Particle",&particle[i]);
+  }
+  for(unsigned int i=0;i<neut.size();i++){
+    tree->Branch(Form("%s.",neut[i].Name().c_str()),"RN_NeutDetector",&neut[i]);
+  }
+
+
   hn_CM=new TH1D("h_nCM","h_nCM",512,1,180);
   hn_CMvLab=new TH2D("hn_CMvLAB","n_CMvLAB",512,1,180,512,1,180);
   hn_tof=new TH1D("hn_tof","hn_tof",4096,1,128);
@@ -57,7 +65,7 @@ void RN_SimRun::initHists(){
 }
 
 void RN_SimRun::FillHistograms(){
-  //tree->Fill();
+  tree->Fill();
   hE_v_theta->Fill(particle[2].LV.Theta()*180/3.14,particle[2].LV.E()-particle[2].LV.M());
   hn_CM->Fill(n_cm*180/3.14);
   hn_CMvLab->Fill(n_cm*180/3.14,particle[2].LV.Theta()*180/3.14);
@@ -119,6 +127,7 @@ void RN_SimRun::StartRun(std::string input){
     else if(input[0]=="fOutput")
       {
 	rootfile=new TFile(input[1].c_str(),"RECREATE");
+	tree=new TTree("sim","sim");
 	if(input.size()==2)
 	  initHists();
 	else

@@ -75,6 +75,8 @@ void RN_NeutDetector::Reset(){
   fPSD=0;
   fDt=0;
   fEsum=0;
+  fT_Sim=0;
+  fCounter=0;
 }
 
 Double_t RN_NeutDetector::E_est() const{
@@ -228,9 +230,7 @@ bool RN_NeutDetector::inDet(const TVector3& v){
   TVector3 ch_vect = v_to_det - posvect;
 
   //see if it is within the detector area
-  double ch_vect_x = fabs(ch_vect.X());
-  double ch_vect_y = fabs(ch_vect.Y());
-  if(sqrt(ch_vect_x*ch_vect_x+ch_vect_y*ch_vect_y) > fRadius){
+  if((ch_vect.Mag()) > fRadius){
     return false;
   }
   return true;
@@ -377,22 +377,22 @@ namespace RNArray{
   int PositionMap(int slot,TVector3 & pos){
     double z=pos.Z();
     
-    if(slot==1)pos.SetXYZ(38.1,-152.4,z);
-    else if(slot==2)pos.SetXYZ(-38.1,-152.4,z);
-    else if(slot==3)pos.SetXYZ(114.3,-76.2,z);
-    else if(slot==4)pos.SetXYZ(38.1,-76.2,z);
-    else if(slot==5)pos.SetXYZ(-38.1,-76.2,z);
-    else if(slot==6)pos.SetXYZ(-114.3,-76.2,z);
-    else if(slot==7)pos.SetXYZ(150.622,0,z);
-    else if(slot==8)pos.SetXYZ(74.422,0,z);
-    else if(slot==9)pos.SetXYZ(-74.422,0,z);
-    else if(slot==10)pos.SetXYZ(-150.622,0,z);
-    else if(slot==11)pos.SetXYZ(114.3,76.2,z);
-    else if(slot==12)pos.SetXYZ(38.1,76.2,z);
-    else if(slot==13)pos.SetXYZ(-38.1,76.2,z);
-    else if(slot==14)pos.SetXYZ(-114.3,76.2,z);
-    else if(slot==15)pos.SetXYZ(38.1,152.4,z);
-    else if(slot==16)pos.SetXYZ(-38.1,152.4,z);
+    if(slot==1)pos.SetXYZ(-38.1,-152.4,z);
+    else if(slot==2)pos.SetXYZ(38.1,-152.4,z);
+    else if(slot==3)pos.SetXYZ(-114.3,-76.2,z);
+    else if(slot==4)pos.SetXYZ(-38.1,-76.2,z);
+    else if(slot==5)pos.SetXYZ(38.1,-76.2,z);
+    else if(slot==6)pos.SetXYZ(114.3,-76.2,z);
+    else if(slot==7)pos.SetXYZ(-150.622,0,z);
+    else if(slot==8)pos.SetXYZ(-74.422,0,z);
+    else if(slot==9)pos.SetXYZ(74.422,0,z);
+    else if(slot==10)pos.SetXYZ(150.622,0,z);
+    else if(slot==11)pos.SetXYZ(-114.3,76.2,z);
+    else if(slot==12)pos.SetXYZ(-38.1,76.2,z);
+    else if(slot==13)pos.SetXYZ(38.1,76.2,z);
+    else if(slot==14)pos.SetXYZ(114.3,76.2,z);
+    else if(slot==15)pos.SetXYZ(-38.1,152.4,z);
+    else if(slot==16)pos.SetXYZ(38.1,152.4,z);
     else return 0;
     
     

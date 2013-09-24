@@ -31,16 +31,16 @@ private:
 
 public:
   RN_Particle(){};
-  RN_Particle(const TLorentzVector&);
+  RN_Particle(std::string,double){}
   RN_Particle(std::string);
-  virtual ~RN_Particle(){};
+  ~RN_Particle(){};
 
   double mass;
   double ex_energy;
   TLorentzVector LV;
   RN_MassTable mtable;//!
 
-  std::string const Name(){return fName;}
+  std::string Name()const {return fName;}
   
   void Reset();
 

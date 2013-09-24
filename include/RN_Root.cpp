@@ -74,12 +74,13 @@ void RN_RootInit(){
     particle.clear();
   }
 
-  particle.push_back(RN_Particle(global::m_beam));
-  particle.push_back(RN_Particle(global::m_target));
-  particle.push_back(RN_Particle(global::m_recoil)); 
-  particle.push_back(RN_Particle(global::m_frag));
-  particle.push_back(RN_Particle(global::m_heavy_decay));
-  particle.push_back(RN_Particle(global::m_decay_product));
+  particle.push_back(RN_Particle("24Mg"));
+  particle.push_back(RN_Particle("d"));
+  particle.push_back(RN_Particle("n")); 
+  particle.push_back(RN_Particle("25Al"));
+  particle.push_back(RN_Particle("p"));  
+  particle.push_back(RN_Particle("24Mg"));
+  
   
 
 
