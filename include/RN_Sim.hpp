@@ -19,44 +19,30 @@
 #include "RN_Particle.hpp"
 #include "RN_MassTable.hpp"
 
+namespace sim{
+
 class RN_Sim{
 
 private:
- 
-public:
-  RN_PTerphCollection pterph;
-  RN_S2Collection s2_det;
-  RN_ParticleCollection plist;
-  
   RN_AngularDistribution nDWBA;
-  RN_MassTable mtable; 
-  RN_VariableMap global;
+
+public:
+
   double E_deposited;
   double n_cm;
   double n_tof;
-  //variables
-  double q1set,q2set,q3set,q4set;
-  double hi_ex_set,d_ex_set;
-  double beam_energy;
-  double beam_eloss;
-  double beam_e;
   double fNe,fNt;
-  TRandom3 myRnd;//!
 
-
-
-  RN_Sim();
+  RN_Sim(){};
   ~RN_Sim(){};
 
   void Init();
-  void LoadVariableFile(std::string a);
   void Reset();
-  void SetVariables();
   void SetAngularDistribution(std::string filename);
   int GenerateEvents(Long64_t evnum,std::string options);
   double QValue(const double,const double,double&,double&);
 };
 
-
+}
 
 #endif

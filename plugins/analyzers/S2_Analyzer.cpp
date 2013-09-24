@@ -1,4 +1,5 @@
 #include "S2_Analyzer.hpp"
+#include "../../include/RN_Root.hpp"
 
 namespace si_cal{
   TFile *rootfile;
@@ -144,8 +145,8 @@ void S2_Analyzer::Terminate(){
     if(!a.initHists(output,index))
       return ;
     if(config){
-      a.LoadVariableFile(config);
-      a.SetCalibrations();
+      LoadVariableFile(config);
+      SetCalibrations();
     }
     a.Loop();
     

@@ -13,6 +13,9 @@
 #pragma link C++ defined_in "RN_Timing.hpp";
 #pragma link C++ defined_in "RN_Analyzer.hpp";
 #pragma link C++ defined_in "RN_Root.hpp";
+#pragma link C++ defined_in "RN_Sim.hpp";
+#pragma link C++ defined_in "RN_SimPhysics.hpp";
+#pragma link C++ defined_in "RN_SimRun.hpp";
 
 
 

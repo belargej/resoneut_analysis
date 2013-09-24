@@ -1,11 +1,35 @@
+#ifndef RN_SIMRUNCXX
+#define RN_SIMRUNCXX
 #include "RN_SimRun.hpp"
+#include "RN_Root.hpp"
 
+namespace sim{
+
+  TFile * rootfile;
+  TTree * tree;
+  
+  //declare histograms here
+  TH1D* hn_tof;
+  TH2D* htof_n;
+  TH2D* hE_n;
+  TH2D* hE_v_theta;
+  TH2D* hT_v_theta;
+  TH1D* hn_CM;
+  TH2D* hn_CMvLab;
+  TH2D* hpos;
+  TH1D* hQ;
+  TH1D* h_nKE;
+  TH1D* h_hiKE;
+  
+
+  
+  
 RN_SimRun::RN_SimRun():def(0){
 }
 
 
 void RN_SimRun::Loop(Long64_t evnum,std::string options){
-  SetVariables();
+  SetCalibrations();
   Long64_t evcount=0;
   while(evcount<evnum){
     if(GenerateEvents(evcount,options))
@@ -19,12 +43,6 @@ void RN_SimRun::Loop(Long64_t evnum,std::string options){
 
 void RN_SimRun::initHists(){
   def=1;
-  /*tree= new TTree("sim","sim");
-  for(unsigned int i=0;i<plist.size();i++)
-    tree->Branch(Form("%s.",plist[i].Name().c_str()),"RN_Particle",&plist[i]);
-  for(unsigned int i=0;i<pterph.size();i++)
-    tree->Branch(Form("%s.",pterph[i].Name().c_str()),"RN_PTerph",&pterph[i]);
-  */
   hn_CM=new TH1D("h_nCM","h_nCM",512,1,180);
   hn_CMvLab=new TH2D("hn_CMvLAB","n_CMvLAB",512,1,180,512,1,180);
   hn_tof=new TH1D("hn_tof","hn_tof",4096,1,128);
@@ -40,20 +58,20 @@ void RN_SimRun::initHists(){
 
 void RN_SimRun::FillHistograms(){
   //tree->Fill();
-  hE_v_theta->Fill(plist[2].LV.Theta()*180/3.14,plist[2].LV.E()-plist[2].LV.M());
+  hE_v_theta->Fill(particle[2].LV.Theta()*180/3.14,particle[2].LV.E()-particle[2].LV.M());
   hn_CM->Fill(n_cm*180/3.14);
-  hn_CMvLab->Fill(n_cm*180/3.14,plist[2].LV.Theta()*180/3.14);
+  hn_CMvLab->Fill(n_cm*180/3.14,particle[2].LV.Theta()*180/3.14);
  
   int cref=0;
-  for(RN_PTerphCollectionRef it=pterph.begin();it!=pterph.end();it++){ 
-    if((*it).fT>0){
-      hn_tof->Fill(((*it).fT));
-      htof_n->Fill(cref,(*it).fT);
+  for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){ 
+    if((*it).fT_Sim>0){
+      hn_tof->Fill(((*it).fT_Sim));
+      htof_n->Fill(cref,(*it).fT_Sim);
       hE_n->Fill(cref,(*it).fEsum);
-      hT_v_theta->Fill(plist[2].LV.Theta()*180/3.14,(*it).fT);
+      hT_v_theta->Fill(particle[2].LV.Theta()*180/3.14,(*it).fT_Sim);
       hpos->Fill((*it).GetHitPos().X(),(*it).GetHitPos().Y());
       double nKE=0,hiKE=0;
-      double q_value=QValue((*it).GetPosVect().Z(),(*it).fT,nKE,hiKE);
+      double q_value=QValue((*it).GetPosVect().Z(),(*it).fT_Sim,nKE,hiKE);
       hQ->Fill(q_value);
       h_nKE->Fill(nKE);
       h_hiKE->Fill(hiKE);
@@ -65,7 +83,7 @@ void RN_SimRun::FillHistograms(){
 
 void RN_SimRun::StartRun(std::string input){
   Init();
-
+  RN_RootInit();
 
   std::string temp;
   ifstream cfg(input.c_str());
@@ -82,7 +100,7 @@ void RN_SimRun::StartRun(std::string input){
       continue;
     if(input[0]=="fParam")
       {      
-	global.AddParam(input[1],sak::string_to_double(input[2]));
+	DetVar.AddParam(input[1],sak::string_to_double(input[2]));
       }
     else if(input[0]=="fDWBA")
       {
@@ -91,9 +109,11 @@ void RN_SimRun::StartRun(std::string input){
       }
     else if(input[0]=="fReaction")
       {
-	if (input.size()==7)
+	if (input.size()==7){
+	  particle.clear();
 	  for(unsigned int i=1;i<7;i++)
-	    plist.push_back(RN_Particle(input[i]));
+	    particle.push_back(RN_Particle(input[i]));
+	}
 	else std::cout<<"incorrect number of entries to fReaction: "<< input.size()-1<<"but needed 6"<<std::endl;
       }
     else if(input[0]=="fOutput")
@@ -130,3 +150,7 @@ void RN_SimRun::WriteOut(){
   rootfile->Close();
 
 }
+
+
+}
+#endif

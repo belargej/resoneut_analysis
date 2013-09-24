@@ -5,7 +5,7 @@
 #include <string>
 #include <new>
 #include "../include/RN_Analyzer.hpp"
-#include "PSD_Analyzer2.hpp"
+#include "PSD_Analyzer.hpp"
 #include "plugins/sak/sak_Histograms.hpp"
 #include "plugins/sak/sak_Gates.hpp"
 

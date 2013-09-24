@@ -2,7 +2,8 @@ CXX=g++
 SOURCES=RN_Unpack2Root.cpp RN_BaseDetector.cpp RN_NeutDetectorArray.cpp \
 	RN_VariableMap.cpp RN_IonChamber.cpp RN_SiliconDetectors.cpp\
 	RN_Calibrator.cpp RN_Timing.cpp RN_Analyzer.cpp sak_ReadBuffer.cpp\
-	RN_MassTable.cpp RN_Particle.cpp RN_NaIArray.cpp RN_Root.cpp
+	RN_MassTable.cpp RN_Particle.cpp RN_NaIArray.cpp RN_Root.cpp \
+	RN_Sim.cpp RN_SimPhysics.cpp RN_SimRun.cpp
 
 
 
@@ -10,7 +11,7 @@ SOURCES=RN_Unpack2Root.cpp RN_BaseDetector.cpp RN_NeutDetectorArray.cpp \
 HEADERS=${SOURCES:.cpp=.hpp}
 OBJECTS=${SOURCES:.cpp=.o}
 OPTIONS=-lMinuit
-EXE=RN_BatchMode #RN_Root
+EXE=RN_BatchMode 
 
 ifndef OPTIMIZE
 DEBUG=-g -Wall
@@ -33,8 +34,6 @@ all: ${EXE}
 RN_BatchMode: RN_BatchMode.o libRNeut.so
 	${CXX} -o ../bin/RNBatchMode $< ${OBJECTS} RN_RootDict.cpp ${LFLAGS}
 
-#RN_Root: RN_Root.o $(OBJECTS)
-#	${CXX} -o ../bin/RNRoot $^ -DMAKE_RN_EXE RN_RootDict.cpp ${LFLAGS}
 
 ####################################################################
 ###Framework Dependencies###########################################

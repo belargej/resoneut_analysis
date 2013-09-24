@@ -49,7 +49,7 @@
 #include "RN_VariableMap.hpp"
 #include "RN_IonChamber.hpp"
 #include "RN_NaIArray.hpp"
-#include "RN_Root.hpp"
+
 
 
 class RN_Analyzer {
@@ -98,11 +98,9 @@ public:
  
   //ROOT Initializations
   TChain * fChain;
-  TRandom3 myRnd;
+
   
   // Methods.
-  void LoadVariableFile(const std::string& f){DetVar.LoadParams(f);}
-  void SetCalibrations();
   virtual void Begin(){};
   virtual void Loop(Long64_t start=0,Long64_t evnum=0);
   virtual void Process(){};

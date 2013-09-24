@@ -1,5 +1,5 @@
 #include "NewTree_Analyzer.hpp"
-
+#include "../../include/RN_Root.hpp"
 
 NewTree_Analyzer::NewTree_Analyzer()
 {

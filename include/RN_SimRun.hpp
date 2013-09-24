@@ -20,32 +20,15 @@
 #include "RN_SiliconDetectors.hpp"
 #include "sak_ReadBuffer.hpp"
 
+namespace sim{
+
 class RN_SimRun:public RN_Sim{
 private:
 
 public:
-  TFile * rootfile;
-  TTree * tree;
-  int def;
-  //declare histograms here
-  TH1D* hn_tof;
-  TH2D* htof_n;
-  TH2D* hE_n;
-  TH2D* hE_v_theta;
-  TH2D* hT_v_theta;
-  TH1D* hn_CM;
-  TH2D* hn_CMvLab;
-  TH2D* hpos;
-  TH1D* hQ;
-  TH1D* h_nKE;
-  TH1D* h_hiKE;
-  
-
-
-
   Long64_t totevents;
   std::string option;
-
+  int def;
   RN_SimRun();
   void Loop(Long64_t evnum,std::string options);
   void StartRun(std::string input);
@@ -54,4 +37,6 @@ public:
   void FillHistograms();
 };
 
+
+}
 #endif

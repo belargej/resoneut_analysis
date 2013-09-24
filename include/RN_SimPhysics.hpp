@@ -17,6 +17,9 @@
 
 #include "RN_NeutDetectorArray.hpp"
 
+
+namespace sim{
+
 class RN_AngularDistribution{
 
 
@@ -42,7 +45,7 @@ public:
 	     double hi_mass);
   virtual ~RN_SimEvent();
   std::vector<TLorentzVector> LVarray;  
-  std::vector<double> Marray;
+  std::vector<Double32_t> Marray;
   double beam_energy;
   double thebeam_mass;
   double thetarget_mass;
@@ -68,47 +71,5 @@ public:
   ClassDef(RN_SimEvent,1);
 };
 
-class RN_PTerph:public TObject{
-
-private:
-  std::string fName;
-  double fRadius;
-  double fThickness;
-  double fThreshold;
-  int fCounter;
-  TVector3 fPos;
-  TVector3 HitPos;
-  TRandom3 rnd;//!
-  double z_pos;//!
-  
-  
-public:
-  double fEsum;
-  double fDt;
-  double fT;
-
-  RN_PTerph(std::string,int apos);
-  RN_PTerph();
-  int NeutIn(TLorentzVector nlv,double& t,double& e);
-  int H_hit(TLorentzVector &nlv);
-  int C_hit(TLorentzVector &nlv);
-  bool inDet(const TVector3& v);
- 
-  void Reset();
-  void LoadVariables(RN_VariableMap&);
-  std::string Name() const {return fName;}
-  int HitCounter() const {return fCounter;}
-  TVector3 GetPosVect()const {return fPos;}
-  TVector3 GetHitPos()const {return HitPos;}
-  float GetRadius()const {return fRadius;}
-  float GetThickness()const {return fThickness;}
-  float GetThreshold()const{return fThreshold;}
-
-  ClassDef(RN_PTerph,1)
-};
-typedef std::vector<RN_PTerph> RN_PTerphCollection;
-typedef std::vector<RN_PTerph>::iterator RN_PTerphCollectionRef;
-
-
-
+}
 #endif

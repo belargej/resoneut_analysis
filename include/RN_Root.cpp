@@ -9,6 +9,7 @@ using namespace std;
 //////////////////Cuts//////////////
 //////////////////////etc///////////
 
+RN_ParticleCollection particle;
 RN_NeutDetectorArray Narray;	     
 RN_NeutCollection neut;	     
 RN_S2Collection si_;		     
@@ -20,6 +21,7 @@ RN_VariableMap DetVar;
 RN_MassTable MassTable;
 int RN_DetectorSet(0);
 
+
 namespace global{
   double beam_e(0);
   double beam_eloss(0);
@@ -28,23 +30,31 @@ namespace global{
   double m_target(0);
   double m_frag(0);
   double m_recoil(0);
+  double m_heavy_decay(0);
+  double m_decay_product(0);
+  double hi_ex_set(0);
+  double d_ex_set(0);
+  TRandom3 myRnd(0);
   
-}
+  
+  void LoadGlobalParams(){
+    DetVar.GetParam("global.beam_e",beam_e);
+    DetVar.GetParam("global.beam_eloss",beam_eloss);
+    DetVar.GetParam("global.hi_ex_set",hi_ex_set);
 
-void LoadGlobalParams(){
-  DetVar.GetParam("global.beam_e",global::beam_e);
-  DetVar.GetParam("global.beam_eloss",global::beam_eloss);
-  
-  //Set Up Experiment Reaction Here
-  MassTable.GetParam("24Mg",global::m_beam);
-  MassTable.GetParam("d",global::m_target);
-  MassTable.GetParam("25Al",global::m_frag);
-  MassTable.GetParam("n",global::m_recoil);
+    beam_est = beam_e - beam_eloss*.5;
+
+    //Set Up Experiment Reaction Here
+    MassTable.GetParam("24Mg",m_beam);
+    MassTable.GetParam("d",m_target);
+    MassTable.GetParam("n",m_recoil);
+    MassTable.GetParam("25Al",m_frag);
+    MassTable.GetParam("24Mg",m_heavy_decay);
+    MassTable.GetParam("p",m_decay_product);
+   
  
-  global::beam_est = global::beam_e - global::beam_eloss*.5;
-
+  }
 }
-
 
 void RN_RootInit(){
   if(!RN_DetectorSet){
@@ -53,6 +63,7 @@ void RN_RootInit(){
     si_.reserve(2);
     si_cluster_.reserve(2);
     nai.reserve(20);
+    particle.reserve(6);
   }
   else{
     neut.clear();
@@ -60,15 +71,26 @@ void RN_RootInit(){
     si_.clear();
     si_cluster_.clear();
     nai.clear();
+    particle.clear();
   }
-    si_.push_back(RN_S2Detector("si_a",16,16));
-    si_.push_back(RN_S2Detector("si_b",16,16));
-    
-    si_cluster_.push_back(RN_S2Cluster("si_cluster_a",16));
-    si_cluster_.push_back(RN_S2Cluster("si_cluster_b",16));
-    
-    rftime.push_back(RN_RFTime("rftime"));
-    
+
+  particle.push_back(RN_Particle(global::m_beam));
+  particle.push_back(RN_Particle(global::m_target));
+  particle.push_back(RN_Particle(global::m_recoil)); 
+  particle.push_back(RN_Particle(global::m_frag));
+  particle.push_back(RN_Particle(global::m_heavy_decay));
+  particle.push_back(RN_Particle(global::m_decay_product));
+  
+
+
+  si_.push_back(RN_S2Detector("si_a",16,16));
+  si_.push_back(RN_S2Detector("si_b",16,16));
+  
+  si_cluster_.push_back(RN_S2Cluster("si_cluster_a",16));
+  si_cluster_.push_back(RN_S2Cluster("si_cluster_b",16));
+  
+  rftime.push_back(RN_RFTime("rftime"));
+  
     neut.push_back(RN_NeutDetector("neut0",4,1));
     neut.push_back(RN_NeutDetector("neut1",4,4));
     neut.push_back(RN_NeutDetector("neut2",4,5));
@@ -106,8 +128,35 @@ void RN_RootInit(){
   
 }
 
+void LoadVariableFile(const std::string& f){DetVar.LoadParams(f);}
 
+void SetCalibrations(){
+  global::LoadGlobalParams();
+  
+  for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
+    (*it).SetCalibrations(DetVar);
+  }
+  
+  for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
+    (*it).SetCalibrations(DetVar);
+  }
+  
+  for(RN_S2ClusterCollectionRef it=si_cluster_.begin();it!=si_cluster_.end();it++){
+    (*it).SetCalibrations(DetVar);
+  }
+  for(RN_RFCollectionRef it=rftime.begin();it!=rftime.end();it++){
+    (*it).SetCalibrations(DetVar);
+  }
+  
+  ic.SetCalibrations(DetVar);
+  
+  for(RN_NaICollectionRef it=nai.begin();it!=nai.end();it++){
+    (*it).SetCalibrations(DetVar);
+  }
 
+  
+  
+}
 
 #endif
 

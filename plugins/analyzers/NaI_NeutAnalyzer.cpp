@@ -22,6 +22,9 @@ namespace psd{
   R__EXTERN TCutG* prots4;
   R__EXTERN TCutG* alphas;
   R__EXTERN TCutG* n3_evt;
+
+
+
   
   //declare histograms here
   
@@ -63,6 +66,22 @@ namespace psd{
   sak::Hist1D* hn3_rftime_gamma;
   sak::Hist1D* hn3_rftime_evtgate_gamma;
 
+  sak::Hist1D* hrftime_ngated_gamma[10];     
+  sak::Hist1D* hrftime_ngated_gamma_gamma[10];
+  sak::Hist1D* hrftime_n_gamma[10];
+  sak::Hist1D* hrftime_n_gamma_gamma[10];
+  sak::Hist1D * hrftime_ngated_mult2_tadded_gamma[10];   
+  sak::Hist1D * hrftime_ngated_mult1plus_tadded_gamma[10];
+  sak::Hist1D * hrftime_ngated_mult2plus_tadded_gamma[10];
+  sak::Hist1D * hnKE_gamma[10];
+  sak::Hist1D * hnKE_gamma_gamma[10];
+  R__EXTERN sak::Hist1D * hQval[10];
+  
+
+
+
+
+
 NaI_NeutAnalyzer::NaI_NeutAnalyzer()
 {
 
@@ -87,7 +106,10 @@ void NaI_NeutAnalyzer::Begin(){
   rootfile->mkdir("evt/neut1/right");
   rootfile->mkdir("neut_PSD");
   rootfile->mkdir("rftime");
-
+  rootfile->mkdir("rftime/single_detector");
+  for(int i=0;i<10;i++)
+    rootfile->mkdir(Form("rftime/single_detector/neut%d",i));
+  
   
   for(int i=0;i<10;i++){
     rootfile->cd("e/left");
@@ -121,19 +143,41 @@ void NaI_NeutAnalyzer::Begin(){
    hPSD_n_[i]=new sak::Histogram2D(Form("hPSD_neut%d",i),"fPSD","fQ_long",256,0.,1.,1024,50,4096);  
  }
  rootfile->cd("rftime");
- hrftime_cal=new sak::Histogram1D("hrftime_cal","rftime[ns]",4096,0,1023);
- hrftime_allneut_gamma_cal_delay=new sak::Histogram1D("hrftime_allneut_gamma_cal_delay","rftime[ns]",4096,0,1023);
- hrftime_allneut_gamma_gamma_cal_delay=new sak::Histogram1D("hrftime_allneut_gamma_gamma_cal_delay","rftime[ns]",4096,0,1023);
- hrftime_allneut_gamma_cal=new sak::Histogram1D("hrftime_allneut_gamma_cal","rftime[ns]",4096,0,1023);
- hrftime_allneut_gamma_gamma_cal=new sak::Histogram1D("hrftime_allneut_gamma_gamma_cal","rftime[ns]",4096,0,1023);
- hrftime_allneut_gamma_prot_cal=new sak::Histogram1D("hrftime_allneut_gamma_prot_cal","rftime[ns]",4096,0,1023);
- hn3_rftime_evtgate_gamma=new sak::Histogram1D("hrftime_allneut_cal_n3_evt_gamma","rftime[ns]",4096,0,1023);    
- hn3_rftime_gamma=new sak::Histogram1D("hn3_rftime_cal_gamma","rftime[ns]",4096,0,1023);    
- hn3_rftime_evtgate_gamma_gamma=new sak::Histogram1D("hrftime_allneut_cal_n3_evt_gamma_gamma","rftime[ns]",4096,0,1023);    
+ hrftime_cal=new sak::Histogram1D("hrftime_cal","rftime[ns]",320,0,80);
+ hrftime_allneut_gamma_cal_delay=new sak::Histogram1D("hrftime_allneut_gamma_cal_delay","rftime[ns]",320,0,80);
+ hrftime_allneut_gamma_gamma_cal_delay=new sak::Histogram1D("hrftime_allneut_gamma_gamma_cal_delay","rftime[ns]",320,0,80);
+ hrftime_allneut_gamma_cal=new sak::Histogram1D("hrftime_allneut_gamma_cal","rftime[ns]",320,0,80);
+ hrftime_allneut_gamma_gamma_cal=new sak::Histogram1D("hrftime_allneut_gamma_gamma_cal","rftime[ns]",320,0,80);
+ hrftime_allneut_gamma_prot_cal=new sak::Histogram1D("hrftime_allneut_gamma_prot_cal","rftime[ns]",320,0,80);
+ hn3_rftime_evtgate_gamma=new sak::Histogram1D("hrftime_allneut_cal_n3_evt_gamma","rftime[ns]",320,0,80);    
+ hn3_rftime_gamma=new sak::Histogram1D("hn3_rftime_cal_gamma","rftime[ns]",320,0,80);    
+ hn3_rftime_evtgate_gamma_gamma=new sak::Histogram1D("hrftime_allneut_cal_n3_evt_gamma_gamma","rftime[ns]",320,0,80);    
  hnai_delay=new sak::Hist1D("hnai_delay","mult",20,0,19);
  hnai_hit=new sak::Hist1D("hnai_hit","mult",20,0,19);
  
+ for(int i=0;i<10;i++){
+   rootfile->cd(Form("rftime/single_detector/neut%d",i));
+   hrftime_ngated_gamma[i]=new sak::Histogram1D(Form("hrftime_n%d_gated_gamma",i),"rftime[ns]",320,0.0,80.0); 
+   hrftime_ngated_gamma_gamma[i]=new sak::Histogram1D(Form("hrftime_n%d_gated_gamma_gamma",i),"rftime[ns]",320,0.0,80.0); 
+   hrftime_n_gamma[i]=new sak::Histogram1D(Form("hrftime_n%d_gamma",i),"rftime[ns]",320,0.0,80.0); 
+   hrftime_n_gamma_gamma[i]=new sak::Histogram1D(Form("hrftime_n%d_gamma_gamma",i),"rftime[ns]",320,0.0,80.0); 
+   hrftime_ngated_mult2_tadded_gamma[i]=new sak::Histogram1D(Form("hrftime_n%d_gated_m2_tadd_gamma",i),"rftime[ns]",320,0.0,80.0); 
+   hrftime_ngated_mult2plus_tadded_gamma[i]=new sak::Histogram1D(Form("hrftime_n%d_gated_m2plus_tadd_gamma",i),"rftime[ns]",320,0.0,80.0); 
+   hrftime_ngated_mult1plus_tadded_gamma[i]=new sak::Histogram1D(Form("hrftime_n%d_gated_m1plus_tadd_gamma",i),"rftime[ns]",320,0.0,80.0); 
+
+   hnKE_gamma[i]=new sak::Histogram1D(Form("hKE_n%d_gamma",i),"nKE[MeV]",128,0.0,1.0);
+   hnKE_gamma_gamma[i]=new sak::Histogram1D(Form("hKE_n%d_gamma_gamma",i),"nKE[MeV]",128,0.0,1.0);
+
+ }
+
+
+
+
+
 }
+
+
+
 void NaI_NeutAnalyzer::Process(){
 
 
@@ -156,7 +200,7 @@ void NaI_NeutAnalyzer::Process(){
     nai_sume_r[i]->Fill(nai[i+10].SumE());
   }
 
-  ApplyCalibrations();
+
   //Fill calpar.Histograms below this line
   /*************************************************************/
   
@@ -222,8 +266,8 @@ void NaI_NeutAnalyzer::Process(){
     }
   }
 
-  if(Narray.fMult>1)
-    return;
+  //  if(Narray.fMult>1)
+  //return;
 
   if(nai_delaycheck && Narray.fMult==1){
     for(int i=0;i<10;i++){
@@ -242,15 +286,65 @@ void NaI_NeutAnalyzer::Process(){
 
 
   if(neutcheck[3]){
-    if (n3_evt && nai_hitcheck)
+    if (n3_evt && nai_hitcheck){
       hn3_rftime_gamma->Fill(rftime[0].fT);
-    if(n3_evt->IsInside(rftime[0].fT,neut[3].fQ_long)){
-      hn3_rftime_evtgate_gamma->Fill(rftime[0].fT);
+      if(n3_evt->IsInside(rftime[0].fT,neut[3].fQ_long)){
+	hn3_rftime_evtgate_gamma->Fill(rftime[0].fT);
       
-      if(nai_hitcheck>1)
-	hn3_rftime_evtgate_gamma_gamma->Fill(rftime[0].fT);
+	if(nai_hitcheck>1)
+	  hn3_rftime_evtgate_gamma_gamma->Fill(rftime[0].fT);
+      }
     }
+  }
+
+
+  for(int i=0;i<10;i++){
+    if(i>=neut.size())
+      break;
     
+    double n_RFT=rftime[0].fT+neut[i].fTrel;
+    double n_ke=neut[i].nKE(rftime[0].fT);
+    double hi_ke=0,q_v=0;
+  
+  
+    
+
+    neut[i].Q_value_est(rftime[0].fT,
+			global::m_beam,
+			global::m_frag,
+			global::beam_est,
+			hi_ke,
+			q_v);
+
+    hPSD_n_[i]->Fill(neut[i].fPSD,neut[i].fQ_long);
+    
+    if(neut[i].fQ_long>0){
+      if(nai_hitcheck){
+	hrftime_n_gamma[i]->Fill(rftime[0].fT);
+
+      }
+      if(nai_hitcheck>1){
+	hrftime_n_gamma_gamma[i]->Fill(rftime[0].fT);
+	
+      }
+      if(neutcheck[i]){
+	if(nai_hitcheck){
+	  hnKE_gamma[i]->Fill(n_ke);
+	  hrftime_ngated_gamma[i]->Fill(rftime[0].fT);
+	  hrftime_ngated_mult1plus_tadded_gamma[i]->Fill(n_RFT);
+	  if(Narray.fMult==2)
+	    hrftime_ngated_mult2_tadded_gamma[i]->Fill(n_RFT);
+	  if(Narray.fMult>1)
+	    hrftime_ngated_mult2plus_tadded_gamma[i]->Fill(n_RFT);
+	}
+	if(nai_hitcheck>2){
+	  hrftime_ngated_gamma_gamma[i]->Fill(rftime[0].fT);
+	  hnKE_gamma_gamma[i]->Fill(n_ke);
+	}
+
+	  
+      }
+    }
   }
 
   hrftime_cal->Fill(rftime[0].fT);
@@ -286,5 +380,5 @@ void NaI_NeutAnalyzer::Terminate(){
     
     
   }
-
+  
 }

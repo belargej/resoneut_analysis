@@ -34,6 +34,7 @@
 #include <TCutG.h>
 
 #include "RN_Unpack2Root.hpp"
+TRint *myRint;
 
 int main(int argc, char*argv[]){
   if(argc==3){
@@ -66,8 +67,13 @@ int main(int argc, char*argv[]){
   }
 
 
-  else
+  else{
     std::cout<<"invalid number of arguments: \n"<<"RNBatchMode dir output config"<<std::endl;
-  
+    myRint=new TRint("myRint",&argc,argv);
+    myRint->Run();
+    return 0;
+  }
+    
 }
+
 

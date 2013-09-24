@@ -7,11 +7,11 @@ LINK_DIR=${PWD}/lib/
 LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG}
 INC_DIR=-I${ROOTSYS}/include -I.
 
-SUB_DIRS=include plugins/sak plugins/analyzers plugins/simulator
+SUB_DIRS=include plugins/sak plugins/analyzers
 
-OBJLIBS= libRNeut.so libRNanalyzers.so libSAK.so libRNsimulator.so
+OBJLIBS= libRNeut.so libRNanalyzers.so libSAK.so
 
-LIBS= -lRNeut -lRNanalyzers -lSAK -lRNsimulator
+LIBS= -lRNeut -lRNanalyzers -lSAK
 
 all: ${OBJLIBS}	
 
@@ -32,10 +32,6 @@ libSAK.so: force_look
 
 libRNanalyzers.so: force_look
 	cd plugins/analyzers; ${MAKE}
-
-libRNsimulator.so:force_look
-	cd plugins/simulator; ${MAKE}
-
 
 force_look :
 	true

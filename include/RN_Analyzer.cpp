@@ -8,39 +8,12 @@
 
 //RN_Analyzer headers.
 #include "RN_Analyzer.hpp"
-
+#include "RN_Root.hpp"
 using namespace std;
             
 
 RN_Analyzer::RN_Analyzer()
 {
-
-}
-
-void RN_Analyzer::SetCalibrations(){
-  LoadGlobalParams();
-  
-  for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
-    (*it).SetCalibrations(DetVar);
-  }
-  
-  for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
-    (*it).SetCalibrations(DetVar);
-  }
-  
-  for(RN_S2ClusterCollectionRef it=si_cluster_.begin();it!=si_cluster_.end();it++){
-    (*it).SetCalibrations(DetVar);
-  }
-  for(RN_RFCollectionRef it=rftime.begin();it!=rftime.end();it++){
-    (*it).SetCalibrations(DetVar);
-  }
- 
-  ic.SetCalibrations(DetVar);
-  
-  for(RN_NaICollectionRef it=nai.begin();it!=nai.end();it++){
-    (*it).SetCalibrations(DetVar);
-  }
-
 
 }
 

@@ -25,10 +25,12 @@
 #include <TRandom3.h>
 #include <TPolyLine3D.h>
 #include <TVector3.h>
+#include <TLorentzVector.h>
 #include <TCutG.h>
 
 #include "RN_VariableMap.hpp"
 #include "RN_BaseDetector.hpp"
+
 
 
 class RN_NeutDetector:public RN_BaseDetector{
@@ -39,9 +41,15 @@ class RN_NeutDetector:public RN_BaseDetector{
   double tshift;//!
   double zero_off;//!
   int apos;//!
-  TVector3 pos_vect;//!
+  TVector3 HitPos;//!
   TVector3 fPos;//!
   
+  //simulation parameters
+  double fRadius;//!
+  double fThickness;//!
+  double fThreshold;//!
+  int fCounter;
+
  public:
   RN_NeutDetector(){}
   RN_NeutDetector(std::string name,int num,int ap);
@@ -55,6 +63,13 @@ class RN_NeutDetector:public RN_BaseDetector{
   Double32_t fT_Q;
   Double32_t fTrel;
 
+  //Simulation Parameters
+  Double32_t fDt;
+  Double32_t fT_Sim;
+  Double32_t fEsum;
+  
+  
+
   void InsertPSDHit(const double& fql,const double& fqs,const double& t = 0.0);
  
   Double_t PSD() const ;
@@ -63,7 +78,12 @@ class RN_NeutDetector:public RN_BaseDetector{
   Double_t E_est() const;
   Double_t T() const;
   Double_t nKE(Double_t tof) const;
-
+  Double_t GetRadius()const {return fRadius;}
+  Double_t GetThickness()const {return fThickness;}
+  Double_t GetThreshold()const{return fThreshold;}
+  TVector3 GetHitPos()const{return HitPos;}
+  int HitCounter() const {return fCounter;}
+  
   Double_t Q_value_est(double tof,
 		       double m1,
 		       double m2,
@@ -72,7 +92,10 @@ class RN_NeutDetector:public RN_BaseDetector{
 		       double& Q_val);
 
   TVector3 GetPosVect() const{return fPos;}//!
-
+  bool inDet(const TVector3& v);
+  int H_hit(TLorentzVector& inLV);
+  int NeutIn(TLorentzVector nLV,double& t,double& e);
+  int C_hit(TLorentzVector& inLV);
   void Reset();
   void SetCalibrations(double elin, 
 		       double eshift,

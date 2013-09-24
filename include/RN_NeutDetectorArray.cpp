@@ -1,8 +1,14 @@
 #ifndef __NEUTARRAY_CXX
 #define __NEUTARRAY_CXX
 #include "RN_NeutDetectorArray.hpp"
+#include "RN_Root.hpp"
+#define M_N 939.565404 
+#define M_P 938.2720137 
+#define M_C 11177.92852
 
 ClassImp(RN_NeutDetector);
+
+double z_pos(0);
 
 
 RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetector(name,num),
@@ -13,6 +19,9 @@ RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetecto
 								  tshift(0),
 								  zero_off(0),
 								  apos(ap),
+								  fRadius(34),
+								  fThickness(25.4),
+								  fThreshold(0.05),
 								  fQ_long(0),
 								  fQ_short(0),
 								  fPSD(0),
@@ -46,6 +55,15 @@ void RN_NeutDetector::SetCalibrations(RN_VariableMap& detvar){
     apos=(int)temp;
     RNArray::PositionMap(apos,fPos);
   }
+  detvar.GetParam("all.radius",fRadius);
+  detvar.GetParam("all.thickness",fThickness);
+  detvar.GetParam("all.threshold",fThreshold);
+  detvar.GetParam(Form("%s.radius",Name().c_str()),fRadius);
+  detvar.GetParam(Form("%s.thickness",Name().c_str()),fThickness);
+  detvar.GetParam(Form("%s.threshold",Name().c_str()),fThreshold);
+  
+
+
 }
 
 void RN_NeutDetector::Reset(){
@@ -55,6 +73,8 @@ void RN_NeutDetector::Reset(){
   fTrel=0;
   fT_Q=0;
   fPSD=0;
+  fDt=0;
+  fEsum=0;
 }
 
 Double_t RN_NeutDetector::E_est() const{
@@ -108,7 +128,7 @@ Double_t RN_NeutDetector::PSD() const{if (fQ_long>0) return fQ_short/fQ_long;}
 
 double RN_NeutDetector::CalculateTRel(const double &tfirst){
   if(fT_Q)
-    fTrel=fT_Q-tfirst;
+    fTrel=T()-tfirst;
   return fTrel;
 }
 
@@ -137,11 +157,12 @@ int RN_NeutDetectorArray::ReconstructHits(RN_NeutCollection& in){
       cref++;
   }
 
+  return 1;
 }
 
 
 int RN_NeutDetectorArray::Reset(){
-  for(unsigned int i=0;i<fMult;i++){
+  for(int i=0;i<fMult;i++){
     fQ_long[i]=0;
     fPSD[i]=0;
     fDetlist[i]=-1;
@@ -185,9 +206,155 @@ int RN_NeutDetectorArray::InsertHit(const double& q_long,const double& q_short,c
 
 
 
+bool RN_NeutDetector::inDet(const TVector3& v){
+  //first see if it intersects the plane of the detector
+  double udotnormv = (v.Unit()).Dot(fPos.Unit());
+  if(udotnormv <= 0.)
+    return false;
+
+  //Find distance from target to interesection point of detector plane 
+  //use line-plane intersection formula
+  TVector3 posvect = GetPosVect();
+  double vdist = (fPos.Unit()).Dot(posvect)/udotnormv;
+  if(vdist <= 0.)
+    return false;
+  
+  //vector from target to interesection point of detector plane with
+  //magnitude equal to distance
+  TVector3 v_to_det(v);
+  v_to_det.SetMag(vdist);
+
+  //create vector from detector origin to interaction point on plane of detector
+  TVector3 ch_vect = v_to_det - posvect;
+
+  //see if it is within the detector area
+  double ch_vect_x = fabs(ch_vect.X());
+  double ch_vect_y = fabs(ch_vect.Y());
+  if(sqrt(ch_vect_x*ch_vect_x+ch_vect_y*ch_vect_y) > fRadius){
+    return false;
+  }
+  return true;
+}
 
 
+int RN_NeutDetector::NeutIn(TLorentzVector nLV,double& t,double& e){
+  TLorentzVector inLV = nLV;
+  double pz=nLV.Pz(), px=nLV.Px(),py=nLV.Py();
+  double psqr=px*px+py*py+pz*pz;
+  double tof=(fPos.Z())*M_N/(pz*3*100);//tof to front of detector
+  fDt=0;//time to first reaction
+  double x_pos=(px*tof*300/(M_N))-fPos.X();
+  double y_pos=(py*tof*300/(M_N))-fPos.Y();
+  HitPos.SetXYZ(x_pos+fPos.X(),y_pos+fPos.Y(),fPos.Z());
+  double radial_pos=sqrt(x_pos*x_pos+y_pos*y_pos);  
+ 
+  z_pos=fThickness;
 
+  while (radial_pos <= fRadius && z_pos >= 0 && z_pos <= fThickness){
+    double nKE=inLV.E()-inLV.M();
+    if (nKE<0.010)
+      break;
+    //step is fThickness/100 (mm)
+    double dx=(fThickness/100)*px/(sqrt(psqr));
+    double dy=(fThickness/100)*py/(sqrt(psqr));
+    double dz=(fThickness/100)*pz/(sqrt(psqr));
+    
+    if(!H_hit(inLV))
+      C_hit(inLV);
+    
+    px = inLV.Px();
+    py = inLV.Py();
+    pz = inLV.Pz();
+    
+    double dr=sqrt(dx*dx+dy*dy);
+    z_pos += dz;//move to start of next sector.
+    radial_pos += dr;
+    
+  }
+  
+  if(fEsum>fThreshold){
+    e = fEsum;
+    t = tof+ fDt;
+    fT_Sim=t;
+    return true;
+  }
+  else{
+    e=0;
+    t=0;
+    return false;
+  }
+
+}	  
+
+int RN_NeutDetector::H_hit(TLorentzVector& inLV){
+  double KE = inLV.E()-inLV.M();
+  TLorentzVector neut_LVcopy(inLV);
+  TLorentzVector Target(0.,0.,0.,M_P);
+  TLorentzVector Before(Target + neut_LVcopy);
+  TVector3 boostv = (-1)*Before.BoostVector();
+  Before.Boost(boostv);
+  neut_LVcopy.Boost(boostv);  //this is for getting neutron KE in CM
+  double nKE=neut_LVcopy.E()-neut_LVcopy.M();
+  
+  if(nKE>.010 && nKE<.400){
+    if(global::myRnd.Rndm()>(0.004508869*exp(2.91109-3.12513*nKE)*fThickness/100))
+      return 0;
+  }
+  else if(nKE>=.400&& nKE<1.4){
+    if(global::myRnd.Rndm()>(0.004508869*exp(2.1646-.67*nKE)*fThickness/100))
+      return 0;
+  }
+  else if(nKE<0.010 || nKE>1.4){
+    return 0;
+  }
+  
+  fCounter++;
+  if(fCounter==1){fDt=(z_pos-fThickness)*M_N/(neut_LVcopy.Pz()*3*100);}
+  double theta = 3.14 * global::myRnd.Rndm(); 
+  double phi = 2.* 3.14 * global::myRnd.Rndm(); //isotropic CM
+  double psqr=2*M_P*M_N*(Before.E()-M_N-M_P)/(M_P+M_N);
+  double pz=-1*sqrt(psqr)*cos(theta);
+  double px=-1*sqrt(psqr)*sin(theta)*cos(phi);
+  double py=-1*sqrt(psqr)*sin(theta)*sin(phi);
+  double e_neut=(psqr/(2*M_N))+M_N;
+  inLV.SetPxPyPzE(px,py,pz,e_neut);
+  inLV.Boost(-1*boostv);//boost back to lab frame
+  fEsum = fEsum + KE - (inLV.E()-inLV.M());
+  return 1;
+  
+}
+
+int RN_NeutDetector::C_hit(TLorentzVector& inLV){
+  double KE = inLV.E()-inLV.M();
+  TLorentzVector neut_LVcopy(inLV);
+  TLorentzVector Target(0.,0.,0.,M_C);
+  TLorentzVector Before(Target + neut_LVcopy);
+  TVector3 boostv = (-1)*Before.BoostVector();
+  Before.Boost(boostv);
+  neut_LVcopy.Boost(boostv);
+  double nKE=neut_LVcopy.E()-neut_LVcopy.M();
+  if(nKE>=.010&& nKE<1.4){
+    if(global::myRnd.Rndm()>(0.005798*(4.6126-1.77378*nKE)*fThickness/100))
+      return 0;
+  }
+  else if(nKE<0.010 || nKE>1.4){
+    return 0;
+  }  
+  
+  fCounter++;
+  if(fCounter==1){fDt=(z_pos-fThickness)*939.56404/(neut_LVcopy.Pz()*3*100);}
+  double theta = 3.14 * global::myRnd.Rndm(); 
+  double phi = 2.* 3.14 * global::myRnd.Rndm(); //isotropic CM
+  double psqr=2*M_C*M_N*(Before.E()-M_N-M_C)/(M_C+M_N);
+  double pz=-1*sqrt(psqr)*cos(theta);
+  double px=-1*sqrt(psqr)*sin(theta)*cos(phi);
+  double py=-1*sqrt(psqr)*sin(theta)*sin(phi);
+  double e_neut=(psqr/(2*M_N))+M_N;
+  inLV.SetPxPyPzE(px,py,pz,e_neut);
+  inLV.Boost(-1*boostv);//boost back to lab frame
+  fEsum = fEsum + KE - (inLV.E()-inLV.M());//add what neut loses
+  return 1;  
+}
 
 namespace RNArray{
   
