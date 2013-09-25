@@ -39,10 +39,15 @@ public:
   void Init();
   void Reset();
   void SetAngularDistribution(std::string filename);
+  int GenerateSingleParticleEvent(Long64_t evnum);
   int GenerateEvents(Long64_t evnum,std::string options);
   double QValue(const double,const double,double&,double&);
 };
 
+
+  extern RN_ParticleGun *particlegun;
+
 }
+
 
 #endif

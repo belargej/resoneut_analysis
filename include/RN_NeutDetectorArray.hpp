@@ -49,6 +49,7 @@ class RN_NeutDetector:public RN_BaseDetector{
   double fThickness;//!
   double fThreshold;//!
   int fCounter;
+  int fCounter_carbon;
 
  public:
   RN_NeutDetector(){}
@@ -67,7 +68,7 @@ class RN_NeutDetector:public RN_BaseDetector{
   Double32_t fDt;
   Double32_t fT_Sim;
   Double32_t fEsum;
-  
+  Double32_t fE_lost;
   
 
   void InsertPSDHit(const double& fql,const double& fqs,const double& t = 0.0);
@@ -78,6 +79,7 @@ class RN_NeutDetector:public RN_BaseDetector{
   Double_t E_est() const;
   Double_t T() const;
   Double_t nKE(Double_t tof) const;
+  Double_t nKE_R(Double_t tof) const;
   Double_t GetRadius()const {return fRadius;}
   Double_t GetThickness()const {return fThickness;}
   Double_t GetThreshold()const{return fThreshold;}

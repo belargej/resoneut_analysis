@@ -5,13 +5,39 @@
 #include "RN_Root.hpp"
 using namespace global;
 namespace sim{
-void RN_Sim::Init(){
 
-}
+  RN_ParticleGun *particlegun;
 
-void RN_Sim::SetAngularDistribution(std::string filename){
-  nDWBA = RN_AngularDistribution(filename);
-}
+  void RN_Sim::Init(){
+    
+  }
+  
+  void RN_Sim::SetAngularDistribution(std::string filename){
+    nDWBA = RN_AngularDistribution(filename);
+  }
+  
+  int RN_Sim::GenerateSingleParticleEvent(Long64_t evnum){
+    Reset();
+    particlegun->Shoot(particle[0].LV);
+    for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
+      if((*it).inDet(particle[0].LV.Vect())){
+	(*it).NeutIn(particle[0].LV,n_tof,E_deposited);  
+	return 1;
+      }
+    }
+    
+    for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
+      if((*it).inDet(particle[0].LV.Vect())){
+	double e=particle[0].LV.E()-particle[0].LV.M();
+	double t=0;
+	(*it).front.InsertHit(e,t,0);
+	return 1;
+      }
+    }
+
+    return 0;
+  }
+  
 
 int RN_Sim::GenerateEvents(Long64_t evnum,std::string options=""){
   Reset();

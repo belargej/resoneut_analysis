@@ -163,4 +163,34 @@ int RN_SimEvent::radiate_in_CM(const TLorentzVector& in_LV,
 
 }
 
+
+RN_ParticleGun::RN_ParticleGun(std::string name,
+			    double minTheta,
+			    double maxTheta,
+			    double minKE,
+			    double maxKE):thetaMin(minTheta),
+					  thetaMax(maxTheta),
+					  keMin(minKE),
+					  keMax(maxKE)
+					 
+{
+  MassTable.GetParam(name,mass);
+
+}
+
+int RN_ParticleGun::Shoot(TLorentzVector & pLV){
+  double theta=(M_PI/180)*(global::myRnd.Rndm()*(thetaMax-thetaMin)+thetaMin);
+  double phi=2*M_PI*global::myRnd.Rndm();
+  double E=global::myRnd.Rndm()*(keMax-keMin)+keMin;
+  double p=sqrt(2*mass*E);
+  TVector3 pv;
+  pv.SetMagThetaPhi(p,theta,phi);
+  pLV.SetPxPyPzE(pv.Px(),pv.Py(),pv.Pz(),mass+E);
+  return 1;
+
+}
+
+
+
+
 #endif

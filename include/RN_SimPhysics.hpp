@@ -16,7 +16,7 @@
 #include <TRandom3.h>
 
 #include "RN_NeutDetectorArray.hpp"
-
+#include "RN_Particle.hpp"
 
 namespace sim{
 
@@ -72,4 +72,24 @@ public:
 };
 
 }
+
+class RN_ParticleGun:public TObject{
+private:
+  double thetaMin;
+  double thetaMax;
+  double keMin;
+  double keMax;
+  double mass;
+public:
+
+  RN_ParticleGun(){}
+  RN_ParticleGun(std::string particle,double minTheta,double maxTheta,double Emin,double Emax);
+  
+  virtual int Shoot(TLorentzVector& in);
+  
+  ClassDef(RN_ParticleGun,1);
+};
+
+
+
 #endif

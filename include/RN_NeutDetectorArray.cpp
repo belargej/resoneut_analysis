@@ -7,9 +7,13 @@
 #define M_C 11177.92852
 
 ClassImp(RN_NeutDetector);
+namespace sim{
+  double z_pos(0);
+  double stepcounter(0);
+  double steptime(0);
+}
 
-double z_pos(0);
-
+using namespace sim;
 
 RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetector(name,num),
 								 
@@ -77,6 +81,8 @@ void RN_NeutDetector::Reset(){
   fEsum=0;
   fT_Sim=0;
   fCounter=0;
+  fCounter_carbon=0;
+  fE_lost=0;
 }
 
 Double_t RN_NeutDetector::E_est() const{
@@ -97,6 +103,10 @@ Double_t RN_NeutDetector::T() const{
 
 Double_t RN_NeutDetector::nKE(double tof) const{
   return ((.5*939.565*fPos.Z()*fPos.Z())/(90000*tof*tof));
+}
+
+Double_t RN_NeutDetector::nKE_R(double tof) const{
+  return ((.5*939.565*fPos.Mag()*fPos.Mag())/(90000*tof*tof));
 }
 
 Double_t RN_NeutDetector::Q_value_est(double tof,
@@ -125,7 +135,10 @@ void RN_NeutDetector::InsertPSDHit(const double& q_long,const double& q_short,co
 
 }
 
-Double_t RN_NeutDetector::PSD() const{if (fQ_long>0) return fQ_short/fQ_long;}
+Double_t RN_NeutDetector::PSD() const{
+  if (fQ_long>0) return fQ_short/fQ_long;
+  else return 0;
+}
 
 
 double RN_NeutDetector::CalculateTRel(const double &tfirst){
@@ -257,14 +270,18 @@ int RN_NeutDetector::NeutIn(TLorentzVector nLV,double& t,double& e){
     if (nKE<0.010)
       break;
     //step is fThickness/100 (mm)
+
+    stepcounter++;
     double step=(fThickness/1000);
+    steptime=steptime+fabs(step*M_N/(inLV.Pz()*3*100));
+
     double dx=step*px/(sqrt(psqr));
     double dy=step*py/(sqrt(psqr));
     double dz=step*pz/(sqrt(psqr));
-    
+      
     if(!H_hit(inLV,step))
       C_hit(inLV,step);
-    
+
     px = inLV.Px();
     py = inLV.Py();
     pz = inLV.Pz();
@@ -275,6 +292,8 @@ int RN_NeutDetector::NeutIn(TLorentzVector nLV,double& t,double& e){
     
   }
   
+  stepcounter=0;
+  steptime=0;
   if(fEsum>fThreshold){
     e = fEsum;
     t = tof+ fDt;
@@ -286,7 +305,7 @@ int RN_NeutDetector::NeutIn(TLorentzVector nLV,double& t,double& e){
     t=0;
     return false;
   }
-
+  
 }	  
 
 int RN_NeutDetector::H_hit(TLorentzVector& inLV,double step/*mm*/){
@@ -312,15 +331,15 @@ int RN_NeutDetector::H_hit(TLorentzVector& inLV,double step/*mm*/){
   }
   
   fCounter++;
-  if(fCounter==1){fDt=(z_pos-fThickness)*M_N/(inLV.Pz()*3*100);}
+  if(fCounter==1){fDt=steptime;}
   double theta = 3.14 * global::myRnd.Rndm(); 
   double phi = 2.* 3.14 * global::myRnd.Rndm(); //isotropic CM
-  double psqr=2*M_P*M_N*(Before.E()-M_N-M_P)/(M_P+M_N);
-  double pz=-1*sqrt(psqr)*cos(theta);
-  double px=-1*sqrt(psqr)*sin(theta)*cos(phi);
-  double py=-1*sqrt(psqr)*sin(theta)*sin(phi);
-  double e_neut=(psqr/(2*M_N))+M_N;
-  inLV.SetPxPyPzE(px,py,pz,e_neut);
+  double E_CM=Before.E();
+  double En=(M_N*M_N-M_P*M_P+E_CM*E_CM)/(2*E_CM);
+  double Pn_sqr = (En * En - M_N * M_N) ;
+  TVector3 nvec;
+  nvec.SetMagThetaPhi(sqrt(Pn_sqr),theta,phi);
+  inLV.SetPxPyPzE(nvec.X(),nvec.Y(),nvec.Z(),En);
   inLV.Boost(-1*boostv);//boost back to lab frame
   fEsum = fEsum + KE - (inLV.E()-inLV.M());
   return 1;
@@ -344,18 +363,17 @@ int RN_NeutDetector::C_hit(TLorentzVector& inLV,double step/*mm*/){
     return 0;
   }  
   
-  fCounter++;
-  if(fCounter==1){fDt=(z_pos-fThickness)*939.56404/(inLV.Pz()*3*100);}
+  fCounter_carbon++;
   double theta = 3.14 * global::myRnd.Rndm(); 
   double phi = 2.* 3.14 * global::myRnd.Rndm(); //isotropic CM
-  double psqr=2*M_C*M_N*(Before.E()-M_N-M_C)/(M_C+M_N);
-  double pz=-1*sqrt(psqr)*cos(theta);
-  double px=-1*sqrt(psqr)*sin(theta)*cos(phi);
-  double py=-1*sqrt(psqr)*sin(theta)*sin(phi);
-  double e_neut=(psqr/(2*M_N))+M_N;
-  inLV.SetPxPyPzE(px,py,pz,e_neut);
+  double E_CM=Before.E();
+  double En=(M_N*M_N-M_C*M_C+E_CM*E_CM)/(2*E_CM);
+  double Pn_sqr = (En * En - M_N * M_N) ;
+  TVector3 nvec;
+  nvec.SetMagThetaPhi(sqrt(Pn_sqr),theta,phi);
+  inLV.SetPxPyPzE(nvec.X(),nvec.Y(),nvec.Z(),En);
   inLV.Boost(-1*boostv);//boost back to lab frame
-  fEsum = fEsum + KE - (inLV.E()-inLV.M());//add what neut loses
+  fE_lost = fE_lost + KE - (inLV.E()-inLV.M());//add what neut loses
   return 1;  
 }
 
