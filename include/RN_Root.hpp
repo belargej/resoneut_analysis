@@ -51,6 +51,8 @@ R__EXTERN RN_MassTable MassTable;
 
 R__EXTERN int RN_DetectorSet;
 
+R__EXTERN TFile * rootfile;
+
 void RN_RootInit();
 void SetCalibrations();
 void LoadVariableFile(const std::string& f);

@@ -21,7 +21,7 @@ namespace si_cal{
     virtual ~S2_Analyzer(){};
     void AutoCalibrate(int matchfront, int matchback);//auto calibrate all elements of Collection
     
-    virtual int initHists(std::string,int ind=0);
+    virtual void Begin();
     virtual void Process();
     virtual void Terminate();
     virtual void Clear();
@@ -31,7 +31,7 @@ namespace si_cal{
   };
 
   
-  
+
   
   void producehists(const char * input,const char* output,int index,const char* config="");
   void autocalibrate(const char* input,int fmatch,int bmatch);

@@ -1,5 +1,5 @@
-#ifndef _NTANALYZER
-#define _NTANALYZER
+#ifndef _TRIGANALYZER
+#define _TRIGANALYZER
 #include <TH2.h>
 #include <cstdlib>
 #include <string>
@@ -9,21 +9,20 @@
 #include "plugins/sak/sak_Gates.hpp"
 
 
-class NewTree_Analyzer:public RN_Analyzer{
+class Trigger_Analyzer:public RN_Analyzer{
 private:
 
-public:
-  
-  NewTree_Analyzer();
-  virtual ~NewTree_Analyzer(){};
+public:  
+  Trigger_Analyzer();
+  virtual ~Trigger_Analyzer(){};
 
-  void InitTree(std::string filename,std::string treename);
+  virtual void Begin();
   virtual void Process();
   virtual void Clear(){};
   virtual void Terminate();
 
 
-  ClassDef(NewTree_Analyzer,0);
+  ClassDef(Trigger_Analyzer,0);
 };
 
 

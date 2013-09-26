@@ -31,6 +31,9 @@
 #define S2INNERRAD 11.0
 #define S2OUTERRAD 35.0
 #define S2MATCHTHRESHOLD 0.1
+#define S1INNERRAD 24.0
+#define S1OUTERRAD 48.0
+#define S1MATCHTHRESHOLD 0.1
 
 
 
@@ -94,7 +97,7 @@ public:
  
 
 
-  TVector3 chVect(const double&cf,const double& cb) const;
+  virtual TVector3 chVect(const double&cf,const double& cb) const;
   void Calcnormv();
   bool inDet(const TVector3&);
   bool Vect_to_ch(const TVector3&, double&, double&);
@@ -110,6 +113,19 @@ public:
 
 typedef std::vector<RN_S2Detector> RN_S2Collection;
 typedef std::vector<RN_S2Detector>::iterator RN_S2CollectionRef;
+
+
+class RN_S1Detector:public RN_S2Detector{
+private:
+public:
+  
+  RN_S1Detector(std::string name,const int& fnum, const int& bnum):RN_S2Detector(name,fnum,bnum)							   
+  {
+  }
+  virtual TVector3 chVect(const double&cf,const double& cb) const{};
+ 
+
+};
 
 
 
@@ -149,7 +165,7 @@ public:
   ~RN_S2Cluster(){};
   RN_S2Cluster(std::string name,Int_t NumOfch);
 
-  int ReconstructClusters(RN_S2Detector& in);
+  virtual int ReconstructClusters(RN_S2Detector& in);
   int SetMatchParameters(float match_enefromback,
 			 float match_epsilon,
 			 float match_delta,
@@ -166,6 +182,22 @@ public:
 
 typedef std::vector<RN_S2Cluster> RN_S2ClusterCollection;
 typedef std::vector<RN_S2Cluster>::iterator RN_S2ClusterCollectionRef;
+
+
+
+class RN_S1Cluster:public RN_S2Cluster{
+private:
+  
+public:
+  
+  RN_S1Cluster(std::string name,Int_t NumOfch):RN_S2Cluster(name,NumOfch){}
+  
+  virtual int ReconstructClusters(RN_S1Detector& in){};
+
+};
+
+
+
 
 
 
@@ -190,7 +222,6 @@ public:
  
   void InsertHit(float e, float t, float ch);
 };
-
 
 
 

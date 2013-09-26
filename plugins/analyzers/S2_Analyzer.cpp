@@ -1,16 +1,22 @@
 #include "S2_Analyzer.hpp"
 #include "../../include/RN_Root.hpp"
-
+#include "PSD_Analyzer.hpp"
 namespace si_cal{
   TFile *rootfile;
-  
-  sak::Histogram1D *h_si_1;
-  sak::Histogram1D *h_si_2;
- 
 
-  sak::Histogram2D *front[16];
-  
-
+  sak::Histogram2D *hpede;  
+  sak::Histogram1D *h_si_[2];
+  sak::Histogram2D *h_evtheta[2];
+  sak::Histogram2D *h_evtheta_protgated[2];
+  sak::Histogram2D *h_evtheta_neutgated[2];
+  sak::Histogram2D *front[2][16];
+  sak::Histogram1D *h_si_fmult[2];
+  sak::Histogram1D *h_si_bmult[2];
+  sak::Histogram1D *h_si_cluster_mult[2];
+  sak::Hist1D *h_nmult_pgated;
+  sak::Hist1D *h_nmult_p_etheta_gated;
+  sak::Hist1D *h_ntime[10];
+  sak::Hist1D *h_ntime_pgated[10];
 
 S2_Analyzer::S2_Analyzer():ind_(0)
 {
@@ -92,37 +98,97 @@ void S2_Analyzer::AutoCalibrate(int matchfront, int matchback){
 
 }
  
-int S2_Analyzer::initHists(std::string output,int ind){ 
-  ind_ = ind;
-  if(ind_>si_.size()){
-    std::cout<<"index out of bounds, taking appropriate measures"<<std::endl;
-    return 0;
-  }
-    
-  rootfile=new TFile(output.c_str(),"RECREATE");
+void S2_Analyzer::Begin(){     
+  rootfile=new TFile("si_analysis.root","RECREATE");
 
+  rootfile->mkdir("f2b_ratio");
+  rootfile->mkdir("f2b_ratio/S1");
+  rootfile->mkdir("f2b_ratio/S2");
+  rootfile->mkdir("ede");
+  rootfile->mkdir("evtheta");
+  rootfile->mkdir("mult");
+  rootfile->mkdir("neuts");
+  h_si_[0]=new sak::Hist1D("h_si_1","E[MeV]",128,1,20);
+  h_si_[1]=new sak::Hist1D("h_si_2","E[MeV]",128,1,20);
   
-  h_si_1=new sak::Hist1D("h_si_1","E[MeV]",2048,500,2000);
-  h_si_2=new sak::Hist1D("h_si_2","E[MeV]",128,1,20);
-
+  rootfile->cd("f2b_ratio");
   for(int i=0;i<16;i++){
-    front[i]=new sak::Hist2D(Form("si_fc%d_corr",i),"channel","ratio",17,0,16,512,0,2);
+    rootfile->cd("f2b_ratio/S1");
+    front[0][i]=new sak::Hist2D(Form("s1_fc%d_corr",i),"channel","ratio",17,0,16,512,0,2);
+    rootfile->cd("f2b_ratio/S2");
+    front[1][i]=new sak::Hist2D(Form("s2_fc%d_corr",i),"channel","ratio",17,0,16,512,0,2);
   }
-
-  return 1;
+  rootfile->cd("ede");
+   hpede=new sak::Hist2D("hpEdE","E [MeV]","dE [MeV]",64,0,20,64,0,6);
+  
+  for(int i=0;i<2;i++){
+    rootfile->cd("evtheta");
+    h_evtheta[i]=new sak::Hist2D(Form("h_evtheta[%d]",i+1),"theta[deg]","E",256,0,128,128,0,32);
+    h_evtheta_protgated[i]=new sak::Hist2D(Form("h_evtheta_prot[%d]",i+1),"theta[deg]","E",256,0,128,128,0,32);
+    rootfile->cd("mult");
+    h_si_fmult[i]= new sak::Hist1D(Form("h_si_fmult_%d",i),"fmult",32,0,31);
+    h_si_bmult[i]= new sak::Hist1D(Form("h_si_bmult_%d",i),"bmult",32,0,31);
+    h_si_cluster_mult[i] = new sak::Hist1D(Form("h_si_%d_cluster_mult",i),"mult",32,0,31);
+    
+    
+  }
+  rootfile->cd("neuts");
+  h_nmult_pgated = new sak::Hist1D("h_nmult_pgated","mult",10,0,9);
+  h_nmult_p_etheta_gated = new sak::Hist1D("h_nmult_p_etheta_gated","mult",10,0,9);
+  for(int i=0;i<10;i++){
+    h_ntime[i]=new sak::Hist1D(Form("h_ntime%d",i),"mult",4096,0,4095);
+    h_ntime_pgated[i]=new sak::Hist1D(Form("h_ntime%d_pgated",i),"mult",4096,0,4095);
+    
+  }
+  
   
 }
 
 void S2_Analyzer::Process(){
-  int idx=(int)si_[ind_].front.fChlist[0];
-  if(si_[ind_].front.fMult>0&&si_[ind_].back.fMult>0){
-    front[idx]->Fill(si_[ind_].back.fChlist[0],(si_[ind_].back.fE[0]/si_[ind_].Front_E(0)));
-    h_si_1->Fill(si_[ind_].Front_E(0));
-    h_si_2->Fill(si_[ind_].Front_E(0));
+  int protcheck(0);
+  double prot_E=0;
+  double prot_dE=0;
+  double prot_theta=0;
+  
+  
+  if(si_[1].front.fMult>0&&si_[0].front.fMult>0){
+    prot_dE=si_[1].Front_E(0);
+    prot_E=si_[0].Front_E(0)+prot_dE;
+    hpede->Fill(prot_E,prot_dE);
+    prot_theta=si_cluster_[1].fPos[0].Theta()*(180/3.14);
   }
+  if(psd::prots1)
+    protcheck=psd::prots1->IsInside(prot_E,prot_dE);
   
 
+  for(int i=0;i<2;i++){
+    int idx=(int)si_[i].front.fChlist[0];	      
+    if(si_[0].front.fMult>0&&si_[0].back.fMult>0){
+      for (int j=0;j<10;j++){
+	h_ntime[j]->Fill(neut[j].fT_Q);
+	if(protcheck)
+	  h_ntime_pgated[j]->Fill(neut[j].fT_Q);
+      }
+      front[i][idx]->Fill(si_[0].back.fChlist[0],(si_[0].Back_E(0)/si_[0].Front_E(0)));
+      if(si_cluster_[i].fMult>0){
+	h_evtheta[i]->Fill(si_cluster_[i].fPos[0].Theta()*180/3.14,si_cluster_[i].fE[0]);
+	if(protcheck){
+	  h_nmult_pgated->Fill(Narray.fMult);
+	  h_evtheta_protgated[i]->Fill(si_cluster_[i].fPos[0].Theta()*180/3.14,si_cluster_[i].fE[0]);
+	}
+      }
+    h_si_[i]->Fill(si_[i].Front_E(0));
+    h_si_fmult[i]->Fill(si_[i].front.fMult);
+    h_si_bmult[i]->Fill(si_[i].back.fMult);
+    h_si_cluster_mult[i]->Fill(si_cluster_[i].fMult);
+    }
+    
+  }
+ 
+
 }
+
+
 void S2_Analyzer::Terminate(){
   rootfile->Write();
   rootfile->Close();
@@ -130,27 +196,22 @@ void S2_Analyzer::Terminate(){
 }
 
   void S2_Analyzer::Clear(){
-    delete h_si_1;
-    delete h_si_2;
-    for (int i=0;i<16;i++){
-      delete front[i];
-    }
-    
-    
+
   }
+    
+    
+
   
   void producehists(const char * input,const char* output,int index,const char* config){
     S2_Analyzer a;
     a.Init(input);
-    if(!a.initHists(output,index))
-      return ;
     if(config){
       LoadVariableFile(config);
       SetCalibrations();
     }
     a.Loop();
     
-
+    
   }
 
   void autocalibrate(const char* input,int fmatch,int bmatch){

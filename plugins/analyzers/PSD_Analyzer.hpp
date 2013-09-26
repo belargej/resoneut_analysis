@@ -31,8 +31,6 @@ namespace psd{
   ClassDef(NeutAnalyzer,0);
 
 };
-
-  extern TFile* rootfile;
   
   //declare Gates
   extern TCutG* n0_neuts;

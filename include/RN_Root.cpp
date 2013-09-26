@@ -21,6 +21,7 @@ RN_VariableMap DetVar;
 RN_MassTable MassTable;
 int RN_DetectorSet(0);
 
+TFile * rootfile;
 
 namespace global{
   double beam_e(0);

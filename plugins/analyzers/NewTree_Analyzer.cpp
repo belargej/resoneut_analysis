@@ -1,6 +1,8 @@
 #include "NewTree_Analyzer.hpp"
 #include "../../include/RN_Root.hpp"
 
+TTree * tree;
+
 NewTree_Analyzer::NewTree_Analyzer()
 {
 

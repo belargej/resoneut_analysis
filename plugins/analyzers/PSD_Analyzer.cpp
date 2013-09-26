@@ -2,9 +2,6 @@
 #include "../../include/RN_Root.hpp"
 
 namespace psd{
-
-
-  TFile* rootfile;
   
   //declare Gates
   TCutG* n0_neuts;
@@ -17,6 +14,16 @@ namespace psd{
   TCutG* n7_neuts;
   TCutG* n8_neuts;
   TCutG* n9_neuts;
+  TCutG* n0_gammas;
+  TCutG* n1_gammas;
+  TCutG* n2_gammas;
+  TCutG* n3_gammas;
+  TCutG* n4_gammas;
+  TCutG* n5_gammas;
+  TCutG* n6_gammas;
+  TCutG* n7_gammas;
+  TCutG* n8_gammas;
+  TCutG* n9_gammas;
   TCutG* n0_neuts_raw;
   TCutG* n1_neuts_raw;
   TCutG* n2_neuts_raw;
@@ -48,6 +55,8 @@ namespace psd{
   //declare histograms here
   //raw
   sak::Histogram1D *hrftime;
+  sak::Histogram1D *hrftime_ntrigger_test;
+  sak::Histogram1D *hrftime_ntrigger_test2;
   sak::Histogram1D *hrftime_prots;
   sak::Hist2D *hrftime_n;
   sak::Hist2D *hrftime_gated_n;
@@ -184,6 +193,7 @@ namespace psd{
 
   sak::Hist1D * hrftime_cal2_evtgated[10];
   sak::Hist1D * hrftime_cal2_evtgated_gamma[10];
+  sak::Hist1D * hrftime_cal2_evtgated_prot[10];
   sak::Hist1D * hrftime_cal2_evtgated_gamma_gamma[10];
   sak::Hist1D * hrftime_cal2_evtgated_gamma_delay[10];
   sak::Hist1D * hrftime_cal2_evtgated_gamma_gamma_delay[10];
@@ -197,12 +207,15 @@ namespace psd{
   sak::Hist1D * hrftime_cal2_allneut_evt_gamma_gamma;
   sak::Hist1D * hrftime_cal2_allneut_evt_gamma_delay;
   sak::Hist1D * hrftime_cal2_allneut_evt_gamma_gamma_delay;
+  sak::Hist1D * hrftime_cal2_allneut_evt_prot;
 
   sak::Hist1D * hrftime_cal_allneut_evt;
   sak::Hist1D * hrftime_cal_allneut_evt_s1_delayed;
   sak::Hist1D * hrftime_cal_allneut_evt_s2_delayed;
   sak::Hist1D * hrftime_cal_allneut_evt_gamma;
   sak::Hist1D * hrftime_cal_allneut_evt_gamma_gamma;
+  
+
 
   NeutAnalyzer::NeutAnalyzer()
   {
@@ -242,6 +255,8 @@ namespace psd{
     
     rootfile->cd("rftime/raw");
     hrftime=new sak::Histogram1D("hrftime","rftime[arb. units]",4096,0,4095);
+    hrftime_ntrigger_test=new sak::Histogram1D("hrftime_ntrigger_test","rftime[arb. units]",4096,0,4095);
+    hrftime_ntrigger_test2=new sak::Histogram1D("hrftime_ntrigger_test2","rftime[arb. units]",4096,0,4095);
     hrftime_prots=new sak::Histogram1D("hrftime_prots","rftime[ns]",4096,0,1023);    
     hrftime_allneut=new sak::Histogram1D("hrftime_allneut","rftime[arb. units]",4096,0,4095);
     hrftime_n=new sak::Histogram2D("hrftime_n","Detector","rftime[ns]",17,0,16,4096,0,4095);
@@ -283,6 +298,7 @@ namespace psd{
     hrftime_cal2_allneut_gamma=new sak::Histogram1D("hrftime_cal2_allneut_gamma","rftime[ns]",256,0,85);
     hrftime_cal2_allneut_gamma_gamma=new sak::Histogram1D("hrftime_cal2_allneut_gamma_gamma","rftime[ns]",256,0,85); 
     hrftime_cal2_allneut_evt=new sak::Histogram1D("hrftime_cal2_allneut_evt","rftime[ns]",256,0,85); 
+    hrftime_cal2_allneut_evt_prot=new sak::Histogram1D("hrftime_cal2_allneut_evt_prot","rftime[ns]",256,0,85); 
     hrftime_cal2_allneut_evt_s1_delayed=new sak::Histogram1D("hrftime_cal2_allneut_evt_s1_delayed","rftime[ns]",256,0,85); 
     hrftime_cal2_allneut_evt_s2_delayed=new sak::Histogram1D("hrftime_cal2_allneut_evt_s2_delayed","rftime[ns]",256,0,85); 
     hrftime_cal2_allneut_evt_gamma=new sak::Histogram1D("hrftime_cal2_allneut_evt_gamma","rftime[ns]",256,0,85); 
@@ -334,6 +350,7 @@ namespace psd{
       hrftime_cal2_evtgated_TRel_s1d[i]=new sak::Histogram1D(Form("hrftime_cal2_n%d_evtgated_TRel_s1delayed",i),"rftime[ns]",256,0,85); 
 
       hrftime_cal2_evtgated_gamma[i]=new sak::Histogram1D(Form("hrftime_cal2_n%d_evtgated_gamma",i),"rftime[ns]",256,0,85); 
+      hrftime_cal2_evtgated_prot[i]=new sak::Histogram1D(Form("hrftime_cal2_n%d_evtgated_prot",i),"rftime[ns]",256,0,85); 
       hrftime_cal2_evtgated_gamma_delay[i]=new sak::Histogram1D(Form("hrftime_cal2_n%d_evtgated_gamma_delay",i),"rftime[ns]",256,0,85); 
       hrftime_cal2_evtgated_gamma_gamma[i]=new sak::Histogram1D(Form("hrftime_cal2_n%d_evtgated_gamma_gamma",i),"rftime[ns]",256,0,85); 
       hrftime_cal2_evtgated_gamma_gamma_delay[i]=new sak::Histogram1D(Form("hrftime_cal2_n%d_evtgated_gamma_gamma_delay",i),"rftime[ns]",256,0,85); 
@@ -431,17 +448,26 @@ namespace psd{
     int neutcheck[10]={0};
     int orcheck=0;
 
-    neutcheck[0] = n0_neuts->IsInside(neut[0].fPSD,neut[0].fQ_long);
-    neutcheck[1] = n1_neuts->IsInside(neut[1].fPSD,neut[1].fQ_long);
-    neutcheck[2] = n2_neuts->IsInside(neut[2].fPSD,neut[2].fQ_long);
-    neutcheck[3] = n3_neuts->IsInside(neut[3].fPSD,neut[3].fQ_long);
-    neutcheck[4] = n4_neuts->IsInside(neut[4].fPSD,neut[4].fQ_long);
-    neutcheck[5] = n5_neuts->IsInside(neut[5].fPSD,neut[5].fQ_long);
-    neutcheck[6] = n6_neuts->IsInside(neut[6].fPSD,neut[6].fQ_long);
-    neutcheck[7] = n7_neuts->IsInside(neut[7].fPSD,neut[7].fQ_long);
-    neutcheck[8] = n8_neuts->IsInside(neut[8].fPSD,neut[8].fQ_long);
-    neutcheck[9] = n9_neuts->IsInside(neut[9].fPSD,neut[9].fQ_long);
-
+    neutcheck[0] = (n0_neuts->IsInside(neut[0].fPSD,neut[0].fQ_long)
+		    && !(n0_gammas->IsInside(neut[0].fPSD,neut[0].fQ_long)));
+    neutcheck[1] = (n1_neuts->IsInside(neut[1].fPSD,neut[1].fQ_long)
+    		    && !(n1_gammas->IsInside(neut[1].fPSD,neut[1].fQ_long)));
+    neutcheck[2] = (n2_neuts->IsInside(neut[2].fPSD,neut[2].fQ_long)
+  		    && !(n2_gammas->IsInside(neut[2].fPSD,neut[2].fQ_long)));
+    neutcheck[3] = (n3_neuts->IsInside(neut[3].fPSD,neut[3].fQ_long)
+		    && !(n3_gammas->IsInside(neut[3].fPSD,neut[3].fQ_long)));
+    neutcheck[4] = (n4_neuts->IsInside(neut[4].fPSD,neut[4].fQ_long)
+		    && !(n4_gammas->IsInside(neut[4].fPSD,neut[4].fQ_long)));
+    neutcheck[5] = (n5_neuts->IsInside(neut[5].fPSD,neut[5].fQ_long)
+		    && !(n5_gammas->IsInside(neut[5].fPSD,neut[5].fQ_long)));
+    neutcheck[6] = (n6_neuts->IsInside(neut[6].fPSD,neut[6].fQ_long)
+		    && !(n6_gammas->IsInside(neut[6].fPSD,neut[6].fQ_long)));
+    neutcheck[7] = (n7_neuts->IsInside(neut[7].fPSD,neut[7].fQ_long)
+		    && !(n7_gammas->IsInside(neut[7].fPSD,neut[7].fQ_long)));
+    neutcheck[8] = (n8_neuts->IsInside(neut[8].fPSD,neut[8].fQ_long)
+		    && !(n8_gammas->IsInside(neut[8].fPSD,neut[8].fQ_long)));
+    neutcheck[9] = (n9_neuts->IsInside(neut[9].fPSD,neut[9].fQ_long)
+		    && !(n9_gammas->IsInside(neut[9].fPSD,neut[9].fQ_long)));
     /*
     neutcheck[0] = n0_neuts_raw->IsInside(neut[0].fQ_long,neut[0].fQ_short);
     neutcheck[1] = n1_neuts_raw->IsInside(neut[1].fQ_long,neut[1].fQ_short);
@@ -467,6 +493,8 @@ namespace psd{
     evtcheck[9] = n9_evt->IsInside(T_wrapped,neut[9].fQ_long);
 
     for (int i=0;i<10;i++){	    
+      if(i==1||i==2||i==8)
+	continue;
       orcheck = neutcheck[i] || orcheck;
       evt_orcheck = evtcheck[i] || evt_orcheck;
     }
@@ -522,13 +550,24 @@ namespace psd{
   //Fill raw parameter Histograms below this line
   /******************************************************/
   hrftime->Fill(rftime[0].fT);
+  int ntriggertest=0;
+  int ntriggertest2=0;
   for (int i=0;i<10;i++){
     if(i>=neut.size())
       break;
+    ntriggertest = ntriggertest || (neut[i].fQ_long>0);
+    ntriggertest2 = ntriggertest2 || (neut[i].fT_Q);
     hPSDq_n[i]->Fill(neut[i].fQ_long,neut[i].fQ_short);
     
 
   }
+
+  if(ntriggertest)
+    hrftime_ntrigger_test->Fill(rftime[0].fT);
+  if(ntriggertest2)
+    hrftime_ntrigger_test2->Fill(rftime[0].fT);
+
+
 
   for (int i=0;i<10;i++){
     nai_e_lu[i]->Fill(nai[i].fE[0]);
@@ -604,6 +643,9 @@ namespace psd{
     if(evt_orcheck){
       hrftime_cal_allneut_evt->Fill(T_cal);
       hrftime_cal2_allneut_evt->Fill(T_wrapped);
+      if(protcheck){
+	hrftime_cal2_allneut_evt_prot->Fill(T_wrapped);
+      }
       if(nai_delaycheck)
 	hrftime_cal2_allneut_evt_gamma_delay->Fill(T_wrapped);
       if(nai_delaycheck>1)
@@ -658,7 +700,7 @@ namespace psd{
       if(s1_delaycheck){
 	hPSD_n_s1delay[i]->Fill(neut[i].fPSD,neut[i].fQ_long);
       }
-      if(nai_hitcheck){
+      if(nai_hitcheck==1){
 	hrftime_cal_n_gamma[i]->Fill(T_cal);
 	hrftime_cal2_n_gamma[i]->Fill(T_wrapped);
 	
@@ -673,6 +715,8 @@ namespace psd{
 	if(evtcheck[i]){
 	  hrftime_cal_evtgated[i]->Fill(T_cal);
 	  hrftime_cal2_evtgated[i]->Fill(T_wrapped);
+	  if(protcheck)
+	    hrftime_cal2_evtgated_prot[i]->Fill(T_wrapped);
 	  hrftime_cal2_evtgated_TRel[i]->Fill(n_RFT);	  
 	}
 	hrftime_cal2_ngated_mult1plus_tadded[i]->Fill(n_RFT);
@@ -682,7 +726,7 @@ namespace psd{
 	if(Narray.fMult==2){
 	  hrftime_cal2_ngated_mult2_tadded[i]->Fill(n_RFT);
 	}
-	if(nai_hitcheck){
+	if(nai_hitcheck==1){
 	  if(evtcheck[i]){
 	    hrftime_cal_evtgated_gamma[i]->Fill(T_cal);
 	    hrftime_cal2_evtgated_gamma[i]->Fill(T_wrapped);  
@@ -700,7 +744,7 @@ namespace psd{
 	  }//neut,mult>1,gamma
 	
 	}//neut,gamma
-	if(nai_delaycheck && evtcheck[i]){
+	if(nai_delaycheck==1 && evtcheck[i]){
 	  hrftime_cal2_evtgated_gamma_delay[i]->Fill(T_wrapped);
 	}
 	if(nai_delaycheck>1 && evtcheck[i]){
@@ -758,11 +802,11 @@ namespace psd{
   }//loop over neuts
 
  
-  if(nai_delaycheck&&orcheck){
+  if(nai_delaycheck==1&&orcheck){
     hrftime_cal_allneut_gamma_delay->Fill(T_cal);
     hrftime_cal2_allneut_gamma_delay->Fill(T_wrapped);
   }
-  if(nai_hitcheck&&orcheck){
+  if(nai_hitcheck==1&&orcheck){
     hrftime_cal_allneut_gamma->Fill(T_cal);
     hrftime_cal2_allneut_gamma->Fill(T_wrapped);
     if(evt_orcheck){
@@ -827,6 +871,28 @@ void NeutAnalyzer::Terminate(){
       n8_neuts=new TCutG(*in.getCut("n8_neuts"));
     if(in.getCut("n9_neuts") && !n9_neuts)
       n9_neuts=new TCutG(*in.getCut("n9_neuts"));
+ 
+    if(in.getCut("n0_gammas") && !n0_gammas)
+      n0_gammas=new TCutG(*in.getCut("n0_gammas"));
+    if(in.getCut("n1_gammas") && !n1_gammas)
+      n1_gammas=new TCutG(*in.getCut("n1_gammas"));
+    if(in.getCut("n2_gammas") && !n2_gammas)
+      n2_gammas=new TCutG(*in.getCut("n2_gammas"));   
+    if(in.getCut("n3_gammas") && !n3_gammas)
+      n3_gammas=new TCutG(*in.getCut("n3_gammas"));
+    if(in.getCut("n4_gammas") && !n4_gammas)
+      n4_gammas=new TCutG(*in.getCut("n4_gammas"));
+    if(in.getCut("n5_gammas") && !n5_gammas)
+      n5_gammas=new TCutG(*in.getCut("n5_gammas"));
+    if(in.getCut("n6_gammas") && !n6_gammas)
+      n6_gammas=new TCutG(*in.getCut("n6_gammas"));   
+    if(in.getCut("n7_gammas") && !n7_gammas)
+      n7_gammas=new TCutG(*in.getCut("n7_gammas"));
+    if(in.getCut("n8_gammas") && !n8_gammas)
+      n8_gammas=new TCutG(*in.getCut("n8_gammas"));
+    if(in.getCut("n9_gammas") && !n9_gammas)
+      n9_gammas=new TCutG(*in.getCut("n9_gammas"));
+
     if(in.getCut("n0_neuts_raw") && !n0_neuts_raw)
       n0_neuts_raw=new TCutG(*in.getCut("n0_neuts_raw"));
     if(in.getCut("n1_neuts_raw") && !n1_neuts_raw)
@@ -863,29 +929,28 @@ void NeutAnalyzer::Terminate(){
 
 
   void SetEvtGates(){
-    double nX[8]={13,13,24,38.5,48,75,75,13};
-    //double nX[8]={13,13,20,32,40,65,65,13};
-    double n0Y[8]={80,1000,650,320,251,126,80,80};
-    double n1Y[8]={85,1000,440,226,167,126,85,85};
-    double n2Y[8]={70,1000,308,183,126,100,70,70};
-    double n3Y[8]={80,1000,593,326,217,142,80,80};
-    double n4Y[8]={80,1000,627,300,217,117,80,80};
-    double n5Y[8]={100,1000,650,320,251,126,100,100};
-    double n6Y[8]={100,1000,635,326,234,134,100,100};
-    double n7Y[8]={100,1000,650,320,251,126,100,100};
-    double n8Y[8]={70,1000,320,190,129,101,70,70};
-    double n9Y[8]={70,1000,460,234,192,100,70,70};
+    double nX[15]={13,13,23,28,34,40,45,50,55,60,65,69,76,76,13};
+    double n0Y[15]={80,1000,860,577,444,380,330,300,270,227,216,190,180,80,80};
+    double n1Y[15]={85,1000,528,372,300,265,223,200,185,165,160,147,132,85,85};
+    double n2Y[15]={70,1000,333,240,200,170,147,120,115,100,96,95,90,70,70};
+    double n3Y[15]={80,1000,780,500,390,317,263,242,220,180,175,170,160,80,80};
+    double n4Y[15]={80,1000,720,509,400,320,270,250,230,190,180,175,165,80,80};
+    double n5Y[15]={100,1000,0,0,0,0,0,0,0,0,0,0,100,100};
+    double n6Y[15]={100,1000,750,517,400,310,275,240,210,185,170,165,165,100,100};
+    double n7Y[15]={100,1000,0,0,0,0,0,0,0,0,0,0,100,100};
+    double n8Y[15]={70,1000,340,312,250,221,200,180,150,145,140,136,136,70,70};
+    double n9Y[15]={70,1000,515,380,340,320,210,190,170,150,145,140,140,70,70};
     
-    if(!n0_evt)n0_evt=new TCutG("n0_evt",8,nX,n0Y);
-    if(!n1_evt)n1_evt=new TCutG("n1_evt",8,nX,n1Y);
-    if(!n2_evt)n2_evt=new TCutG("n2_evt",8,nX,n2Y);
-    if(!n3_evt)n3_evt=new TCutG("n3_evt",8,nX,n3Y);
-    if(!n4_evt)n4_evt=new TCutG("n4_evt",8,nX,n4Y);
-    if(!n5_evt)n5_evt=new TCutG("n5_evt",8,nX,n5Y);
-    if(!n6_evt)n6_evt=new TCutG("n6_evt",8,nX,n6Y);
-    if(!n7_evt)n7_evt=new TCutG("n7_evt",8,nX,n7Y);
-    if(!n8_evt)n8_evt=new TCutG("n8_evt",8,nX,n8Y);
-    if(!n9_evt)n9_evt=new TCutG("n9_evt",8,nX,n9Y);
+    if(!n0_evt)n0_evt=new TCutG("n0_evt",14,nX,n0Y);
+    if(!n1_evt)n1_evt=new TCutG("n1_evt",14,nX,n1Y);
+    if(!n2_evt)n2_evt=new TCutG("n2_evt",14,nX,n2Y);
+    if(!n3_evt)n3_evt=new TCutG("n3_evt",14,nX,n3Y);
+    if(!n4_evt)n4_evt=new TCutG("n4_evt",14,nX,n4Y);
+    if(!n5_evt)n5_evt=new TCutG("n5_evt",14,nX,n5Y);
+    if(!n6_evt)n6_evt=new TCutG("n6_evt",14,nX,n6Y);
+    if(!n7_evt)n7_evt=new TCutG("n7_evt",14,nX,n7Y);
+    if(!n8_evt)n8_evt=new TCutG("n8_evt",14,nX,n8Y);
+    if(!n9_evt)n9_evt=new TCutG("n9_evt",14,nX,n9Y);
 
 
     
