@@ -30,7 +30,10 @@ RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetecto
 								  fQ_short(0),
 								  fPSD(0),
 								  fT_Q(0),
+								  phe_lin(1),
+								  phe_shift(0),
 								  fTrel(0)
+  							  
   
 {
   fPos.SetXYZ(0,0,-228.7);//set default zpos
@@ -65,7 +68,8 @@ void RN_NeutDetector::SetCalibrations(RN_VariableMap& detvar){
   detvar.GetParam(Form("%s.radius",Name().c_str()),fRadius);
   detvar.GetParam(Form("%s.thickness",Name().c_str()),fThickness);
   detvar.GetParam(Form("%s.threshold",Name().c_str()),fThreshold);
-  
+  detvar.GetParam(Form("%s.phe_lin",Name().c_str()),phe_lin);
+  detvar.GetParam(Form("%s.phe_shift",Name().c_str()),phe_shift);
 
 
 }
@@ -145,6 +149,10 @@ double RN_NeutDetector::CalculateTRel(const double &tfirst){
   if(fT_Q)
     fTrel=T()-tfirst;
   return fTrel;
+}
+
+Double_t RN_NeutDetector::keVee() const {
+  return fQ_long*phe_lin+phe_shift;
 }
 
 

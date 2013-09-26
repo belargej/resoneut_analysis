@@ -43,6 +43,8 @@ class RN_NeutDetector:public RN_BaseDetector{
   int apos;//!
   TVector3 HitPos;//!
   TVector3 fPos;//!
+  double phe_lin;//!
+  double phe_shift;//!
   
   //simulation parameters
   double fRadius;//!
@@ -79,6 +81,7 @@ class RN_NeutDetector:public RN_BaseDetector{
   Double_t E_est() const;
   Double_t T() const;
   Double_t nKE(Double_t tof) const;
+  Double_t keVee() const;
   Double_t nKE_R(Double_t tof) const;
   Double_t GetRadius()const {return fRadius;}
   Double_t GetThickness()const {return fThickness;}

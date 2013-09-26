@@ -678,7 +678,6 @@ namespace psd{
     //double n_ke=neut[i].nKE(n_RFT);
     double n_ke=neut[i].nKE_R(n_RFT);
     double hi_ke=0,q_v=0;
-
     neut[i].Q_value_est(n_RFT,
 			global::m_beam,
 			global::m_frag,
@@ -695,7 +694,8 @@ namespace psd{
     if(neut[i].fQ_long>0){
       hPSD_n_[i]->Fill(neut[i].fPSD,neut[i].fQ_long);
       hnKE[i]->Fill(n_ke);
-      hnKE_vnE[i]->Fill(n_ke,neut[i].fQ_long);
+      if(n_RFT>0&&n_RFT<80)
+	hnKE_vnE[i]->Fill(n_ke,neut[i].keVee());
       if(nai_delaycheck){
 	hPSD_n_gdelay[i]->Fill(neut[i].fPSD,neut[i].fQ_long);
       }
@@ -766,7 +766,8 @@ namespace psd{
 	}//gamma gamma
 
 	hnKE_gated[i]->Fill(n_ke);
-	hnKE_gated_vnE[i]->Fill(n_ke,neut[i].fQ_long);
+	if(n_RFT>0&&n_RFT<55)
+	  hnKE_gated_vnE[i]->Fill(n_ke,neut[i].keVee());
 	hQval[i]->Fill(q_v);
 	hTrel_cal_ngated[i]->Fill(neut[i].fTrel,neut[i].fQ_long);
 	hrftime_gated_n->Fill(i,rftime[0].fT);
