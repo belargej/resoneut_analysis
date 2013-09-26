@@ -3,6 +3,23 @@
 
 #include "RN_BaseDetector.hpp"
 
+RN_BaseDetector::RN_BaseDetector(std::string name, int num):fName(name),
+							    fNumOfCh(num),
+							    sorted_by_channel(0),
+							    lowlimit(0),
+							    highlimit(4096),		
+							    fMult(0),
+							    fChlist(num,double(0)),
+							    fE(num,double(0)),
+							    fT(num,double(0))
+							    
+							    
+				       
+				       
+{
+
+
+}
 
 void RN_BaseDetector::Reset(){
   for(int i=0;i<fMult;i++){
@@ -29,7 +46,7 @@ void RN_BaseDetector::SetELimits(const double& elow,const double& ehigh){
 
 
 int RN_BaseDetector::InsertHit(const double& e,const double& t,const double& ch){
-
+  
   if(e <= lowlimit || e > highlimit) 
     return -1;
   int i,j;

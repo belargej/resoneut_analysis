@@ -38,7 +38,7 @@
 
 
 class RN_S2Detector:public TObject{
-private:
+protected:
   std::string fName;//!
   Double32_t elin;//!
   Double32_t eshift;//!
@@ -48,13 +48,16 @@ private:
   std::vector<Double32_t> fronta1;//!
   std::vector<Double32_t> backa0;//!
   std::vector<Double32_t> backa1;//!
+  std::vector<Double32_t> fch;//!
+  std::vector<Double32_t> bch;//!
   TVector3 normv_;//!
   TVector3 shiftv_;//!
   TVector3 posv_;//!
   TVector3 rotv_;//!
   Double32_t ring_pitch_;//!
   Double32_t delta_phi_;//!
-
+  Double32_t innerrad;//!
+  Double32_t outerrad;//!
 public:
   RN_BaseDetector front;
   RN_BaseDetector back;
@@ -62,30 +65,8 @@ public:
 
   RN_S2Detector(){}
   ~RN_S2Detector(){}
-  RN_S2Detector(std::string name,const int& fnum, const int& bnum):fName(name),
-								   elin(1),
-								   eshift(0),
-								   tlin(1),
-								   tshift(0),
-								   fronta0(fnum,double(0)),
-								   fronta1(fnum,double(1)),
-								   backa0(bnum,double(0)),
-								   backa1(bnum,double(1)),
-								   normv_(0,0,0),
-								   shiftv_(0,0,0),
-								   posv_(0,0,0),
-								   rotv_(0,0,0),
-								   front("front",fnum),
-								   back("back",bnum)
-						  
-
-  {
-    ring_pitch_ = (S2OUTERRAD - S2INNERRAD) / static_cast<double>(front.NumOfCh());
-    delta_phi_ = 360. / static_cast<double>(back.NumOfCh());
-    front.SetELimits(0,3500);
-    back.SetELimits(0,3500);
-  }
-
+  RN_S2Detector(std::string name,const int& fnum, const int& bnum);
+  
   TVector3 GetPosVect(){return posv_+shiftv_;}
   void SetPosVect(TVector3 posv){posv_=posv;}
   void SetShiftVect(TVector3 shiftv){shiftv_=shiftv;}
@@ -121,10 +102,17 @@ public:
   
   RN_S1Detector(std::string name,const int& fnum, const int& bnum):RN_S2Detector(name,fnum,bnum)							   
   {
+    outerrad=S1OUTERRAD;
+    innerrad=S1INNERRAD;
+    
+    ring_pitch_ = (S1OUTERRAD - S1INNERRAD) / static_cast<double>(front.NumOfCh());
+    delta_phi_ = 360. / static_cast<double>(back.NumOfCh());
   }
-  virtual TVector3 chVect(const double&cf,const double& cb) const{};
- 
-
+  TVector3 chVect(const double&cf,const double& cb) const{
+    return TVector3(0,0,0);
+  };
+  
+  ClassDef(RN_S1Detector,1);
 };
 
 

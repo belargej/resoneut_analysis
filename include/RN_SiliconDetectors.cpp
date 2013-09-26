@@ -24,6 +24,33 @@ void RN_S2Detector::SetCalibrations(double elin,double eshift,double tlin, doubl
 
 }
 
+RN_S2Detector::RN_S2Detector(std::string name,const int& fnum, const int& bnum):fName(name),
+								 elin(1),
+								 eshift(0),
+								 tlin(1),
+								 tshift(0),
+								 fronta0(fnum,double(0)),
+								 fronta1(fnum,double(1)),
+								 backa0(bnum,double(0)),
+								 backa1(bnum,double(1)),
+								 normv_(0,0,0),
+								 shiftv_(0,0,0),
+								 posv_(0,0,0),
+								 rotv_(0,0,0),
+								 front("front",fnum),
+								 back("back",bnum)
+								 
+								 
+  {
+   
+
+    outerrad=S2OUTERRAD;
+    innerrad=S2INNERRAD;
+    ring_pitch_ = (S2OUTERRAD - S2INNERRAD) / static_cast<double>(front.NumOfCh());
+    delta_phi_ = 360. / static_cast<double>(back.NumOfCh());
+    front.SetELimits(0,3500);
+    back.SetELimits(0,3500);
+  }
 
 void RN_S2Detector::SetCalibrations(RN_VariableMap& detvar){
   for (int i=0;i<front.NumOfCh();i++){
@@ -33,6 +60,7 @@ void RN_S2Detector::SetCalibrations(RN_VariableMap& detvar){
   for (int i=0;i<back.NumOfCh();i++){
     detvar.GetParam(Form("%s.back.a0[%d]",Name().c_str(),i),backa0[i]);  
     detvar.GetParam(Form("%s.back.a1[%d]",Name().c_str(),i),backa1[i]);
+
   }
   detvar.GetParam(Form("%s.elin",Name().c_str()),elin);
   detvar.GetParam(Form("%s.eshift",Name().c_str()),eshift);
@@ -132,7 +160,7 @@ bool RN_S2Detector::inDet(const TVector3& v){
   double ch_vect_mag = ch_vect.Mag();
 
   //see if it falls in the detector window
-  if((ch_vect_mag > S2OUTERRAD)||(ch_vect_mag < S2INNERRAD)){
+  if((ch_vect_mag > outerrad)||(ch_vect_mag < innerrad)){
     return false;
   }
   return true;
@@ -163,12 +191,12 @@ bool RN_S2Detector::Vect_to_ch(const TVector3& v,double& cf,double& cb){
   double ch_vect_mag = ch_vect.Mag();
 
   //see if it falls in the detector window
-  if((ch_vect_mag > S2OUTERRAD)||(ch_vect_mag < S2INNERRAD)){
+  if((ch_vect_mag > outerrad)||(ch_vect_mag < innerrad)){
     return false;
   }
   
   //find the ring
-  cf = (ch_vect_mag-S2INNERRAD)/ring_pitch_;
+  cf = (ch_vect_mag-innerrad)/ring_pitch_;
   
   double phi = ch_vect.Phi()*180./M_PI;
   //switch range of phi from (-180,180) to (0,360)
@@ -190,7 +218,7 @@ TVector3 RN_S2Detector::chVect(const double& cf,const double& cb) const{
   double phi;
   if((cf < static_cast<double>(front.NumOfCh())) 
      && (cb < static_cast<double>(back.NumOfCh()))){
-    s = S2INNERRAD + (cf + (double)myRnd.Rndm())*ring_pitch_;
+    s = innerrad + (cf + (double)myRnd.Rndm())*ring_pitch_;
     phi = (static_cast<double>(front.NumOfCh()) - cb 
 	   - (double)myRnd.Rndm())*delta_phi_;
   }
@@ -230,8 +258,8 @@ RN_S2Cluster::RN_S2Cluster(std::string name,Int_t NumOfCh):RN_BaseDetector(name,
   match_epsilon=0.0;
   match_delta=0.1;
   match_maxene=4096;
-  addback_front=0.0; 
-  addback_back=0.0;
+  addback_front=1.0; 
+  addback_back=1.0;
   
 }
 

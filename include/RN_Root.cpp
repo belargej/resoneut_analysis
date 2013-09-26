@@ -85,7 +85,7 @@ void RN_RootInit(){
   
 
 
-  si_.push_back(RN_S2Detector("si_a",16,16));
+  si_.push_back(RN_S1Detector("si_a",16,16));
   si_.push_back(RN_S2Detector("si_b",16,16));
   
   si_cluster_.push_back(RN_S2Cluster("si_cluster_a",16));

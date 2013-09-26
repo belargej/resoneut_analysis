@@ -6,6 +6,7 @@ namespace si_cal{
 
   sak::Histogram2D *hpede;  
   sak::Histogram1D *h_si_[2];
+  sak::Histogram1D *h_si_a[2];
   sak::Histogram2D *h_evtheta[2];
   sak::Histogram2D *h_evtheta_protgated[2];
   sak::Histogram2D *h_evtheta_neutgated[2];
@@ -107,9 +108,11 @@ void S2_Analyzer::Begin(){
   rootfile->mkdir("ede");
   rootfile->mkdir("evtheta");
   rootfile->mkdir("mult");
-  rootfile->mkdir("neuts");
-  h_si_[0]=new sak::Hist1D("h_si_1","E[MeV]",128,1,20);
-  h_si_[1]=new sak::Hist1D("h_si_2","E[MeV]",128,1,20);
+  rootfile->mkdir("neuts");  
+  h_si_a[0]=new sak::Hist1D("h_si_1a","E[MeV]",4096,0,4095);
+  h_si_a[1]=new sak::Hist1D("h_si_2a","E[MeV]",4096,0,4095);
+  h_si_[0]=new sak::Hist1D("h_si_1","E[MeV]",512,1,16);
+  h_si_[1]=new sak::Hist1D("h_si_2","E[MeV]",512,1,16);
   
   rootfile->cd("f2b_ratio");
   for(int i=0;i<16;i++){
@@ -123,8 +126,8 @@ void S2_Analyzer::Begin(){
   
   for(int i=0;i<2;i++){
     rootfile->cd("evtheta");
-    h_evtheta[i]=new sak::Hist2D(Form("h_evtheta[%d]",i+1),"theta[deg]","E",256,0,128,128,0,32);
-    h_evtheta_protgated[i]=new sak::Hist2D(Form("h_evtheta_prot[%d]",i+1),"theta[deg]","E",256,0,128,128,0,32);
+    h_evtheta[i]=new sak::Hist2D(Form("h_evtheta[%d]",i+1),"theta[deg]","E",256,10,42,128,0,32);
+    h_evtheta_protgated[i]=new sak::Hist2D(Form("h_evtheta_prot[%d]",i+1),"theta[deg]","E",256,10,42,128,0,32);
     rootfile->cd("mult");
     h_si_fmult[i]= new sak::Hist1D(Form("h_si_fmult_%d",i),"fmult",32,0,31);
     h_si_bmult[i]= new sak::Hist1D(Form("h_si_bmult_%d",i),"bmult",32,0,31);
@@ -151,9 +154,9 @@ void S2_Analyzer::Process(){
   double prot_theta=0;
   
   
-  if(si_[1].front.fMult>0&&si_[0].front.fMult>0){
-    prot_dE=si_[1].Front_E(0);
-    prot_E=si_[0].Front_E(0)+prot_dE;
+  if(si_cluster_[1].fMult>0&&si_cluster_[0].fMult>0){
+    prot_dE=si_cluster_[1].fE[0];
+    prot_E=si_cluster_[0].fE[0]+prot_dE;
     hpede->Fill(prot_E,prot_dE);
     prot_theta=si_cluster_[1].fPos[0].Theta()*(180/3.14);
   }
@@ -171,13 +174,14 @@ void S2_Analyzer::Process(){
       }
       front[i][idx]->Fill(si_[0].back.fChlist[0],(si_[0].Back_E(0)/si_[0].Front_E(0)));
       if(si_cluster_[i].fMult>0){
-	h_evtheta[i]->Fill(si_cluster_[i].fPos[0].Theta()*180/3.14,si_cluster_[i].fE[0]);
+	h_evtheta[i]->Fill(si_cluster_[i].fPos[0].Theta()*180/3.14,prot_E);
 	if(protcheck){
 	  h_nmult_pgated->Fill(Narray.fMult);
-	  h_evtheta_protgated[i]->Fill(si_cluster_[i].fPos[0].Theta()*180/3.14,si_cluster_[i].fE[0]);
+	  h_evtheta_protgated[i]->Fill(si_cluster_[i].fPos[0].Theta()*180/3.14,prot_E);
 	}
       }
     h_si_[i]->Fill(si_[i].Front_E(0));
+    h_si_a[i]->Fill(si_[i].Front_E(0));
     h_si_fmult[i]->Fill(si_[i].front.fMult);
     h_si_bmult[i]->Fill(si_[i].back.fMult);
     h_si_cluster_mult[i]->Fill(si_cluster_[i].fMult);

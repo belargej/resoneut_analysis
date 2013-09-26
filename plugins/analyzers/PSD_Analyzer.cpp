@@ -509,9 +509,9 @@ namespace psd{
   int nai_hitcheck=0;
   int nai_delaycheck=0;
 
-  if(si_[1].front.fMult>0&&si_[0].front.fMult>0){
-    prot_dE=si_[1].Front_E(0);
-    prot_E=si_[0].Front_E(0)+prot_dE;
+  if(si_cluster_[1].fMult>0&&si_cluster_[0].fMult>0){
+    prot_dE=si_cluster_[1].fE[0];
+    prot_E=si_cluster_[0].fE[0]+prot_dE;
     hpede->Fill(prot_E,prot_dE);
     hpede_2->Fill(prot_E,prot_dE);
     prot_theta=si_cluster_[1].fPos[0].Theta()*(180/3.14);
@@ -673,8 +673,10 @@ namespace psd{
     if(i>=neut.size())
       break;
     
-    double n_RFT=T_wrapped + neut[i].fTrel;
-    double n_ke=neut[i].nKE(n_RFT);
+    //    double n_RFT=T_wrapped + neut[i].fTrel;
+    double n_RFT=neut[i].fTrel;
+    //double n_ke=neut[i].nKE(n_RFT);
+    double n_ke=neut[i].nKE_R(n_RFT);
     double hi_ke=0,q_v=0;
 
     neut[i].Q_value_est(n_RFT,

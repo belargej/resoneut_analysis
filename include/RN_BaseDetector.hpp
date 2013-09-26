@@ -31,29 +31,20 @@ private:
   int sorted_by_channel;//!
   double lowlimit;//!
   double highlimit;//!
+  
 public:
   RN_BaseDetector(){
   }
-  RN_BaseDetector(std::string name, int num):fName(name),
-					     fNumOfCh(num),
-					     sorted_by_channel(0),
-					     lowlimit(0),
-					     highlimit(4096),
-					     fMult(0),
-					     fChlist(num,double(0)),
-					     fE(num,double(0)),
-					     fT(num,double(0))
-				       
-				       
-				       
-  {
-  }
+  RN_BaseDetector(std::string name, int num);
 
   int fMult;
+  
   std::vector<Double32_t>fChlist;//[fMult]
   std::vector<Double32_t>fE;//[fMult]
   std::vector<Double32_t>fT;//[fMult]
 
+  
+  
   void SetELimits(const double&,const double&);
   void Init(const double& num);
   void Reset();
