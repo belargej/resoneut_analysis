@@ -204,13 +204,10 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
     k+=2;
   }
 
-
-
-
-
   if(TDC1[0]>0)rftime[0].InsertHit(TDC1[0]);
-
+  if(TDC1[2]>0)rftime[1].InsertHit(TDC1[2]);
   
+
   for(int k=0;k<32;k++){
     if(ADC5 && ADC5[k]>0){
       ic.xgrid.InsertHit(ADC5[k],0,k);
@@ -219,8 +216,11 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
       ic.ygrid.InsertHit(ADC6[k],0,k);
     }
   }
-  if(ADC4 && ADC4[13]>0){
-    ic.fdE=ADC4[13];
+  if(ADC4 && ADC4[14]>0){
+    ic.fE=ADC4[14];
+  }
+  if(ADC4 && ADC4[15]>0){
+    ic.fdE=ADC4[15];
   }
 
  

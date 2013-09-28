@@ -63,15 +63,18 @@ bool RNUnpack2Root::init(){
 
   short caen_geo[]={3,4,5,6,7,8,10,11,12,13};
   short mesy_geo[]={14,16};
-  
+
   caen_stack.insert(caen_stack.begin(),caen_geo,caen_geo+10);
   mesy_stack.insert(mesy_stack.begin(),mesy_geo,mesy_geo+2);  
-
+  
   return 1;
 } 
 
 void RNUnpack2Root::Reset(){
   Event[1]=0;
+  for(int i=0;i<ScalerList.size();i++){
+    ScalerList[i]=0;
+  }
   for(int i=0;i<32;i++){
     ADC1[i]=0;
     ADC2[i]=0;
@@ -430,8 +433,8 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
 	      logfile<<"event ended abruptly, check for cause"<<std::endl;
 	      break;}
 	    else{
-	    evtfile.seekg(BufferBytes,ios::cur);
-	    continue;}
+	      evtfile.seekg(BufferBytes,ios::cur);
+	      continue;}
 	  }
 	  evtfile.read((char*)buffer,BufferBytes); //skip to end of this type
 	  unsigned short * tpointer;
@@ -453,6 +456,35 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
       //this is most likely a scaler increment event type.  Modify this later if you want
       //to save any information regarding scalers.
 
+	else if(ItemType==20){//20 is Scaler
+	  logfile<<" An Item Type 20 was intercepted meaning this is a Scaler"<<std::endl;
+	  buffer= new (nothrow) unsigned short[BufferWords];
+	  if (buffer==0){
+	    logfile<<"memory could not be allocated, occurance: "<<mem_counter++<<std::endl;
+	    logfile<<"Tried to allocated"<<BufferBytes<<"bytes"<<std::endl;
+	    if(mem_counter==10){
+	      logfile<<"event ended abruptly, check for cause"<<std::endl;
+	      break;}
+	    else{
+	      evtfile.seekg(BufferBytes,ios::cur);
+	      continue;}
+	  }
+	  evtfile.read((char*)buffer,BufferBytes); //skip to end of this type
+	  unsigned short * tpointer;
+	  tpointer = buffer; tpointer++;
+	  int lowtime = *tpointer++ ;
+	  int hightime = *tpointer << 16 ;//read byte as high byte
+	  int timeoffset = (hightime + lowtime) - timer;
+	  timer = (hightime + lowtime);
+	  logfile<<"time counter: "<<timer<<std::endl;
+	  logfile<<"time since last event counter: "<<timeoffset <<std::endl;
+	  delete [] buffer;
+	  Reset();
+	  continue;
+	}
+
+
+	/**********Other Item Type***************************************/
 	else{
 	  badcounter++;
 	  logfile<<" An Item Type "<<ItemType<<" was intercepted meaning this is an unidentified buffer"<<std::endl;

@@ -37,6 +37,7 @@ namespace psd{
   TCutG* prots1;
   TCutG* prots2;
   TCutG* alphas;
+  TCutG* F17;
   TCutG* s1_delayed_rf;
   TCutG* s2_delayed_rf;
   TCutG* n0_evt;
@@ -215,7 +216,9 @@ namespace psd{
   sak::Hist1D * hrftime_cal_allneut_evt_gamma;
   sak::Hist1D * hrftime_cal_allneut_evt_gamma_gamma;
   
-
+  sak::Hist1D * hMCP;
+  sak::Hist2D * h_icEdE;
+  sak::Hist2D* hNaI_vRftime;
 
   NeutAnalyzer::NeutAnalyzer()
   {
@@ -253,6 +256,10 @@ namespace psd{
     rootfile->mkdir("gammas/esum/left");
     rootfile->mkdir("gammas/esum/right");
     
+    hMCP=new sak::Histogram1D("hMCP","MCP_t[arb. units]",4096,0,4095);
+    h_icEdE=new sak::Histogram2D("h_icEdE","E","dE",512,512,2048,512,512,2048);
+
+
     rootfile->cd("rftime/raw");
     hrftime=new sak::Histogram1D("hrftime","rftime[arb. units]",4096,0,4095);
     hrftime_ntrigger_test=new sak::Histogram1D("hrftime_ntrigger_test","rftime[arb. units]",4096,0,4095);
@@ -317,9 +324,9 @@ namespace psd{
       hrftime_cal_ngated_gamma_gamma[i]=new sak::Histogram1D(Form("hrftime_cal_n%d_gated_gamma_gamma",i),"rftime[ns]",4096,0,1023); 
       hrftime_cal_n_gamma[i]=new sak::Histogram1D(Form("hrftime_cal_n%d_gamma",i),"rftime[ns]",4096,0,1023); 
       hrftime_cal_n_gamma_gamma[i]=new sak::Histogram1D(Form("hrftime_cal_n%d_gamma_gamma",i),"rftime[ns]",4096,0,1023); 
-      hTrel_cal_n[i]=new sak::Histogram2D(Form("hTrel_cal_n%d",i),"Trel","E",64,0,128,512,50,2500);
-      hTrel_cal_ngated[i]=new sak::Histogram2D(Form("hTrel_cal_ngated%d",i),"Trel","E",64,0,128,512,50,2500);
-      hEvT_cal_n[i]=new sak::Histogram2D(Form("hEvT_n%d",i),"rftime[ns]","E[arb.units]",1200,0,1199,2048,50,1000);
+      hTrel_cal_n[i]=new sak::Histogram2D(Form("hTrel_cal_n%d",i),"Trel","E[keVee]",64,0,128,1024,1,1024);
+      hTrel_cal_ngated[i]=new sak::Histogram2D(Form("hTrel_cal_ngated%d",i),"Trel","E[keVee]",64,0,128,1024,1,1024);
+      hEvT_cal_n[i]=new sak::Histogram2D(Form("hEvT_n%d",i),"rftime[ns]","E[keVee]",1200,0,1199,1024,1,1024);
 
       hrftime_cal_evtgated[i]=new sak::Histogram1D(Form("hrftime_cal_n%d_evtgated",i),"rftime[ns]",4096,0,1023); 
       hrftime_cal_evtgated_gamma[i]=new sak::Histogram1D(Form("hrftime_cal_n%d_evtgated_gamma",i),"rftime[ns]",4096,0,1023); 
@@ -396,7 +403,7 @@ namespace psd{
     rootfile->cd("gammas");
     hnai_delay=new sak::Hist1D("hnai_delay","mult",20,0,19);
     hnai_hit=new sak::Hist1D("hnai_hit","mult",20,0,19);
- 
+    hNaI_vRftime=new sak::Hist2D("nai_tvrf","rftime[ns]","TDC2",4096,0,4095,512,1.,4096.);
 
     for(int i=0;i<10;i++){
       rootfile->cd("gammas/e/left");
@@ -447,27 +454,31 @@ namespace psd{
     int evt_orcheck=0;
     int neutcheck[10]={0};
     int orcheck=0;
+    int F17check=0;
 
-    neutcheck[0] = (n0_neuts->IsInside(neut[0].fPSD,neut[0].fQ_long)
-		    && !(n0_gammas->IsInside(neut[0].fPSD,neut[0].fQ_long)));
-    neutcheck[1] = (n1_neuts->IsInside(neut[1].fPSD,neut[1].fQ_long)
-    		    && !(n1_gammas->IsInside(neut[1].fPSD,neut[1].fQ_long)));
-    neutcheck[2] = (n2_neuts->IsInside(neut[2].fPSD,neut[2].fQ_long)
-  		    && !(n2_gammas->IsInside(neut[2].fPSD,neut[2].fQ_long)));
-    neutcheck[3] = (n3_neuts->IsInside(neut[3].fPSD,neut[3].fQ_long)
-		    && !(n3_gammas->IsInside(neut[3].fPSD,neut[3].fQ_long)));
-    neutcheck[4] = (n4_neuts->IsInside(neut[4].fPSD,neut[4].fQ_long)
-		    && !(n4_gammas->IsInside(neut[4].fPSD,neut[4].fQ_long)));
-    neutcheck[5] = (n5_neuts->IsInside(neut[5].fPSD,neut[5].fQ_long)
-		    && !(n5_gammas->IsInside(neut[5].fPSD,neut[5].fQ_long)));
-    neutcheck[6] = (n6_neuts->IsInside(neut[6].fPSD,neut[6].fQ_long)
-		    && !(n6_gammas->IsInside(neut[6].fPSD,neut[6].fQ_long)));
-    neutcheck[7] = (n7_neuts->IsInside(neut[7].fPSD,neut[7].fQ_long)
-		    && !(n7_gammas->IsInside(neut[7].fPSD,neut[7].fQ_long)));
-    neutcheck[8] = (n8_neuts->IsInside(neut[8].fPSD,neut[8].fQ_long)
-		    && !(n8_gammas->IsInside(neut[8].fPSD,neut[8].fQ_long)));
-    neutcheck[9] = (n9_neuts->IsInside(neut[9].fPSD,neut[9].fQ_long)
-		    && !(n9_gammas->IsInside(neut[9].fPSD,neut[9].fQ_long)));
+    if(F17 && F17->IsInside(ic.fE,ic.fdE))
+      F17check=1;
+    
+    neutcheck[0] = (n0_neuts && n0_neuts->IsInside(neut[0].fPSD,neut[0].fQ_long)
+		    && !(n0_gammas && n0_gammas->IsInside(neut[0].fPSD,neut[0].fQ_long)));
+    neutcheck[1] = (n1_neuts && n1_neuts->IsInside(neut[1].fPSD,neut[1].fQ_long)
+    		    && !(n1_gammas && n1_gammas->IsInside(neut[1].fPSD,neut[1].fQ_long)));
+    neutcheck[2] = (n2_neuts && n2_neuts->IsInside(neut[2].fPSD,neut[2].fQ_long)
+  		    && !(n2_gammas && n2_gammas->IsInside(neut[2].fPSD,neut[2].fQ_long)));
+    neutcheck[3] = (n3_neuts && n3_neuts->IsInside(neut[3].fPSD,neut[3].fQ_long)
+		    && !(n3_gammas && n3_gammas->IsInside(neut[3].fPSD,neut[3].fQ_long)));
+    neutcheck[4] = (n4_neuts && n4_neuts->IsInside(neut[4].fPSD,neut[4].fQ_long)
+		    && !(n4_gammas && n4_gammas->IsInside(neut[4].fPSD,neut[4].fQ_long)));
+    neutcheck[5] = (n5_neuts && n5_neuts->IsInside(neut[5].fPSD,neut[5].fQ_long)
+		    && !(n5_gammas && n5_gammas->IsInside(neut[5].fPSD,neut[5].fQ_long)));
+    neutcheck[6] = (n6_neuts && n6_neuts->IsInside(neut[6].fPSD,neut[6].fQ_long)
+		    && !(n6_gammas && n6_gammas->IsInside(neut[6].fPSD,neut[6].fQ_long)));
+    neutcheck[7] = (n7_neuts && n7_neuts->IsInside(neut[7].fPSD,neut[7].fQ_long)
+		    && !(n7_gammas && n7_gammas->IsInside(neut[7].fPSD,neut[7].fQ_long)));
+    neutcheck[8] = (n8_neuts && n8_neuts->IsInside(neut[8].fPSD,neut[8].fQ_long)
+		    && !(n8_gammas && n8_gammas->IsInside(neut[8].fPSD,neut[8].fQ_long)));
+    neutcheck[9] = (n9_neuts && n9_neuts->IsInside(neut[9].fPSD,neut[9].fQ_long)
+		    && !(n9_gammas && n9_gammas->IsInside(neut[9].fPSD,neut[9].fQ_long)));
     /*
     neutcheck[0] = n0_neuts_raw->IsInside(neut[0].fQ_long,neut[0].fQ_short);
     neutcheck[1] = n1_neuts_raw->IsInside(neut[1].fQ_long,neut[1].fQ_short);
@@ -581,7 +592,16 @@ namespace psd{
     nai_sume_l[i]->Fill(nai[i].SumE());
     nai_sume_r[i]->Fill(nai[i+10].SumE());
   }
- 
+  hMCP->Fill(rftime[1].fT);
+  h_icEdE->Fill(ic.fE,ic.fdE);
+  
+  if(F17 && !F17check)
+    return ;
+  for(int i=0;i<10;i++){
+    hNaI_vRftime->Fill(rftime[0].fT,nai[i].fT[0]);
+  }
+  
+
 
   //Fill calpar.Histograms below this line
   /*************************************************************/
@@ -598,7 +618,7 @@ namespace psd{
   for(int i=0;i<10;i++){
     if(i>=neut.size())
       break;
-    hTrel_cal_n[i]->Fill(neut[i].fTrel,neut[i].fQ_long);
+    hTrel_cal_n[i]->Fill(neut[i].fTrel,neut[i].keVee());
     hPSD_n_[i]->Fill(neut[i].fPSD,neut[i].fQ_long);
     if(neut[i].fQ_long>0){
       hrftime_n->Fill(i,rftime[0].T());
@@ -926,7 +946,8 @@ void NeutAnalyzer::Terminate(){
       s1_delayed_rf=new TCutG(*in.getCut("s1_delayed_rf"));
     if(in.getCut("s2_delayed_rf") && !s2_delayed_rf)
       s2_delayed_rf=new TCutG(*in.getCut("s2_delayed_rf"));    
-     
+    if(in.getCut("F17") && !F17)
+      F17=new TCutG(*in.getCut("F17"));
    
   }
 

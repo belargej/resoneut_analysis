@@ -92,41 +92,42 @@ void RN_RootInit(){
   si_cluster_.push_back(RN_S2Cluster("si_cluster_b",16));
   
   rftime.push_back(RN_RFTime("rftime"));
+  rftime.push_back(RN_RFTime("MCP"));
   
-    neut.push_back(RN_NeutDetector("neut0",4,1));
-    neut.push_back(RN_NeutDetector("neut1",4,4));
-    neut.push_back(RN_NeutDetector("neut2",4,5));
-    neut.push_back(RN_NeutDetector("neut3",4,6));
-    neut.push_back(RN_NeutDetector("neut4",4,7));
-    neut.push_back(RN_NeutDetector("neut5",4,11));
-    neut.push_back(RN_NeutDetector("neut6",4,14));
-    neut.push_back(RN_NeutDetector("neut7",4,10));
-    neut.push_back(RN_NeutDetector("neut8",4,12));
-    neut.push_back(RN_NeutDetector("neut9",4,15));
- 
-    nai.push_back(RN_NaIDetector("nai_l1"));
-    nai.push_back(RN_NaIDetector("nai_l2"));
-    nai.push_back(RN_NaIDetector("nai_l3"));
-    nai.push_back(RN_NaIDetector("nai_l4"));
-    nai.push_back(RN_NaIDetector("nai_l5"));
-    nai.push_back(RN_NaIDetector("nai_l6"));
-    nai.push_back(RN_NaIDetector("nai_l7"));
-    nai.push_back(RN_NaIDetector("nai_l8"));
-    nai.push_back(RN_NaIDetector("nai_l9"));
-    nai.push_back(RN_NaIDetector("nai_l10"));
-    nai.push_back(RN_NaIDetector("nai_r1"));
-    nai.push_back(RN_NaIDetector("nai_r2"));
-    nai.push_back(RN_NaIDetector("nai_r3"));
-    nai.push_back(RN_NaIDetector("nai_r4"));
-    nai.push_back(RN_NaIDetector("nai_r5"));
-    nai.push_back(RN_NaIDetector("nai_r6"));
-    nai.push_back(RN_NaIDetector("nai_r7"));
-    nai.push_back(RN_NaIDetector("nai_r8"));
-    nai.push_back(RN_NaIDetector("nai_r9"));
-    nai.push_back(RN_NaIDetector("nai_r10"));
+  neut.push_back(RN_NeutDetector("neut0",4,1));
+  neut.push_back(RN_NeutDetector("neut1",4,4));
+  neut.push_back(RN_NeutDetector("neut2",4,5));
+  neut.push_back(RN_NeutDetector("neut3",4,6));
+  neut.push_back(RN_NeutDetector("neut4",4,7));
+  neut.push_back(RN_NeutDetector("neut5",4,11));
+  neut.push_back(RN_NeutDetector("neut6",4,14));
+  neut.push_back(RN_NeutDetector("neut7",4,10));
+  neut.push_back(RN_NeutDetector("neut8",4,12));
+  neut.push_back(RN_NeutDetector("neut9",4,15));
   
-    RN_DetectorSet = 1;
+  nai.push_back(RN_NaIDetector("nai_l1"));
+  nai.push_back(RN_NaIDetector("nai_l2"));
+  nai.push_back(RN_NaIDetector("nai_l3"));
+  nai.push_back(RN_NaIDetector("nai_l4"));
+  nai.push_back(RN_NaIDetector("nai_l5"));
+  nai.push_back(RN_NaIDetector("nai_l6"));
+  nai.push_back(RN_NaIDetector("nai_l7"));
+  nai.push_back(RN_NaIDetector("nai_l8"));
+  nai.push_back(RN_NaIDetector("nai_l9"));
+  nai.push_back(RN_NaIDetector("nai_l10"));
+  nai.push_back(RN_NaIDetector("nai_r1"));
+  nai.push_back(RN_NaIDetector("nai_r2"));
+  nai.push_back(RN_NaIDetector("nai_r3"));
+  nai.push_back(RN_NaIDetector("nai_r4"));
+  nai.push_back(RN_NaIDetector("nai_r5"));
+  nai.push_back(RN_NaIDetector("nai_r6"));
+  nai.push_back(RN_NaIDetector("nai_r7"));
+  nai.push_back(RN_NaIDetector("nai_r8"));
+  nai.push_back(RN_NaIDetector("nai_r9"));
+  nai.push_back(RN_NaIDetector("nai_r10"));
   
+  RN_DetectorSet = 1;
+    
   
 }
 
