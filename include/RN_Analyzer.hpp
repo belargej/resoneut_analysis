@@ -66,36 +66,6 @@ public:
   //even if you load an old file where these modules are not present
   //if you refer to the Init(), the modules will not be aligned to a
   //branch address in this case
-
-  Float_t       ADC1[32];
-  Float_t       ADC2[32];
-  Float_t       ADC3[32];
-  Float_t       ADC4[32];
-  Float_t       ADC5[32];
-  Float_t       ADC6[32];
-  Float_t       ADC7[32];
-  Float_t       TDC1[32];
-  Float_t       TDC2[32];
-  Float_t       TDC3[32];
-  Float_t       TDC4[32];
-  Float_t       QDC1[32];
-  Float_t       QDC2[32];
-  
-  // List of branches
-  TBranch        *b_ADC1;   //!
-  TBranch        *b_ADC2;   //!
-  TBranch        *b_ADC3;   //!
-  TBranch        *b_ADC4;   //!
-  TBranch        *b_ADC5;   //!
-  TBranch        *b_ADC6;   //!
-  TBranch        *b_ADC7;   //!
-  TBranch        *b_TDC1;   //!
-  TBranch        *b_TDC2;   //!
-  TBranch        *b_TDC3;   //!
-  TBranch        *b_TDC4;   //!
-  TBranch        *b_QDC1;   //!
-  TBranch        *b_QDC2;   //!
- 
   //ROOT Initializations
   TChain * fChain;
 

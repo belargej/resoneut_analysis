@@ -9,11 +9,54 @@
 
 using namespace std;
 
+namespace unpacker{
+  Int_t Event[3];//stores RunNum/flag/scaler
+  ScalerNames scaler_names;
+  ScalerValues scaler_values;
+
+  float ADC1[32];
+  float ADC2[32];
+  float ADC3[32];
+  float ADC4[32];
+  float ADC5[32];
+  float ADC6[32];
+  float ADC7[32];
+  float TDC1[32];
+  float TDC2[32];
+  float TDC3[32];
+  float TDC4[32];
+  float QDC1[32];
+  float QDC2[32];
+  
+  TBranch        *b_ADC1;   //!
+  TBranch        *b_ADC2;   //!
+  TBranch        *b_ADC3;   //!
+  TBranch        *b_ADC4;   //!
+  TBranch        *b_ADC5;   //!
+  TBranch        *b_ADC6;   //!
+  TBranch        *b_ADC7;   //!
+  TBranch        *b_TDC1;   //!
+  TBranch        *b_TDC2;   //!
+  TBranch        *b_TDC3;   //!
+  TBranch        *b_TDC4;   //!
+  TBranch        *b_QDC1;   //!
+  TBranch        *b_QDC2;   //!
+ 
+
+  std::vector<short> caen_stack;
+  std::vector<short> mesy_stack;
+
+  int GetMesyNum(){return mesy_stack.size();}
+  int GetCaenNum(){return caen_stack.size();}
+}
+
+using namespace unpacker;
 
 RNUnpack2Root::RNUnpack2Root():Rnd(0)
 {
   Event[0]=0;
   Event[1]=0;
+  Event[2]=0;
   for(int i=0;i<32;i++){
     ADC1[i]=0;
     ADC2[i]=0;
@@ -52,7 +95,14 @@ bool RNUnpack2Root::init(const std::string & configfile){
 	for(unsigned int i=1;i<input.size();i++){
 	  mesy_stack.push_back(sak::string_to_int(input[i]));
 	}
+      else if(input[0]=="scaler_list"){
+	for(unsigned int i=1;i<input.size();i++){
+	  scaler_names.push_back(input[i]);
+	  scaler_values.push_back(0);
+	}
+      }
     }
+    
   }while(!cfg.eof());
   
 
@@ -63,7 +113,7 @@ bool RNUnpack2Root::init(){
 
   short caen_geo[]={3,4,5,6,7,8,10,11,12,13};
   short mesy_geo[]={14,16};
-
+  
   caen_stack.insert(caen_stack.begin(),caen_geo,caen_geo+10);
   mesy_stack.insert(mesy_stack.begin(),mesy_geo,mesy_geo+2);  
   
@@ -71,10 +121,10 @@ bool RNUnpack2Root::init(){
 } 
 
 void RNUnpack2Root::Reset(){
+  //Event[0]=runnumber should not be zeroed
   Event[1]=0;
-  for(int i=0;i<ScalerList.size();i++){
-    ScalerList[i]=0;
-  }
+  //Event[2]=scalernumber should not be zeroed
+  
   for(int i=0;i<32;i++){
     ADC1[i]=0;
     ADC2[i]=0;
@@ -123,6 +173,7 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
   
   TFile* RootFile;
   TTree* DataTree;
+  TTree* ScalerTree;
   unsigned int BufferWords; //number of short length words, each 2 bytes
   unsigned int BufferBytes; //number of bytes to be stored
   unsigned int BufferType;
@@ -149,9 +200,10 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
 
   // Data Tree
   DataTree = new TTree("DataTree","DataTree");
+  ScalerTree = new TTree("ScalerTree","ScalerTree");
  
   //flag is used to notify the user of any issues seen during unpacking
-  DataTree->Branch("Event",&Event,"RunNum/I:flag/I"); 
+  DataTree->Branch("Event",&Event,"RunNum/I:flag/I:ScalerIDX/I"); 
   DataTree->Branch("ADC1",&ADC1,"ADC1[32]/F");
   DataTree->Branch("ADC2",&ADC2,"ADC2[32]/F");
   DataTree->Branch("ADC3",&ADC3,"ADC3[32]/F");
@@ -165,7 +217,10 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
   DataTree->Branch("TDC4",&TDC4,"TDC4[32]/F");
   DataTree->Branch("QDC1",&QDC1,"QDC1[32]/F");
   DataTree->Branch("QDC2",&QDC2,"QDC2[32]/F");
-  
+  ScalerTree->Branch("Scalers",&scaler_values);
+
+
+
   //Loop over files in the data file list.
   for(unsigned int b=0;b<run_number.size();b++){
     //this section to properly format the evt number to buffer run number with zeroes.
@@ -241,7 +296,7 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
 	//first we read in "Event Buffers or Item" header
 	//reading in 10 bytes reads the entire item header.
 
-	BufferWords = 5; BufferBytes = BufferWords * sizeof(short); 
+	BufferWords = 4; BufferBytes = BufferWords * sizeof(short); 
 	buffer = new unsigned short[BufferWords];
 	evtfile.read((char*)buffer,BufferBytes); 
 
@@ -250,7 +305,6 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
 	//BufferWords is now the size of the buffer needed to read the event contents.
 	BufferWords = BufferBytes/(sizeof(short)); 
 	ItemType = buffer[2];
-	OtherInfo=buffer[4];//important for non-event type construct
 	delete [] buffer;
 
 	if(ItemType==30){ //30 is PhysicsEvent
@@ -271,6 +325,7 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
 	  evtfile.read((char*)buffer,BufferBytes);
 	  unsigned short * gpointer,* endpointer;
 	  gpointer = buffer; //copy pointer to beginning of buffer(outside of header) 
+	  gpointer++;//extra word after item type
 	  endpointer = buffer + BufferWords;
 
 
@@ -424,7 +479,7 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
       //related to buffer overloads).  This was to understand how frequently this happens.
 
 	else if(ItemType==31){//31 is PhysicsEventCounter
-	  logfile<<" An Item Type 31 was intercepted meaning this is a Physics Event Counter"<<std::endl;
+	  //logfile<<" An Item Type 31 was intercepted meaning this is a Physics Event Counter"<<std::endl;
 	  buffer= new (nothrow) unsigned short[BufferWords];
 	  if (buffer==0){
 	    logfile<<"memory could not be allocated, occurance: "<<mem_counter++<<std::endl;
@@ -443,8 +498,8 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
 	  int hightime = *tpointer << 16 ;//read byte as high byte
 	  int timeoffset = (hightime + lowtime) - timer;
 	  timer = (hightime + lowtime);
-	  logfile<<"time counter: "<<timer<<std::endl;
-	  logfile<<"time since last event counter: "<<timeoffset <<std::endl;
+	  //logfile<<"time counter: "<<timer<<std::endl;
+	  //logfile<<"time since last event counter: "<<timeoffset <<std::endl;
 	  delete [] buffer;
 	  Reset();
 	  continue;}
@@ -457,7 +512,7 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
       //to save any information regarding scalers.
 
 	else if(ItemType==20){//20 is Scaler
-	  logfile<<" An Item Type 20 was intercepted meaning this is a Scaler"<<std::endl;
+	  //	  logfile<<" An Item Type 20 was intercepted meaning this is a Scaler"<<std::endl;
 	  buffer= new (nothrow) unsigned short[BufferWords];
 	  if (buffer==0){
 	    logfile<<"memory could not be allocated, occurance: "<<mem_counter++<<std::endl;
@@ -470,19 +525,33 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
 	      continue;}
 	  }
 	  evtfile.read((char*)buffer,BufferBytes); //skip to end of this type
-	  unsigned short * tpointer;
-	  tpointer = buffer; tpointer++;
-	  int lowtime = *tpointer++ ;
-	  int hightime = *tpointer << 16 ;//read byte as high byte
-	  int timeoffset = (hightime + lowtime) - timer;
-	  timer = (hightime + lowtime);
-	  logfile<<"time counter: "<<timer<<std::endl;
-	  logfile<<"time since last event counter: "<<timeoffset <<std::endl;
+	  unsigned short* ipointer;
+	  ipointer = buffer;
+	  ipointer+=2;//time_start offset
+	  ipointer+=2;//time_end offset
+	  ipointer+=2;//time_stamp
+	  unsigned short scalercount = *ipointer;ipointer+=2;
+	  if(scaler_values.size()!=0){//if scaler_list is even set
+	    ScalerValueIterator it=scaler_values.begin();
+	    for(unsigned short i=0;i<scalercount;i++){
+	      if(it==scaler_values.end())
+		break;
+	      (*it)=(short)*ipointer;ipointer+=2;
+	    it++;
+	    }
+	  }
+	  ScalerTree->Fill();
+	  Event[2]++; //increase scaler index to know which data goes with which scaler
+	  for(ScalerValueIterator it=scaler_values.begin();it!=scaler_values.end();it++){
+	    (*it)=0;
+	  }
+	  
+	
 	  delete [] buffer;
 	  Reset();
 	  continue;
 	}
-
+      
 
 	/**********Other Item Type***************************************/
 	else{
@@ -516,6 +585,7 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
   if(buffer!=0)buffer = NULL;
   logfile.close();
   DataTree->Write();
+  ScalerTree->Write();
   RootFile->Close(); 
   // The function Close() first writes to the ROOT file and then closes it.  
 

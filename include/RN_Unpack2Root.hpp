@@ -40,6 +40,8 @@ using RN_modules. also got rid of the need for a "config file".  Changes to the 
 #include <TCutG.h>
 #include <TSelector.h>
 #include <map>
+#include <list>
+#include <utility>
 
 #include "sak_ReadBuffer.hpp"
 
@@ -47,40 +49,69 @@ class RNUnpack2Root{
 private:
   int adc_counter;
   int mes_counter;
-  Int_t Event[2];//stores RunNum/flag
+  
  
 public:
-  float ADC1[32];
-  float ADC2[32];
-  float ADC3[32];
-  float ADC4[32];
-  float ADC5[32];
-  float ADC6[32];
-  float ADC7[32];
-  float TDC1[32];
-  float TDC2[32];
-  float TDC3[32];
-  float TDC4[32];
-  float QDC1[32];
-  float QDC2[32];
-
-  std::vector<short> caen_stack;
-  std::vector<short> mesy_stack;
-
+ 
   TRandom3 Rnd;
 
   RNUnpack2Root();
   int Convert(std::vector<int>&run_number,std::string data_dir,std::string output_file);
   bool init();
   bool init(const std::string& configfile);
-  int GetMesyNum(){return mesy_stack.size();}
-  int GetCaenNum(){return caen_stack.size();}
   int SortGeoChan(short geoaddress,short chan,short val);
   void Reset();
 
 
  
 };
+
+namespace unpacker{
+  extern Int_t Event[3];
+  extern float ADC1[32];
+  extern float ADC2[32];
+  extern float ADC3[32];
+  extern float ADC4[32];
+  extern float ADC5[32];
+  extern float ADC6[32];
+  extern float ADC7[32];
+  extern float TDC1[32];
+  extern float TDC2[32];
+  extern float TDC3[32];
+  extern float TDC4[32];
+  extern float QDC1[32];
+  extern float QDC2[32];
+
+  extern TBranch        *b_ADC1;   //!
+  extern TBranch        *b_ADC2;   //!
+  extern TBranch        *b_ADC3;   //!
+  extern TBranch        *b_ADC4;   //!
+  extern TBranch        *b_ADC5;   //!
+  extern TBranch        *b_ADC6;   //!
+  extern TBranch        *b_ADC7;   //!
+  extern TBranch        *b_TDC1;   //!
+  extern TBranch        *b_TDC2;   //!
+  extern TBranch        *b_TDC3;   //!
+  extern TBranch        *b_TDC4;   //!
+  extern TBranch        *b_QDC1;   //!
+  extern TBranch        *b_QDC2;   //!
+ 
+
+  extern std::vector<short> caen_stack;
+  extern std::vector<short> mesy_stack;
+  int GetMesyNum();
+  int GetCaenNum();
+
+}
+
+typedef std::vector<std::string> ScalerNames;
+typedef std::vector<Short_t> ScalerValues;
+typedef std::vector<Short_t>::iterator ScalerValueIterator;
+
+//above method is easier for writing to tree
+typedef std::pair<std::string,short> Scaler;
+typedef std::list< Scaler > ScalerList;
+typedef std::list< Scaler >::iterator ScalerIterator;
 
 
 #endif

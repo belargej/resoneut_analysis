@@ -9,8 +9,10 @@
 //RN_Analyzer headers.
 #include "RN_Analyzer.hpp"
 #include "RN_Root.hpp"
+#include "RN_Unpack2Root.hpp"
+
 using namespace std;
-            
+using namespace unpacker;            
 
 RN_Analyzer::RN_Analyzer()
 {

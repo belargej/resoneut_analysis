@@ -1,5 +1,6 @@
 #include "Trigger_Analyzer.hpp"
 #include "../../include/RN_Root.hpp"
+#include "../../include/RN_Unpack2Root.hpp"
 
 int Q1T1[16];
 int Q1T0[16];
@@ -10,6 +11,7 @@ int Q1T0a(0);
 int T1Q1a(0);
 int T1Q0a(0);
 
+using namespace unpacker;
 
 Trigger_Analyzer::Trigger_Analyzer()
 {
