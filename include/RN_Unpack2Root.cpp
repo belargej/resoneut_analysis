@@ -271,7 +271,7 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
       //Include below anything else wanted from the header
       //this can be run number, title, etc...
       //right now this is just getting the start time from the run
-
+      std::cout<<"Converting Run: "<<buffer[0]<<endl;
       unsigned short *tpointer;tpointer=buffer+4;
       int lowtime = *tpointer++ ;
       int hightime = *tpointer++ << 16 ;//read byte as high byte
@@ -322,10 +322,9 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
 
 	  evtfile.read((char*)buffer,BufferBytes);
 	  unsigned short * gpointer,* endpointer;
+	  endpointer = buffer + BufferWords;
 	  gpointer = buffer; //copy pointer to beginning of buffer(outside of header) 
 	  gpointer++;//extra word after item type
-	  endpointer = buffer + BufferWords;
-
 
 	  //first read in CAEN data, keep track of how many CAEN modules 
 	  //that are plugged in (not just the ones you are using.)
@@ -394,24 +393,22 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
 	    gpointer = zpointer; //move gpointer to end of this zpointer
 	  }
 
-	  if(*gpointer!=0xffff)
-	    Event[1]=1;
-	  gpointer = gpointer + 2; //end of buffer ffffs
-	  // this is a check to make sure the buffer is properly formatted.
-	  // gpointer should, at this moment, point to the endpointer which has an
-	  //an address dictated by buffer words at the beginning.
-	  if (gpointer!=endpointer){
-	    gpointer=endpointer;
-	    Event[1]+=2;//flag
-	    // int diff = endpointer-gpointer;
-	    //logfile<<"Item Header(Length, Type): "<< BufferBytes<<" "<<ItemType<<std::endl;
-	    //logfile<<diff<<" words went unread out of "<<BufferWords<<std::endl;
-	    // logfile<<"last adc counter number: "<<adc_counter<<" and last mesy counter number: "<<mes_counter<<std::endl;
-	    //Reset();
-	    //BufferPhysics--;
-	    //  delete [] buffer;
-	    //continue;
+	  while(gpointer < endpointer){
+	    if(*gpointer==0xffff)
+	      gpointer++;
+	    if(*gpointer!=0xffff){
+	      Event[1]=1;
+	      gpointer++;
+	    }
 	  }
+	  
+	  if(gpointer!=endpointer){
+	    Event[1]=2;
+	    gpointer=endpointer;
+	  }
+	  
+
+	    
 	 
 	  DataTree->Fill();
 	  Reset();

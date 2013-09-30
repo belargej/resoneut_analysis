@@ -387,16 +387,21 @@ int RN_NeutDetector::C_hit(TLorentzVector& inLV,double step/*mm*/){
 
 namespace RNArray{
   
+  Double32_t tfirst(4096.0);
+  Short_t detfirst(-1);
+  
   void ReconstructTREL(RN_NeutCollection&in){
-    double t=4096;
+    tfirst=4096.0;
     for(unsigned int i=0;i<in.size();i++){
-      if(in[i].fQ_long>0 &&in[i].T()>0 &&in[i].T()<t)
-	t=in[i].T();
+      if(in[i].fQ_long>0 &&in[i].T()>0 &&in[i].T()<tfirst){
+	tfirst=in[i].T();
+	detfirst=i;
+      }
     }
-    if(t<4096){    
+    if(tfirst<4096.0){    
       //calculate TRel for all detectors(only important for coincidence data(ie source)
       for(RN_NeutCollectionRef it = in.begin(); it != in.end();it++){
-	(*it).CalculateTRel(t);
+	(*it).CalculateTRel(tfirst);
       }
     }
     

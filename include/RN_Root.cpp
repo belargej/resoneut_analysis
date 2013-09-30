@@ -10,6 +10,7 @@ using namespace std;
 //////////////////////etc///////////
 
 RN_ParticleCollection particle;
+RN_TriggerBitCollection triggerbit;
 RN_NeutDetectorArray Narray;	     
 RN_NeutCollection neut;	     
 RN_S2Collection si_;		     
@@ -65,6 +66,7 @@ void RN_RootInit(){
     si_cluster_.reserve(2);
     nai.reserve(20);
     particle.reserve(6);
+    triggerbit.reserve(5);
   }
   else{
     neut.clear();
@@ -73,6 +75,7 @@ void RN_RootInit(){
     si_cluster_.clear();
     nai.clear();
     particle.clear();
+    triggerbit.clear();
   }
 
   particle.push_back(RN_Particle("24Mg"));
@@ -94,6 +97,9 @@ void RN_RootInit(){
   rftime.push_back(RN_RFTime("rftime"));
   rftime.push_back(RN_RFTime("MCP"));
   
+  triggerbit.push_back(RN_TriggerBit("S1bit"));
+  triggerbit.push_back(RN_TriggerBit("ICbit"));
+
   neut.push_back(RN_NeutDetector("neut0",4,1));
   neut.push_back(RN_NeutDetector("neut1",4,4));
   neut.push_back(RN_NeutDetector("neut2",4,5));

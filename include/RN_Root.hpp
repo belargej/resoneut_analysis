@@ -35,11 +35,13 @@
 #include "RN_IonChamber.hpp"
 #include "RN_NaIArray.hpp"
 #include "RN_MassTable.hpp"
+#include "RN_TriggerBit.hpp"
 
 
 //These are added here so that they will be added to rootcint
 extern RN_ParticleCollection particle;
 R__EXTERN RN_NeutDetectorArray Narray;	     
+R__EXTERN RN_TriggerBitCollection triggerbit;	     
 R__EXTERN RN_NeutCollection neut;	     
 R__EXTERN RN_S2Collection si_;		     
 R__EXTERN RN_S2ClusterCollection si_cluster_;

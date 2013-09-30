@@ -11,6 +11,7 @@
 #pragma link C++ defined_in "RN_MassTable.hpp";
 #pragma link C++ defined_in "RN_Particle.hpp";
 #pragma link C++ defined_in "RN_Timing.hpp";
+#pragma link C++ defined_in "RN_TriggerBit.hpp";
 #pragma link C++ defined_in "RN_Analyzer.hpp";
 #pragma link C++ defined_in "RN_Root.hpp";
 #pragma link C++ defined_in "RN_Sim.hpp";
@@ -25,6 +26,7 @@
 #pragma link C++ class std::vector<RN_S2Detector>;
 #pragma link C++ class std::vector<RN_RFTime>;
 #pragma link C++ class std::vector<RN_NaIDetector>;
+#pragma link C++ class std::vector<RN_TriggerBit>;
 #pragma link C++ class std::vector<Double32_t>;
 #pragma link C++ class std::vector<Short_t>;
 
