@@ -56,7 +56,7 @@ RNUnpack2Root::RNUnpack2Root():Rnd(0)
 {
   Event[0]=0;
   Event[1]=0;
-  Event[2]=0;
+  //Event[2]=0;
   for(int i=0;i<32;i++){
     ADC1[i]=0;
     ADC2[i]=0;
@@ -121,10 +121,7 @@ bool RNUnpack2Root::init(){
 } 
 
 void RNUnpack2Root::Reset(){
-  //Event[0]=runnumber should not be zeroed
   Event[1]=0;
-  //Event[2]=scalernumber should not be zeroed
-  
   for(int i=0;i<32;i++){
     ADC1[i]=0;
     ADC2[i]=0;
@@ -217,7 +214,8 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
   DataTree->Branch("TDC4",&TDC4,"TDC4[32]/F");
   DataTree->Branch("QDC1",&QDC1,"QDC1[32]/F");
   DataTree->Branch("QDC2",&QDC2,"QDC2[32]/F");
-  ScalerTree->Branch("Scalers",&scaler_values);
+  ScalerTree->Branch("Scaler",&scaler_values);
+
 
 
 
@@ -536,23 +534,23 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
 	    for(unsigned short i=0;i<scalercount;i++){
 	      if(it==scaler_values.end())
 		break;
-	      (*it)=(short)*ipointer;ipointer+=2;
-	    it++;
+	      (*it) = (Double32_t)*ipointer;ipointer+=2;
+	      it++;
 	    }
 	  }
 	  ScalerTree->Fill();
-	  Event[2]++; //increase scaler index to know which data goes with which scaler
+	  Event[2]+=1; //increase scaler index to know which data goes with which scaler
 	  for(ScalerValueIterator it=scaler_values.begin();it!=scaler_values.end();it++){
 	    (*it)=0;
 	  }
 	  
-	
+	  
 	  delete [] buffer;
 	  Reset();
 	  continue;
 	}
       
-
+	
 	/**********Other Item Type***************************************/
 	else{
 	  badcounter++;

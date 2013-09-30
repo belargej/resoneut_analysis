@@ -152,7 +152,7 @@ double RN_NeutDetector::CalculateTRel(const double &tfirst){
 }
 
 Double_t RN_NeutDetector::keVee() const {
-  return fQ_long*phe_lin+phe_shift;
+  return (fQ_long*phe_lin+phe_shift);
 }
 
 

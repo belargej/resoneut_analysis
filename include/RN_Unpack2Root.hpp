@@ -66,6 +66,12 @@ public:
  
 };
 
+
+typedef std::vector<std::string> ScalerNames;
+typedef std::vector<Double32_t> ScalerValues;
+typedef std::vector<Double32_t>::iterator ScalerValueIterator;
+
+
 namespace unpacker{
   extern Int_t Event[3];
   extern float ADC1[32];
@@ -96,22 +102,13 @@ namespace unpacker{
   extern TBranch        *b_QDC1;   //!
   extern TBranch        *b_QDC2;   //!
  
-
+  extern ScalerNames scaler_names;
+  extern ScalerValues scaler_values;
   extern std::vector<short> caen_stack;
   extern std::vector<short> mesy_stack;
   int GetMesyNum();
   int GetCaenNum();
 
 }
-
-typedef std::vector<std::string> ScalerNames;
-typedef std::vector<Short_t> ScalerValues;
-typedef std::vector<Short_t>::iterator ScalerValueIterator;
-
-//above method is easier for writing to tree
-typedef std::pair<std::string,short> Scaler;
-typedef std::list< Scaler > ScalerList;
-typedef std::list< Scaler >::iterator ScalerIterator;
-
 
 #endif
