@@ -43,6 +43,7 @@ using RN_modules. also got rid of the need for a "config file".  Changes to the 
 #include <list>
 #include <utility>
 
+#include "DataFormat.h"
 #include "sak_ReadBuffer.hpp"
 
 class RNUnpack2Root{
@@ -52,11 +53,10 @@ private:
   
  
 public:
- 
   TRandom3 Rnd;
 
   RNUnpack2Root();
-  int Convert(std::vector<int>&run_number,std::string data_dir,std::string output_file);
+  int Convert(std::vector<std::string>&run_number,std::string data_dir,std::string output_file);
   bool init();
   bool init(const std::string& configfile);
   int SortGeoChan(short geoaddress,short chan,short val);

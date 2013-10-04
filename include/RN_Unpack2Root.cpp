@@ -4,7 +4,6 @@
 #ifndef __RNUNPACKER_CXX
 #define __RNUNPACKER_CXX
 
-
 #include "RN_Unpack2Root.hpp"
 
 using namespace std;
@@ -13,6 +12,9 @@ namespace unpacker{
   Int_t Event[3];//stores RunNum/flag/scaler
   ScalerNames scaler_names;
   ScalerValues scaler_values;
+
+
+
 
   float ADC1[32];
   float ADC2[32];
@@ -56,7 +58,7 @@ RNUnpack2Root::RNUnpack2Root():Rnd(0)
 {
   Event[0]=0;
   Event[1]=0;
-  //Event[2]=0;
+  Event[2]=0;
   for(int i=0;i<32;i++){
     ADC1[i]=0;
     ADC2[i]=0;
@@ -166,7 +168,7 @@ int RNUnpack2Root::SortGeoChan(short geoaddress,short chan, short val){
 // File converter, from .evt to .root. Arguments:
 // - files_list: used to specify the 
 ///////////////////////////////////////////////////////////////////////////////////
-int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std::string output_file){
+int RNUnpack2Root::Convert(std::vector<std::string>&run_number,std::string data_dir,std::string output_file){
   
   TFile* RootFile;
   TTree* DataTree;
@@ -222,100 +224,48 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
   //Loop over files in the data file list.
   for(unsigned int b=0;b<run_number.size();b++){
     //this section to properly format the evt number to buffer run number with zeroes.
-    Event[0]=run_number[b];
-    stringstream ss;
-    ss<<run_number[b];
-    string run_string;
-    ss>>run_string;
-    int str_length = run_string.length();
-    for (int i = 0; i < 4 - str_length; i++){
-      run_string = "0" + run_string;}
-
-    string name = data_dir + "/run-" + run_string + "-00.evt";
- 
+    string name = data_dir + "/run-" + run_number[b] + ".evt";
+    
     //Open evt file
-   evtfile.open(name.c_str(),ios::binary);      
-   if (!evtfile.is_open()){
-     std::cout << "  Could not open " << name << std::endl;
-     break;
-   }
-   else 
-     std::cout << "  Converting " << name << " ..." << std::endl;
-
-   
-    BufferWords = 4;  //read just enough to get words and type
-    buffer = new unsigned short[BufferWords]; //create buffer to store header from evt file
-    BufferBytes = BufferWords*sizeof(short); //to count number of bytes to be read from evt file
-    evtfile.read((char*)buffer,BufferBytes); //read evt file
-    BufferBytes = buffer[0]; //size is first 16 in a 32 bit block::number of bytes in file header
-    BufferType = buffer[2]; //type is first 16 in a 32 bit block
-   
-    logfile<<"Ring Header Length(bytes), Type(01=Begin): "<<BufferBytes<<" "<<BufferType<<std::endl;
-   
-    //BufferBytes includes the BufferLength and BufferType, which is self-inclusive and 8bytes
-    BufferBytes -= BufferWords*sizeof(short);
-    BufferWords = BufferBytes/(sizeof(short));
+    evtfile.open(name.c_str(),ios::binary);      
+    if (!evtfile.is_open()){
+      std::cout << "  Could not open " << name << std::endl;
+      break;
+    }
+    else 
+      std::cout << "  Converting " << name << " ..." << std::endl;
     
-    if (BufferType == 1) { //Type 1 means BEGIN_RUN.   
-      // Now that we know the length we read the rest of the header
-      delete [] buffer;
-
-      //re-size header buffer using the remainder of the BufferBytes
-      //gotten from previous step
-
-      buffer = new unsigned short[BufferWords];
-      evtfile.read((char*)buffer,BufferBytes);
-      
-
-
-      //Include below anything else wanted from the header
-      //this can be run number, title, etc...
-      //right now this is just getting the start time from the run
-      std::cout<<"Converting Run: "<<buffer[0]<<endl;
-      unsigned short *tpointer;tpointer=buffer+4;
-      int lowtime = *tpointer++ ;
-      int hightime = *tpointer++ << 16 ;//read byte as high byte
-      timer = (hightime + lowtime);
-      logfile<<"timer start :"<<timer<<std::endl;
-
-      /****************************************************/
+    //looping over new buffer==event format
+    //first we read in "Event Buffers or Item" header
     
-
-
-      delete [] buffer;
-      
-
-      //looping over new buffer==event format
+    while(!evtfile.eof()){
+      NBuffers++;
+      if(NBuffers%30000==0)std::cout<<NBuffers<<std::endl;
       //first we read in "Event Buffers or Item" header
-
-      while(!evtfile.eof()){
-	NBuffers++;
-	if(NBuffers%30000==0)std::cout<<NBuffers<<std::endl;
-	//first we read in "Event Buffers or Item" header
-	//reading in 10 bytes reads the entire item header.
-
-	BufferWords = 4; BufferBytes = BufferWords * sizeof(short); 
-	buffer = new unsigned short[BufferWords];
-	evtfile.read((char*)buffer,BufferBytes); 
-
-	//remove from Buffer Bytes the amount of buffer already read.
-	BufferBytes = buffer[0] - BufferWords*sizeof(short);
-	//BufferWords is now the size of the buffer needed to read the event contents.
-	BufferWords = BufferBytes/(sizeof(short)); 
-	ItemType = buffer[2];
-	delete [] buffer;
-
-	if(ItemType==30){ //30 is PhysicsEvent
-	  BufferPhysics++;
-	  Reset();
-	  buffer= new (nothrow) unsigned short[BufferWords];
-	  if (buffer==0){
-	    logfile<<"memory could not be allocated, occurance: "<<mem_counter++<<std::endl;
-	    logfile<<"Tried to allocated"<<2*BufferWords<<"bytes"<<std::endl;
-	    if(mem_counter==10){
-	      logfile<<"event ended abruptly, check for cause"<<std::endl;
+      //reading in 10 bytes reads the entire item header.
+      
+      BufferWords = 4; BufferBytes = BufferWords * sizeof(short); 
+      buffer = new unsigned short[BufferWords];
+      evtfile.read((char*)buffer,BufferBytes); 
+      
+      //remove from Buffer Bytes the amount of buffer already read.
+      BufferBytes = buffer[0] - BufferWords*sizeof(short);
+      //BufferWords is now the size of the buffer needed to read the event contents.
+      BufferWords = BufferBytes/(sizeof(short)); 
+      ItemType = buffer[2];
+      delete [] buffer;
+      
+      if(ItemType==30){ //30 is PhysicsEvent
+	BufferPhysics++;
+	Reset();
+	buffer= new (nothrow) unsigned short[BufferWords];
+	if (buffer==0){
+	  logfile<<"memory could not be allocated, occurance: "<<mem_counter++<<std::endl;
+	  logfile<<"Tried to allocated"<<2*BufferWords<<"bytes"<<std::endl;
+	  if(mem_counter==10){
+	    logfile<<"event ended abruptly, check for cause"<<std::endl;
 	      break;}
-	    else{
+	  else{
 	    evtfile.seekg(BufferBytes,ios::cur);
 	    continue;}
 	  }
@@ -415,22 +365,50 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
 	  delete [] buffer;
 
 	}//end if ItemType==30 (physics)
-
-      /**********End Run Header Type************************************/
-      // this means we are reading a file header and a 2 means END_RUN and we should 
-      //break out of this event file
-
-	else if(ItemType==02){
-	  logfile<<" An Item Type 2 was intercepted meaning this is a RING_HEADER(2=End)"<<std::endl;
-	  logfile<<"End of Run :"<<OtherInfo<<std::endl;
-	  buffer = new unsigned short[BufferWords];
+	
+	
+	else if(ItemType==01){
+	  logfile<<"Ring Header Length(bytes), Type(01=Begin): "<<BufferBytes<<" "<<BufferType<<std::endl;
+      	  buffer = new unsigned short[BufferWords];
 	  evtfile.read((char*)buffer,BufferBytes);
+	  Event[0]=buffer[0];
+	  
 	  
 	  //Include below anything else wanted from the header
 	  //this can be run number, title, etc...
 	  //right now this is just getting the start time from the run
+	  std::cout<<"Converting Run: "<<buffer[0]<<endl;
+	  unsigned short *tpointer;tpointer=buffer+4;
+	  int lowtime = *tpointer++ ;
+	  int hightime = *tpointer++ << 16 ;//read byte as high byte
+	  timer = (hightime + lowtime);
+	  logfile<<"timer start :"<<timer<<std::endl;
 	  
-	  unsigned short *tpointer;tpointer=buffer+3;
+	  /****************************************************/
+	  
+	  
+	  delete [] buffer;
+	}
+	
+	
+	
+
+	
+	/**********End Run Header Type************************************/
+	// this means we are reading a file header and a 2 means END_RUN and we should 
+	//break out of this event file
+	
+	else if(ItemType==02){
+	  logfile<<" An Item Type 2 was intercepted meaning this is a RING_HEADER(2=End)"<<std::endl;
+	  buffer = new unsigned short[BufferWords];
+	  evtfile.read((char*)buffer,BufferBytes);
+	  logfile<<"End of Run :"<<buffer[1]<<std::endl;
+	  Event[0]=0;
+	  //Include below anything else wanted from the header
+	  //this can be run number, title, etc...
+	  //right now this is just getting the start time from the run
+	  
+	  unsigned short *tpointer;tpointer=buffer+4;
 	  int lowtime = *tpointer++ ;
 	  int hightime = *tpointer++ << 16 ;//read byte as high byte
 	  timer = (hightime + lowtime);
@@ -440,39 +418,11 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
 	  Reset();
 	  break;}
 	
-	/**********Illegal Begin Run Header Type******************************/
-	//this means we are reading a file header and a 1 means Begin_RUN
-	//which should not happen since we are already inside a begin run
-	//this is probably the result of readout hanging up and concatenating
-	//the next run to the end of this one.
+	/**********Physics Event Counter Item Type***********************/
+	//right now this just prints to the log file how long its been since the previous 
+	// "counter" type was encountered(since this has been coming in correspondance with errors 
+	//related to buffer overloads).  This was to understand how frequently this happens.
 	
-	else if(ItemType==01){
-	  logfile<<" An Item Type 1 was intercepted meaning this is a RING_HEADER(1=Begin)"<<std::endl;
-	  
-	  logfile<<"Actually, the begin of Run: "<<OtherInfo<<std::endl;
-      buffer = new unsigned short[BufferWords];
-      evtfile.read((char*)buffer,BufferBytes);
-     
-      //Include below anything else wanted from the header
-      //this can be run number, title, etc...
-      //right now this is just getting the start time from the run
-      
-      unsigned short *tpointer;tpointer=buffer+3;
-      int lowtime = *tpointer++ ;
-      int hightime = *tpointer++ << 16 ;//read byte as high byte
-      timer = (hightime + lowtime);
-      logfile<<"timer stop :"<<timer<<std::endl;
-
-      delete[]buffer;
-      Reset();
-      break;}
-	
-
-      /**********Physics Event Counter Item Type***********************/
-      //right now this just prints to the log file how long its been since the previous 
-      // "counter" type was encountered(since this has been coming in correspondance with errors 
-      //related to buffer overloads).  This was to understand how frequently this happens.
-
 	else if(ItemType==31){//31 is PhysicsEventCounter
 	  //logfile<<" An Item Type 31 was intercepted meaning this is a Physics Event Counter"<<std::endl;
 	  buffer= new (nothrow) unsigned short[BufferWords];
@@ -564,17 +514,13 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
       }//end evtfile.eof
       
       evtfile.close();
-      
-    }//end if(BufferType==1)
   }
-
-    
 
   
   std::cout << setprecision(3);
   std::cout << "Total buffers = " << NBuffers << std::endl;
   std::cout << "Physics buffers = " << BufferPhysics  << " (" 
-       << 100.0*BufferPhysics/NBuffers << "\% of total buffers)" << std::endl;
+	    << 100.0*BufferPhysics/NBuffers << "\% of total buffers)" << std::endl;
   std::cout << "Output file: " << output_file <<  std::endl;
   
   if(buffer!=0)buffer = NULL;
@@ -583,9 +529,10 @@ int RNUnpack2Root::Convert(std::vector<int>&run_number,std::string data_dir,std:
   ScalerTree->Write();
   RootFile->Close(); 
   // The function Close() first writes to the ROOT file and then closes it.  
-
+  
   return 0;
-
+  
+  
 }
 
 #endif

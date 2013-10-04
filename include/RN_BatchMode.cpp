@@ -40,13 +40,13 @@ int main(int argc, char*argv[]){
   if(argc==3){
     RNUnpack2Root* a=new RNUnpack2Root();
     a->init();
-    std::vector<int>run_numbers;
+    std::vector<std::string>run_numbers;
     run_numbers.reserve(10);
-    int enter=-1;
-    while(enter!=0){
+    std::string enter="";
+    while(enter!="0"){
       std::cout<<"enter run number (0 to finish entering)"<<std::endl;
       std::cin>>enter;
-      if(enter)run_numbers.push_back(enter);
+      if(enter.size()>1)run_numbers.push_back(enter);
     }
     a->Convert(run_numbers,argv[1],argv[2]);//1:data dir,2:output file    
   }
@@ -55,13 +55,13 @@ int main(int argc, char*argv[]){
   else if(argc==4){
     RNUnpack2Root* a=new RNUnpack2Root();
     a->init(argv[3]);
-    std::vector<int>run_numbers;
+    std::vector<std::string>run_numbers;
     run_numbers.reserve(10);
-    int enter=-1;
-    while(enter!=0){
+    std::string enter="";
+    while(enter!="0"){
       std::cout<<"enter run number (0 to finish entering)"<<std::endl;
       std::cin>>enter;
-      if(enter)run_numbers.push_back(enter);
+      if(enter.size()>1)run_numbers.push_back(enter);
     }
     a->Convert(run_numbers,argv[1],argv[2]);//1:data dir,2:output file    
   }
