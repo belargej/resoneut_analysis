@@ -28,6 +28,6 @@
 #pragma link C++ class std::vector<RN_NaIDetector>;
 #pragma link C++ class std::vector<RN_TriggerBit>;
 #pragma link C++ class std::vector<Double32_t>;
-#pragma link C++ class std::vector<Short_t>;
+
 
 #endif

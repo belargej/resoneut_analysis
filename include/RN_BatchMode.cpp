@@ -37,9 +37,8 @@
 TRint *myRint;
 
 int main(int argc, char*argv[]){
-  if(argc==3){
-    RNUnpack2Root* a=new RNUnpack2Root();
-    a->init();
+  if(argc==4){
+    unpacker::InitStack(argv[3]);
     std::vector<std::string>run_numbers;
     run_numbers.reserve(10);
     std::string enter="";
@@ -48,25 +47,8 @@ int main(int argc, char*argv[]){
       std::cin>>enter;
       if(enter.size()>1)run_numbers.push_back(enter);
     }
-    a->Convert(run_numbers,argv[1],argv[2]);//1:data dir,2:output file    
+    unpacker::Convert2Root(run_numbers,argv[1],argv[2]);//1:data dir,2:output file    
   }
-
-  //same as above but with the optional config file given (this is to go back to old setups)
-  else if(argc==4){
-    RNUnpack2Root* a=new RNUnpack2Root();
-    a->init(argv[3]);
-    std::vector<std::string>run_numbers;
-    run_numbers.reserve(10);
-    std::string enter="";
-    while(enter!="0"){
-      std::cout<<"enter run number (0 to finish entering)"<<std::endl;
-      std::cin>>enter;
-      if(enter.size()>1)run_numbers.push_back(enter);
-    }
-    a->Convert(run_numbers,argv[1],argv[2]);//1:data dir,2:output file    
-  }
-
-
   else{
     std::cout<<"invalid number of arguments: \n"<<"RNBatchMode dir output config"<<std::endl;
     myRint=new TRint("myRint",&argc,argv);

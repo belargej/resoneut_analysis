@@ -31,6 +31,7 @@ using RN_modules. also got rid of the need for a "config file".  Changes to the 
 #include <TApplication.h>
 #include <TH1F.h>
 #include <TH2.h>
+#include <TROOT.h>
 #include <TFile.h>
 #include <TStyle.h>
 #include <TCanvas.h>
@@ -46,33 +47,25 @@ using RN_modules. also got rid of the need for a "config file".  Changes to the 
 #include "DataFormat.h"
 #include "sak_ReadBuffer.hpp"
 
-class RNUnpack2Root{
-private:
-  int adc_counter;
-  int mes_counter;
-  
- 
-public:
-  TRandom3 Rnd;
-
-  RNUnpack2Root();
-  int Convert(std::vector<std::string>&run_number,std::string data_dir,std::string output_file);
-  bool init();
-  bool init(const std::string& configfile);
-  int SortGeoChan(short geoaddress,short chan,short val);
-  void Reset();
-
-
- 
-};
-
-
 typedef std::vector<std::string> ScalerNames;
 typedef std::vector<Double32_t> ScalerValues;
 typedef std::vector<Double32_t>::iterator ScalerValueIterator;
 
-
 namespace unpacker{
+  extern TFile* RootFile;
+  extern TTree* DataTree;
+  extern TTree* ScalerTree;
+  extern unsigned int BufferWords; //number of short length words, each 2 bytes
+  extern unsigned int BufferBytes; //number of bytes to be stored
+  extern unsigned int BufferType;
+  extern unsigned int NBuffers; 
+  extern int BufferPhysics;
+  extern ifstream evtfile;
+  extern unsigned short * buffer;
+  extern int timer; 
+  extern int adc_counter;
+  extern int mes_counter;
+ 
   extern Int_t Event[3];
   extern float ADC1[32];
   extern float ADC2[32];
@@ -106,8 +99,23 @@ namespace unpacker{
   extern ScalerValues scaler_values;
   extern std::vector<short> caen_stack;
   extern std::vector<short> mesy_stack;
+ 
   int GetMesyNum();
   int GetCaenNum();
+  int SortGeoChan(short geoaddress,short chan,short val);
+  int Convert2Root(std::vector<std::string>&run_number,std::string data_dir,std::string output_file);
+  bool InitStack(const std::string& configfile);
+  void ResetTreeParameters();
+
+  int ExtractRingBuffer();
+  int UnpackBeginRun();
+  int UnpackEndRun();
+  int UnpackScalers();
+  int UnpackPhysicsEvent();
+  int UnpackPhysicsEventCounter();
+  int UnpackUndefined();
+
+
 
 }
 
