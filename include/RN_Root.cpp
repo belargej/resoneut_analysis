@@ -43,7 +43,6 @@ namespace global{
     DetVar.GetParam("global.beam_e",beam_e);
     DetVar.GetParam("global.beam_eloss",beam_eloss);
     DetVar.GetParam("global.hi_ex_set",hi_ex_set);
-
     beam_est = beam_e - beam_eloss*.5;
 
     //Set Up Experiment Reaction Here
@@ -85,9 +84,7 @@ void RN_RootInit(){
   particle.push_back(RN_Particle("p"));  
   particle.push_back(RN_Particle("24Mg"));
   
-  
-
-
+ 
   si_.push_back(RN_S1Detector("si_a",16,16));
   si_.push_back(RN_S2Detector("si_b",16,16));
   

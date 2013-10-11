@@ -86,6 +86,11 @@ void RN_Analyzer::Init(TString rootfile)
      fChain->SetBranchAddress("QDC2", &QDC2, &b_QDC2);
    else
      std::cout<<"no QDC2 present, do not extract in channel mapping"<<std::endl;
+
+   if(fChain->GetBranch("QDC3"))   
+     fChain->SetBranchAddress("QDC3", &QDC3, &b_QDC3);
+   else
+     std::cout<<"no QDC3 present, do not extract in channel mapping"<<std::endl;
 }
 
 

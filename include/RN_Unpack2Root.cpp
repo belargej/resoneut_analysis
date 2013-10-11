@@ -43,6 +43,7 @@ namespace unpacker{
   float TDC4[32];
   float QDC1[32];
   float QDC2[32];
+  float QDC3[32];
   
   TBranch        *b_ADC1;   //!
   TBranch        *b_ADC2;   //!
@@ -57,6 +58,7 @@ namespace unpacker{
   TBranch        *b_TDC4;   //!
   TBranch        *b_QDC1;   //!
   TBranch        *b_QDC2;   //!
+  TBranch        *b_QDC3;   //!
  
 
   std::vector<short> caen_stack;
@@ -348,6 +350,7 @@ bool InitStack(const std::string & configfile){
       TDC4[i]=0;
       QDC1[i]=0;
       QDC2[i]=0;
+      QDC3[i]=0;
     }
   }
 

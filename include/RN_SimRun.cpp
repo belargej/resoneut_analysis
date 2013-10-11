@@ -54,12 +54,21 @@ void RN_SimRun::initHists(){
   def=1;
   tree=new TTree("sim","sim");
   for(unsigned int i=0;i<particle.size();i++){
-    tree->Branch(Form("%s.",particle[i].Name().c_str()),"RN_Particle",&particle[i]);
+    std::string pname=particle[i].Name() + ".";
+    int pidx=2;
+    //check if the tree already has a particle with this name(as is the case
+    //after the heavy ion fragment proton decays back to the beam nucleus).
+    while(tree->GetBranch(pname.c_str())){
+      pname=Form("%s%d.",particle[i].Name().c_str(),pidx);
+      pidx++;
+    }
+    tree->Branch(pname.c_str(),"RN_Particle",&particle[i]);
+   
   }
+
   for(unsigned int i=0;i<neut.size();i++){
     tree->Branch(Form("%s.",neut[i].Name().c_str()),"RN_NeutDetector",&neut[i]);
   }
-
 
   hn_CM=new TH1D("h_nCM","h_nCM",512,1,180);
   hn_CMvLab=new TH2D("hn_CMvLAB","n_CMvLAB",512,1,180,512,1,180);
@@ -72,6 +81,7 @@ void RN_SimRun::initHists(){
   hE_v_theta=new TH2D("hE_v_theta","hE_v_theta",180,0,179,512,0,20);
   hT_v_theta=new TH2D("hT_v_theta","hT_v_theta",180,0,179,512,1,128);
   hpos=new TH2D("hpos","hpos",1024,-256,256,1024,-256,256);
+
 }
 
 void RN_SimRun::FillHistograms(){

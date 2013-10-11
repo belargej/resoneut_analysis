@@ -80,6 +80,7 @@ namespace unpacker{
   extern float TDC4[32];
   extern float QDC1[32];
   extern float QDC2[32];
+  extern float QDC3[32];
 
   extern TBranch        *b_ADC1;   //!
   extern TBranch        *b_ADC2;   //!
@@ -94,6 +95,7 @@ namespace unpacker{
   extern TBranch        *b_TDC4;   //!
   extern TBranch        *b_QDC1;   //!
   extern TBranch        *b_QDC2;   //!
+  extern TBranch        *b_QDC3;   //!
  
   extern ScalerNames scaler_names;
   extern ScalerValues scaler_values;

@@ -57,4 +57,9 @@ int RN_VariableMap::AddParam(std::string param,double var){
   vmap.insert(std::pair<std::string,double>(param,var));
 }
 
+void RN_VariableMap::ClearParams(){
+  vmap.clear();
+}
+
+
 #endif

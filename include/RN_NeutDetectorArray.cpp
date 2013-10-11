@@ -2,9 +2,9 @@
 #define __NEUTARRAY_CXX
 #include "RN_NeutDetectorArray.hpp"
 #include "RN_Root.hpp"
-#define M_N 939.565404 
+#define M_N 939.5653451
 #define M_P 938.2720137 
-#define M_C 11177.92852
+#define M_C 11177.862342
 
 ClassImp(RN_NeutDetector);
 namespace sim{
@@ -288,7 +288,7 @@ int RN_NeutDetector::NeutIn(TLorentzVector nLV,double& t,double& e){
     double dz=step*pz/(sqrt(psqr));
       
     if(!H_hit(inLV,step))
-      C_hit(inLV,step);
+     C_hit(inLV,step);
 
     px = inLV.Px();
     py = inLV.Py();
@@ -317,20 +317,23 @@ int RN_NeutDetector::NeutIn(TLorentzVector nLV,double& t,double& e){
 }	  
 
 int RN_NeutDetector::H_hit(TLorentzVector& inLV,double step/*mm*/){
-  double KE = inLV.E()-inLV.M();
-  TLorentzVector neut_LVcopy(inLV);
+  
+  //Create the Neut+Target LV
+  TLorentzVector neut_LVcopy(0,0,inLV.P(),inLV.E());
   TLorentzVector Target(0.,0.,0.,M_P);
   TLorentzVector Before(Target + neut_LVcopy);
-  TVector3 boostv = (-1)*Before.BoostVector();
-  Before.Boost(boostv);
-  neut_LVcopy.Boost(boostv);  //this is for getting neutron KE in CM
-  double nKE=neut_LVcopy.E()-neut_LVcopy.M();
   
-  if(nKE>.005 && nKE<.400){
+  //Boost into CM frame
+  TVector3 boostv = (-1)*Before.BoostVector();
+  neut_LVcopy.Boost(boostv); 
+  
+  //Get the neutron KE in CM frame for probability calculation
+  double nKE=neut_LVcopy.E()-neut_LVcopy.M();
+  if(nKE>=.005 && nKE<.400){
     if(global::myRnd.Rndm()>(0.004508869*exp(2.91109-3.12513*nKE)*step))
       return 0;
   }
-  else if(nKE>=.400&& nKE<1.4){
+  else if(nKE>=.400&& nKE<=1.4){
     if(global::myRnd.Rndm()>(0.004508869*exp(2.1646-.67*nKE)*step))
       return 0;
   }
@@ -338,30 +341,45 @@ int RN_NeutDetector::H_hit(TLorentzVector& inLV,double step/*mm*/){
     return 0;
   }
   
+  //increment hit counter and if its the first hit, save the steptime
   fCounter++;
   if(fCounter==1){fDt=steptime;}
-  double theta = 3.14 * global::myRnd.Rndm(); 
+
+  //random CM_Angles
+  double theta = 3.14 * global::myRnd.Rndm();
   double phi = 2.* 3.14 * global::myRnd.Rndm(); //isotropic CM
-  double E_CM=Before.E();
-  double En=(M_N*M_N-M_P*M_P+E_CM*E_CM)/(2*E_CM);
-  double Pn_sqr = (En * En - M_N * M_N) ;
-  TVector3 nvec;
-  nvec.SetMagThetaPhi(sqrt(Pn_sqr),theta,phi);
-  inLV.SetPxPyPzE(nvec.X(),nvec.Y(),nvec.Z(),En);
-  inLV.Boost(-1*boostv);//boost back to lab frame
-  fEsum = fEsum + KE - (inLV.E()-inLV.M());
+ 
+  //Set CM LV and boost back to lab frame
+  
+  neut_LVcopy.SetTheta(theta);
+  neut_LVcopy.SetPhi(phi);
+  neut_LVcopy.Boost(-1*boostv);//boost back to lab frame
+
+  neut_LVcopy.SetTheta(neut_LVcopy.Theta()+inLV.Theta());
+  neut_LVcopy.SetPhi(neut_LVcopy.Phi()+inLV.Phi());
+  
+  //Get Energy Loss
+  fEsum += inLV.E() - neut_LVcopy.E();
+  
+  //return the new E/angle to the original neut Lorentz Vector
+  inLV = neut_LVcopy;
+
   return 1;
   
 }
 
 int RN_NeutDetector::C_hit(TLorentzVector& inLV,double step/*mm*/){
-  double KE = inLV.E()-inLV.M();
-  TLorentzVector neut_LVcopy(inLV);
+  
+  //Create the Neut+Target LV
+  TLorentzVector neut_LVcopy(0,0,inLV.P(),inLV.E());
   TLorentzVector Target(0.,0.,0.,M_C);
   TLorentzVector Before(Target + neut_LVcopy);
+
+  //Boost into CM frame
   TVector3 boostv = (-1)*Before.BoostVector();
-  Before.Boost(boostv);
   neut_LVcopy.Boost(boostv);
+
+  //Get the neutron KE in CM frame for probability calculation
   double nKE=neut_LVcopy.E()-neut_LVcopy.M();
   if(nKE>=.01&& nKE<1.4){
     if(global::myRnd.Rndm()>(0.005798*(4.6126-1.77378*nKE)*step))
@@ -370,18 +388,28 @@ int RN_NeutDetector::C_hit(TLorentzVector& inLV,double step/*mm*/){
   else if(nKE<0.01 || nKE>1.4){
     return 0;
   }  
-  
+
+  //increment Carbon hit counter to see how much energy gets lost
   fCounter_carbon++;
+
+  //Calculate En CM + random CM_Angles
   double theta = 3.14 * global::myRnd.Rndm(); 
   double phi = 2.* 3.14 * global::myRnd.Rndm(); //isotropic CM
-  double E_CM=Before.E();
-  double En=(M_N*M_N-M_C*M_C+E_CM*E_CM)/(2*E_CM);
-  double Pn_sqr = (En * En - M_N * M_N) ;
-  TVector3 nvec;
-  nvec.SetMagThetaPhi(sqrt(Pn_sqr),theta,phi);
-  inLV.SetPxPyPzE(nvec.X(),nvec.Y(),nvec.Z(),En);
-  inLV.Boost(-1*boostv);//boost back to lab frame
-  fE_lost = fE_lost + KE - (inLV.E()-inLV.M());//add what neut loses
+
+  //Set CM LV and boost back to lab frame
+  neut_LVcopy.SetTheta(theta);
+  neut_LVcopy.SetPhi(phi);
+  neut_LVcopy.Boost(-1*boostv);//boost back to lab frame
+
+  neut_LVcopy.SetTheta(neut_LVcopy.Theta()+inLV.Theta());
+  neut_LVcopy.SetPhi(neut_LVcopy.Phi()+inLV.Phi());
+    
+  //Get Energy Loss
+  fE_lost += inLV.E()- neut_LVcopy.E();//add what neut loses
+
+  //return the new E/angle to the original neut Lorentz Vector
+  inLV = neut_LVcopy;
+
   return 1;  
 }
 

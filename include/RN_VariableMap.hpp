@@ -40,6 +40,8 @@ public:
   int GetParam(std::string,double&);
   void LoadParams(std::string filename);
   int AddParam(std::string,double);
+  void ClearParams();
+
 };
 
 
