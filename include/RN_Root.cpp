@@ -23,6 +23,7 @@ RN_MassTable MassTable;
 int RN_DetectorSet(0);
 
 TFile * rootfile;
+TTree * newtree;
 
 namespace global{
   double beam_e(0);
@@ -135,6 +136,13 @@ void RN_RootInit(){
 }
 
 void LoadVariableFile(const std::string& f){DetVar.LoadParams(f);}
+void SetRootOuputFile(std::string filename){
+  rootfile=new TFile(filename.c_str(),"RECREATE");
+}
+void SetRootOuputFileAndTree(std::string filename,std::string treename){
+  rootfile=new TFile(filename.c_str(),"RECREATE");
+  newtree=new TFile(treename.c_str());
+}
 
 void SetCalibrations(){
   global::LoadGlobalParams();
@@ -165,22 +173,5 @@ void SetCalibrations(){
 }
 
 #endif
-
-
-
-
-///////////////////////////////////////////////////////////////////////
-#ifdef MAKE_RN_EXE
-
-TRint *myRint;
-
-int main(int argc, char*argv[]){  
-  myRint=new TRint("myRint",&argc,argv);
-  myRint->Run();
-  return 0;
-}
-
-#endif
-
 
 

@@ -408,6 +408,7 @@ bool InitStack(const std::string & configfile){
     DataTree->Branch("TDC4",&TDC4,"TDC4[32]/F");
     DataTree->Branch("QDC1",&QDC1,"QDC1[32]/F");
     DataTree->Branch("QDC2",&QDC2,"QDC2[32]/F");
+    DataTree->Branch("QDC3",&QDC2,"QDC3[32]/F");
     ScalerTree->Branch("Scaler",&scaler_values);
     
     //Loop over files in the data file list.
