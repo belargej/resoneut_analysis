@@ -58,6 +58,8 @@ R__EXTERN TFile * rootfile;
 void RN_RootInit();
 void SetCalibrations();
 void LoadVariableFile(const std::string& f);
+void SetRootOutputFile(std::string filename);
+void SetRootOutputFileAndTree(std::string filename,std::string treename);
 
 namespace global{
   void LoadGlobalParams();

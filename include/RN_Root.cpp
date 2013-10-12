@@ -136,12 +136,12 @@ void RN_RootInit(){
 }
 
 void LoadVariableFile(const std::string& f){DetVar.LoadParams(f);}
-void SetRootOuputFile(std::string filename){
+void SetRootOutputFile(std::string filename){
   rootfile=new TFile(filename.c_str(),"RECREATE");
 }
-void SetRootOuputFileAndTree(std::string filename,std::string treename){
+void SetRootOutputFileAndTree(std::string filename,std::string treename){
   rootfile=new TFile(filename.c_str(),"RECREATE");
-  newtree=new TFile(treename.c_str());
+  newtree=new TTree(treename.c_str(),treename.c_str());
 }
 
 void SetCalibrations(){
