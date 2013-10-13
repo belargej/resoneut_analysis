@@ -106,6 +106,7 @@ namespace unpacker{
   int GetCaenNum();
   int SortGeoChan(short geoaddress,short chan,short val);
   int Convert2Root(std::vector<std::string>&run_number,std::string data_dir,std::string output_file);
+ int Convert2Root(const std::string&,std::string output_file);
   bool InitStack(const std::string& configfile);
   void ResetTreeParameters();
 

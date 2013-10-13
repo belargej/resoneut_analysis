@@ -5,7 +5,6 @@
 
 namespace sim{
 
-  TFile * rootfile;
   TTree * tree;
   
   //declare histograms here
@@ -35,7 +34,7 @@ void RN_SimRun::Loop(Long64_t evnum,std::string options){
   Long64_t evcount=0;
   while(evcount<evnum){
     if(particle.size()==1){
-      if(GenerateSingleParticleEvent(evnum))
+      if(GenerateSingleParticleEvent(evcount))
 	evcount++;
       else continue;
     }
@@ -52,6 +51,7 @@ void RN_SimRun::Loop(Long64_t evnum,std::string options){
 
 void RN_SimRun::initHists(){
   def=1;
+  rootfile->cd();
   tree=new TTree("sim","sim");
   for(unsigned int i=0;i<particle.size();i++){
     std::string pname=particle[i].Name() + ".";
@@ -115,7 +115,6 @@ void RN_SimRun::FillHistograms(){
 
 void RN_SimRun::StartRun(std::string input){
   Init();
-  RN_RootInit();
 
   std::string temp;
   ifstream cfg(input.c_str());

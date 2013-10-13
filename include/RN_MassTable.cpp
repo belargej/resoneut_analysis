@@ -17,6 +17,7 @@ RN_MassTable::RN_MassTable(){
   AddParam("24Mg",22335.79);
   AddParam("25Al",23271.793);
   AddParam("26Si",24204.44054);
+  AddParam("16O",14895.03101);
   AddParam("17F",15832.751186);
   AddParam("18Ne",16767.09968);
 

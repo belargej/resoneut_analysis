@@ -444,6 +444,74 @@ bool InitStack(const std::string & configfile){
     return 0;
     
   }
-}  
+
+
+  int Convert2Root(const std::string& name,std::string output_file){
+
+    // ROOT output file
+    RootFile = new TFile(output_file.c_str(),"RECREATE");  
+    std::string logger = Form("%s.log",output_file.c_str());
+    logfile.open(logger.c_str(),std::ios::out);
+
+    // Data Tree
+    DataTree = new TTree("DataTree","DataTree");
+    ScalerTree = new TTree("ScalerTree","ScalerTree");
+    
+    //flag is used to notify the user of any issues seen during unpacking
+    DataTree->Branch("Event",&Event,"RunNum/I:flag/I:ScalerIDX/I"); 
+    DataTree->Branch("ADC1",&ADC1,"ADC1[32]/F");
+    DataTree->Branch("ADC2",&ADC2,"ADC2[32]/F");
+    DataTree->Branch("ADC3",&ADC3,"ADC3[32]/F");
+    DataTree->Branch("ADC4",&ADC4,"ADC4[32]/F");
+    DataTree->Branch("ADC5",&ADC5,"ADC5[32]/F");
+    DataTree->Branch("ADC6",&ADC6,"ADC6[32]/F");
+    DataTree->Branch("ADC7",&ADC7,"ADC7[32]/F");
+    DataTree->Branch("TDC1",&TDC1,"TDC1[32]/F");
+    DataTree->Branch("TDC2",&TDC2,"TDC2[32]/F");
+    DataTree->Branch("TDC3",&TDC3,"TDC3[32]/F");
+    DataTree->Branch("TDC4",&TDC4,"TDC4[32]/F");
+    DataTree->Branch("QDC1",&QDC1,"QDC1[32]/F");
+    DataTree->Branch("QDC2",&QDC2,"QDC2[32]/F");
+    DataTree->Branch("QDC3",&QDC2,"QDC3[32]/F");
+    ScalerTree->Branch("Scaler",&scaler_values);
+    
+    //Loop over files in the data file list.
+    
+    //this section to properly format the evt number to buffer run number with zeroes.
+    
+    
+    //Open evt file
+    evtfile.open(name.c_str(),std::ios::binary);      
+    if (!evtfile.is_open()){
+      std::cout << "  Could not open " << name << std::endl;
+      exit(EXIT_FAILURE);
+    }
+    else 
+      std::cout << "  Converting " << name << " ..." << std::endl;
+    
+    while(ExtractRingBuffer()){}
+    evtfile.close();
+    
+    std::cout << std::setprecision(3);
+    std::cout << "Total buffers = " << NBuffers << std::endl;
+    std::cout << "Physics buffers = " << BufferPhysics  << " (" 
+	      << 100.0*BufferPhysics/NBuffers << "\% of total buffers)" << std::endl;
+    std::cout << "Output file: " << output_file <<  std::endl;
+    
+    if(buffer!=0)buffer = NULL;
+    logfile.close();
+    DataTree->Write();
+    ScalerTree->Write();
+    RootFile->Close(); 
+    // The function Close() first writes to the ROOT file and then closes it.  
+    
+    return 0;
+  }
+}
+    
+
+
+
+
 
 #endif

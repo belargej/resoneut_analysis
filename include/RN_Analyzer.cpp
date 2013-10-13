@@ -223,10 +223,6 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
     k+=2;
   }
 
-  if(TDC1[0]>0)rftime[0].InsertHit(TDC1[0]);
-  if(TDC1[2]>0)rftime[1].InsertHit(TDC1[2]);
-  
-
   for(int k=0;k<32;k++){
     if(ADC5[k]>0){
       ic.xgrid.InsertHit(ADC5[k],0,k);
@@ -235,13 +231,15 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
       ic.ygrid.InsertHit(ADC6[k],0,k);
     }
   }
-  if(ADC4[14]>0){
-    ic.fE=ADC4[14];
-  }
-  if(ADC4[15]>0){
-    ic.fdE=ADC4[15];
-  }
 
+
+  if(ADC4[14]>0)ic.fE=ADC4[14];
+  if(ADC4[15]>0)ic.fdE=ADC4[15];
+  if(TDC1[0]>0)rftime[0].InsertHit(TDC1[0]);
+  if(TDC1[2]>0)rftime[1].InsertHit(TDC1[2]);
+  if(TDC1[3]>0)triggerbit[0].fBit=TDC1[3];
+  if(TDC1[4]>0)triggerbit[1].fBit=TDC1[4];
+  
  
   Narray.ReconstructHits(neut);
   if(Narray.fMult>1)

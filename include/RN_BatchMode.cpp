@@ -39,15 +39,22 @@ TRint *myRint;
 int main(int argc, char*argv[]){
   if(argc==4){
     unpacker::InitStack(argv[3]);
-    std::vector<std::string>run_numbers;
-    run_numbers.reserve(10);
-    std::string enter="";
-    while(enter!="0"){
-      std::cout<<"enter run number (0 to finish entering)"<<std::endl;
-      std::cin>>enter;
-      if(enter.size()>1)run_numbers.push_back(enter);
+    std::string runinput = argv[1];
+
+    if(!runinput.find(".evt")){
+      std::vector<std::string>run_numbers;
+      run_numbers.reserve(10);
+      std::string enter="";
+      while(enter!="0"){
+	std::cout<<"enter run number (0 to finish entering)"<<std::endl;
+	std::cin>>enter;
+	if(enter.size()>1)run_numbers.push_back(enter);
+      }
+      unpacker::Convert2Root(run_numbers,argv[1],argv[2]);//1:data dir,2:output file    
     }
-    unpacker::Convert2Root(run_numbers,argv[1],argv[2]);//1:data dir,2:output file    
+    else{
+      unpacker::Convert2Root(runinput,argv[2]);
+    }
   }
   else{
     std::cout<<"invalid number of arguments: \n"<<"RNBatchMode dir output config"<<std::endl;

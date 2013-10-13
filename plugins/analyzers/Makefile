@@ -1,7 +1,7 @@
 CXX=g++
 
-SOURCES=PSD_Analyzer.cpp NewTree_Analyzer.cpp S2_Analyzer.cpp \
-	Trigger_Analyzer.cpp
+SOURCES=PSD_Analyzer.cpp IC_Analyzer.cpp S2_Analyzer.cpp \
+	Trigger_Analyzer.cpp S2_IC_Analyzer.cpp
 
 OBJECTS=${SOURCES:.cpp=.o}
 HEADERS=${SOURCES:.cpp=.hpp}
