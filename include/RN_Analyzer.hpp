@@ -39,7 +39,8 @@
 #include <TMath.h>
 #include <TChain.h>
 #include <TBranch.h>
-
+#include <TList.h>
+#include <TCollection.h>
 
 #include <map>
 #include "RN_Unpack2Root.hpp"
@@ -52,10 +53,11 @@
 
 
 
-class RN_Analyzer {
+class RN_Analyzer:public TNamed {
 public:
 
-  //constructors
+ 
+ //constructors
   
   RN_Analyzer();
   virtual ~RN_Analyzer();
@@ -80,7 +82,8 @@ public:
   virtual void Init(TString rootfile);
   virtual Int_t   GetEntry(Long64_t entry, Int_t getall = 0) { return fChain ? fChain->GetEntry(entry, getall) : 0; }
   virtual int GetDetectorEntry(Long64_t entry,Int_t getall=0);
-
+  
+  
   ClassDef(RN_Analyzer,0);
 };
 

@@ -36,7 +36,10 @@
 #include "RN_NaIArray.hpp"
 #include "RN_MassTable.hpp"
 #include "RN_TriggerBit.hpp"
+#include "RN_Analyzer.hpp"
 
+
+static const unsigned int NEUTNUM(10);
 
 //These are added here so that they will be added to rootcint
 extern RN_ParticleCollection particle;
@@ -51,15 +54,20 @@ R__EXTERN RN_NaICollection nai;
 R__EXTERN RN_VariableMap DetVar;
 R__EXTERN RN_MassTable MassTable;
 
-R__EXTERN int RN_DetectorSet;
+R__EXTERN int RN_RootSet;
 
+R__EXTERN RN_Analyzer MainAnalyzer;
 R__EXTERN TFile * rootfile;
+R__EXTERN TTree * newtree;
+R__EXTERN TList * analyzers;
+
 
 void RN_RootInit();
 void SetCalibrations();
 void LoadVariableFile(const std::string& f);
 void SetRootOutputFile(std::string filename);
 void SetRootOutputFileAndTree(std::string filename,std::string treename);
+int AddAnalyzer(TObject *object);
 
 namespace global{
   void LoadGlobalParams();

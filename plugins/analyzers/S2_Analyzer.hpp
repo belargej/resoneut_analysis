@@ -30,9 +30,19 @@ namespace si_cal{
     ClassDef(S2_Analyzer,0);
   };
 
-  
+  extern TCutG* prots1;
+  extern TCutG* prots2;
+  extern TCutG* alphas;
 
-  
+  extern int protcheck;
+  extern double prot_E;
+  extern double prot_dE;
+  extern double prot_theta;
+
+
+  void LoadGates(const std::string &input);  
+  void ClearGates();  
+
   void producehists(const char * input,const char* output,int index,const char* config="");
   void autocalibrate(const char* input,int fmatch,int bmatch);
   

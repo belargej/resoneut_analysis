@@ -19,7 +19,7 @@ RN_Analyzer::RN_Analyzer()
 
 }
 
-void RN_Analyzer::Init(TString rootfile)
+void RN_Analyzer::Init(TString rootfilename)
 {
    // The Init() function is called when the selector needs to initialize
    // a new tree or chain. Typically here the branch addresses and branch
@@ -28,12 +28,12 @@ void RN_Analyzer::Init(TString rootfile)
    // code, but the routine can be extended by the user if needed.
    // Init() will be called many times when running on PROOF
    // (once per file to be processed)
-  if(!RN_DetectorSet)
+  if(!RN_RootSet)
     RN_RootInit();
   
   
   fChain=new TChain("DataTree");
-  fChain->Add(rootfile);
+  fChain->Add(rootfilename);
   
   if(fChain->GetBranch("ADC1"))
     fChain->SetBranchAddress("ADC1", &ADC1, &b_ADC1);
@@ -103,13 +103,25 @@ void RN_Analyzer::Loop(Long64_t start,Long64_t evnum){
       totentries=start+evnum;
   
   Begin();
+  TIter next(analyzers);
+  while(RN_Analyzer * obj =  (RN_Analyzer*)next()){
+    obj->Begin();
+  }
+  next.Reset();
+  
   for (Long64_t i=start;i<totentries;i++){
     GetDetectorEntry(i);
-
     Process();
+    while(RN_Analyzer * obj = (RN_Analyzer*)next()){
+      obj->Process();
+    }
+    next.Reset();
   }
-
-  Terminate();
+  
+  if(RN_Analyzer * obj =  (RN_Analyzer*)analyzers->Last())
+    obj->Terminate();
+  else
+    Terminate();
 
 }
 

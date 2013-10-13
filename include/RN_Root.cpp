@@ -20,10 +20,13 @@ RN_IonChamber ic("ic");
 RN_NaICollection nai;		     
 RN_VariableMap DetVar;
 RN_MassTable MassTable;
-int RN_DetectorSet(0);
+int RN_RootSet(0);
 
 TFile * rootfile;
 TTree * newtree;
+TList * analyzers;
+
+RN_Analyzer MainAnalyzer;
 
 namespace global{
   double beam_e(0);
@@ -59,7 +62,9 @@ namespace global{
 }
 
 void RN_RootInit(){
-  if(!RN_DetectorSet){
+  if(!analyzers)analyzers = new TList();
+
+  if(!RN_RootSet){
     neut.reserve(16);
     rftime.reserve(2);
     si_.reserve(2);
@@ -130,7 +135,7 @@ void RN_RootInit(){
   nai.push_back(RN_NaIDetector("nai_r9"));
   nai.push_back(RN_NaIDetector("nai_r10"));
   
-  RN_DetectorSet = 1;
+  RN_RootSet = 1;
     
   
 }
@@ -142,6 +147,15 @@ void SetRootOutputFile(std::string filename){
 void SetRootOutputFileAndTree(std::string filename,std::string treename){
   rootfile=new TFile(filename.c_str(),"RECREATE");
   newtree=new TTree(treename.c_str(),treename.c_str());
+}
+
+int AddAnalyzer(TObject *obj){
+  if(!analyzers){
+    std::cout<<"analyzer list not set"<<std::endl;
+    return 0;
+  }
+  analyzers->Add(obj);
+  return 1;
 }
 
 void SetCalibrations(){
