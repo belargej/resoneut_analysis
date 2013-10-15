@@ -6,6 +6,8 @@ namespace si_cal{
   TCutG* alphas;
 
   int protcheck(0);
+  int prot2check(0);
+  int alphacheck(0);
   double prot_E(0);
   double prot_dE(0);
   double prot_theta(0);
@@ -22,15 +24,53 @@ namespace si_cal{
   sak::Histogram1D *h_si_fmult[2];
   sak::Histogram1D *h_si_bmult[2];
   sak::Histogram1D *h_si_cluster_mult[2];
-  sak::Hist1D *h_nmult_pgated;
-  sak::Hist1D *h_nmult_p_etheta_gated;
-  sak::Hist1D *h_ntime[10];
-  sak::Hist1D *h_ntime_pgated[10];
+
+  sak::Histogram2D* rfvs1_t;
+  sak::Histogram2D *rfvs2_t;
+  sak::Histogram2D *rfvs1_t_rel;
+  sak::Histogram2D *rfvs2_t_rel;
+  
+  sak::Histogram2D *rfvs1_t_prot;
+  sak::Histogram2D *rfvs2_t_prot;
+  sak::Histogram2D *rfvs1_t_rel_prot;
+  sak::Histogram2D *rfvs2_t_rel_prot;
+  
+  sak::Histogram2D *rfvs1_t_prot2;
+  sak::Histogram2D *rfvs1_t_alpha;
+  sak::Histogram2D *rfvs1_t_rel_prot2;
+  sak::Histogram2D *rfvs1_t_rel_alpha;
+
+  sak::Histogram2D *mcpvs1_t;
+  sak::Histogram2D *mcpvs2_t;
+  sak::Histogram2D *mcpvs1_t_rel;
+  sak::Histogram2D *mcpvs2_t_rel;
+  
+ 
+  sak::Histogram2D *mcpvs1_t_prot;
+  sak::Histogram2D *mcpvs2_t_prot;
+  sak::Histogram2D *mcpvs1_t_rel_prot;
+  sak::Histogram2D *mcpvs2_t_rel_prot;
+
+  sak::Histogram1D *h_s1_t;
+  sak::Histogram1D *h_s1_t_noticds;
+
+
 
   S2_Analyzer::S2_Analyzer():ind_(0)
   {
     
   }
+
+  void S2_Analyzer::ResetGlobals(){
+    prot_E=0;
+    prot_dE=0;
+    protcheck=0;
+    prot2check=0;
+    alphacheck=0;
+    prot_theta=0;
+
+  }
+
 
   void S2_Analyzer::AutoCalibrate(int matchfront, int matchback){
     std::cout<<"calibrating back to front match channel : "<<matchfront<<std::endl;
@@ -115,54 +155,85 @@ namespace si_cal{
     exit(EXIT_FAILURE);
     }
     
-  rootfile->mkdir("f2b_ratio");
-  rootfile->mkdir("f2b_ratio/S1");
-  rootfile->mkdir("f2b_ratio/S2");
-  rootfile->mkdir("ede");
-  rootfile->mkdir("evtheta");
-  rootfile->mkdir("mult");
-  rootfile->mkdir("neuts");  
-  h_si_a[0]=new sak::Hist1D("h_si_1a","E[MeV]",4096,0,4095);
-  h_si_a[1]=new sak::Hist1D("h_si_2a","E[MeV]",4096,0,4095);
-  h_si_[0]=new sak::Hist1D("h_si_1","E[MeV]",512,1,16);
-  h_si_[1]=new sak::Hist1D("h_si_2","E[MeV]",512,1,16);
-  
-  rootfile->cd("f2b_ratio");
+    rootfile->mkdir("Silicon/f2b_ratio");
+    rootfile->mkdir("Silicon/f2b_ratio/S1");
+    rootfile->mkdir("Silicon/f2b_ratio/S2");
+    rootfile->mkdir("Silicon/ede");
+    rootfile->mkdir("Silicon/evtheta");
+    rootfile->mkdir("Silicon/Timing");
+    rootfile->mkdir("mult/Silicon");
+    
+    rootfile->cd("Silicon");
+    h_si_a[0]=new sak::Hist1D("h_si_1a","E[MeV]",4096,0,4095);
+    h_si_a[1]=new sak::Hist1D("h_si_2a","E[MeV]",4096,0,4095);
+    h_si_[0]=new sak::Hist1D("h_si_1","E[MeV]",512,1,16);
+    h_si_[1]=new sak::Hist1D("h_si_2","E[MeV]",512,1,16);
+    
+  rootfile->cd("Silicon/f2b_ratio");
   for(int i=0;i<16;i++){
-    rootfile->cd("f2b_ratio/S1");
+    rootfile->cd("Silicon/f2b_ratio/S1");
     front[0][i]=new sak::Hist2D(Form("s1_fc%d_corr",i),"channel","ratio",17,0,16,512,0,2);
-    rootfile->cd("f2b_ratio/S2");
+    rootfile->cd("Silicon/f2b_ratio/S2");
     front[1][i]=new sak::Hist2D(Form("s2_fc%d_corr",i),"channel","ratio",17,0,16,512,0,2);
   }
-  rootfile->cd("ede");
+  rootfile->cd("Silicon/ede");
    hpede=new sak::Hist2D("hpEdE","E [MeV]","dE [MeV]",64,0,20,64,0,6);
   
   for(int i=0;i<2;i++){
-    rootfile->cd("evtheta");
+    rootfile->cd("Silicon/evtheta");
     h_evtheta[i]=new sak::Hist2D(Form("h_evtheta[%d]",i+1),"theta[deg]","E",256,10,42,128,0,32);
     h_evtheta_protgated[i]=new sak::Hist2D(Form("h_evtheta_prot[%d]",i+1),"theta[deg]","E",256,10,42,128,0,32);
     h_si_x_y[i]=new sak::Hist2D(Form("h_si_x_y[%d]",i+1),"X","Y",512,-100,100,512,-100,100);
     h_si_x_y_prot[i]=new sak::Hist2D(Form("h_si_x_y_prot[%d]",i+1),"X","Y",512,-100,100,512,-100,100);
 
 
-    rootfile->cd("mult");
+    rootfile->cd("mult/Silicon");
     h_si_fmult[i]= new sak::Hist1D(Form("h_si_fmult_%d",i),"fmult",32,0,31);
     h_si_bmult[i]= new sak::Hist1D(Form("h_si_bmult_%d",i),"bmult",32,0,31);
     h_si_cluster_mult[i] = new sak::Hist1D(Form("h_si_%d_cluster_mult",i),"mult",32,0,31);
-    
-    
-  }
-  rootfile->cd("neuts");
-  h_nmult_pgated = new sak::Hist1D("h_nmult_pgated","mult",10,0,9);
-  h_nmult_p_etheta_gated = new sak::Hist1D("h_nmult_p_etheta_gated","mult",10,0,9);
-  for(int i=0;i<10;i++){
-    h_ntime[i]=new sak::Hist1D(Form("h_ntime%d",i),"mult",4096,0,4095);
-    h_ntime_pgated[i]=new sak::Hist1D(Form("h_ntime%d_pgated",i),"mult",4096,0,4095);
-    
-  }
+  } 
+   
+  rootfile->cd("Silicon/Timing");
+  h_s1_t=new sak::Hist1D("h_s1_t","time",1024,0,4096);
+  h_s1_t_noticds=new sak::Hist1D("h_s1_t_noticds","time",1024,0,4096);; 
+
+
+  rootfile->cd("Silicon/Timing/rftime");
   
+  rfvs1_t=new sak::Hist2D("rfvs1_t","rftime","s1_t",1024,256,2304,1024,0,4096);
+  rfvs2_t=new sak::Hist2D("rfvs2_t","rftime","s2_t",1024,256,2304,1024,0,4096);
+  rfvs1_t_rel=new sak::Hist2D("rfvs1_t_rel","rftime","s1_t_rel",1024,256,2304,1024,-2048,2047);
+  rfvs2_t_rel=new sak::Hist2D("rfvs2_t_rel","rftime","s2_t_rel",1024,256,2304,1024,-2048,2047);
+
+  rfvs1_t_prot=new sak::Hist2D("rfvs1_t_prot","rftime","s1_t",1024,256,2304,1024,0,4096);
+  rfvs2_t_prot=new sak::Hist2D("rfvs2_t_prot","rftime","s2_t",1024,256,2304,1024,0,4096);
+  rfvs1_t_rel_prot=new sak::Hist2D("rfvs1_t_rel_prot","rftime","s1_t_rel",1024,256,2304,1024,-2048,2047);
+  rfvs2_t_rel_prot=new sak::Hist2D("rfvs2_t_rel_prot","rftime","s2_t_rel",1024,256,2304,1024,-2048,2047);
   
-}
+  rfvs1_t_prot2=new sak::Hist2D("rfvs1_t_prot2","rftime","s1_t",1024,256,2304,1024,0,4096);
+  rfvs1_t_rel_prot2=new sak::Hist2D("rfvs1_t_rel_prot2","rftime","s1_t_rel",1024,256,2304,1024,-2048,2047);
+  rfvs1_t_alpha=new sak::Hist2D("rfvs1_t_alpha","rftime","s1_t",1024,256,2304,1024,0,4096);
+  rfvs1_t_rel_alpha=new sak::Hist2D("rfvs1_t_rel_alpha","rftime","s1_t_rel",1024,256,2304,1024,-2048,2047);
+ 
+
+  
+  rootfile->cd("Silicon/Timing/mcp");
+  mcpvs1_t=new sak::Hist2D("mcpvs1_t","mcp","s1_t",1024,0,4095,1024,0,4095);
+  mcpvs2_t=new sak::Hist2D("mcpvs2_t","mcp","s2_t",1024,0,4095,1024,0,4095);
+  mcpvs1_t_rel=new sak::Hist2D("mcpvs1_t_rel","mcp","s1_t_rel",1024,0,4095,1024,-2048,2047);
+  mcpvs2_t_rel=new sak::Hist2D("mcpvs2_t_rel","mcp","s2_t_rel",1024,0,4095,1024,-2048,2047);
+  
+ 
+  mcpvs1_t_prot=new sak::Hist2D("mcpvs1_t_prot","mcp","s1_t",1024,0,4095,1024,0,4095);
+  mcpvs2_t_prot=new sak::Hist2D("mcpvs2_t_prot",",mcp","s2_t",1024,0,4095,1024,0,4095);
+  mcpvs1_t_rel_prot=new sak::Hist2D("mcpvs1_t_rel_prot","mcp","s1_t_rel",1024,0,4095,1024,-2048,2047);
+  mcpvs2_t_rel_prot=new sak::Hist2D("mcpvs2_t_rel_prot","mcp","s2_t_rel",1024,0,4095,1024,-2048,2047);
+  
+    
+  }  
+    
+    
+  
 
 void S2_Analyzer::Process(){
   protcheck=0;
@@ -170,6 +241,9 @@ void S2_Analyzer::Process(){
   prot_dE=0;
   prot_theta=0;
   
+  h_s1_t->Fill(si_[0].Back_T(0));
+  if(!unpacker::TDC1[4]>0)
+    h_s1_t_noticds->Fill(si_[0].Back_T(0));
   
   if(si_cluster_[1].fMult>0&&si_cluster_[0].fMult>0){
     prot_dE=si_cluster_[1].fE[0];
@@ -180,21 +254,22 @@ void S2_Analyzer::Process(){
   if(si_cal::prots1)
     protcheck=si_cal::prots1->IsInside(prot_E,prot_dE);
   
+  if(si_cal::prots2)
+    prot2check=si_cal::prots2->IsInside(prot_E,prot_dE);
+  
+  if(si_cal::alphas)
+    alphacheck=si_cal::alphas->IsInside(prot_E,prot_dE);
+  
+
 
   for(int i=0;i<2;i++){
     int idx=(int)si_[i].front.fChlist[0];	      
-    if(si_[0].front.fMult>0&&si_[0].back.fMult>0){
-      for (int j=0;j<10;j++){
-	h_ntime[j]->Fill(neut[j].fT_Q);
-	if(protcheck)
-	  h_ntime_pgated[j]->Fill(neut[j].fT_Q);
-      }
-      front[i][idx]->Fill(si_[0].back.fChlist[0],(si_[0].Back_E(0)/si_[0].Front_E(0)));
+    if(si_[i].front.fMult>0&&si_[i].back.fMult>0){
+      front[i][idx]->Fill(si_[i].back.fChlist[0],(si_[i].Back_E(0)/si_[i].Front_E(0)));
       if(si_cluster_[i].fMult>0){
 	h_evtheta[i]->Fill(si_cluster_[i].fPos[0].Theta()*180/3.14,prot_E);
 	h_si_x_y[i]->Fill(si_cluster_[i].fPos[0].X(),si_cluster_[i].fPos[0].Y());
 	if(protcheck){
-	  h_nmult_pgated->Fill(Narray.fMult);
 	  h_evtheta_protgated[i]->Fill(si_cluster_[i].fPos[0].Theta()*180/3.14,prot_E);
 	  h_si_x_y_prot[i]->Fill(si_cluster_[i].fPos[0].X(),si_cluster_[i].fPos[0].Y());
 	}
@@ -207,7 +282,49 @@ void S2_Analyzer::Process(){
     }
     
   }
- 
+
+  if(si_[0].Back_T(0)>0){
+    rfvs1_t->Fill(rftime[0].fT,si_[0].Back_T(0));
+    rfvs2_t->Fill(rftime[0].fT,si_[1].Back_T(0));
+    rfvs1_t_rel->Fill(rftime[0].fT,rftime[0].fT-si_[0].Back_T(0));
+    rfvs2_t_rel->Fill(rftime[0].fT,rftime[0].fT-si_[1].Back_T(0));
+    
+    mcpvs1_t->Fill(rftime[1].fT,si_[0].Back_T(0));
+    mcpvs2_t->Fill(rftime[1].fT,si_[1].Back_T(0));
+    mcpvs1_t_rel->Fill(rftime[1].fT,rftime[0].fT-si_[0].Back_T(0));
+    mcpvs2_t_rel->Fill(rftime[1].fT,rftime[0].fT-si_[1].Back_T(0));
+
+    if(protcheck){
+      rfvs1_t_prot->Fill(rftime[0].fT,si_[0].Back_T(0));
+      rfvs2_t_prot->Fill(rftime[0].fT,si_[1].Back_T(0));
+      rfvs1_t_rel_prot->Fill(rftime[0].fT,rftime[0].fT-si_[0].Back_T(0));
+      rfvs2_t_rel_prot->Fill(rftime[0].fT,rftime[0].fT-si_[1].Back_T(0));
+
+      mcpvs1_t_prot->Fill(rftime[1].fT,si_[0].Back_T(0));
+      mcpvs2_t_prot->Fill(rftime[1].fT,si_[1].Back_T(0));
+      mcpvs1_t_rel_prot->Fill(rftime[1].fT,rftime[0].fT-si_[0].Back_T(0));
+      mcpvs2_t_rel_prot->Fill(rftime[1].fT,rftime[0].fT-si_[1].Back_T(0));
+
+    }
+    
+    if(prot2check){
+      rfvs1_t_prot2->Fill(rftime[0].fT,si_[0].Back_T(0));
+      rfvs1_t_rel_prot2->Fill(rftime[0].fT,rftime[0].fT-si_[0].Back_T(0));
+    }
+    
+    
+    if(alphacheck){
+      rfvs1_t_alpha->Fill(rftime[0].fT,si_[0].Back_T(0));
+      rfvs1_t_rel_alpha->Fill(rftime[0].fT,rftime[0].fT-si_[0].Back_T(0));
+      
+      
+      
+    }
+
+    
+  }
+
+
 
 }
 

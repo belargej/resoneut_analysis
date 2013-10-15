@@ -25,20 +25,24 @@ void RN_S2Detector::SetCalibrations(double elin,double eshift,double tlin, doubl
 }
 
 RN_S2Detector::RN_S2Detector(std::string name,const int& fnum, const int& bnum):fName(name),
-								 elin(1),
-								 eshift(0),
-								 tlin(1),
-								 tshift(0),
-								 fronta0(fnum,double(0)),
-								 fronta1(fnum,double(1)),
-								 backa0(bnum,double(0)),
-								 backa1(bnum,double(1)),
-								 normv_(0,0,0),
-								 shiftv_(0,0,0),
-								 posv_(0,0,0),
-								 rotv_(0,0,0),
-								 front("front",fnum),
-								 back("back",bnum)
+										elin(1),
+										eshift(0),
+										tlin(1),
+										tshift(0),
+										fronta0(fnum,double(0)),
+										fronta1(fnum,double(1)),
+										backa0(bnum,double(0)),
+										backa1(bnum,double(1)),
+										frontt0(fnum,double(0)),
+										frontt1(fnum,double(1)),
+										backt0(fnum,double(0)),
+										backt1(bnum,double(1)),									
+										normv_(0,0,0),
+										shiftv_(0,0,0),
+										posv_(0,0,0),
+										rotv_(0,0,0),
+										front("front",fnum),
+										back("back",bnum)
 								 
 								 
   {
@@ -56,10 +60,14 @@ void RN_S2Detector::SetCalibrations(RN_VariableMap& detvar){
   for (int i=0;i<front.NumOfCh();i++){
     detvar.GetParam(Form("%s.front.a0[%d]",Name().c_str(),i),fronta0[i]);  
     detvar.GetParam(Form("%s.front.a1[%d]",Name().c_str(),i),fronta1[i]);
+    detvar.GetParam(Form("%s.front.t0[%d]",Name().c_str(),i),frontt0[i]);  
+    detvar.GetParam(Form("%s.front.t1[%d]",Name().c_str(),i),frontt1[i]);
   }
   for (int i=0;i<back.NumOfCh();i++){
     detvar.GetParam(Form("%s.back.a0[%d]",Name().c_str(),i),backa0[i]);  
     detvar.GetParam(Form("%s.back.a1[%d]",Name().c_str(),i),backa1[i]);
+    detvar.GetParam(Form("%s.back.t0[%d]",Name().c_str(),i),backt0[i]);  
+    detvar.GetParam(Form("%s.back.t1[%d]",Name().c_str(),i),backt1[i]);
 
   }
   detvar.GetParam(Form("%s.elin",Name().c_str()),elin);
@@ -112,27 +120,34 @@ void RN_S2Detector::Calcnormv(){
 Double_t RN_S2Detector::Front_E(int i) const{
   if(i>front.fMult)
     return -1;
-  
-  return ((fronta1[(int)front.fChlist[i]]*front.fE[i])+fronta0[(int)front.fChlist[i]])*elin+eshift;
+  if (!front.fE[i]>0)
+    return 0;
+  return (((fronta1[(int)front.fChlist[i]] * front.fE[i]) + fronta0[(int)front.fChlist[i]]) * elin + eshift);
 }
 
 Double_t RN_S2Detector::Front_T(int i) const{
   if(i>front.fMult)
     return -1;
-  return tlin*front.fT[i]+tshift;
-
+  if (!front.fT[i]>0)
+    return 0;
+  return ((( front.fT[i] * frontt1[(int)front.fChlist[i]]) + frontt0[(int)front.fChlist[i]] ) * tlin  + tshift);
+  
 }
 
 Double_t RN_S2Detector::Back_E(int i) const{
   if(i>back.fMult)
     return -1;
+  if(!back.fE[i]>0)
+    return 0;
   return (((backa1[(int)back.fChlist[i]] * back.fE[i] )+backa0[(int)back.fChlist[i]])*elin+eshift);   
 }
 
 Double_t RN_S2Detector::Back_T(int i) const{
   if (i>back.fMult)
     return -1;
-  return (tlin * back.fT[i] + tshift);
+  if (!back.fT[i]>0)
+    return 0;
+  return ((( back.fT[i] * backt1[(int)back.fChlist[i]]) + backt0[(int)back.fChlist[i]] ) * tlin  + tshift);
 }
 
 bool RN_S2Detector::inDet(const TVector3& v){

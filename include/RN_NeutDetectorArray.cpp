@@ -160,6 +160,7 @@ RN_NeutDetectorArray::RN_NeutDetectorArray():fMult(0),
 					     fPos(16,0),
 					     fQ_long(16,0),
 					     fPSD(16,0),
+					     fT(16,0),
 					     fDetlist(16,-1){
   
 }
@@ -174,7 +175,8 @@ int RN_NeutDetectorArray::ReconstructHits(RN_NeutCollection& in){
       double ql=(*it).Q_Long();
       double qs=(*it).Q_Short_Off();
       TVector3 pos=(*it).GetPosVect();
-      InsertHit(ql,qs,pos,cref);
+      double t=(*it).T();
+      InsertHit(ql,qs,t,pos,cref);
     }
     
       cref++;
@@ -196,16 +198,16 @@ int RN_NeutDetectorArray::Reset(){
 }
 
 
-int RN_NeutDetectorArray::InsertHit(const double& q_long,const double& q_short,const TVector3& pos,const int& index){
+int RN_NeutDetectorArray::InsertHit(const double& q_long,const double& q_short,const double& q_t,const TVector3& pos,const int& index){
   if (!q_long>0)
     return -1;
 
   int i,j;
   double psd=(q_short/q_long);
 
-  /* sorted by energy, smallest fPSD ratio first */
+  /* sorted by energy */
   for (i=(int)fMult-1;i>=0;i--){
-    if (psd>fPSD[i])
+    if (q_long<fQ_long[i])
       break;
   }
   
@@ -215,6 +217,7 @@ int RN_NeutDetectorArray::InsertHit(const double& q_long,const double& q_short,c
     fDetlist[j+1]=fDetlist[j];
     fQ_long[j+1]=fQ_long[j];
     fPSD[j+1]=fPSD[j];
+    fT[j+1]=fT[j];
     fPos[j+1]=fPos[j];
   }
   // and shove it in
@@ -222,6 +225,7 @@ int RN_NeutDetectorArray::InsertHit(const double& q_long,const double& q_short,c
   fQ_long[i+1]=q_long;
   fPSD[i+1]=psd;
   fPos[i+1]=pos;
+  fT[i+1]=q_t;
   fMult += 1;
 
   return (i+1);

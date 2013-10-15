@@ -1,42 +1,41 @@
-#ifndef _NAINEUTANALYZERTWO
-#define _NAINEUTANALYZERTWO
+#ifndef _NAI_NEUTANALYZER_H
+#define _NAI_NEUTANALYZER_H
 #include <TH2.h>
+#include <TFile.h>
 #include <cstdlib>
 #include <string>
+#include <vector>
 #include <new>
 #include "../include/RN_Analyzer.hpp"
-#include "PSD_Analyzer.hpp"
 #include "plugins/sak/sak_Histograms.hpp"
 #include "plugins/sak/sak_Gates.hpp"
+#include "../../include/RN_Root.hpp"
 
 
-namespace psd{
-
-  class NaI_NeutAnalyzer:public RN_Analyzer{
-  private:
-    
-  public:
-    
-    NaI_NeutAnalyzer();
-    virtual ~NaI_NeutAnalyzer(){};
-    
-    virtual void Begin();
-    
-    virtual void Process();
-    virtual void Terminate();
-    
-    virtual void Clear(){};
-    
-    
-    ClassDef(NaI_NeutAnalyzer,0);
-  };
+class NaI_NeutAnalyzer:public RN_Analyzer{
+private:
   
+public:
+  
+  NaI_NeutAnalyzer();
+  virtual ~NaI_NeutAnalyzer(){};
+  
+  virtual void Begin();
+  
+  virtual void Process();
+  virtual void Terminate();
+  
+  virtual void Clear(){};
+  virtual void ResetGlobals();
+
+  
+  ClassDef(NaI_NeutAnalyzer,0);
+  
+};
 
 
-  void nai_neut_analysis(const char * infile, const char * config, const char * cuts);
-  
-  
-}
+
+
 
 
 #endif

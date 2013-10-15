@@ -25,6 +25,7 @@ namespace si_cal{
     virtual void Process();
     virtual void Terminate();
     virtual void Clear();
+    virtual void ResetGlobals();
     
     
     ClassDef(S2_Analyzer,0);
@@ -35,6 +36,8 @@ namespace si_cal{
   extern TCutG* alphas;
 
   extern int protcheck;
+  extern int prot2check;
+  extern int alphacheck;
   extern double prot_E;
   extern double prot_dE;
   extern double prot_theta;

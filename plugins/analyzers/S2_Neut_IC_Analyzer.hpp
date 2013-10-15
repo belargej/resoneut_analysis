@@ -1,5 +1,5 @@
-#ifndef _S2_IC_ANALYZER
-#define _S2_IC_ANALYZER
+#ifndef _S2_Neut_IC_ANALYZER
+#define _S2_Neut_IC_ANALYZER
 #include <TH2.h>
 #include <cstdlib>
 #include <string>
@@ -11,13 +11,13 @@
 
 namespace coinc{
 
-  class S2_IC_Analyzer:public RN_Analyzer{
+  class S2_Neut_IC_Analyzer:public RN_Analyzer{
   private:
     
   public:
     
-    S2_IC_Analyzer();
-    virtual ~S2_IC_Analyzer(){};
+    S2_Neut_IC_Analyzer();
+    virtual ~S2_Neut_IC_Analyzer(){};
     
     virtual void Begin();
     virtual void Process();
@@ -26,7 +26,7 @@ namespace coinc{
     virtual void ResetGlobals();
     
     
-    ClassDef(S2_IC_Analyzer,0);
+    ClassDef(S2_Neut_IC_Analyzer,0);
   };
 
 

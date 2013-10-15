@@ -27,7 +27,8 @@ namespace psd{
   virtual void Process();
   virtual void Terminate();
   
-  virtual void Clear(){};
+    virtual void Clear(){};
+    virtual void ResetGlobals();
 
 
   ClassDef(NeutAnalyzer,0);

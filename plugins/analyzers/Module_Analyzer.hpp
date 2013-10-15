@@ -1,5 +1,5 @@
-#ifndef _TRIGANALYZER
-#define _TRIGANALYZER
+#ifndef _MODULEANALYZER_H
+#define _MODULEANALYZER_H
 #include <TH2.h>
 #include <cstdlib>
 #include <string>
@@ -8,14 +8,14 @@
 #include "plugins/sak/sak_Histograms.hpp"
 #include "plugins/sak/sak_Gates.hpp"
 
-namespace trigger{
 
-class Trigger_Analyzer:public RN_Analyzer{
+
+class Module_Analyzer:public RN_Analyzer{
 private:
 
 public:  
-  Trigger_Analyzer();
-  virtual ~Trigger_Analyzer(){};
+  Module_Analyzer();
+  virtual ~Module_Analyzer(){};
 
   virtual void Begin();
   virtual void Process();
@@ -24,10 +24,10 @@ public:
   virtual void ResetGlobals();
 
 
-  ClassDef(Trigger_Analyzer,0);
+  ClassDef(Module_Analyzer,0);
 };
 
 
 
-}
+
 #endif

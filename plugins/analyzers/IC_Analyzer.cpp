@@ -8,6 +8,12 @@ namespace ionchamber{
   int hi_check[3];
 
   sak::Histogram2D *hIC_ede;  
+  sak::Hist1D * h_IC_t_F17gated;
+  sak::Hist1D * h_IC_t_O16gated;
+
+
+
+  using unpacker::TDC1;
 
   IC_Analyzer::IC_Analyzer()
   {
@@ -23,11 +29,13 @@ namespace ionchamber{
     
  
   rootfile->mkdir("IC/ede");
+  rootfile->mkdir("IC/t");
   
   rootfile->cd("IC/ede");
    hIC_ede=new sak::Hist2D("hIC_EdE","E [arb]","dE [arb]",1024,0,4096,1024,0,4096);
-  
-  
+   rootfile->cd("IC/t");
+   h_IC_t_F17gated=new sak::Hist1D("h_IC_t_F17","t",1024,0,4095);
+   h_IC_t_O16gated=new sak::Hist1D("h_IC_t_O16","t",1024,0,4095);
   }
 
 void IC_Analyzer::Process(){
@@ -40,7 +48,13 @@ void IC_Analyzer::Process(){
   hi_check[2]= (ede_hi3 && ede_hi3->IsInside(ic.fE,ic.fdE));
 
   hIC_ede->Fill(ic.fE,ic.fdE);
+  
+  if(hi_check[0])
+    h_IC_t_F17gated->Fill(TDC1[1]);
     
+  if(hi_check[1])
+    h_IC_t_O16gated->Fill(TDC1[1]);
+
 }
 
 

@@ -48,6 +48,10 @@ protected:
   std::vector<Double32_t> fronta1;//!
   std::vector<Double32_t> backa0;//!
   std::vector<Double32_t> backa1;//!
+  std::vector<Double32_t> frontt0;//!
+  std::vector<Double32_t> frontt1;//!
+  std::vector<Double32_t> backt0;//!
+  std::vector<Double32_t> backt1;//!
   std::vector<Double32_t> fch;//!
   std::vector<Double32_t> bch;//!
   TVector3 normv_;//!

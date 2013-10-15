@@ -127,13 +127,14 @@ public:
   std::vector<TVector3>fPos;//!
   std::vector<Double32_t>fQ_long;//[fMult]
   std::vector<Double32_t>fPSD;//[fMult]
+  std::vector<Double32_t>fT;//[fMult]
   std::vector<int>fDetlist;//[fMult]
 
 
 
   RN_NeutDetectorArray();
   int ReconstructHits(RN_NeutCollection& in);
-  int InsertHit(const double& q_long,const double& q_short,const TVector3& fPos,const int& index);
+  int InsertHit(const double& q_long,const double& q_short,const double& q_T,const TVector3& fPos,const int& index);
   
   int Reset();
   ClassDef(RN_NeutDetectorArray,1);

@@ -370,6 +370,7 @@ bool InitStack(const std::string & configfile){
     else if(geoaddress==13&&chan<32)TDC4[chan]=(float)val+gRandom->Rndm();
     else if(geoaddress==14&&chan<32)QDC1[chan]=(float)val+gRandom->Rndm();
     else if(geoaddress==16&&chan<32)QDC2[chan]=(float)val+gRandom->Rndm();
+    else if(geoaddress==16&&chan<32)QDC3[chan]=(float)val+gRandom->Rndm();
     else return 0;
     
     return 1;

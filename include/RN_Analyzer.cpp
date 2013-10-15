@@ -110,12 +110,21 @@ void RN_Analyzer::Loop(Long64_t start,Long64_t evnum){
   next.Reset();
   
   for (Long64_t i=start;i<totentries;i++){
+    ResetGlobals();
+    while(RN_Analyzer * obj = (RN_Analyzer*)next()){
+      obj->ResetGlobals();
+    }
+    next.Reset();
+
     GetDetectorEntry(i);
+
     Process();
     while(RN_Analyzer * obj = (RN_Analyzer*)next()){
       obj->Process();
     }
     next.Reset();
+
+
   }
   
   if(RN_Analyzer * obj =  (RN_Analyzer*)analyzers->Last())

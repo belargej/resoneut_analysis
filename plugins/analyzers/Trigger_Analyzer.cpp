@@ -16,6 +16,8 @@ namespace trigger{
     
   }
   
+  void Trigger_Analyzer::ResetGlobals(){
+  }
   
   void Trigger_Analyzer::Process(){
     s1_bit=0;

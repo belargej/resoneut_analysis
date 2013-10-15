@@ -110,9 +110,7 @@ namespace psd{
   
     
   }
-  
-
-  void NeutAnalyzer::Process(){ 
+  void NeutAnalyzer::ResetGlobals(){
     for(int i=0;i<NEUTNUM;i++){
       neutcheck[i]=0;
       neut_sansgamma[i]=0;
@@ -126,6 +124,12 @@ namespace psd{
     neut_sansgamma_orcheck = 0;
     rawneut_sansrawgamma_orcheck = 0;
     
+    
+  }
+  
+
+  void NeutAnalyzer::Process(){ 
+ 
     
     neutcheck[0] = (n0_neuts && n0_neuts->IsInside(neut[0].fPSD,neut[0].fQ_long));
     gammacheck[0] = (n0_gammas && n0_gammas->IsInside(neut[0].fPSD,neut[0].fQ_long));
