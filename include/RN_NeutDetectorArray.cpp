@@ -191,6 +191,7 @@ int RN_NeutDetectorArray::Reset(){
     fQ_long[i]=0;
     fPSD[i]=0;
     fDetlist[i]=-1;
+    fT[i]=0;
  }
   fMult=0;
 

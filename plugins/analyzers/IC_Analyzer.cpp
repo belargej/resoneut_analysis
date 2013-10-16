@@ -49,12 +49,14 @@ void IC_Analyzer::Process(){
 
   hIC_ede->Fill(ic.fE,ic.fdE);
   
-  if(hi_check[0])
+  if(hi_check[0]){
     h_IC_t_F17gated->Fill(TDC1[1]);
-    
-  if(hi_check[1])
+  }
+  if(hi_check[1]){
     h_IC_t_O16gated->Fill(TDC1[1]);
 
+
+  }
 }
 
 

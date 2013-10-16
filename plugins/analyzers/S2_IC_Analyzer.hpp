@@ -30,6 +30,10 @@ namespace coinc{
   };
 
 
+  extern int si_ic_tcheck;
+
+  void Load_Si_IC_Gates(const std::string& input);
+  
 }
 
 

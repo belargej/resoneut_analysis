@@ -13,6 +13,7 @@ namespace coinc{
   sak::Histogram2D *hpede_rawgamma;  
   sak::Histogram2D *hpede_rawneutsansgamma;  
   sak::Histogram2D *h_n_t_v_si_t;
+  sak::Histogram2D *h_n_t_v_si_t_F17_prot_timing;
   sak::Histogram2D *h_n_t_v_si_trel;
   sak::Histogram2D *h_n_trel_v_si_t;
   sak::Histogram2D *h_n_t_v_si_t_ngated;
@@ -35,6 +36,10 @@ namespace coinc{
   sak::Histogram2D *rfvs1_t_rel_prot_F17;
   sak::Histogram2D *rfvs1_t_rel_prot_O16;
 
+  sak::Histogram2D *hPSDq_n_prot_t_F17[NEUTNUM];
+  sak::Histogram2D *hPSDq_n_prot_F17[NEUTNUM];
+  sak::Histogram2D *hPSDq_n_prot[NEUTNUM];
+
   S2_Neut_IC_Analyzer::S2_Neut_IC_Analyzer()
   {
     
@@ -56,6 +61,8 @@ namespace coinc{
 
 
     rootfile->mkdir("coinc/S2_Neut");
+    rootfile->mkdir("coinc/S2_Neut/PSD");
+
     rootfile->mkdir("coinc/S2_Neut/ede");
     rootfile->mkdir("coinc/S2_Neut/timing");
     rootfile->mkdir("coinc/S2_Neut/timing/neutPSD");
@@ -65,6 +72,12 @@ namespace coinc{
     rootfile->mkdir("coinc/S2_Neut/timing/F17/MCP");
 
 
+    rootfile->cd("coinc/S2_Neut/PSD");
+    for(int i=0;i<NEUTNUM;i++){
+      hPSDq_n_prot_t_F17[i]=new sak::Histogram2D(Form("hPSDq_n%d_prot_t_F17",i),"fQ_long","fQ_short",1024,0,4096,1024,0,4096);
+      hPSDq_n_prot[i]=new sak::Histogram2D(Form("hPSDq_n%d_prot",i),"fQ_long","fQ_short",1024,0,4096,1024,0,4096);
+      hPSDq_n_prot_F17[i]=new sak::Histogram2D(Form("hPSDq_n%d_prot_F17",i),"fQ_long","fQ_short",1024,0,4096,1024,0,4096);
+    }
 
     rootfile->cd("coinc/S2_Neut/ede");
     hpede_rawneut=new sak::Hist2D("hpEdE_rawneut","E [MeV]","dE [MeV]",64,0,20,64,0,6);
@@ -73,6 +86,7 @@ namespace coinc{
 
     rootfile->cd("coinc/S2_Neut/timing");
     h_n_t_v_si_t = new  sak::Hist2D("h_n_t_v_si_t","n_t","si_t",1024,0,4095,1024,0,4095);
+    h_n_t_v_si_t_F17_prot_timing = new  sak::Hist2D("h_n_t_v_si_t_F17_prot_timing","n_t","si_t",1024,0,4095,1024,0,4095);
     h_n_t_v_si_trel = new  sak::Hist2D("h_n_t_v_si_trel","n_t","si_t - rftime",1024,0,4095,1024,-2097,2098);
     h_n_trel_v_si_t = new  sak::Hist2D("h_n_trel_v_si_t","n_t-rftime","si_t",1024,-2097,2098,1024,0,4096);
     
@@ -108,13 +122,25 @@ namespace coinc{
 
 
   void S2_Neut_IC_Analyzer::Process(){
-    double neut_t=Narray.fT[0];
+    double neut_t=Narray.fT[0];//=Narray.fT[0];
     double si_t=si_[0].Back_T(0);
-    
+    /*
+    for(unsigned int i=0;i<neut.size();i++){
+      if(neut[i].fT_Q>0){
+	neut_t=neut[i].fT_Q;
+	break;
+      }
+    }
+    */
     if(neut_t>0 && si_t>0){
       h_n_t_v_si_t->Fill(neut_t,si_t);
       h_n_t_v_si_trel->Fill(neut_t,rftime[0].fT-si_t);
       h_n_trel_v_si_t->Fill(rftime[0].fT-neut_t,si_t);
+      
+      if(ionchamber::hi_check[0]&& coinc::si_ic_tcheck&&si_cal::protcheck){
+	h_n_t_v_si_t_F17_prot_timing->Fill(neut_t,si_t);
+      }
+      
 
       if(psd::rawneut_orcheck){
 	h_n_t_v_si_t_ngated->Fill(neut_t,si_t);
@@ -132,45 +158,72 @@ namespace coinc{
 	  }
 	}
       }
-
-    
-      if(si_cal::protcheck&&ionchamber::hi_check[0]){
-	rfvs1_t_rel_prot_F17->Fill(rftime[0].fT,rftime[0].fT-si_[1].Back_T(0));
-      }
-      
-      if(si_cal::protcheck&&ionchamber::hi_check[1]){
-	rfvs1_t_rel_prot_O16->Fill(rftime[0].fT,rftime[0].fT-si_[1].Back_T(0));
+    }
+     
+   
 	
+      for(int i=0;i<NEUTNUM;i++){
+	if(i>=neut.size())
+	  break;
+	if(neut[i].fQ_long>0){
+	  if(coinc::si_ic_tcheck&&ionchamber::hi_check[0]&&si_cal::protcheck){
+	    hPSDq_n_prot_t_F17[i]->Fill(neut[i].fQ_long,neut[i].fQ_short);
+	  }
+	  if(si_cal::protcheck)
+	    hPSDq_n_prot[i]->Fill(neut[i].fQ_long,neut[i].fQ_short);
+	  
+	  if(si_cal::protcheck&&ionchamber::hi_check[0])
+	    hPSDq_n_prot_F17[i]->Fill(neut[i].fQ_long,neut[i].fQ_short);
+
+
+	}
       }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    if(si_cal::protcheck&&ionchamber::hi_check[0]){
+      rfvs1_t_rel_prot_F17->Fill(rftime[0].fT,rftime[0].fT-si_t);
+    }
+    
+    if(si_cal::protcheck&&ionchamber::hi_check[1]){
+      rfvs1_t_rel_prot_O16->Fill(rftime[0].fT,rftime[0].fT-si_t);
       
-
-      if(ionchamber::hi_check[0]){
-	h_n_t_v_si_t_F17_gated->Fill(neut_t,si_t);
-	h_n_t_v_si_trel_F17_gated->Fill(neut_t,rftime[0].fT-si_t);
-	h_n_trel_v_si_t_F17_gated->Fill(rftime[0].fT-neut_t,si_t);	
-      }
-
-      if(ionchamber::hi_check[0] && rftime[1].fT>0){
-	h_n_t_v_si_t_F17_MCP_gated->Fill(neut_t,si_t);
-	h_n_t_v_si_trel_F17_MCP_gated->Fill(neut_t,rftime[0].fT-si_t);
-	h_n_trel_v_si_t_F17_MCP_gated->Fill(rftime[0].fT-neut_t,si_t);
-      }
     }
 
- 
-    if(psd::rawneut_orcheck)
-      hpede_rawneut->Fill(si_cal::prot_E,si_cal::prot_dE);
-    if(psd::rawgammacheck[0])
-      hpede_rawgamma->Fill(si_cal::prot_E,si_cal::prot_dE);
-    if(psd::rawneut_sansrawgamma_orcheck)
-      hpede_rawneutsansgamma->Fill(si_cal::prot_E,si_cal::prot_dE);
-
-   
     
-
-
-
+    if(ionchamber::hi_check[0]){
+      h_n_t_v_si_t_F17_gated->Fill(neut_t,si_t);
+      h_n_t_v_si_trel_F17_gated->Fill(neut_t,rftime[0].fT-si_t);
+      h_n_trel_v_si_t_F17_gated->Fill(rftime[0].fT-neut_t,si_t);	
+    }
+    
+    if(ionchamber::hi_check[0] && rftime[1].fT>0){
+      h_n_t_v_si_t_F17_MCP_gated->Fill(neut_t,si_t);
+      h_n_t_v_si_trel_F17_MCP_gated->Fill(neut_t,rftime[0].fT-si_t);
+      h_n_trel_v_si_t_F17_MCP_gated->Fill(rftime[0].fT-neut_t,si_t);
+    }
+  
+  
+  
+  if(psd::rawneut_orcheck)
+    hpede_rawneut->Fill(si_cal::prot_E,si_cal::prot_dE);
+  if(psd::rawgammacheck[0])
+    hpede_rawgamma->Fill(si_cal::prot_E,si_cal::prot_dE);
+  if(psd::rawneut_sansrawgamma_orcheck)
+    hpede_rawneutsansgamma->Fill(si_cal::prot_E,si_cal::prot_dE);
+  
   }
+    
+  
+  
+  
+
   
   
   
