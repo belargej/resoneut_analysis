@@ -21,9 +21,9 @@ namespace si_cal{
     virtual ~S2_Analyzer(){};
     void AutoCalibrate(int matchfront, int matchback);//auto calibrate all elements of Collection
     
-    virtual void Begin();
-    virtual void Process();
-    virtual void Terminate();
+    virtual bool Begin();
+    virtual bool Process();
+    virtual bool Terminate();
     virtual void Clear();
     virtual void ResetGlobals();
     

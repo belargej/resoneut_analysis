@@ -421,7 +421,7 @@ bool InitStack(const std::string & configfile){
       evtfile.open(name.c_str(),std::ios::binary);      
       if (!evtfile.is_open()){
 	std::cout << "  Could not open " << name << std::endl;
-	break;
+	exit(EXIT_FAILURE);
       }
       else 
 	std::cout << "  Converting " << name << " ..." << std::endl;

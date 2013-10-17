@@ -73,10 +73,10 @@ public:
 
   
   // Methods.
-  virtual void Begin(){};
+  virtual bool Begin(){return true;};
   virtual void Loop(Long64_t start=0,Long64_t evnum=0);
-  virtual void Process(){};
-  virtual void Terminate(){};
+  virtual bool Process(){return true;};
+  virtual bool Terminate(){return true;};
   virtual void Clear(){};
   virtual void ResetGlobals(){};
   Long64_t TotEntries() const{return fChain->GetEntries();} 

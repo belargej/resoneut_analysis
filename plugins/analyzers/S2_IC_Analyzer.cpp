@@ -55,7 +55,7 @@ namespace coinc{
 
   }
 
-  void S2_IC_Analyzer::Begin(){   
+  bool S2_IC_Analyzer::Begin(){   
     
     if(!rootfile){
       std::cout<<"output file has not been created"<<std::endl;
@@ -117,10 +117,11 @@ namespace coinc{
     mcpvs1_t_prot_F17=new sak::Hist2D("mcpvs1_t_prot_F17","mcp","s1_t",1024,0,4095,1024,0,4095);
     mcpvs2_t_prot_F17=new sak::Hist2D("mcpvs2_t_prot_F17","mcp","s2_t",1024,0,4095,1024,0,4095);
 
+    return 1;
   }
 
 
-  void S2_IC_Analyzer::Process(){
+  bool S2_IC_Analyzer::Process(){
     si_ic_tcheck=0;
 
     si_ic_tcheck=((si_ic_time1 && si_ic_time2) && (si_ic_time1->IsInside(rftime[0].fT -si_[0].Back_T(0),unpacker::TDC1[1]) || 
@@ -217,15 +218,16 @@ namespace coinc{
     
       
     }
+    return 1;
   }
   
   
   
   
-  void S2_IC_Analyzer::Terminate(){
+  bool S2_IC_Analyzer::Terminate(){
     rootfile->Write();
     rootfile->Close();
-    
+    return 1;
   }
   
   void S2_IC_Analyzer::Clear(){

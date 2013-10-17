@@ -19,7 +19,7 @@ namespace ionchamber{
   {
     
   }  
-  void IC_Analyzer::Begin(){   
+  bool IC_Analyzer::Begin(){   
     
     if(!rootfile){
       std::cout<<"output file has not been created"<<std::endl;
@@ -36,9 +36,11 @@ namespace ionchamber{
    rootfile->cd("IC/t");
    h_IC_t_F17gated=new sak::Hist1D("h_IC_t_F17","t",1024,0,4095);
    h_IC_t_O16gated=new sak::Hist1D("h_IC_t_O16","t",1024,0,4095);
-  }
 
-void IC_Analyzer::Process(){
+   return 1;
+}
+
+bool IC_Analyzer::Process(){
   for(int i=0;i<3;i++){
     hi_check[i]=0;
   }
@@ -57,13 +59,17 @@ void IC_Analyzer::Process(){
 
 
   }
+
+
+  return 1;
 }
 
 
-  void IC_Analyzer::Terminate(){
+  bool IC_Analyzer::Terminate(){
     rootfile->Write();
     rootfile->Close();
     
+    return 1;
   }
   
   void IC_Analyzer::Clear(){

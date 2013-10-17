@@ -22,10 +22,10 @@ namespace psd{
   NeutAnalyzer();
   virtual ~NeutAnalyzer(){};
 
-  virtual void Begin();
+  virtual bool Begin();
   
-  virtual void Process();
-  virtual void Terminate();
+  virtual bool Process();
+  virtual bool Terminate();
   
     virtual void Clear(){};
     virtual void ResetGlobals();

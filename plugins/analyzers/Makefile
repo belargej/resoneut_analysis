@@ -2,8 +2,8 @@ CXX=g++
 
 SOURCES=PSD_Analyzer.cpp IC_Analyzer.cpp S2_Analyzer.cpp \
 	Trigger_Analyzer.cpp S2_IC_Analyzer.cpp Module_Analyzer.cpp \
-	NaI_NeutAnalyzer.cpp S2_Neut_IC_Analyzer.cpp \
-	Coincidence_Analyzer.cpp
+	NaI_NeutAnalyzer.cpp S2_Neut_IC_Analyzer.cpp 
+
 
 OBJECTS=${SOURCES:.cpp=.o}
 HEADERS=${SOURCES:.cpp=.hpp}

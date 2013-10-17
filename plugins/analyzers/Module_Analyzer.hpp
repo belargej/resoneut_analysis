@@ -17,10 +17,10 @@ public:
   Module_Analyzer();
   virtual ~Module_Analyzer(){};
 
-  virtual void Begin();
-  virtual void Process();
+  virtual bool Begin();
+  virtual bool Process();
   virtual void Clear(){};
-  virtual void Terminate();
+  virtual bool Terminate();
   virtual void ResetGlobals();
 
 

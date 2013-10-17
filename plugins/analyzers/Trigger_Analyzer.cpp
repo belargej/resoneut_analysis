@@ -10,6 +10,20 @@ namespace trigger{
   double nai_down_triggerloc(0);
   double s1_triggerloc(0);
   
+  int n_tmult(0);
+  int s1_tmult(0);
+  int s1raw_tmult(0);
+  int nai_up_tmult(0);
+  int nai_down_tmult(0);
+  
+  int n_emult(0);
+  int s1_emult(0);
+  int s1raw_emult(0);
+  int nai_up_emult(0);
+  int nai_down_emult(0);
+  
+  int icds_OFF(0);
+  
   //initialize all tfirsts to values above TDC range
   double n_tfirst(5000);
   double nai_up_tfirst(5000);
@@ -21,13 +35,16 @@ namespace trigger{
   std::vector<float> triggerinfo(6,0);
   std::vector<std::string> triggernames;
   
+  void SetICdsOFF(){
+    icds_OFF=1;
+  }
 
   Trigger_Analyzer::Trigger_Analyzer()
   {
     
   }
   
-  void Trigger_Analyzer::Begin(){
+  bool Trigger_Analyzer::Begin(){
     int enter;
     std::cout<<"verify triggerlocs set"<<std::endl;
     std::cout<<"neut: "<<n_triggerloc<<std::endl;
@@ -39,7 +56,8 @@ namespace trigger{
     //hidden exit option
     if(enter==100)
       exit(EXIT_FAILURE);
-
+    
+    return 1;
   }
   
   void Trigger_Analyzer::ResetGlobals(){
@@ -53,37 +71,85 @@ namespace trigger{
     nai_down_tfirst=5000;
     s1_tfirst=5000;
     s1raw_tfirst=5000;
+
+    n_tmult=0;       
+    s1_tmult=0;      
+    s1raw_tmult=0;   
+    nai_up_tmult=0;  
+    nai_down_tmult=0;
+    
+    n_emult=0;       
+    s1_emult=0;      
+    s1raw_emult=0;   
+    nai_up_emult=0;  
+    nai_down_emult=0;
+    
+
   }
   
-  void Trigger_Analyzer::Process(){
+  bool Trigger_Analyzer::Process(){
     
     //find the earliest neut time
     for(unsigned int i=0;i<neut.size();i++){
-      if(neut[i].fT_Q>0 && neut[i].T()<n_tfirst)
-	n_tfirst=neut[i].T();
+      if(neut[i].fQ_long>0){
+	n_emult++;
+      }
+      if(neut[i].fT_Q>0){
+	n_tmult++;
+	if(neut[i].T()<n_tfirst){
+	  n_tfirst=neut[i].T();
+	}
+      }
     }
     
     //find the earliest si time, this requires an E hit
     for(int i=0;i<si_[0].back.fMult;i++){
-      if(si_[0].back.fT[i]>0&&si_[0].Back_T(i)<s1_tfirst)
-	s1_tfirst=si_[0].Back_T(i);
+      if(si_[0].back.fE[i]>0){
+	s1_emult++;
+      }
+      if(si_[0].back.fT[i]>0){
+	s1_tmult++;
+	if(si_[0].Back_T(i)<s1_tfirst){
+	  s1_tfirst=si_[0].Back_T(i);
+	}
+      }
     }
 
     //find both the earliest upstream/downstream nai time
-    for(int i=0;i<nai.size();i++){
-      if(nai[i].fT[0]>0 && nai[i].T(0)<nai_up_tfirst)
-	nai_up_tfirst=nai[i].T(0);  
-      if(nai[i].fT[1]>0 && nai[i].T(1)<nai_down_tfirst)
-	nai_down_tfirst=nai[i].T(1);  
+    for(unsigned int i=0;i<nai.size();i++){
+      if(nai[i].fE[0]>0){
+	nai_up_emult++;
+      }
+      if(nai[i].fE[1]>0){
+	nai_down_emult++;
+      }
 
+      if(nai[i].fT[0]>0){
+	nai_up_tmult++;
+	if(nai[i].T(0)<nai_up_tfirst){
+	  nai_up_tfirst=nai[i].T(0);  
+	}
+      }
+      if(nai[i].fT[1]>0){
+	nai_down_tmult++;
+	if(nai[i].T(1)<nai_down_tfirst){
+	  nai_down_tfirst=nai[i].T(1);  
+	}
+      }
     }
 
     //find the raw_unsorted TDC time corresponding to the S1 detector
     for(unsigned int i=0;i<16;i++){
-      if(unpacker::TDC2[i]>0&&unpacker::TDC2[i] < s1raw_tfirst)
-	s1raw_tfirst=unpacker::TDC2[i];
+      if(unpacker::TDC2[i]>0){
+	s1raw_tmult++;
+	if(unpacker::TDC2[i] < s1raw_tfirst){
+	  s1raw_tfirst=unpacker::TDC2[i];
+	}
+      }
     }
-    
+
+
+
     //compare with the expected time determining start/self-stop
     if(n_tfirst<5000)
       triggerinfo[0] = 1 - (TMath::Abs(n_tfirst-n_triggerloc) / n_triggerloc);
@@ -108,18 +174,27 @@ namespace trigger{
     if(unpacker::TDC1[3]>0)
       triggerinfo[1]=1;
 
-    std::cout<<"*******************"<<std::endl;
-    std::cout<<"tfirsts: "<<n_tfirst<<" "<<s1_tfirst<<" "<<nai_up_tfirst<<" "<<nai_down_tfirst<<" "<<unpacker::TDC1[4]<<" "<<s1raw_tfirst<<std::endl;
-    std::cout<<"triggers: "<<triggerinfo[0]<<" "<<triggerinfo[1]<<" "<<triggerinfo[2]<<" "<<triggerinfo[3]<<" "<<triggerinfo[4]<<" "<<triggerinfo[5]<<std::endl;
+    
+    //if icds_OFF bit is set then we break from all future processes
+    if(triggerinfo[4]&&icds_OFF){
+      return 0;
+    }
 
-
+    /*
+    std::cout<<"*******************\n";
+    std::cout<<"tfirsts:  "<<n_tfirst<<" "<<s1_tfirst<<" "<<nai_up_tfirst<<" "<<nai_down_tfirst<<" "<<unpacker::TDC1[4]<<" "<<s1raw_tfirst<<"\n";
+    std::cout<<"triggers: "<<triggerinfo[0]<<" "<<triggerinfo[1]<<" "<<triggerinfo[2]<<" "<<triggerinfo[3]<<" "<<triggerinfo[4]<<" "<<triggerinfo[5]<<"\n";
+    std::cout<<"tmults:    "<<n_tmult<<" "<<s1_tmult<<" "<<nai_up_tmult<<" "<<nai_down_tmult<<" "<<"  "<<" "<<s1raw_tmult<<"\n";
+    std::cout<<"emults:    "<<n_emult<<" "<<s1_emult<<" "<<nai_up_emult<<" "<<nai_down_emult<<" "<<"  "<<" "<<"  "<<std::endl;
+    */
+    return 1;
    
   }
   
   
   
-  void Trigger_Analyzer::Terminate(){
-    
+  bool Trigger_Analyzer::Terminate(){
+    return 1;
     
   }
 

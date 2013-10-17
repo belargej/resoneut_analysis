@@ -36,10 +36,10 @@ public:
   Trigger_Analyzer();
   virtual ~Trigger_Analyzer(){};
 
-  virtual void Begin();
-  virtual void Process();
+  virtual bool Begin();
+  virtual bool Process();
   virtual void Clear(){};
-  virtual void Terminate();
+  virtual bool Terminate();
   virtual void ResetGlobals();
 
 
@@ -47,6 +47,7 @@ public:
 };
 
   int SetTriggerLocs(const double& n_trig,const double& s1_trig,const double& nai_trig_up,const double& nai_trig_down);
+  void SetICdsOFF();
 
   //extern double n_triggerloc;
   //extern double nai_up_triggerloc;
@@ -57,6 +58,20 @@ public:
   extern double nai_down_tfirst;
   extern double s1_tfirst;
   extern double s1raw_tfirst;
+
+  extern int n_tmult;       
+  extern int s1_tmult;      
+  extern int s1raw_tmult;   
+  extern int nai_up_tmult;  
+  extern int nai_down_tmult;
+  					       
+  extern int n_emult;       
+  extern int s1_emult;      
+  extern int s1raw_emult;   
+  extern int nai_up_emult;  
+  extern int nai_down_emult;
+
+  extern int icds_OFF;
 
   extern std::vector<float> triggerinfo;
   extern std::vector<std::string> triggernames;

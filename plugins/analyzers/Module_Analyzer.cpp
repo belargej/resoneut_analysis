@@ -29,7 +29,7 @@ Module_Analyzer::Module_Analyzer()
 void Module_Analyzer::ResetGlobals(){
 }
 
-void Module_Analyzer::Begin(){
+bool Module_Analyzer::Begin(){
 
   if(!rootfile){
     std::cout<<"output file has not been created"<<std::endl;
@@ -84,11 +84,13 @@ void Module_Analyzer::Begin(){
     hQDC3[i]=new sak::Hist1D(Form("hQDC3[%d]",i),Form("QDC3[%d]",i),4096,0,4095);    
 
   }
+
+  return 1;
  
 }
 
 
-void Module_Analyzer::Process(){
+bool Module_Analyzer::Process(){
 
   for(unsigned int i=0;i<32;i++){
     if(TDC1[i]>0) hTDC1[i]->Fill(TDC1[i]);
@@ -109,13 +111,14 @@ void Module_Analyzer::Process(){
   }    
 
 
+  return 1;
 
 }
   
 
 
-void Module_Analyzer::Terminate(){
-  
+bool Module_Analyzer::Terminate(){
+  return 1;
   
 }
 

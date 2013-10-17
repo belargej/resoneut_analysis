@@ -147,7 +147,7 @@ namespace si_cal{
     
   }
   
-  void S2_Analyzer::Begin(){   
+  bool S2_Analyzer::Begin(){   
     
     if(!rootfile){
       std::cout<<"output file has not been created"<<std::endl;
@@ -229,13 +229,14 @@ namespace si_cal{
   mcpvs1_t_rel_prot=new sak::Hist2D("mcpvs1_t_rel_prot","mcp","s1_t_rel",1024,0,4095,1024,-2048,2047);
   mcpvs2_t_rel_prot=new sak::Hist2D("mcpvs2_t_rel_prot","mcp","s2_t_rel",1024,0,4095,1024,-2048,2047);
   
-    
+
+  return 1;
   }  
     
     
   
 
-void S2_Analyzer::Process(){
+bool S2_Analyzer::Process(){
   protcheck=0;
   prot_E=0;
   prot_dE=0;
@@ -324,15 +325,16 @@ void S2_Analyzer::Process(){
     
   }
 
-
+  return 1;
 
 }
 
 
-  void S2_Analyzer::Terminate(){
+  bool S2_Analyzer::Terminate(){
     rootfile->Write();
     rootfile->Close();
     
+    return 1;
   }
   
   void S2_Analyzer::Clear(){

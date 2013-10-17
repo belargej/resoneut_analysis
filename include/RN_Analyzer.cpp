@@ -101,7 +101,7 @@ void RN_Analyzer::Loop(Long64_t start,Long64_t evnum){
   if (start!=0&&evnum!=0)
     if(start+evnum<totentries)
       totentries=start+evnum;
-  
+
   Begin();
   TIter next(analyzers);
   while(RN_Analyzer * obj =  (RN_Analyzer*)next()){
@@ -120,7 +120,8 @@ void RN_Analyzer::Loop(Long64_t start,Long64_t evnum){
 
     Process();
     while(RN_Analyzer * obj = (RN_Analyzer*)next()){
-      obj->Process();
+      if(!obj->Process())
+	break;
     }
     next.Reset();
 

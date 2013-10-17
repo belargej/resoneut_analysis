@@ -19,9 +19,9 @@ namespace ionchamber{
     IC_Analyzer();
     virtual ~IC_Analyzer(){};
     
-    virtual void Begin();
-    virtual void Process();
-    virtual void Terminate();
+    virtual bool Begin();
+    virtual bool Process();
+    virtual bool Terminate();
     virtual void Clear();
     
     

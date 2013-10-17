@@ -24,7 +24,7 @@ void NaI_NeutAnalyzer::ResetGlobals(){
 
 }
 
-void NaI_NeutAnalyzer::Begin(){
+bool NaI_NeutAnalyzer::Begin(){
   
   if(!rootfile){
     std::cout<<"output file has not been created"<<std::endl;
@@ -46,13 +46,13 @@ void NaI_NeutAnalyzer::Begin(){
   h_nai_t_v_neut_t_neut_HI_MCP_prot_gated=new sak::Hist2D("h_nai_t_v_neut_t_neutHIMCP_prot_gated","nai_t","neut_t",1024,0,4095,1024,0,4095);
 
 
+
+  return 1;
 }
-void NaI_NeutAnalyzer::Process(){ 
+bool NaI_NeutAnalyzer::Process(){ 
   double nai_t(0);
   double neut_t(0);
-  if(!Narray.fMult>0)
-    return;
-  
+
   for(RN_NaICollectionRef it=nai.begin();it!=nai.end();it++){
     if((*it).SumE()>750 && (*it).fT[0] > 0 ){
       nai_t=((*it).T(0));
@@ -86,15 +86,16 @@ void NaI_NeutAnalyzer::Process(){
       }
     }
   }
-
-
+  
+  return 1;
 }
 
 
- void NaI_NeutAnalyzer::Terminate(){
+ bool NaI_NeutAnalyzer::Terminate(){
   rootfile->Write();
   rootfile->Close();
-  
+ 
+  return 1;
 }
 
   

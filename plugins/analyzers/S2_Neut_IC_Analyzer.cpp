@@ -48,7 +48,7 @@ namespace coinc{
 
   }
 
-  void S2_Neut_IC_Analyzer::Begin(){   
+  bool S2_Neut_IC_Analyzer::Begin(){   
     
     if(!rootfile){
       std::cout<<"output file has not been created"<<std::endl;
@@ -117,21 +117,21 @@ namespace coinc{
     
 
     
-
+    return 1;
   }
 
 
-  void S2_Neut_IC_Analyzer::Process(){
-    double neut_t=Narray.fT[0];//=Narray.fT[0];
+  bool S2_Neut_IC_Analyzer::Process(){
+    double neut_t=0;
     double si_t=si_[0].Back_T(0);
-    /*
+    
     for(unsigned int i=0;i<neut.size();i++){
       if(neut[i].fT_Q>0){
 	neut_t=neut[i].fT_Q;
 	break;
       }
     }
-    */
+    
     if(neut_t>0 && si_t>0){
       h_n_t_v_si_t->Fill(neut_t,si_t);
       h_n_t_v_si_trel->Fill(neut_t,rftime[0].fT-si_t);
@@ -177,6 +177,8 @@ namespace coinc{
 
 
 	}
+
+
       }
     
     
@@ -218,6 +220,8 @@ namespace coinc{
   if(psd::rawneut_sansrawgamma_orcheck)
     hpede_rawneutsansgamma->Fill(si_cal::prot_E,si_cal::prot_dE);
   
+
+  return 1;
   }
     
   
@@ -228,10 +232,10 @@ namespace coinc{
   
   
   
-  void S2_Neut_IC_Analyzer::Terminate(){
+  bool S2_Neut_IC_Analyzer::Terminate(){
     rootfile->Write();
     rootfile->Close();
-    
+    return 1;    
   }
   
   void S2_Neut_IC_Analyzer::Clear(){

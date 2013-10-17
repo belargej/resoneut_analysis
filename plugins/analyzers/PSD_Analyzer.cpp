@@ -80,7 +80,7 @@ namespace psd{
 
 
 
-  void NeutAnalyzer::Begin(){
+  bool NeutAnalyzer::Begin(){
     int idx=0;
 
     if(!rootfile){
@@ -107,7 +107,7 @@ namespace psd{
     rootfile->cd();
 
     
-  
+    return 1;
     
   }
   void NeutAnalyzer::ResetGlobals(){
@@ -128,7 +128,7 @@ namespace psd{
   }
   
 
-  void NeutAnalyzer::Process(){ 
+  bool NeutAnalyzer::Process(){ 
  
     
     neutcheck[0] = (n0_neuts && n0_neuts->IsInside(neut[0].fPSD,neut[0].fQ_long));
@@ -228,13 +228,16 @@ namespace psd{
     if(rawneut_orcheck){
       h_ndetMult_ngated->Fill(Narray.fMult);
     }
+
+    return 1;
   }
 
   
-  void NeutAnalyzer::Terminate(){
+  bool NeutAnalyzer::Terminate(){
     rootfile->Write();
     rootfile->Close();
     
+    return 1;
   }
   
   void LoadGates(const std::string& input){
