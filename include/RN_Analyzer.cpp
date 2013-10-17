@@ -186,16 +186,11 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
   int idx=1; //neut detectors start from channel 1 in QDC
   for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
     if(QDC1[idx]>0){
-      if(TDC1[idx+16]>0){  
-      (*it).InsertPSDHit(QDC1[idx],QDC1[idx+16],TDC1[idx+16]);
-      }
-      else
-	(*it).InsertPSDHit(QDC1[idx],QDC1[idx+16]);
+      (*it).InsertPSDHit(QDC1[idx],QDC1[idx+16]);
     }
-    
-   
-    
-
+    if(TDC1[idx+16]>0){  
+      (*it).fT_Q=TDC1[idx+16];
+    }  
     idx++;
   }
 
