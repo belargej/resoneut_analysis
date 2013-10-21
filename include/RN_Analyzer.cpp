@@ -93,7 +93,11 @@ void RN_Analyzer::Init(TString rootfilename)
      std::cout<<"no QDC3 present, do not extract in channel mapping"<<std::endl;
 }
 
-
+bool RN_Analyzer::Begin(){
+  
+  std::cout<<"Total Entries in Chain: "<<TotEntries()<<std::endl;
+  return 1;
+}
 
 
 void RN_Analyzer::Loop(Long64_t start,Long64_t evnum){

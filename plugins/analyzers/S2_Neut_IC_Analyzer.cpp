@@ -4,15 +4,18 @@
 #include "S2_IC_Analyzer.hpp"
 #include "IC_Analyzer.hpp"
 #include "PSD_Analyzer.hpp"
-
+#include "Trigger_Analyzer.hpp"
 
 namespace coinc{
 
+  sak::Histogram1D *h_n_minus_sit;
+  sak::Histogram1D *h_n_minus_sitfirst;
 
   sak::Histogram2D *hpede_rawneut;    
   sak::Histogram2D *hpede_rawgamma;  
   sak::Histogram2D *hpede_rawneutsansgamma;  
   sak::Histogram2D *h_n_t_v_si_t;
+  sak::Histogram2D *h_nai_t_v_si_t;
   sak::Histogram2D *h_n_t_v_si_t_F17_prot_timing;
   sak::Histogram2D *h_n_t_v_si_trel;
   sak::Histogram2D *h_n_trel_v_si_t;
@@ -70,6 +73,8 @@ namespace coinc{
     rootfile->mkdir("coinc/S2_Neut/timing/F17");
     rootfile->mkdir("coinc/S2_Neut/timing/neutPSD/F17/MCP");
     rootfile->mkdir("coinc/S2_Neut/timing/F17/MCP");
+    rootfile->mkdir("coinc/NaI_S2");    
+
 
 
     rootfile->cd("coinc/S2_Neut/PSD");
@@ -89,6 +94,10 @@ namespace coinc{
     h_n_t_v_si_t_F17_prot_timing = new  sak::Hist2D("h_n_t_v_si_t_F17_prot_timing","n_t","si_t",1024,0,4095,1024,0,4095);
     h_n_t_v_si_trel = new  sak::Hist2D("h_n_t_v_si_trel","n_t","si_t - rftime",1024,0,4095,1024,-2097,2098);
     h_n_trel_v_si_t = new  sak::Hist2D("h_n_trel_v_si_t","n_t-rftime","si_t",1024,-2097,2098,1024,0,4096);
+    h_n_minus_sit=new sak::Histogram1D("h_n_minus_sit","nt-sit",256,-2048,2047);
+    h_n_minus_sitfirst=new sak::Histogram1D("h_n_minus_sitfirst","nt-sitfirst",256,-2048,2047);
+
+
     
     rootfile->cd("coinc/S2_Neut/timing/neutPSD");
     h_n_t_v_si_t_ngated = new  sak::Hist2D("h_n_t_v_si_t_neutg","n_t","si_t",1024,0,4095,1024,0,4095);
@@ -114,7 +123,8 @@ namespace coinc{
     h_n_t_v_si_trel_F17_MCP_gated = new  sak::Hist2D("h_n_t_v_si_trel_F17_MCPg","n_t","si_t - rftime",1024,0,4095,1024,-2097,2098);
     h_n_trel_v_si_t_F17_MCP_gated = new  sak::Hist2D("h_n_trel_v_si_t_F17_MCPg","n_t-rftime","si_t",1024,-2097,2098,1024,0,4096);
     
-    
+    rootfile->cd("coinc/NaI_S2");    
+    h_nai_t_v_si_t=new sak::Hist2D("h_nai_t_v_si_t","nai_t","si_t",1024,0,4095,1024,0,4095);
 
     
     return 1;
@@ -122,17 +132,30 @@ namespace coinc{
 
 
   bool S2_Neut_IC_Analyzer::Process(){
-    double neut_t=0;
+    double neut_t=Narray.fT[0];
     double si_t=si_[0].Back_T(0);
+    double nai_t(0);
     
-    for(unsigned int i=0;i<neut.size();i++){
+    for(RN_NaICollectionRef it=nai.begin();it!=nai.end();it++){
+      if((*it).SumE()>750 && (*it).fT[0] > 0 ){
+	nai_t=((*it).T(0));
+	break;
+      }
+    }
+
+    /* for(unsigned int i=0;i<neut.size();i++){
       if(neut[i].fT_Q>0){
 	neut_t=neut[i].fT_Q;
 	break;
       }
-    }
-    
+      }*/
+
+    if(nai_t>0&&si_t>0)
+      h_nai_t_v_si_t->Fill(nai_t,si_t);
+
     if(neut_t>0 && si_t>0){
+      h_n_minus_sit->Fill(neut_t-si_t);
+      h_n_minus_sitfirst->Fill(neut_t-trigger::s1_tfirst);
       h_n_t_v_si_t->Fill(neut_t,si_t);
       h_n_t_v_si_trel->Fill(neut_t,rftime[0].fT-si_t);
       h_n_trel_v_si_t->Fill(rftime[0].fT-neut_t,si_t);

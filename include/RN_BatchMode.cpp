@@ -36,12 +36,16 @@
 #include "RN_Unpack2Root.hpp"
 TRint *myRint;
 
-int main(int argc, char*argv[]){
+int main(int argc, char*argv[])
+{
   if(argc==4){
     unpacker::InitStack(argv[3]);
     std::string runinput = argv[1];
-
-    if(!runinput.find(".evt")){
+    
+    if(runinput.find(".evt")!=std::string::npos){
+      unpacker::Convert2Root(runinput,argv[2]);
+    }
+    else{
       std::vector<std::string>run_numbers;
       run_numbers.reserve(10);
       std::string enter="";
@@ -52,9 +56,7 @@ int main(int argc, char*argv[]){
       }
       unpacker::Convert2Root(run_numbers,argv[1],argv[2]);//1:data dir,2:output file    
     }
-    else{
-      unpacker::Convert2Root(runinput,argv[2]);
-    }
+    
   }
   else{
     std::cout<<"invalid number of arguments: \n"<<"RNBatchMode dir output config"<<std::endl;
@@ -62,7 +64,7 @@ int main(int argc, char*argv[]){
     myRint->Run();
     return 0;
   }
-    
+
 }
 
 

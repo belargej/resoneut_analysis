@@ -49,7 +49,20 @@ namespace psd{
   TCutG* n8_gammas_raw;
   TCutG* n9_gammas_raw;
 
+  TCutG* n0_evt;
+  TCutG* n1_evt;
+  TCutG* n2_evt;
+  TCutG* n3_evt;
+  TCutG* n4_evt;
+  TCutG* n5_evt;
+  TCutG* n6_evt;
+  TCutG* n7_evt;
+  TCutG* n8_evt;
+  TCutG* n9_evt;
+
+
   int neutcheck[NEUTNUM];
+  int evtcheck[NEUTNUM];
   int neut_sansgamma[NEUTNUM];
   int rawneutcheck[NEUTNUM];
   int rawneut_sansrawgamma[NEUTNUM];
@@ -73,6 +86,12 @@ namespace psd{
   sak::Histogram2D *hPSDq_n[NEUTNUM];
   sak::Histogram2D *hPSD_n_[NEUTNUM];
 
+  //neut_time
+  sak::Histogram2D *hQvT_n[NEUTNUM];
+  sak::Histogram2D *hQvT_ngated[NEUTNUM];
+
+  sak::Histogram2D *hPSDq_n_evtgated[NEUTNUM];
+
 
   NeutAnalyzer::NeutAnalyzer()
   {
@@ -91,7 +110,11 @@ namespace psd{
     
     rootfile->mkdir("neut_PSD/raw");
     rootfile->mkdir("neut_PSD/cal");
+    rootfile->mkdir("neut/TRel");
     rootfile->mkdir("mult/neut");
+
+    rootfile->cd("neut/TRel");
+   
 
     rootfile->cd("mult/neut");
     h_ndetMult=new sak::Hist1D("h_ndetmult","mult",NEUTNUM+1,0,NEUTNUM);
@@ -99,10 +122,15 @@ namespace psd{
     
 
     for(int i=0;i<NEUTNUM;i++){  
+      rootfile->cd("neut/TRel");
+      hQvT_n[i]=new sak::Histogram2D(Form("hQvT_n%d",i),"T","Q",128,0,128,1024,0,4095);
+      hQvT_ngated[i]=new sak::Histogram2D(Form("hQvT_n%d_ngated",i),"T","Q",128,0,128,1024,0,4095);
       rootfile->cd("neut_PSD/raw");
       hPSDq_n[i]=new sak::Histogram2D(Form("hPSDq_n%d",i),"fQ_long","fQ_short",1024,0,4096,1024,0,4096);
+      hPSDq_n_evtgated[i]=new sak::Histogram2D(Form("hPSDq_n%d_evtgated",i),"fQ_long","fQ_short",1024,0,4096,1024,0,4096);
+  
       rootfile->cd("neut_PSD/cal");
-      hPSD_n_[i]=new sak::Histogram2D(Form("hPSD_neut%d",i),"fPSD","fQ_long",256,0.,1.,1024,50,4096);
+      hPSD_n_[i]=new sak::Histogram2D(Form("hPSD_neut%d",i),"fPSD","fQ_long",256,-2.,2.,1024,50,4096);
     } 
     rootfile->cd();
 
@@ -118,6 +146,7 @@ namespace psd{
       rawneutcheck[i]=0;
       gammacheck[i]=0;
       rawgammacheck[i]=0;
+      evtcheck[i]=0;
     }
     neut_orcheck = 0;
     rawneut_orcheck = 0;
@@ -192,6 +221,20 @@ namespace psd{
 
     rawneutcheck[9] = (n9_neuts_raw && n9_neuts_raw->IsInside(neut[9].fQ_long,neut[9].fQ_short));
     rawgammacheck[9] = (n9_gammas_raw && n9_gammas_raw->IsInside(neut[9].fQ_long,neut[9].fQ_short));
+
+
+    evtcheck[0] = (n0_evt && n0_evt->IsInside(neut[0].fTrel,neut[0].fQ_long));
+    evtcheck[1] = (n1_evt && n1_evt->IsInside(neut[1].fTrel,neut[1].fQ_long));    
+    evtcheck[2] = (n2_evt && n2_evt->IsInside(neut[2].fTrel,neut[2].fQ_long));
+    evtcheck[3] = (n3_evt && n3_evt->IsInside(neut[3].fTrel,neut[3].fQ_long));
+    evtcheck[4] = (n4_evt && n4_evt->IsInside(neut[4].fTrel,neut[4].fQ_long));
+    evtcheck[5] = (n5_evt && n5_evt->IsInside(neut[5].fTrel,neut[5].fQ_long));
+    evtcheck[6] = (n6_evt && n6_evt->IsInside(neut[6].fTrel,neut[6].fQ_long));
+    evtcheck[7] = (n7_evt && n7_evt->IsInside(neut[7].fTrel,neut[7].fQ_long));
+    evtcheck[8] = (n8_evt && n8_evt->IsInside(neut[8].fTrel,neut[8].fQ_long));
+    evtcheck[9] = (n9_evt && n9_evt->IsInside(neut[9].fTrel,neut[9].fQ_long));
+    
+
     
     for (int i=0;i<10;i++){	    
       neut_sansgamma[i] = neutcheck[i] && !(gammacheck[i]);
@@ -212,7 +255,12 @@ namespace psd{
       if(i>=neut.size())
 	break;
       hPSDq_n[i]->Fill(neut[i].fQ_long,neut[i].fQ_short);
+      hQvT_n[i]->Fill(neut[i].fTrel,neut[i].fQ_long);
+      if(rawneut_orcheck)hQvT_ngated[i]->Fill(neut[i].fTrel,neut[i].fQ_long);
+      if(evtcheck[i])hPSDq_n_evtgated[i]->Fill(neut[i].fQ_long,neut[i].fQ_short);
     }
+
+    
     
  
     //Fill calpar.Histograms below this line
@@ -326,11 +374,33 @@ namespace psd{
       n8_gammas_raw=new TCutG(*in.getCut("n8_gammas_raw"));
     if(in.getCut("n9_gammas_raw") && !n9_gammas_raw)
       n9_gammas_raw=new TCutG(*in.getCut("n9_gammas_raw"));
-  
-
+    
+    if(in.getCut("n0_evt") && !n0_evt)
+      n0_evt=new TCutG(*in.getCut("n0_evt"));
+    if(in.getCut("n1_evt") && !n1_evt)
+      n1_evt=new TCutG(*in.getCut("n1_evt"));
+    if(in.getCut("n2_evt") && !n2_evt)
+      n2_evt=new TCutG(*in.getCut("n2_evt"));   
+    if(in.getCut("n3_evt") && !n3_evt)
+      n3_evt=new TCutG(*in.getCut("n3_evt"));
+    if(in.getCut("n4_evt") && !n4_evt)
+      n4_evt=new TCutG(*in.getCut("n4_evt"));
+    if(in.getCut("n5_evt") && !n5_evt)
+      n5_evt=new TCutG(*in.getCut("n5_evt"));
+    if(in.getCut("n6_evt") && !n6_evt)
+      n6_evt=new TCutG(*in.getCut("n6_evt"));   
+    if(in.getCut("n7_evt") && !n7_evt)
+      n7_evt=new TCutG(*in.getCut("n7_evt"));
+    if(in.getCut("n8_evt") && !n8_evt)
+      n8_evt=new TCutG(*in.getCut("n8_evt"));
+    if(in.getCut("n9_evt") && !n9_evt)
+      n9_evt=new TCutG(*in.getCut("n9_evt"));
+    
+    
+    
   
     in.Close();
-    }
+  }
 
   void ClearGates(){
     if(n0_neuts)delete n0_neuts;

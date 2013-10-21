@@ -48,6 +48,11 @@ public:
 
   int SetTriggerLocs(const double& n_trig,const double& s1_trig,const double& nai_trig_up,const double& nai_trig_down);
   void SetICdsOFF();
+  void RequireS1();
+  void RequireNeut();
+  void RequireNaI();
+  void Require_NTMult(int mult);
+  void Require_NEMult(int mult);  
 
   //extern double n_triggerloc;
   //extern double nai_up_triggerloc;
@@ -72,6 +77,21 @@ public:
   extern int nai_down_emult;
 
   extern int icds_OFF;
+  extern int require_S1;
+  extern int require_neut;
+  extern int require_nai;
+  extern int require_ic;
+  extern int require_ntmult;
+  extern int require_nemult;
+
+  extern double S1_eps;
+  extern double neut_eps;
+  extern double nai_eps;
+  
+
+
+
+
 
   extern std::vector<float> triggerinfo;
   extern std::vector<std::string> triggernames;

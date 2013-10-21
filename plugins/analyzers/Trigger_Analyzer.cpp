@@ -23,6 +23,16 @@ namespace trigger{
   int nai_down_emult(0);
   
   int icds_OFF(0);
+  int require_S1(0);
+  int require_neut(0);
+  int require_nai(0);
+  int require_ic(0);
+  int require_ntmult(0);
+  int require_nemult(0);
+
+  double S1_eps(0.0);
+  double neut_eps(0.0);
+  double nai_eps(0.0);
   
   //initialize all tfirsts to values above TDC range
   double n_tfirst(5000);
@@ -35,9 +45,15 @@ namespace trigger{
   std::vector<float> triggerinfo(6,0);
   std::vector<std::string> triggernames;
   
-  void SetICdsOFF(){
-    icds_OFF=1;
-  }
+  void SetICdsOFF(){icds_OFF=1;}
+  void RequireS1(){require_S1=1;}
+  void RequireNeut(){require_neut=1;}
+  void RequireNaI(){require_nai=1;}
+  void Require_NTMult(int mult){require_ntmult=mult;}
+  void Require_NEMult(int mult){require_ntmult=mult;}
+
+  
+
 
   Trigger_Analyzer::Trigger_Analyzer()
   {
@@ -174,11 +190,29 @@ namespace trigger{
     if(unpacker::TDC1[3]>0)
       triggerinfo[1]=1;
 
+
+    if(n_tmult<require_ntmult){
+      return 0;
+    }
+    if(n_emult<require_nemult){
+      return 0;
+    }
     
     //if icds_OFF bit is set then we break from all future processes
     if(triggerinfo[4]&&icds_OFF){
       return 0;
     }
+    
+    if(require_S1 && !triggerinfo[1])
+      return 0;
+    
+    if(require_neut && !triggerinfo[0])
+      return 0;
+
+    if(require_nai && !(triggerinfo[2]||triggerinfo[3]))
+      return 0;
+
+
 
     /*
     std::cout<<"*******************\n";

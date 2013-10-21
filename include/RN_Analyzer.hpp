@@ -73,7 +73,7 @@ public:
 
   
   // Methods.
-  virtual bool Begin(){return true;};
+  virtual bool Begin();
   virtual void Loop(Long64_t start=0,Long64_t evnum=0);
   virtual bool Process(){return true;};
   virtual bool Terminate(){return true;};
