@@ -150,6 +150,19 @@ Double_t RN_S2Detector::Back_T(int i) const{
   return ((( back.fT[i] * backt1[(int)back.fChlist[i]]) + backt0[(int)back.fChlist[i]] ) * tlin  + tshift);
 }
 
+Double_t RN_S2Detector::InnerTheta()const{
+  if(GetPosVect().Z()>0)
+    return TMath::ATan(innerrad/GetPosVect().Z())*180/3.14;
+  else return 0;
+}
+Double_t RN_S2Detector::OuterTheta()const{
+  if(GetPosVect().Z()>0)
+    return TMath::ATan(outerrad/GetPosVect().Z())*180/3.14;
+  else return 0;
+}
+
+
+
 bool RN_S2Detector::inDet(const TVector3& v){
   //first see if it intersects the plane of the detector
   double udotnormv = (v.Unit()).Dot(normv_);

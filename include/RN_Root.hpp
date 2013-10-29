@@ -38,8 +38,7 @@
 #include "RN_TriggerBit.hpp"
 #include "RN_Analyzer.hpp"
 
-
-static const unsigned int NEUTNUM(10);
+const static unsigned int NEUTNUM(16);
 
 //These are added here so that they will be added to rootcint
 extern RN_ParticleCollection particle;
@@ -61,7 +60,7 @@ R__EXTERN TFile * rootfile;
 R__EXTERN TTree * newtree;
 R__EXTERN TList * analyzers;
 
-
+void RN_RootReset();
 void RN_RootInit();
 void SetCalibrations();
 void LoadVariableFile(const std::string& f);
@@ -70,7 +69,6 @@ void SetRootOutputFileAndTree(std::string filename,std::string treename);
 int AddAnalyzer(TObject *object);
 
 namespace global{
-  void LoadGlobalParams();
   extern double beam_e;
   extern double beam_eloss;
   extern double beam_est;

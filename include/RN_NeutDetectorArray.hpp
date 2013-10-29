@@ -41,6 +41,7 @@ class RN_NeutDetector:public RN_BaseDetector{
   double tshift;//!
   double zero_off;//!
   int apos;//!
+  TVector3 normv_;//!
   TVector3 HitPos;//!
   TVector3 fPos;//!
   double phe_lin;//!
@@ -88,7 +89,7 @@ class RN_NeutDetector:public RN_BaseDetector{
   Double_t GetThreshold()const{return fThreshold;}
   TVector3 GetHitPos()const{return HitPos;}
   int HitCounter() const {return fCounter;}
-  
+  Int_t GetArrayPos() const{return apos;}
   Double_t Q_value_est(double tof,
 		       double m1,
 		       double m2,

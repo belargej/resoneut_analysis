@@ -38,6 +38,7 @@ RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetecto
 {
   fPos.SetXYZ(0,0,-228.7);//set default zpos
   RNArray::PositionMap(apos,fPos);//set xpos and ypos
+  
 } 
 
 
@@ -87,6 +88,7 @@ void RN_NeutDetector::Reset(){
   fCounter=0;
   fCounter_carbon=0;
   fE_lost=0;
+  HitPos.SetXYZ(0,0,0);
 }
 
 Double_t RN_NeutDetector::E_est() const{
@@ -236,16 +238,20 @@ int RN_NeutDetectorArray::InsertHit(const double& q_long,const double& q_short,c
 
 
 
+
 bool RN_NeutDetector::inDet(const TVector3& v){
   //first see if it intersects the plane of the detector
-  double udotnormv = (v.Unit()).Dot(fPos.Unit());
+  // double udotnormv = (v.Unit()).Dot(fPos.Unit());
+  TVector3 normv(0,0,fPos.Z());
+  double udotnormv = (v.Unit()).Dot(normv);
   if(udotnormv <= 0.)
     return false;
 
   //Find distance from target to interesection point of detector plane 
   //use line-plane intersection formula
   TVector3 posvect = GetPosVect();
-  double vdist = (fPos.Unit()).Dot(posvect)/udotnormv;
+  //  double vdist = (fPos.Unit()).Dot(posvect)/udotnormv;
+  double vdist = (normv).Dot(posvect)/udotnormv;
   if(vdist <= 0.)
     return false;
   
@@ -275,7 +281,9 @@ int RN_NeutDetector::NeutIn(TLorentzVector nLV,double& t,double& e){
   double y_pos=(py*tof*300/(M_N))-fPos.Y();
   HitPos.SetXYZ(x_pos+fPos.X(),y_pos+fPos.Y(),fPos.Z());
   double radial_pos=sqrt(x_pos*x_pos+y_pos*y_pos);  
- 
+
+  stepcounter=0;
+  steptime=0; 
   z_pos=fThickness;
 
   while (radial_pos <= fRadius && z_pos >= 0 && z_pos <= fThickness){
@@ -305,8 +313,7 @@ int RN_NeutDetector::NeutIn(TLorentzVector nLV,double& t,double& e){
     
   }
   
-  stepcounter=0;
-  steptime=0;
+
   if(fEsum>fThreshold){
     e = fEsum;
     t = tof+ fDt;

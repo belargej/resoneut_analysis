@@ -3,7 +3,7 @@ SOURCES=RN_Unpack2Root.cpp RN_BaseDetector.cpp RN_NeutDetectorArray.cpp \
 	RN_VariableMap.cpp RN_IonChamber.cpp RN_SiliconDetectors.cpp\
 	RN_Calibrator.cpp RN_Timing.cpp RN_Analyzer.cpp sak_ReadBuffer.cpp\
 	RN_MassTable.cpp RN_Particle.cpp RN_NaIArray.cpp RN_TriggerBit.cpp\
-	RN_Sim.cpp RN_SimPhysics.cpp RN_SimRun.cpp RN_Root.cpp 
+	RN_Sim.cpp RN_SimPhysics.cpp RN_Root.cpp 
 
 
 
@@ -11,7 +11,7 @@ SOURCES=RN_Unpack2Root.cpp RN_BaseDetector.cpp RN_NeutDetectorArray.cpp \
 HEADERS=${SOURCES:.cpp=.hpp}
 OBJECTS=${SOURCES:.cpp=.o}
 OPTIONS=-lMinuit
-EXE=RN_BatchMode 
+EXE=RN_BatchMode RN_SimRun
 
 ifndef OPTIMIZE
 DEBUG=-g -Wall
@@ -34,11 +34,15 @@ all: ${EXE}
 RN_BatchMode: RN_BatchMode.o libRNeut.so
 	${CXX} -o ../bin/RNBatchMode $< ${OBJECTS} RN_RootDict.cpp ${LFLAGS}
 
-
+RN_SimRun: RN_SimRun.o libRNeut.so
+	${CXX} -o ../bin/RN_SimRun $< ${OBJECTS} RN_RootDict.cpp ${LFLAGS}
 ####################################################################
 ###Framework Dependencies###########################################
 ####################################################################
 RN_BatchMode.o: RN_BatchMode.cpp
+	${CXX} ${CFLAGS} $<
+
+RN_SimRun.o: RN_SimRun.cpp
 	${CXX} ${CFLAGS} $<
 
 RN_RootDict.cpp: ${HEADERS} my_LinkDef.h
@@ -56,19 +60,20 @@ libRNeut.so: ${OBJECTS} RN_RootDict.cpp
 #####################################################################
 
 clean: 
-	rm  ../bin/RNBatchMode ../bin/RNRoot ${OBJECTS} RN_RootDict.* ${addsuffix .o,${EXE}} ../lib/libRNeut.so
+	rm  ../bin/RNBatchMode ../bin/RN_SimRun ${OBJECTS} RN_RootDict.* ${addsuffix .o,${EXE}} ../lib/libRNeut.so
 
 newdict:
 	rm RN_RootDict.*
 
 install:
 	ln -s ${PWD}/../bin/RNBatchMode ${HOME}/bin
+	ln -s ${PWD}/../bin/RN_SimRun ${HOME}/bin	
 	ln -s ${PWD}/../lib/libRNeut.so ${HOME}/lib
 
 uninstall:	
 	rm ${HOME}/bin/RNBatchMode
 	rm ${HOME}/lib/libRNeut.so
-
+	rm ${HOME}/bin/RN_SimRun
 
 help:
 	@echo "Optimization Flags:\n \

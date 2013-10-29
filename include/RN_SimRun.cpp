@@ -1,200 +1,51 @@
-#ifndef RN_SIMRUNCXX
-#define RN_SIMRUNCXX
-#include "RN_SimRun.hpp"
+////////////////////////////////////////////////////////////////////
+// RN_Sim Binary:
+// provides a main for a compilable version of RN_Sim
+// that runs in terminal given a few arguments.  Currently it serves
+// to quickly perform simulation given a single config file.
+// 
+// Author: Sean Kuvin 
+////////////////////////////////////////////////////////////////////
+
+//C and C++ libraries.
+#include <cstdlib>
+#include <iostream>
+#include <iomanip>
+#include <math.h>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <time.h>
+
+//ROOT libraties
+#include <TROOT.h>
+#include <TRint.h>
+#include <TH1.h>
+#include <TApplication.h>
+#include <TH1F.h>
+#include <TH2.h>
+#include <TFile.h>
+#include <TStyle.h>
+#include <TCanvas.h>
+#include <TMath.h>
+#include <TTree.h>
+#include <TBranch.h>
+#include <TBrowser.h>
+#include <TCutG.h>
+
 #include "RN_Root.hpp"
+#include "RN_Sim.hpp"
 
-namespace sim{
-
-  TTree * tree;
-  
-  //declare histograms here
-  TH1D* hn_tof;
-  TH2D* htof_n;
-  TH2D* hE_n;
-  TH2D* hE_v_theta;
-  TH2D* hT_v_theta;
-  TH1D* hn_CM;
-  TH2D* hn_CMvLab;
-  TH2D* hpos;
-  TH1D* hQ;
-  TH1D* h_nKE;
-  TH1D* h_hiKE;
-  
-
-  
-  
-RN_SimRun::RN_SimRun():def(0){
-}
-
-
-void RN_SimRun::Loop(Long64_t evnum,std::string options){
-  if(rootfile)
-    initHists();
-  SetCalibrations();
-  Long64_t evcount=0;
-  while(evcount<evnum){
-    if(particle.size()==1){
-      if(GenerateSingleParticleEvent(evcount))
-	evcount++;
-      else continue;
-    }
-    else if(particle.size()>1){
-      if(GenerateEvents(evcount,options))
-	evcount++;
-      else
-	continue;
-    }
-    if(def==1)FillHistograms();
-    if(evcount%30000==0)std::cout<<evcount<<std::endl;
-  }  
-}
-
-void RN_SimRun::initHists(){
-  def=1;
-  rootfile->cd();
-  tree=new TTree("sim","sim");
-  for(unsigned int i=0;i<particle.size();i++){
-    std::string pname=particle[i].Name() + ".";
-    int pidx=2;
-    //check if the tree already has a particle with this name(as is the case
-    //after the heavy ion fragment proton decays back to the beam nucleus).
-    while(tree->GetBranch(pname.c_str())){
-      pname=Form("%s%d.",particle[i].Name().c_str(),pidx);
-      pidx++;
-    }
-    tree->Branch(pname.c_str(),"RN_Particle",&particle[i]);
-   
+int main(int argc, char*argv[])
+{
+  if(argc==2){
+    RN_RootInit();//initialize default detector setup
+    sim::RN_Sim a;
+    a.StartRun(argv[1]);
+    return 1;
   }
-
-  for(unsigned int i=0;i<neut.size();i++){
-    tree->Branch(Form("%s.",neut[i].Name().c_str()),"RN_NeutDetector",&neut[i]);
+  else{
+    std::cout<<"RN_Sim expects one additional argument only for the configuration file"<<std::endl;
+    exit(EXIT_FAILURE);
   }
-
-  hn_CM=new TH1D("h_nCM","h_nCM",512,1,180);
-  hn_CMvLab=new TH2D("hn_CMvLAB","n_CMvLAB",512,1,180,512,1,180);
-  hn_tof=new TH1D("hn_tof","hn_tof",4096,1,128);
-  htof_n=new TH2D("htof_n0","htof_n0",17,0,16,512,1,128);
-  hE_n=new TH2D("hE_n","hE_n",17,0,16,512,0,5);
-  hQ=new TH1D("hQ","hQ",4096,-4,0);
-  h_nKE=new TH1D("h_nKE","h_nKE",1024,0,1);
-  h_hiKE=new TH1D("h_hiKE","h_hiKE",1024,0,100);
-  hE_v_theta=new TH2D("hE_v_theta","hE_v_theta",180,0,179,512,0,20);
-  hT_v_theta=new TH2D("hT_v_theta","hT_v_theta",180,0,179,512,1,128);
-  hpos=new TH2D("hpos","hpos",1024,-256,256,1024,-256,256);
-
 }
-
-void RN_SimRun::FillHistograms(){
-  tree->Fill();
-  if(particle.size()>1){
-    hE_v_theta->Fill(particle[2].LV.Theta()*180/3.14,particle[2].LV.E()-particle[2].LV.M());
-    hn_CM->Fill(n_cm*180/3.14);
-    hn_CMvLab->Fill(n_cm*180/3.14,particle[2].LV.Theta()*180/3.14);
-  }
-  int cref=0;
-  for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){ 
-    if((*it).fT_Sim>0){
-      hn_tof->Fill(((*it).fT_Sim));
-      htof_n->Fill(cref,(*it).fT_Sim);
-      hE_n->Fill(cref,(*it).fEsum);
-   
-      hpos->Fill((*it).GetHitPos().X(),(*it).GetHitPos().Y());
-      double nKE=0,hiKE=0;
-      double q_value=QValue((*it).GetPosVect().Z(),(*it).fT_Sim,nKE,hiKE);
-      hQ->Fill(q_value);
-      h_nKE->Fill(nKE);
-      h_hiKE->Fill(hiKE);
-      if(particle.size()!=1)
-	hT_v_theta->Fill(particle[2].LV.Theta()*180/3.14,(*it).fT_Sim);
-
-    }
-    cref++;
-  }
- 
-}
-
-void RN_SimRun::StartRun(std::string input){
-  Init();
-
-  std::string temp;
-  ifstream cfg(input.c_str());
-  if(!cfg){
-    std::cout<<"could not cfg "<<input<<std::endl;
-    std::cin>>temp;
-    return ;
-  }
-
-  do{
-    std::vector<std::string>input;
-    sak::ReadLine(cfg,input);
-    if(input.size()==0)
-      continue;
-    if(input[0]=="fParam")
-      {      
-	DetVar.AddParam(input[1],sak::string_to_double(input[2]));
-      }
-    else if(input[0]=="fDWBA")
-      {
-	SetAngularDistribution(input[1]);
-	
-      }
-    else if(input[0]=="fReaction")
-      {
-	if (input.size()==7){
-	  particle.clear();
-	  for(unsigned int i=1;i<7;i++)
-	    particle.push_back(RN_Particle(input[i]));
-	}
-	else std::cout<<"incorrect number of entries to fReaction: "<< input.size()-1<<"but needed 6"<<std::endl;
-      }
-    else if(input[0]=="fParticleGun"){
-      if (input.size()==6){
-	particlegun=new RN_ParticleGun(input[1],
-				       sak::string_to_double(input[2]),//emin
-				       sak::string_to_double(input[3]),//emax
-				       sak::string_to_double(input[4]),//thetamin
-				       sak::string_to_double(input[5])//thetamax
-				       );
-	particle.clear();
-	particle.push_back(RN_Particle(input[1]));	
-      }
-      else std::cout<<"incorrect numbef of inputs for fParticle gun: "<<input.size()<<". Need particle name emin emax thetamin thetamax"<<std::endl; 
-    }
-	  
-    else if(input[0]=="fOutput")
-      {
-	if(input.size()==2){
-	  rootfile=new TFile(input[1].c_str(),"RECREATE");
-	}
-	else std::cout<<"invalid number of arguments for fOutput"<<std::endl;
-      }
-    else if(input[0]=="fEvents")
-      {
-	totevents=sak::string_to_int(input[1]);
-      }
-    else if(input[0]=="fOption")
-      {
-	option=input[1];
-      }
-
-    else
-      continue;
-  } while(!cfg.eof());
-  
-  Loop(totevents,option);
-
-    
-
-}
-
-
-void RN_SimRun::WriteOut(){
-
-  rootfile->Write();
-  rootfile->Close();
-
-}
-
-
-}
-#endif

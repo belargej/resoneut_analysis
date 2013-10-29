@@ -18,6 +18,7 @@ RN_S2ClusterCollection si_cluster_;
 RN_RFCollection rftime;	     
 RN_IonChamber ic("ic");		     
 RN_NaICollection nai;		     
+
 RN_VariableMap DetVar;
 RN_MassTable MassTable;
 int RN_RootSet(0);
@@ -43,23 +44,33 @@ namespace global{
   TRandom3 myRnd(0);
   
   
-  void LoadGlobalParams(){
-    DetVar.GetParam("global.beam_e",beam_e);
-    DetVar.GetParam("global.beam_eloss",beam_eloss);
-    DetVar.GetParam("global.hi_ex_set",hi_ex_set);
-    beam_est = beam_e - beam_eloss*.5;
-
-    //Set Up Experiment Reaction Here
-    MassTable.GetParam("24Mg",m_beam);
-    MassTable.GetParam("d",m_target);
-    MassTable.GetParam("n",m_recoil);
-    MassTable.GetParam("25Al",m_frag);
-    MassTable.GetParam("24Mg",m_heavy_decay);
-    MassTable.GetParam("p",m_decay_product);
-   
- 
-  }
 }
+
+void RN_RootReset(){
+  global::beam_e=0;
+  global::beam_eloss=0;
+  global::beam_est=0;
+  global::m_beam=0;
+  global::m_target=0;
+  global::m_frag=0;
+  global::m_recoil=0;
+  global::m_heavy_decay=0;
+  global::m_decay_product=0;
+  global::hi_ex_set=0;
+  global::d_ex_set=0;
+
+  if(analyzers)analyzers->Clear();
+  neut.clear();
+  rftime.clear();
+  si_.clear();
+  si_cluster_.clear();
+  nai.clear();
+  particle.clear();
+  triggerbit.clear();
+  DetVar.ClearParams();
+  RN_RootSet=0;
+}
+
 
 void RN_RootInit(){
   if(!analyzers)analyzers = new TList();
@@ -83,14 +94,7 @@ void RN_RootInit(){
     triggerbit.clear();
   }
 
-  particle.push_back(RN_Particle("24Mg"));
-  particle.push_back(RN_Particle("d"));
-  particle.push_back(RN_Particle("n")); 
-  particle.push_back(RN_Particle("25Al"));
-  particle.push_back(RN_Particle("p"));  
-  particle.push_back(RN_Particle("24Mg"));
-  
- 
+
   si_.push_back(RN_S1Detector("si_a",16,16));
   si_.push_back(RN_S2Detector("si_b",16,16));
   
@@ -113,7 +117,14 @@ void RN_RootInit(){
   neut.push_back(RN_NeutDetector("neut7",4,10));
   neut.push_back(RN_NeutDetector("neut8",4,12));
   neut.push_back(RN_NeutDetector("neut9",4,15));
-  
+  //neut.push_back(RN_NeutDetector("neut10",4,2));
+  //neut.push_back(RN_NeutDetector("neut11",4,3));
+  //neut.push_back(RN_NeutDetector("neut12",4,8));
+  //neut.push_back(RN_NeutDetector("neut13",4,9));
+  //neut.push_back(RN_NeutDetector("neut14",4,13));
+  //neut.push_back(RN_NeutDetector("neut15",4,16));
+
+
   nai.push_back(RN_NaIDetector("nai_l1"));
   nai.push_back(RN_NaIDetector("nai_l2"));
   nai.push_back(RN_NaIDetector("nai_l3"));
@@ -158,8 +169,14 @@ int AddAnalyzer(TObject *obj){
   return 1;
 }
 
+
+//Apply any calibrations loaded into the variable map DetVar 
+
 void SetCalibrations(){
-  global::LoadGlobalParams();
+  DetVar.GetParam("global.beam_e",global::beam_e);
+  DetVar.GetParam("global.beam_eloss",global::beam_eloss);
+  DetVar.GetParam("global.hi_ex_set",global::hi_ex_set);
+  if(global::beam_e>0) global::beam_est = global::beam_e - global::beam_eloss*.5;
   
   for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
     (*it).SetCalibrations(DetVar);

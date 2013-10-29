@@ -71,7 +71,7 @@ public:
   ~RN_S2Detector(){}
   RN_S2Detector(std::string name,const int& fnum, const int& bnum);
   
-  TVector3 GetPosVect(){return posv_+shiftv_;}
+  TVector3 GetPosVect()const{return posv_+shiftv_;}
   void SetPosVect(TVector3 posv){posv_=posv;}
   void SetShiftVect(TVector3 shiftv){shiftv_=shiftv;}
   void SetRotVect(TVector3 rotv){rotv_=rotv;}
@@ -79,7 +79,8 @@ public:
   Double_t Back_E(int i=0)const;
   Double_t Front_T(int i=0)const;
   Double_t Back_T(int i=0)const;
- 
+  Double_t InnerTheta()const;
+  Double_t OuterTheta()const;
 
 
   virtual TVector3 chVect(const double&cf,const double& cb) const;
@@ -184,8 +185,8 @@ public:
   
   RN_S1Cluster(std::string name,Int_t NumOfch):RN_S2Cluster(name,NumOfch){}
   
-  virtual int ReconstructClusters(RN_S1Detector& in){};
-
+  virtual int ReconstructClusters(RN_S1Detector& in){return false;};
+  ClassDef(RN_S1Cluster,1);
 };
 
 
