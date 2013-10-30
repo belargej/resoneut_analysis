@@ -24,6 +24,9 @@ void RN_IonChamber::SetCalibrations(float elin, float eshift, float tlin, float 
 
 
 void RN_IonChamber::SetCalibrations(RN_VariableMap& detvar){
+  xgrid.SetCalibrations(detvar);
+  ygrid.SetCalibrations(detvar);
+
   detvar.GetParam(Form("%s.elin",Name().c_str()),elin);
   detvar.GetParam(Form("%s.eshift",Name().c_str()),eshift);
   detvar.GetParam(Form("%s.tlin",Name().c_str()),tlin);

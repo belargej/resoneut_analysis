@@ -8,6 +8,7 @@ RN_BaseDetector::RN_BaseDetector(std::string name, int num):fName(name),
 							    sorted_by_channel(0),
 							    lowlimit(0),
 							    highlimit(4096),		
+							    fCh_cal(num,int(0)),
 							    fMult(0),
 							    fChlist(num,double(0)),
 							    fE(num,double(0)),
@@ -17,6 +18,9 @@ RN_BaseDetector::RN_BaseDetector(std::string name, int num):fName(name),
 				       
 				       
 {
+  for(unsigned int i=0;i<num;i++){
+    fCh_cal[i]=i;
+  }
 
 
 }
@@ -44,6 +48,14 @@ void RN_BaseDetector::SetELimits(const double& elow,const double& ehigh){
   highlimit=ehigh;
 }
 
+void RN_BaseDetector::SetCalibrations(RN_VariableMap& detvar){
+  for(unsigned int i=0;i<fNumOfCh;i++){
+    detvar.GetParam(Form("%s.ch[%d]",Name().c_str(),i),fCh_cal[i]);
+  } 
+  detvar.GetParam(Form("%s.elowlimit",Name().c_str()),lowlimit);
+  detvar.GetParam(Form("%s.ehighlimit",Name().c_str()),highlimit);
+
+}
 
 int RN_BaseDetector::InsertHit(const double& e,const double& t,const double& ch){
   

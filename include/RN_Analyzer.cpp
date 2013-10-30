@@ -188,6 +188,7 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
 
   //ChanneltoDetector
   
+  //Neutron Detector Long and Short gate Hits
   int idx=1; //neut detectors start from channel 1 in QDC
   for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
     if(QDC1[idx]>0){
@@ -198,8 +199,10 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
     }  
     idx++;
   }
+  //Neutron Detector position channel hits
+  //insert here
 
-
+  //Silicon Hits
   for(int j=0;j<16;j++){
     if(ADC2[j+16]>0)si_[0].front.InsertHit(ADC2[j+16],0,j);
     if(ADC3[j+16]>0)si_[1].front.InsertHit(ADC3[j+16],0,j);
@@ -208,6 +211,7 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
 
   }
 
+  //NaI E and T hits
   int k=0;
   for(int j=0;j<8;j++){
     if(ADC4[k+16]>0)nai[j].fE[0]=ADC4[k+16];
@@ -237,6 +241,9 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
     k+=2;
   }
 
+
+
+  //IonChamber Position grid hits
   for(int k=0;k<32;k++){
     if(ADC5[k]>0){
       ic.xgrid.InsertHit(ADC5[k],0,k);
@@ -246,11 +253,17 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
     }
   }
 
-
+  //IonChamber E+dE hits
   if(ADC4[14]>0)ic.fE=ADC4[14];
   if(ADC4[15]>0)ic.fdE=ADC4[15];
+  
+  //rftime
   if(TDC1[0]>0)rftime[0].InsertHit(TDC1[0]);
+  
+  //mcptime
   if(TDC1[2]>0)rftime[1].InsertHit(TDC1[2]);
+
+
   if(TDC1[3]>0)triggerbit[0].fBit=TDC1[3];
   if(TDC1[4]>0)triggerbit[1].fBit=TDC1[4];
   

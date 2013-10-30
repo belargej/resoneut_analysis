@@ -41,8 +41,8 @@ RN_S2Detector::RN_S2Detector(std::string name,const int& fnum, const int& bnum):
 										shiftv_(0,0,0),
 										posv_(0,0,0),
 										rotv_(0,0,0),
-										front("front",fnum),
-										back("back",bnum)
+										front(name+".front",fnum),
+										back(name+".back",bnum)
 								 
 								 
   {
@@ -57,6 +57,10 @@ RN_S2Detector::RN_S2Detector(std::string name,const int& fnum, const int& bnum):
   }
 
 void RN_S2Detector::SetCalibrations(RN_VariableMap& detvar){
+  front.SetCalibrations(detvar);
+  back.SetCalibrations(detvar);
+
+
   for (int i=0;i<front.NumOfCh();i++){
     detvar.GetParam(Form("%s.front.a0[%d]",Name().c_str(),i),fronta0[i]);  
     detvar.GetParam(Form("%s.front.a1[%d]",Name().c_str(),i),fronta1[i]);
@@ -88,14 +92,7 @@ void RN_S2Detector::SetCalibrations(RN_VariableMap& detvar){
   detvar.GetParam(Form("%s.rot_theta",Name().c_str()),tempx);
   detvar.GetParam(Form("%s.rot_phi",Name().c_str()),tempy);
   double flowlimit=0,fhighlimit=0,blowlimit=0,bhighlimit=0;
-  detvar.GetParam(Form("%s.front.lowlimit",Name().c_str()),flowlimit);
-  detvar.GetParam(Form("%s.front.highlimit",Name().c_str()),fhighlimit);
-  detvar.GetParam(Form("%s.back.lowlimit",Name().c_str()),blowlimit);
-  detvar.GetParam(Form("%s.back.highlimit",Name().c_str()),bhighlimit);
-  if(flowlimit>0&&fhighlimit>0)
-    front.SetELimits(flowlimit,fhighlimit);
-  if(blowlimit>0&&bhighlimit>0)
-    back.SetELimits(blowlimit,bhighlimit);
+
   
   Calcnormv();
 

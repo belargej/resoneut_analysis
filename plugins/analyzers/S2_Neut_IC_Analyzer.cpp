@@ -15,6 +15,7 @@ namespace coinc{
   sak::Histogram2D *hpede_rawgamma;  
   sak::Histogram2D *hpede_rawneutsansgamma;  
   sak::Histogram2D *h_n_t_v_si_t;
+  sak::Histogram2D *h_n_t_v_si_t_protongated;
   sak::Histogram2D *h_nai_t_v_si_t;
   sak::Histogram2D *h_n_t_v_si_t_F17_prot_timing;
   sak::Histogram2D *h_n_t_v_si_trel;
@@ -91,6 +92,7 @@ namespace coinc{
 
     rootfile->cd("coinc/S2_Neut/timing");
     h_n_t_v_si_t = new  sak::Hist2D("h_n_t_v_si_t","n_t","si_t",1024,0,4095,1024,0,4095);
+    h_n_t_v_si_t_protongated = new  sak::Hist2D("h_n_t_v_si_t_protongated","n_t","si_t",1024,0,4095,1024,0,4095);
     h_n_t_v_si_t_F17_prot_timing = new  sak::Hist2D("h_n_t_v_si_t_F17_prot_timing","n_t","si_t",1024,0,4095,1024,0,4095);
     h_n_t_v_si_trel = new  sak::Hist2D("h_n_t_v_si_trel","n_t","si_t - rftime",1024,0,4095,1024,-2097,2098);
     h_n_trel_v_si_t = new  sak::Hist2D("h_n_trel_v_si_t","n_t-rftime","si_t",1024,-2097,2098,1024,0,4096);
@@ -162,6 +164,9 @@ namespace coinc{
       
       if(ionchamber::hi_check[0]&& coinc::si_ic_tcheck&&si_cal::protcheck){
 	h_n_t_v_si_t_F17_prot_timing->Fill(neut_t,si_t);
+      }
+      if(si_cal::protcheck){
+	h_n_t_v_si_t_protongated->Fill(neut_t,si_t);
       }
       
 

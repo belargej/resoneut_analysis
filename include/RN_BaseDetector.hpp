@@ -31,7 +31,8 @@ private:
   int sorted_by_channel;//!
   double lowlimit;//!
   double highlimit;//!
-  
+  std::vector<Double32_t>fCh_cal;//!
+
 public:
   RN_BaseDetector(){
   }
@@ -44,7 +45,7 @@ public:
   std::vector<Double32_t>fT;//[fMult]
 
   
-  
+  Double32_t Ch(int i=0){return fCh_cal[(int)fChlist[i]];}
   void SetELimits(const double&,const double&);
   void Init(const double& num);
   void Reset();
@@ -52,6 +53,7 @@ public:
   std::string Name()const {return fName;} 
   int InsertHit(const double&, const double&, const double&);
   void SetSortByChannel(){sorted_by_channel=1;}
+  virtual void SetCalibrations(RN_VariableMap& detvar);
 
   ClassDef(RN_BaseDetector,1);
 };

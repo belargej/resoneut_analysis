@@ -50,8 +50,8 @@ class RN_IonChamber:public TObject{
 				  tshift(0),
 				  fE(0),
 				  fdE(0),
-				  xgrid("xgrid",32),
-				  ygrid("ygrid",32)
+				  xgrid(name+".xgrid",32),
+				  ygrid(name+".ygrid",32)
 					 
   {
   }
