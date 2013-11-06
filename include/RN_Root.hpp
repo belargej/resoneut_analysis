@@ -60,6 +60,8 @@ R__EXTERN TFile * rootfile;
 R__EXTERN TTree * newtree;
 R__EXTERN TList * analyzers;
 
+
+		 
 void RN_RootReset();
 void RN_RootInit();
 void SetCalibrations();
@@ -82,6 +84,14 @@ namespace global{
   extern double d_ex_set;
   extern TRandom3 myRnd;
 
+
+  void SetReaction(std::string,
+		   std::string,
+		   std::string,
+		   std::string,
+		   std::string,
+		   std::string);
+  
 }
 
 

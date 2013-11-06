@@ -1,11 +1,11 @@
 #ifndef __RN_SILICON_CXX
 #define __RN_SILICON_CXX
 #include "RN_SiliconDetectors.hpp"
-
+#include "RN_Root.hpp"
 
 ClassImp(RN_S2Detector);
 
-
+using global::myRnd;
 
 ////////////////////////////////////////////////////////////////////
 ///RN_S2Detector
@@ -41,20 +41,22 @@ RN_S2Detector::RN_S2Detector(std::string name,const int& fnum, const int& bnum):
 										shiftv_(0,0,0),
 										posv_(0,0,0),
 										rotv_(0,0,0),
+										_s1switch(0),
 										front(name+".front",fnum),
 										back(name+".back",bnum)
-								 
-								 
-  {
-   
-
-    outerrad=S2OUTERRAD;
-    innerrad=S2INNERRAD;
-    ring_pitch_ = (S2OUTERRAD - S2INNERRAD) / static_cast<double>(front.NumOfCh());
-    delta_phi_ = 360. / static_cast<double>(back.NumOfCh());
-    front.SetELimits(0,3500);
-    back.SetELimits(0,3500);
-  }
+										
+  
+  
+{
+  
+  
+  outerrad=S2OUTERRAD;
+  innerrad=S2INNERRAD;
+  ring_pitch_ = (S2OUTERRAD - S2INNERRAD) / static_cast<double>(front.NumOfCh());
+  delta_phi_ = 360. / static_cast<double>(back.NumOfCh());
+  front.SetELimits(0,3500);
+  back.SetELimits(0,3500);
+}
 
 void RN_S2Detector::SetCalibrations(RN_VariableMap& detvar){
   front.SetCalibrations(detvar);
@@ -91,8 +93,7 @@ void RN_S2Detector::SetCalibrations(RN_VariableMap& detvar){
   tempx=0,tempy=0,tempz=0,temp=0;
   detvar.GetParam(Form("%s.rot_theta",Name().c_str()),tempx);
   detvar.GetParam(Form("%s.rot_phi",Name().c_str()),tempy);
-  double flowlimit=0,fhighlimit=0,blowlimit=0,bhighlimit=0;
-
+ 
   
   Calcnormv();
 
@@ -156,6 +157,30 @@ Double_t RN_S2Detector::OuterTheta()const{
   if(GetPosVect().Z()>0)
     return TMath::ATan(outerrad/GetPosVect().Z())*180/3.14;
   else return 0;
+}
+
+int RN_S2Detector::Quadrant(int i)const{
+  return floor(back.Ch(i)/4);
+}
+
+Double_t RN_S2Detector::Ring_Ch(int i)const{
+  if(!_s1switch){
+    return front.Ch(i);
+  }
+  else{
+    if(Quadrant(i)%2!=0){
+      return front.Ch(i);
+    }
+    else{
+      if((int)front.Ch(i)%2!=0){
+	return front.Ch(i)-1;
+      }
+      else
+	return front.Ch(i)+1;
+    }
+  }
+    
+
 }
 
 
@@ -238,7 +263,6 @@ bool RN_S2Detector::Vect_to_ch(const TVector3& v,double& cf,double& cb){
 
 TVector3 RN_S2Detector::chVect(const double& cf,const double& cb) const{
   //First make a vector to the channel for a detector at the origin
-  TRandom3 myRnd(0);//!
   double s;
   double phi;
   if((cf < static_cast<double>(front.NumOfCh())) 
@@ -283,8 +307,8 @@ RN_S2Cluster::RN_S2Cluster(std::string name,Int_t NumOfCh):RN_BaseDetector(name,
   match_epsilon=0.0;
   match_delta=0.1;
   match_maxene=4096;
-  addback_front=1.0; 
-  addback_back=1.0;
+  addback_front=0.0; 
+  addback_back=0.0;
   
 }
 
@@ -325,19 +349,19 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
   // first add-back neighboring hits
   // in the back
   for (i=0;i<in.back.fMult;i++){
-    backstatus |= (((unsigned int)in.back.fChlist[i]));
+    backstatus |= (((unsigned int)in.back.Ch(i)));
     ebacktotal = ebacktotal+in.Back_E(i);
     if (addback_back&&
-	(i+1<in.back.fMult)&&(in.back.fChlist[i+1]==in.back.fChlist[i]+1)){
+	(i+1<in.back.fMult)&&(in.back.Ch(i+1)==in.back.Ch(i)+1)){
       float ecluster=in.Back_E(i)+in.Back_E(i+1);
       float tcluster=(in.Back_T(i+1)+in.Back_T(i))/2;
-      float chnew=(in.back.fChlist[i+1]+in.back.fChlist[i])/2.0;
+      float chnew=(in.back.Ch(i+1)+in.back.Ch(i))/2.0;
       BackClusters.InsertHit(ecluster,tcluster,chnew);
       // we analyzed the i+1 hit along with the i, so 
       i++;
     }
     else{
-      int ch=in.back.fChlist[i];
+      int ch=in.back.Ch(i);
       float ecluster=in.Back_E(i);
       float tcluster=in.Back_T(i);
       
@@ -349,20 +373,20 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
     efronttotal = efronttotal+in.Front_E(i);
   }
   for (i=0;i<in.front.fMult;i++){
-    frontstatus |= (((unsigned int)in.front.fChlist[i]));
+    frontstatus |= (((unsigned int)in.front.Ch(i)));
     if (addback_front&&
-	(i+1<in.front.fMult)&&(in.front.fChlist[i+1]==in.front.fChlist[i]+1)){
+	(i+1<in.front.fMult)&&(in.front.Ch(i+1)==in.front.Ch(i)+1)){
  
  
       float ecluster=in.Front_E(i+1)+in.Front_E(i);
       float tcluster=(in.Front_T(i+1)+in.Front_T(i))/2;
-      float chnew=(in.front.fChlist[i+1]+in.front.fChlist[i])/2.0;
+      float chnew=(in.front.Ch(i+1)+in.front.Ch(i))/2.0;
       FrontClusters.InsertHit(ecluster,tcluster,chnew);
       // we analyzed the i+1 hit along with the i, so 
       i++;
     }
     else{
-      int ch=in.front.fChlist[i];
+      int ch=in.front.Ch(i);
       float ecluster=in.Front_E(i);
       float tcluster=in.Front_T(i);
       FrontClusters.InsertHit(ecluster,tcluster,ch);
@@ -428,6 +452,7 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
 
 
 void RN_S2Cluster::Reset(){
+  
   for(int i=0;i<fMult;i++){
     fPos[i].SetXYZ(0,0,0);
     fChlist_b[i]=-1;

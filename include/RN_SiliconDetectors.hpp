@@ -62,6 +62,7 @@ protected:
   Double32_t delta_phi_;//!
   Double32_t innerrad;//!
   Double32_t outerrad;//!
+  Int_t _s1switch;//!
 public:
   RN_BaseDetector front;
   RN_BaseDetector back;
@@ -81,7 +82,8 @@ public:
   Double_t Back_T(int i=0)const;
   Double_t InnerTheta()const;
   Double_t OuterTheta()const;
-
+  int Quadrant(int i=0)const;
+  Double_t Ring_Ch(int i=0)const;
 
   virtual TVector3 chVect(const double&cf,const double& cb) const;
   void Calcnormv();
@@ -109,13 +111,10 @@ public:
   {
     outerrad=S1OUTERRAD;
     innerrad=S1INNERRAD;
-    
+    _s1switch=1;
     ring_pitch_ = (S1OUTERRAD - S1INNERRAD) / static_cast<double>(front.NumOfCh());
     delta_phi_ = 360. / static_cast<double>(back.NumOfCh());
   }
-  TVector3 chVect(const double&cf,const double& cb) const{
-    return TVector3(0,0,0);
-  };
   
   ClassDef(RN_S1Detector,1);
 };

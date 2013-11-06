@@ -26,6 +26,7 @@
 #pragma link C++ class std::vector<RN_RFTime>;
 #pragma link C++ class std::vector<RN_NaIDetector>;
 #pragma link C++ class std::vector<RN_TriggerBit>;
+#pragma link C++ class std::vector<RN_Particle>;
 #pragma link C++ class std::vector<Double32_t>;
 
 

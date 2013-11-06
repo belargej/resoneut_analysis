@@ -59,7 +59,7 @@ public:
  
  //constructors
   
-  RN_Analyzer();
+  RN_Analyzer(const std::string&a="",const std::string& b="");
   virtual ~RN_Analyzer();
 
   // Declaration of leaf types

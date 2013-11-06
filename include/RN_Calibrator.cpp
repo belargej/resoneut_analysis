@@ -48,6 +48,10 @@ void RN_S2Calibrator::PerformFit(){
   TF1 *fitter= new TF1("fitter","pol1",elowlimit,ehighlimit);
   unsigned int num=a0.size();
   for(unsigned int l=0;l<num;l++){
+    if(Corr[l].GetN()<50){
+      std::cout<<"Not enough points for fitting this detector/channel"<<std::endl;
+      continue;
+    }
     Corr[l].Fit(fitter,"ROB=0.52","",elowlimit,ehighlimit);
     a0[l]=fitter->GetParameter(0);
     a1[l]=fitter->GetParameter(1);

@@ -44,7 +44,34 @@ namespace global{
   TRandom3 myRnd(0);
   
   
+
+  void SetReaction(std::string a,
+		   std::string b,
+		   std::string c,
+		   std::string d,
+		   std::string e,
+		   std::string f){
+    
+    if(particle.size()!=0){
+      std::cout<<"clearing current particle list"<<std::endl;
+      particle.clear();
+    }
+    particle.push_back(a);
+    particle.push_back(b);
+    particle.push_back(c);
+    particle.push_back(d);
+    particle.push_back(e);    
+    particle.push_back(f);
+
+    m_beam = particle[0].mass;
+    m_target = particle[1].mass;
+    m_recoil = particle[2].mass;
+    m_frag = particle[3].mass;
+    m_decay_product = particle[4].mass;
+    m_heavy_decay = particle[5].mass;
+  }
 }
+
 
 void RN_RootReset(){
   global::beam_e=0;

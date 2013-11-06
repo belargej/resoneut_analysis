@@ -11,7 +11,8 @@
 #pragma link C++ defined_in "Trigger_Analyzer.hpp";
 #pragma link C++ defined_in "Module_Analyzer.hpp";
 #pragma link C++ defined_in "NaI_NeutAnalyzer.hpp";
-
+#pragma link C++ defined_in "PhysicsAnalyzer.hpp";
+#pragma link C++ defined_in "NewTree_Analyzer.hpp";
 
 
 

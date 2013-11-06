@@ -41,7 +41,7 @@ class RN_S2Calibrator{
 private:
 public:
   RN_S2Calibrator(const int& corrnum,std::string dname,const double& lowlimit=0.,const double& highlimit=4096.):a0(corrnum,double(0)),
-														a1(corrnum,double(0)),
+														a1(corrnum,double(1)),
 														point(corrnum,int(0)),
 														Corr(corrnum,TGraph()),
 														detname(dname),

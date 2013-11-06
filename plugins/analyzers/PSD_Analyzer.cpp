@@ -79,24 +79,24 @@ namespace psd{
   //declare histograms here
 
   //n_detmult
-  sak::Hist1D *h_ndetMult;
-  sak::Hist1D *h_ndetMult_ngated;
+  TH1D *h_ndetMult;
+  TH1D *h_ndetMult_ngated;
 
   //neut_psd
-  sak::Histogram2D *hPSDq_n[NEUTNUM];
-  sak::Histogram2D *hPSD_n_[NEUTNUM];
+  TH2D *hPSDq_n[NEUTNUM];
+  TH2D *hPSD_n_[NEUTNUM];
 
   //neut_time
-  sak::Histogram2D *hQvT_n[NEUTNUM];
-  sak::Histogram2D *hQvT_ngated[NEUTNUM];
+  TH2D *hQvT_n[NEUTNUM];
+  TH2D *hQvT_ngated[NEUTNUM];
 
-  sak::Histogram2D *hPSDq_n_evtgated[NEUTNUM];
+  TH2D *hPSDq_n_evtgated[NEUTNUM];
 
 
-  NeutAnalyzer::NeutAnalyzer()
+  NeutAnalyzer::NeutAnalyzer():RN_Analyzer("NeutAnalyzer","NeutAnalyzer")
   {
   }
-
+  
 
 
   bool NeutAnalyzer::Begin(){
@@ -117,20 +117,20 @@ namespace psd{
    
 
     rootfile->cd("mult/neut");
-    h_ndetMult=new sak::Hist1D("h_ndetmult","mult",NEUTNUM+1,0,NEUTNUM);
-    h_ndetMult_ngated=new sak::Hist1D("h_ndetmult_ngated","mult",NEUTNUM+1,0,NEUTNUM);
+    h_ndetMult=new TH1D("h_ndetmult","nmult;mult",NEUTNUM+1,0,NEUTNUM);
+    h_ndetMult_ngated=new TH1D("h_ndetmult_ngated","nmult_ngated;mult",NEUTNUM+1,0,NEUTNUM);
     
 
     for(int i=0;i<NEUTNUM;i++){  
       rootfile->cd("neut/TRel");
-      hQvT_n[i]=new sak::Histogram2D(Form("hQvT_n%d",i),"T","Q",128,0,128,1024,0,4095);
-      hQvT_ngated[i]=new sak::Histogram2D(Form("hQvT_n%d_ngated",i),"T","Q",128,0,128,1024,0,4095);
+      hQvT_n[i]=new TH2D(Form("hQvT_n%d",i),Form("hQvT_n%d;T;Q",i),128,0,128,1024,0,4095);
+      hQvT_ngated[i]=new TH2D(Form("hQvT_n%d_ngated",i),Form("hQvT_n%d_ngated;T;Q",i),128,0,128,1024,0,4095);
       rootfile->cd("neut_PSD/raw");
-      hPSDq_n[i]=new sak::Histogram2D(Form("hPSDq_n%d",i),"fQ_long","fQ_short",1024,0,4096,1024,0,4096);
-      hPSDq_n_evtgated[i]=new sak::Histogram2D(Form("hPSDq_n%d_evtgated",i),"fQ_long","fQ_short",1024,0,4096,1024,0,4096);
+      hPSDq_n[i]=new TH2D(Form("hPSDq_n%d",i),Form("hPSDq_n%d",i),1024,0,4096,1024,0,4096);
+      hPSDq_n_evtgated[i]=new TH2D(Form("hPSDq_n%d_evtgated",i),Form("hPSDq_n%d_evtgated",i),1024,0,4096,1024,0,4096);
   
       rootfile->cd("neut_PSD/cal");
-      hPSD_n_[i]=new sak::Histogram2D(Form("hPSD_neut%d",i),"fPSD","fQ_long",256,-2.,2.,1024,50,4096);
+      hPSD_n_[i]=new TH2D(Form("hPSD_neut%d",i),Form("hPSD_neut%d",i),256,-2.,2.,1024,50,4096);
     } 
     rootfile->cd();
 

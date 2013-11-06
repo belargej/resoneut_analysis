@@ -7,26 +7,25 @@
 #include <vector>
 #include <new>
 #include "../include/RN_Analyzer.hpp"
-#include "plugins/sak/sak_Histograms.hpp"
 #include "plugins/sak/sak_Gates.hpp"
 #include "../../include/RN_Root.hpp"
 
 namespace psd{
-
-
+  
+  
   class NeutAnalyzer:public RN_Analyzer{
   private:
     
   public:
     
-  NeutAnalyzer();
-  virtual ~NeutAnalyzer(){};
-
-  virtual bool Begin();
-  
-  virtual bool Process();
-  virtual bool Terminate();
-  
+    NeutAnalyzer();
+    virtual ~NeutAnalyzer(){};
+    
+    virtual bool Begin();
+    
+    virtual bool Process();
+    virtual bool Terminate();
+    
     virtual void Clear(){};
     virtual void ResetGlobals();
 

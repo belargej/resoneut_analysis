@@ -17,11 +17,12 @@ public:
   NewTree_Analyzer();
   virtual ~NewTree_Analyzer(){};
 
-  void InitTree(std::string filename,std::string treename);
-  virtual void Process();
+  
+  virtual bool Begin();
+  virtual bool Process();
+  virtual bool Terminate();
   virtual void Clear(){};
-  virtual void Terminate();
-
+  virtual void ResetGlobals();
 
   ClassDef(NewTree_Analyzer,0);
 };
