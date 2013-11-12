@@ -276,11 +276,11 @@ namespace unpacker{
     while(gpointer < endpointer){
       if(*gpointer==0xffff)
 	gpointer++;
-      if(*gpointer!=0xffff){
+      else if(*gpointer!=0xffff){
 	Event[1]=1;
 	gpointer++;
       }
-  }
+    }
     
     if(gpointer!=endpointer){
       Event[1]=2;
