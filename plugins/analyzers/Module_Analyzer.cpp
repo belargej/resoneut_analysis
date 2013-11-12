@@ -1,3 +1,12 @@
+/***********************************************************/
+//Class: Module_Analyzer
+//
+//Author:Sean Kuvin
+//
+//Module_Analyzer serves the simple purpose of creating 1D histograms
+//for all of the module parameters (just as SpecTcl does)
+/***********************************************************/
+
 #include "Module_Analyzer.hpp"
 #include "../../include/RN_Root.hpp"
 #include "../../include/RN_Unpack2Root.hpp"
@@ -89,8 +98,11 @@ bool Module_Analyzer::Begin(){
  
 }
 
-
 bool Module_Analyzer::Process(){
+  return 1;
+}
+
+bool Module_Analyzer::ProcessFill(){
 
   for(unsigned int i=0;i<32;i++){
     if(TDC1[i]>0) hTDC1[i]->Fill(TDC1[i]);

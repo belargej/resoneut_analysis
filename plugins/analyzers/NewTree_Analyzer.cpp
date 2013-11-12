@@ -1,5 +1,26 @@
+/***********************************************************/
+//Class: NewTree_Analyzer
+//
+//Author:Sean Kuvin
+//
+//NewTree_Analyzer class to be inserted in the analyzer list for 
+//producing a new tree.  Branches are created for the original 
+//DataTree format (to allow for immediate reprocessing of the
+//new trees with the same analyzers) as some sorted parameters 
+//the new trees are filtered down by imposing requirements on the
+//analyzers which come before it in the analyzer list.
+//for instance, if trigger::Analyzer is first and a RequireS1()
+//is set, then NewTree_Analyzer will be filtered to require events
+//that have a valid S1 time.
+/***********************************************************/
+
+#ifndef _NTANALYZER_CXX
+#define _NTANALYZER_CXX
+
 #include "NewTree_Analyzer.hpp"
 #include "../../include/RN_Root.hpp"
+#include "S2_Analyzer.hpp"
+using namespace unpacker;
 
 
 NewTree_Analyzer::NewTree_Analyzer()
@@ -17,24 +38,35 @@ bool NewTree_Analyzer::Begin(){
     std::cout<<"new tree has not been created"<<std::endl;   
     exit(EXIT_FAILURE);
   }
+  
  
-  //for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++)
-  //tree->Branch(Form("%s.",(*it).Name().c_str()),"RN_NeutDetector",&(*it));
-  for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++)
-    newtree->Branch(Form("%s.",(*it).Name().c_str()),"RN_S2Detector",&(*it));
-  for(RN_S2ClusterCollectionRef it=si_cluster_.begin();it!=si_cluster_.end();it++)
-    newtree->Branch(Form("%s.",(*it).Name().c_str()),"RN_S2Cluster",&(*it));
-  //for(RN_RFCollectionRef it=rftime.begin();it!=rftime.end();it++)
-  // tree->Branch(Form("%s.",(*it).Name().c_str()),"RN_RFTime",&(*it));
-  //tree->Branch("Narray.","RN_NeutDetectorArray",&Narray);
-  newtree->Branch("ic.","RN_IonChamber",&ic);
-  // tree->Branch("nai.","RN_NaIArray",&nai);
+  newtree->Branch("Event",&Event,"RunNum/I:flag/I:ScalerIDX/I"); 
+  newtree->Branch("prot_E",&si_cal::prot_E);
+  newtree->Branch("prot_dE",&si_cal::prot_dE);
+  newtree->Branch("prot_Theta",&si_cal::prot_theta);
+  newtree->Branch("ADC1",&ADC1,"ADC1[32]/F");
+  newtree->Branch("ADC2",&ADC2,"ADC2[32]/F");
+  newtree->Branch("ADC3",&ADC3,"ADC3[32]/F");
+  newtree->Branch("ADC4",&ADC4,"ADC4[32]/F");
+  newtree->Branch("ADC5",&ADC5,"ADC5[32]/F");
+  newtree->Branch("ADC6",&ADC6,"ADC6[32]/F");
+  newtree->Branch("ADC7",&ADC7,"ADC7[32]/F");
+  newtree->Branch("TDC1",&TDC1,"TDC1[32]/F");
+  newtree->Branch("TDC2",&TDC2,"TDC2[32]/F");
+  newtree->Branch("TDC3",&TDC3,"TDC3[32]/F");
+  newtree->Branch("TDC4",&TDC4,"TDC4[32]/F");
+  newtree->Branch("QDC1",&QDC1,"QDC1[32]/F");
+  newtree->Branch("QDC2",&QDC2,"QDC2[32]/F");
+  newtree->Branch("QDC3",&QDC2,"QDC3[32]/F");
+
   return 1;
 }
 
-
 bool NewTree_Analyzer::Process(){
+  return 1;
+}
 
+bool NewTree_Analyzer::ProcessFill(){
   newtree->Fill();
   return 1;
 }
@@ -42,8 +74,14 @@ bool NewTree_Analyzer::Process(){
 void NewTree_Analyzer::ResetGlobals(){
 }
 
-bool NewTree_Analyzer::Terminate(){
+bool NewTree_Analyzer::TerminateIfLast(){
   rootfile->Write();
   rootfile->Close();
   return 1;
 }
+
+bool NewTree_Analyzer::Terminate(){
+
+}
+
+#endif

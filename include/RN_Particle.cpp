@@ -27,5 +27,10 @@ void RN_Particle::Reset(){
   LV.SetPxPyPzE(0.0,0.0,0.0,mass);
 }
 
+Double_t RN_Particle::KE(){
+  return (LV.E() - LV.M());
+
+}
+
 
 #endif

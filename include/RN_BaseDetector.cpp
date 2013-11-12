@@ -1,3 +1,15 @@
+/************************************************************************
+Class: RN_Base Detector
+Author: Sean Kuvin                             
+
+
+ RN_BaseDetector class: Inserting a hit (energy, time, channel) 
+ is sorted by energy(default) and mult is counted. 
+ Adapted from SpecTcl DetectorParameters.cpp (Diffenderfer, Wiedenhoever)
+
+***********************************************************************/
+
+
 #ifndef __BaseDetector__CXX
 #define __BaseDetector__CXX
 

@@ -1,3 +1,18 @@
+/***************************************************************/
+//Class: S2_IC_Analyzer
+//
+//Author:Sean Kuvin
+//
+//S2_IC_Analyzer is added to the analyzer list just as S2_Analyzer
+//is except now we are looking at Silicon detector parameters
+//alongside Ion Chamber parameters.  The results of sorting through
+//the S2_Analyzer and the IC_analyzer are necessary for proper function
+//of this class. Therefore, both S2_Analyzer and IC_Analyzer must be 
+//added to the analyzer list and they both must be added before this analyzer
+//is added
+/********************************************************************/
+
+
 #ifndef _S2_IC_ANALYZER
 #define _S2_IC_ANALYZER
 #include <TH2.h>
@@ -21,7 +36,9 @@ namespace coinc{
     
     virtual bool Begin();
     virtual bool Process();
+    virtual bool ProcessFill();
     virtual bool Terminate();
+    virtual bool TerminateIfLast();
     virtual void Clear();
     virtual void ResetGlobals();
     

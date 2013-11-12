@@ -352,7 +352,7 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
     backstatus |= (((unsigned int)in.back.Ch(i)));
     ebacktotal = ebacktotal+in.Back_E(i);
     if (addback_back&&
-	(i+1<in.back.fMult)&&(in.back.Ch(i+1)==in.back.Ch(i)+1)){
+	(i+1<in.back.fMult)&&(in.back.Ch(i+1)==in.back.Ch(i)+1 || in.back.Ch(i+1)==in.back.Ch(i)-1)){
       float ecluster=in.Back_E(i)+in.Back_E(i+1);
       float tcluster=(in.Back_T(i+1)+in.Back_T(i))/2;
       float chnew=(in.back.Ch(i+1)+in.back.Ch(i))/2.0;
@@ -375,7 +375,7 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
   for (i=0;i<in.front.fMult;i++){
     frontstatus |= (((unsigned int)in.front.Ch(i)));
     if (addback_front&&
-	(i+1<in.front.fMult)&&(in.front.Ch(i+1)==in.front.Ch(i)+1)){
+	(i+1<in.front.fMult)&&(in.front.Ch(i+1)==in.front.Ch(i)+1 || in.front.Ch(i+1)==in.front.Ch(i)-1)){
  
  
       float ecluster=in.Front_E(i+1)+in.Front_E(i);

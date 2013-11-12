@@ -41,7 +41,7 @@ public:
   RN_MassTable mtable;//!
 
   std::string Name()const {return fName;}
-  
+  Double_t KE();
   void Reset();
 
   ClassDef(RN_Particle,1);

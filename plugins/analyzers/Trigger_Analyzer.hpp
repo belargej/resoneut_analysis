@@ -14,6 +14,12 @@ std::vector<float>triggerinfo, which provides the trigger information.
 each element in the triggerinfo is a ratio of how close the TDC time was
 to the expected location of the time determining peak which the user must
 specify using SetTriggerLocs.
+
+Require_____() can also be set to make explicit filtering requirements on 
+the data since Trigger_Analyzer will typically come first or early in the
+analyzer list.  If RequireS1() is set before sorting the data
+then events which do not have a valid S1 time will be prevented from proceeding
+to analyzers which follow this one.
 *******************************************************************/
 
 

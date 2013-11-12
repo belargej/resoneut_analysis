@@ -1,3 +1,15 @@
+/***********************************************************/
+//Class: S2_Analyzer
+//
+//Author:Sean Kuvin
+//
+//S2 Analyzer class to be inserted in the analyzer list for 
+//sorting S1 and S2 type detectors. Making Histograms, 
+//Loading Cuts, and checking validity of cuts should 
+//all be performed here when considering Silicon detector 
+//parameters on their own. 
+/***********************************************************/
+
 #ifndef _S2ANALYZER
 #define _S2ANALYZER
 #include <TH2.h>
@@ -11,6 +23,8 @@
 
 namespace si_cal{
 
+
+
   class S2_Analyzer:public RN_Analyzer{
   private:
     int ind_;
@@ -23,7 +37,9 @@ namespace si_cal{
     
     virtual bool Begin();
     virtual bool Process();
+    virtual bool ProcessFill();
     virtual bool Terminate();
+    virtual bool TerminateIfLast();
     virtual void Clear();
     virtual void ResetGlobals();
     
@@ -34,7 +50,8 @@ namespace si_cal{
   extern TCutG* prots1;
   extern TCutG* prots2;
   extern TCutG* alphas;
-
+  extern int _require_proton;
+  extern int _require_alpha;
   extern int protcheck;
   extern int prot2check;
   extern int alphacheck;
@@ -42,7 +59,8 @@ namespace si_cal{
   extern double prot_dE;
   extern double prot_theta;
 
-
+  void RequireProton();
+  void RequireAlpha();
   void LoadGates(const std::string &input);  
   void ClearGates();  
 

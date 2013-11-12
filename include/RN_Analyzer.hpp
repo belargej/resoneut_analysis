@@ -1,15 +1,17 @@
-/////////////////////////////////////////////////////////////////////////////////////
-//** Analyzer class follows the form of a simple MakeClass designed to
-//** read the tree structure of data extracted by the Unpack2Root Method.
-//** Approach this class in two ways,first by overriding the Begin(),Process(), 
-//** and Terminate() methods to create, fill and write histograms or new
-//** trees. The second by instantiating an object of RN_Analyzer and calling the
-//** GetDetectorEntry() function   
-//** from a Loop function in a different application. 
-//
-//
-//                 Author: Sean Kuvin                             
-//***********************************************************************************/
+/*************************************************************************
+Class: RN_Analyzer
+Author: Sean Kuvin
+
+Analyzer class follows the form of a simple MakeClass designed to
+read the tree structure of data extracted by the Unpack2Root Method.
+Approach this class in two ways,first by overriding the Begin(),Process(), 
+and Terminate() methods to create, fill and write histograms or new
+trees. The second by instantiating an object of RN_Analyzer and calling the
+GetDetectorEntry() function   
+from a Loop function in a different application. 
+Add user analyzers to the "analyzer" list(which is global in RN_Root) 
+
+*******************************************************************/
 
 
 #ifndef RESONEUT_ANALYZER_H
@@ -75,8 +77,10 @@ public:
   // Methods.
   virtual bool Begin();
   virtual void Loop(Long64_t start=0,Long64_t evnum=0);
+  virtual bool ProcessFill(){return true;};
   virtual bool Process(){return true;};
   virtual bool Terminate(){return true;};
+  virtual bool TerminateIfLast(){return true;};
   virtual void Clear(){};
   virtual void ResetGlobals(){};
   Long64_t TotEntries() const{return fChain->GetEntries();} 

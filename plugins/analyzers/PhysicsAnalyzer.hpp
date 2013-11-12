@@ -1,3 +1,12 @@
+/*************************************************************/
+//Class: Physics_Analyzer
+//
+//Author:Sean Kuvin
+//
+//Physics Analyzer class to be inserted in the analyzer list for 
+//calculating physical parameters using the detector parameters
+/**************************************************************/
+
 #ifndef _PHYSICSANALYZER_H
 #define _PHYSICSANALYZER_H
 #include <TH2.h>
@@ -19,8 +28,10 @@ namespace physical{
     
     virtual bool Begin();
     virtual bool Process();
+    virtual bool ProcessFill();
     virtual void Clear(){};
     virtual bool Terminate();
+    virtual bool TerminateIfLast();
     virtual void ResetGlobals();
     
     

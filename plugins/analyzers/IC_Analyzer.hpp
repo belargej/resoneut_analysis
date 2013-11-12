@@ -1,3 +1,18 @@
+
+/***********************************************************/
+//Class: IC_Analyzer
+//
+//Author:Sean Kuvin
+//
+//IC Analyzer class to be inserted in the analyzer list for 
+//sorting Ion Chamber parameters. Making Histograms, 
+//Loading Cuts, and checking validity of cuts should 
+//all be performed here when considering Ion chamber 
+//parameters on their own. 
+/***********************************************************/
+
+
+
 #ifndef _ICANALYZER_H
 #define _ICANALYZER_H
 #include <TH2.h>
@@ -21,7 +36,10 @@ namespace ionchamber{
     
     virtual bool Begin();
     virtual bool Process();
+    virtual bool ProcessFill();
+    virtual void ResetGlobals();
     virtual bool Terminate();
+    virtual bool TerminateIfLast();
     virtual void Clear();
     
     
@@ -33,7 +51,8 @@ namespace ionchamber{
   extern TCutG* ede_hi3;
 
   extern int hi_check[3];
-
+  extern Double32_t IC_TotalE;
+  extern Double32_t IC_ELoss;
 
   void LoadGates(const std::string &input);  
   void ClearGates();  

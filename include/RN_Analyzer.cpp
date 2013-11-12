@@ -1,7 +1,17 @@
-////////////////////////////////////////////////////////////////////////
-///Originally Created by: Sean Kuvin- 2013                             
-///RN_Analyzer functions like a basic MakeClass for the DataTree TTree
-////////////////////////////////////////////////////////////////////////
+/*************************************************************************
+Class: RN_Analyzer
+Author: Sean Kuvin
+
+Analyzer class follows the form of a simple MakeClass designed to
+read the tree structure of data extracted by the Unpack2Root Method.
+Approach this class in two ways,first by overriding the Begin(),Process(), 
+and Terminate() methods to create, fill and write histograms or new
+trees. The second by instantiating an object of RN_Analyzer and calling the
+GetDetectorEntry() function   
+from a Loop function in a different application. 
+Add user analyzers to the "analyzer" list(which is global in RN_Root) 
+
+*******************************************************************/
 
 #ifndef _RN_ANALYZER_CXX
 #define _RN_ANALYZER_CXX
@@ -28,13 +38,19 @@ void RN_Analyzer::Init(TString rootfilename)
    // code, but the routine can be extended by the user if needed.
    // Init() will be called many times when running on PROOF
    // (once per file to be processed)
+
   if(!RN_RootSet)
     RN_RootInit();
   
   
   fChain=new TChain("DataTree");
   fChain->Add(rootfilename);
-  
+
+  if(fChain->GetBranch("Event"))
+    fChain->SetBranchAddress("Event",&Event, &b_Event);
+  else
+    std::cout<<"No Event Branch Present, check in sorting code"<<std::endl;
+
   if(fChain->GetBranch("ADC1"))
     fChain->SetBranchAddress("ADC1", &ADC1, &b_ADC1);
    else
@@ -99,22 +115,25 @@ bool RN_Analyzer::Begin(){
   return 1;
 }
 
-
 void RN_Analyzer::Loop(Long64_t start,Long64_t evnum){
   Long64_t totentries= TotEntries();    
   if (start!=0&&evnum!=0)
     if(start+evnum<totentries)
       totentries=start+evnum;
-
+  
   Begin();
-  TIter next(analyzers);
+  TIter next(analyzers); // point to analyzers added to the list
+  int fillbit = 1;
+  //loop over all analyzer Begin() 's;
   while(RN_Analyzer * obj =  (RN_Analyzer*)next()){
     obj->Begin();
   }
   next.Reset();
   
   for (Long64_t i=start;i<totentries;i++){
+    fillbit = 1;
     ResetGlobals();
+    //loop over all analyzer ResetGlobals() 's
     while(RN_Analyzer * obj = (RN_Analyzer*)next()){
       obj->ResetGlobals();
     }
@@ -122,21 +141,35 @@ void RN_Analyzer::Loop(Long64_t start,Long64_t evnum){
 
     GetDetectorEntry(i);
 
+    //loop over all analyzer Process() 's
     Process();
     while(RN_Analyzer * obj = (RN_Analyzer*)next()){
-      if(!obj->Process())
+      if(!obj->Process()){
+	fillbit=0;
 	break;
+      }
     }
     next.Reset();
-
+    if(fillbit){
+      while(RN_Analyzer * obj = (RN_Analyzer*)next()){
+	obj->ProcessFill();
+      }
+    }
+    
+    next.Reset();
 
   }
+ 
+  next.Reset();
+
+  //execute the TerminateIfLast() of the last analyzer in the list. 
   
   if(RN_Analyzer * obj =  (RN_Analyzer*)analyzers->Last())
-    obj->Terminate();
-  else
-    Terminate();
+    obj->TerminateIfLast();
 
+  while(RN_Analyzer * obj = (RN_Analyzer*)next()){
+    obj->Terminate();
+  }
 }
 
 
@@ -174,7 +207,7 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
   
 
 
-
+  //extract from the tree all of the module parameters
   if(!GetEntry(entry,getall)){
     
     return 0;
@@ -267,13 +300,14 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
   if(TDC1[3]>0)triggerbit[0].fBit=TDC1[3];
   if(TDC1[4]>0)triggerbit[1].fBit=TDC1[4];
   
- 
+  //reconstruct neutron detector hits for all neutron detectors 
+  //in NeutCollection
   Narray.ReconstructHits(neut);
   if(Narray.fMult>1)
     RNArray::ReconstructTREL(neut);
   
-  
-  int cref=0;
+  //recontruct clusters for all silicon detectors in S2Collection
+  unsigned int cref=0;
   for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
     if(cref<si_cluster_.size())
       si_cluster_[cref].ReconstructClusters(*it);
@@ -281,7 +315,7 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
     
   }
   
- 
+  return 1;
 }
 
 

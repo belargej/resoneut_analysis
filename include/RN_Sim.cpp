@@ -28,6 +28,7 @@ namespace sim{
   TH1D* hQ_n[NEUTNUM];
   TH1D* h_nKE;
   TH1D* h_hiKE;
+  TH1D* hQ_proton;
   TF1* TOF_fit_n[NEUTNUM];
   TF1* Q_fit_n[NEUTNUM];
   TF1* Q_fit;
@@ -37,6 +38,7 @@ namespace sim{
   double n_cm;
   double n_tof;
   double fNe,fNt;
+  double q_val_p;
 
   Long64_t totevents;
 
@@ -88,8 +90,15 @@ namespace sim{
 	{
 	  if (input.size()==7){
 	    particle.clear();
-	    for(unsigned int i=1;i<7;i++)
-	    particle.push_back(RN_Particle(input[i]));
+	    for(unsigned int i=1;i<7;i++){
+	      particle.push_back(RN_Particle(input[i]));
+	    }
+	    global::m_beam = particle[0].mass;
+	    global::m_target = particle[1].mass;
+	    global::m_recoil = particle[2].mass;
+	    global::m_frag = particle[3].mass;
+	    global::m_decay_product = particle[4].mass;
+	    global::m_heavy_decay = particle[5].mass;
 	  }
 	  else {
 	    std::cout<<"incorrect number of entries to fReaction: "<< input.size()-1<<"but needed 6"<<std::endl;
@@ -170,7 +179,16 @@ namespace sim{
     }
     cref++;
   }
+  double p_ke=particle[4].KE();
+  double p_theta=particle[4].LV.Theta();
+  double hi_ke=particle[3].KE();
 
+  
+  q_val_p = (p_ke* (1 + (global::m_decay_product / global::m_heavy_decay)) 
+	       - (hi_ke * ( 1 - (global::m_frag / global::m_heavy_decay)))
+	       - ((2 / global::m_heavy_decay) * TMath::Sqrt(p_ke * global::m_decay_product * hi_ke * global::m_frag) * cos(p_theta)));
+    
+  hQ_proton->Fill(q_val_p);
   
   }
 
@@ -221,6 +239,7 @@ void RN_Sim::initHists(){
     Q_fit_n[i]=new TF1(Form("Q_fit_n%d",i),"gaus",-4,4);
   }
   simfile->cd();
+  hQ_proton=new TH1D("hQ_proton","hQ_proton;Q",512,-10,10);
   h_nKE=new TH1D("h_nKE","h_nKE",1024,0,1);
   h_hiKE=new TH1D("h_hiKE","h_hiKE",1024,0,100);
   hE_v_theta=new TH2D("hE_v_theta","hE_v_theta",180,0,179,512,0,20);
@@ -357,6 +376,7 @@ double RN_Sim::QValue(const double deltaz/*mm*/, const double tof /*ns*/,double&
 void RN_Sim::Reset(){
   E_deposited=0;
   n_tof=0;
+  q_val_p=0;
    
   for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){ 
     (*it).Reset();  

@@ -44,7 +44,8 @@ namespace unpacker{
   float QDC1[32];
   float QDC2[32];
   float QDC3[32];
-  
+
+  TBranch        *b_Event;  //!
   TBranch        *b_ADC1;   //!
   TBranch        *b_ADC2;   //!
   TBranch        *b_ADC3;   //!

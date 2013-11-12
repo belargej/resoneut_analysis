@@ -1,5 +1,17 @@
-#ifndef _PSDANALYZER
-#define _PSDANALYZER
+/***************************************************************/
+//Class: NeutAnalyzer
+//
+//Author:Sean Kuvin
+//
+//NeutAnalyzer is added to the analyzer list to sort neutron detector
+//parameters.  Make histograms, load cuts, and check cuts 
+//using parameters related to the neutron detector pulse shape
+// discrimination spectra.  Also, neutron timing.
+/********************************************************************/
+
+
+#ifndef _PSDANALYZER_H
+#define _PSDANALYZER_H
 #include <TH2.h>
 #include <TFile.h>
 #include <cstdlib>
@@ -24,8 +36,9 @@ namespace psd{
     virtual bool Begin();
     
     virtual bool Process();
+    virtual bool ProcessFill();
     virtual bool Terminate();
-    
+    virtual bool TerminateIfLast();
     virtual void Clear(){};
     virtual void ResetGlobals();
 

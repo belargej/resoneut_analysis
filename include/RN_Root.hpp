@@ -82,6 +82,7 @@ namespace global{
   extern double m_decay_product;
   extern double hi_ex_set;
   extern double d_ex_set;
+  extern double E_fragment;
   extern TRandom3 myRnd;
 
 

@@ -41,6 +41,7 @@ namespace global{
   double m_decay_product(0);
   double hi_ex_set(0);
   double d_ex_set(0);
+  double E_fragment(0);
   TRandom3 myRnd(0);
   
   
@@ -203,6 +204,7 @@ void SetCalibrations(){
   DetVar.GetParam("global.beam_e",global::beam_e);
   DetVar.GetParam("global.beam_eloss",global::beam_eloss);
   DetVar.GetParam("global.hi_ex_set",global::hi_ex_set);
+  DetVar.GetParam("global.E_fragment",global::E_fragment);
   if(global::beam_e>0) global::beam_est = global::beam_e - global::beam_eloss*.5;
   
   for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){

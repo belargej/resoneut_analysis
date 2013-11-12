@@ -9,7 +9,7 @@ INC_DIR=-I${ROOTSYS}/include -I.
 
 SUB_DIRS=include plugins/sak plugins/analyzers
 
-OBJLIBS= libRNeut.so libRNanalyzers.so libSAK.so
+OBJLIBS= libRNeut.so libSAK.so libRNanalyzers.so 
 
 LIBS= -lRNeut -lRNanalyzers -lSAK
 

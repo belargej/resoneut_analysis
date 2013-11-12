@@ -1,3 +1,16 @@
+/***************************************************************/
+//Class: NeutAnalyzer
+//
+//Author:Sean Kuvin
+//
+//NeutAnalyzer is added to the analyzer list to sort neutron detector
+//parameters.  Make histograms, load cuts, and check cuts 
+//using parameters related to the neutron detector pulse shape
+// discrimination spectra.  Also, neutron timing.
+/********************************************************************/
+#ifndef _PSD_ANALYZER_CXX
+#define _PSD_ANALYZER_CXX
+
 #include "PSD_Analyzer.hpp"
 
 
@@ -250,44 +263,43 @@ namespace psd{
       neut_sansgamma_orcheck = neut_sansgamma[i] || neut_sansgamma_orcheck;
       rawneut_sansrawgamma_orcheck = rawneut_sansrawgamma[i] || rawneut_sansrawgamma_orcheck;
     }
-		       
-    for (int i=0;i<NEUTNUM;i++){
-      if(i>=neut.size())
-	break;
-      hPSDq_n[i]->Fill(neut[i].fQ_long,neut[i].fQ_short);
-      hQvT_n[i]->Fill(neut[i].fTrel,neut[i].fQ_long);
-      if(rawneut_orcheck)hQvT_ngated[i]->Fill(neut[i].fTrel,neut[i].fQ_long);
-      if(evtcheck[i])hPSDq_n_evtgated[i]->Fill(neut[i].fQ_long,neut[i].fQ_short);
-    }
+		           
+    return 1; 
+  }
 
+  bool NeutAnalyzer::ProcessFill(){
     
-    
- 
-    //Fill calpar.Histograms below this line
-    /*************************************************************/
     h_ndetMult->Fill(Narray.fMult);  
     
     for(int i=0;i<NEUTNUM;i++){
       if(i>=neut.size())
 	break;
-    hPSD_n_[i]->Fill(neut[i].fPSD,neut[i].fQ_long); 
-    }
+      hPSD_n_[i]->Fill(neut[i].fPSD,neut[i].fQ_long); 
+      hPSDq_n[i]->Fill(neut[i].fQ_long,neut[i].fQ_short);    
     
+    hQvT_n[i]->Fill(neut[i].fTrel,neut[i].fQ_long);
     if(rawneut_orcheck){
       h_ndetMult_ngated->Fill(Narray.fMult);
+      hQvT_ngated[i]->Fill(neut[i].fTrel,neut[i].fQ_long);
     }
-
+    if(evtcheck[i])
+      hPSDq_n_evtgated[i]->Fill(neut[i].fQ_long,neut[i].fQ_short);
+    }
+    
     return 1;
   }
 
   
   bool NeutAnalyzer::Terminate(){
-    rootfile->Write();
-    rootfile->Close();
-    
     return 1;
   }
   
+  bool NeutAnalyzer::TerminateIfLast(){
+    rootfile->Write();
+    rootfile->Close();
+    return 1;
+  }
+
   void LoadGates(const std::string& input){
     sak::LoadCuts in(input.c_str());    
     if(in.getCut("n0_neuts") && !n0_neuts)
@@ -453,7 +465,9 @@ namespace psd{
 }
 
   
-		       
+	
+
+#endif	       
 
 
 
