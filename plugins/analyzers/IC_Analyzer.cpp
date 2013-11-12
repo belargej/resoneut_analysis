@@ -80,9 +80,9 @@ namespace ionchamber{
   }
   
   bool IC_Analyzer::ProcessFill(){
-  
+    
     hIC_ede->Fill(IC_TotalE,IC_ELoss);
-  
+    
     if(hi_check[0]){
       h_IC_t_F17gated->Fill(TDC1[1]);
     }

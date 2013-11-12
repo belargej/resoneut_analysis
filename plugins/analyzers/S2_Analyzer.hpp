@@ -52,6 +52,7 @@ namespace si_cal{
   extern TCutG* alphas;
   extern int _require_proton;
   extern int _require_alpha;
+  extern int _require_thetatheta;
   extern int protcheck;
   extern int prot2check;
   extern int alphacheck;
@@ -61,6 +62,7 @@ namespace si_cal{
 
   void RequireProton();
   void RequireAlpha();
+  void RequireThetaTheta();
   void LoadGates(const std::string &input);  
   void ClearGates();  
 

@@ -19,6 +19,7 @@
 
 namespace physical{
 
+  sak::Hist1D *Q_Value;
   sak::Hist1D *Q_Value_proton;
   sak::Hist1D *Q_Value_protontheta;
   sak::Hist1D *Q_Value_protontheta_F17;
@@ -54,6 +55,7 @@ namespace physical{
     rootfile->mkdir("physical/Q");
   
     rootfile->cd("physical/Q");
+    Q_Value=new sak::Hist1D("Q_val_p","Q_value",1024,-10,10);
     Q_Value_proton=new sak::Hist1D("Q_val_proton","Q_value",1024,-10,10);
     Q_Value_proton_F17=new sak::Hist1D("Q_val_proton_F17","Q_value",1024,-10,10);
     Q_Value_proton_O16=new sak::Hist1D("Q_val_proton_O16","Q_value",1024,-10,10);
@@ -85,6 +87,8 @@ namespace physical{
   }
   
   bool Physics_Analyzer::ProcessFill(){
+    Q_Value->Fill(q_val_p);
+
     if(si_cal::protcheck){
       Q_Value_proton->Fill(q_val_p);
       

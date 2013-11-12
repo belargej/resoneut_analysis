@@ -22,10 +22,12 @@ namespace si_cal{
   TCutG* thetatheta_cut;
   int _require_proton(0);
   int _require_alpha(0);
+  int _require_thetatheta(0);
 
   int protcheck(0);
   int prot2check(0);
   int alphacheck(0);
+  int thetathetacheck(0);
 
   double prot_E(0);
   double prot_dE(0);
@@ -80,10 +82,11 @@ namespace si_cal{
   void S2_Analyzer::ResetGlobals(){
     prot_E=0;
     prot_dE=0;
+    prot_theta=0;  
     protcheck=0;
     prot2check=0;
     alphacheck=0;
-    prot_theta=0;
+    thetathetacheck=0;
 
   }
 
@@ -251,8 +254,7 @@ namespace si_cal{
     
     return 1;
   }  
-    
-    
+  
   
 
   bool S2_Analyzer::Process(){
@@ -264,7 +266,6 @@ namespace si_cal{
     if(si_cluster_[1].fMult>0&&si_cluster_[0].fMult>0){
       prot_dE=si_cluster_[1].fE[0];
       prot_E=si_cluster_[0].fE[0]+prot_dE;
-      hpede->Fill(prot_E,prot_dE);
       //prot_theta=si_cluster_[1].fPos[0].Theta()*(180/3.14);
       prot_theta=si_cluster_[0].fPos[0].Theta()*(180/3.14);
    
@@ -279,6 +280,10 @@ namespace si_cal{
     if(si_cal::alphas)
       alphacheck=si_cal::alphas->IsInside(prot_E,prot_dE);
 
+    if(si_cal::thetatheta_cut){
+      thetathetacheck= si_cal::thetatheta_cut->IsInside(si_cluster_[0].fPos[0].Theta()*180/3.14,si_cluster_[1].fPos[0].Theta()*180/3.14);
+    }
+
     //if proton gate is not passed return 0 (abort analyzers)
     if(_require_proton && !protcheck){
       return 0;
@@ -287,7 +292,13 @@ namespace si_cal{
     //if alpha gate is not passed return 0 (abort analyzers)
     if(_require_alpha && !alphacheck){
       return 0;
-    }  
+    }
+  
+    if(_require_thetatheta && !thetathetacheck){
+      return 0;
+    }
+
+
     return 1;
   }
   bool S2_Analyzer::ProcessFill(){
@@ -323,6 +334,7 @@ namespace si_cal{
     }
     if(si_cluster_[1].fMult>0&&si_cluster_[0].fMult>0){
       hS1Theta_vS2Theta->Fill(si_cluster_[0].fPos[0].Theta()*180/3.14,si_cluster_[1].fPos[0].Theta()*180/3.14);
+      hpede->Fill(prot_E,prot_dE);
     }
   
     if(si_[0].Back_T(0)>0){
@@ -404,6 +416,10 @@ namespace si_cal{
 
   void RequireAlpha(){
     _require_alpha=1;
+  }
+
+  void RequireThetaTheta(){
+    _require_thetatheta=1;
   }
 
 
