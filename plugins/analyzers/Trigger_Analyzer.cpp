@@ -56,6 +56,7 @@ namespace trigger{
   int require_ic(0);
   int require_ntmult(0);
   int require_nemult(0);
+  int _requireOFF_nai(0);
 
   double S1_eps(0.0);
   double neut_eps(0.0);
@@ -78,7 +79,7 @@ namespace trigger{
   void RequireNaI(){require_nai=1;}
   void Require_NTMult(int mult){require_ntmult=mult;}
   void Require_NEMult(int mult){require_nemult=mult;}
-
+  void RequireOFF_NaI(){_requireOFF_nai = 1;}
   
 
 
@@ -169,14 +170,14 @@ namespace trigger{
 
       if(nai[i].fT[0]>0){
 	nai_up_tmult++;
-	if(nai[i].T(0)<nai_up_tfirst){
-	  nai_up_tfirst=nai[i].T(0);  
+	if(nai[i].T1()<nai_up_tfirst){
+	  nai_up_tfirst=nai[i].T1();  
 	}
       }
       if(nai[i].fT[1]>0){
 	nai_down_tmult++;
-	if(nai[i].T(1)<nai_down_tfirst){
-	  nai_down_tfirst=nai[i].T(1);  
+	if(nai[i].T2()<nai_down_tfirst){
+	  nai_down_tfirst=nai[i].T2();  
 	}
       }
     }
@@ -239,6 +240,8 @@ namespace trigger{
     if(require_nai && !(triggerinfo[2]||triggerinfo[3]))
       return 0;
 
+    if(_requireOFF_nai && (triggerinfo[2]||triggerinfo[3]))
+      return 0;
 
 
     /*

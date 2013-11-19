@@ -1,20 +1,14 @@
 /***************************************************************/
-//Class: NaI_Neut_Analyzer
+//Class: NaI_Analyzer
 //
 //Author:Sean Kuvin
 //
-//NaI_Neut_Analyzer is added to the analyzer list just as NaI_Analyzer
-//is except now we are looking at NaI parameters
-//alongside Neut parameters.  The results of sorting through
-//the Neut_analyzer is necessary for proper function
-//of this class. Therefore, Neut_Analyzer must be 
-//added to the analyzer list and must be added before this analyzer
-//is added
+//NaI_Analyzer is added to the analyzer list to sort NaI parameters
 /********************************************************************/
 
 
-#ifndef _NAI_NEUTANALYZER_H
-#define _NAI_NEUTANALYZER_H
+#ifndef _NAI_ANALYZER_H
+#define _NAI_ANALYZER_H
 #include <TH2.h>
 #include <TFile.h>
 #include <cstdlib>
@@ -26,15 +20,15 @@
 #include "plugins/sak/sak_Gates.hpp"
 #include "../../include/RN_Root.hpp"
 
-namespace coinc{
+namespace gamma_nai{
 
-  class NaI_NeutAnalyzer:public RN_Analyzer{
+  class NaI_Analyzer:public RN_Analyzer{
   private:
   
   public:
   
-    NaI_NeutAnalyzer();
-    virtual ~NaI_NeutAnalyzer(){};
+    NaI_Analyzer();
+    virtual ~NaI_Analyzer(){};
   
     virtual bool Begin();
   
@@ -48,14 +42,14 @@ namespace coinc{
     virtual void ResetGlobals();
 
   
-    ClassDef(NaI_NeutAnalyzer,0);
+    ClassDef(NaI_Analyzer,0);
   
 
   };
 
   
   extern Double32_t nai_t;
-  extern Double32_t neut_t;
+ 
 
 
 }

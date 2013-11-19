@@ -50,18 +50,27 @@ namespace si_cal{
   extern TCutG* prots1;
   extern TCutG* prots2;
   extern TCutG* alphas;
+  extern TCutG* ptheta_cut;
+  extern TCutG* thetatheta_cut;
+
   extern int _require_proton;
   extern int _require_alpha;
   extern int _require_thetatheta;
+  extern int _require_ptheta;
   extern int protcheck;
   extern int prot2check;
   extern int alphacheck;
   extern double prot_E;
   extern double prot_dE;
   extern double prot_theta;
+  extern double rel_angle;
+  extern double rel_z;
+  extern double rel_transverse;
+
 
   void RequireProton();
   void RequireAlpha();
+  void RequirePThetaCut();
   void RequireThetaTheta();
   void LoadGates(const std::string &input);  
   void ClearGates();  

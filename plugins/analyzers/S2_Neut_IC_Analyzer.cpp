@@ -13,7 +13,10 @@ namespace coinc{
 
   sak::Histogram2D *hpede_rawneut;    
   sak::Histogram2D *hpede_rawgamma;  
-  sak::Histogram2D *hpede_rawneutsansgamma;  
+  sak::Histogram2D *hpede_rawneutsansgamma;
+
+  sak::Histogram2D *hevt_rawneut;
+  
   sak::Histogram2D *h_n_t_v_si_t;
   sak::Histogram2D *h_n_t_v_si_t_protongated;
   sak::Histogram2D *h_nai_t_v_si_t;
@@ -75,8 +78,10 @@ namespace coinc{
     rootfile->mkdir("coinc/S2_Neut/timing/neutPSD/F17/MCP");
     rootfile->mkdir("coinc/S2_Neut/timing/F17/MCP");
     rootfile->mkdir("coinc/NaI_S2");    
+    
+    rootfile->cd();
 
-
+    hevt_rawneut=new sak::Hist2D("hpEvT_rawneut","Theta","E [MeV]",180,0,179,256,0,20);
 
     rootfile->cd("coinc/S2_Neut/PSD");
     for(int i=0;i<NEUTNUM;i++){
@@ -89,6 +94,7 @@ namespace coinc{
     hpede_rawneut=new sak::Hist2D("hpEdE_rawneut","E [MeV]","dE [MeV]",64,0,20,64,0,6);
     hpede_rawneutsansgamma=new sak::Hist2D("hpEdE_rawneut_sansgamma","E [MeV]","dE [MeV]",64,0,20,64,0,6);
     hpede_rawgamma=new sak::Hist2D("hpEdE_rawgamma","E [MeV]","dE [MeV]",64,0,20,64,0,6);
+   
 
     rootfile->cd("coinc/S2_Neut/timing");
     h_n_t_v_si_t = new  sak::Hist2D("h_n_t_v_si_t","n_t","si_t",1024,0,4095,1024,0,4095);
@@ -154,6 +160,11 @@ namespace coinc{
 
     if(nai_t>0&&si_t>0)
       h_nai_t_v_si_t->Fill(nai_t,si_t);
+    
+    if(si_cal::protcheck && psd::rawneut_orcheck){
+      hevt_rawneut->Fill(si_cal::prot_theta,si_cal::prot_E);
+    }
+
 
     if(neut_t>0 && si_t>0){
       h_n_minus_sit->Fill(neut_t-si_t);

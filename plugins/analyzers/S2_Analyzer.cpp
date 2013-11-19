@@ -18,20 +18,26 @@
 namespace si_cal{
   TCutG* prots1;
   TCutG* prots2;
+  TCutG* ptheta_cut;
   TCutG* alphas;
   TCutG* thetatheta_cut;
   int _require_proton(0);
   int _require_alpha(0);
   int _require_thetatheta(0);
+  int _require_ptheta(0);
 
   int protcheck(0);
   int prot2check(0);
+  int pthetacheck(0);
   int alphacheck(0);
   int thetathetacheck(0);
 
   double prot_E(0);
   double prot_dE(0);
   double prot_theta(0);
+  double rel_angle(0);
+  double rel_transverse(0);
+  double rel_z(0);
 
   TH2D *hpede;  
   TH1D *h_si_[2];
@@ -50,6 +56,15 @@ namespace si_cal{
   TH1D *h_chlistb[2];
   TH1D *h_chlist_cluster_ring[2];
   TH1D *h_chlist_cluster_segment[2];
+
+  TH2D *h_chS1_chS2_rings;
+  TH2D *h_chS1_chS2_segments;
+
+  TH2D *h_ch_f0vf1[2];
+  TH2D *h_e_f0vf1[2];
+  TH2D *h_ch_f0vQuadrant[2];
+  TH2D *h_e_f0vQuadrant[2];
+
 
   TH2D *hS1Theta_vS2Theta; 
   TH2D *hS1Theta_vS2Theta_prot; 
@@ -80,13 +95,21 @@ namespace si_cal{
   }
 
   void S2_Analyzer::ResetGlobals(){
-    prot_E=0;
-    prot_dE=0;
-    prot_theta=0;  
-    protcheck=0;
-    prot2check=0;
-    alphacheck=0;
-    thetathetacheck=0;
+    
+    //silicon telescope parameters
+    prot_E = 0;
+    prot_dE = 0;
+    prot_theta = 0;  
+    rel_angle = 0;
+    rel_z = 0;
+    rel_transverse = 0;
+
+    //silicon telescope gate results
+    protcheck = 0;
+    prot2check = 0;
+    alphacheck = 0;
+    pthetacheck = 0;
+    thetathetacheck = 0;
 
   }
 
@@ -176,6 +199,7 @@ namespace si_cal{
     }
     
     rootfile->mkdir("Silicon/f2b_ratio");
+    rootfile->mkdir("Silicon/f2b_ratio/charge_sharing");
     rootfile->mkdir("Silicon/f2b_ratio/S1");
     rootfile->mkdir("Silicon/f2b_ratio/S2");
     rootfile->mkdir("Silicon/ede");
@@ -200,6 +224,10 @@ namespace si_cal{
     h_chlist_cluster_segment[0]=new TH1D("h_chlist_cluster_segment_S1","Chlist_cluster_segment_S1;Ch",20,-1,18);
     h_chlist_cluster_segment[1]=new TH1D("h_chlist_cluster_segment_S2","Chlist_cluster_segment_S2;Ch",20,-1,18);
 
+
+    h_chS1_chS2_rings=new TH2D("h_chS1_chS2_rings","h_chS1_chS2_rings;s1rings;s2rings",17,0,16,17,0,16);
+    h_chS1_chS2_segments = new TH2D("h_chS1_chS2_segments","h_chS1_chS2_segments;s1segments;s2segments",17,0,16,17,0,16);
+
     rootfile->cd("Silicon/f2b_ratio");
     for(int i=0;i<16;i++){
       rootfile->cd("Silicon/f2b_ratio/S1");
@@ -207,6 +235,17 @@ namespace si_cal{
       rootfile->cd("Silicon/f2b_ratio/S2");
       front[1][i]=new TH2D(Form("s2_fc%d_corr",i),Form("s2_fc%d_corr;channel;ratio",i),17,0,16,512,0,2);
     }
+
+    rootfile->cd("Silicon/f2b_ratio/charge_sharing");
+    for(unsigned int i=0;i<2;i++){
+      h_ch_f0vf1[i]=new TH2D(Form("h_ch_f0vf1_s%d",i+1),Form("h_ch_f0vf1_s%d;ch_f0;ch_f1",i+1),17,0,16,17,0,16);
+      h_e_f0vf1[i]=new TH2D(Form("h_e_f0vf1_s%d",i+1),Form("h_e_f0vf1_s%d;e_f0;e_f1",i+1),128,0,16,128,0,16);
+      h_ch_f0vQuadrant[i]=new TH2D(Form("h_ch_f0vQuadrant_s%d",i+1),Form("h_ch_f0vQuadrant_s%d;ch_f0;Quadrant",i+1),17,0,16,5,0,4);
+      h_e_f0vQuadrant[i]=new TH2D(Form("h_e_f0vQuadrant_s%d",i+1),Form("h_e_f0vQuadrant_s%d;e_f0;Quadrant",i+1),128,0,16,5,0,4);
+    }
+ 
+
+
     rootfile->cd("Silicon/ede");
     hpede=new TH2D("hpEdE","siPID;E[MeV];dE[MeV]",64,0,20,64,0,6);
 
@@ -258,10 +297,6 @@ namespace si_cal{
   
 
   bool S2_Analyzer::Process(){
-    protcheck=0;
-    prot_E=0;
-    prot_dE=0;
-    prot_theta=0;
  
     if(si_cluster_[1].fMult>0&&si_cluster_[0].fMult>0){
       prot_dE=si_cluster_[1].fE[0];
@@ -270,19 +305,26 @@ namespace si_cal{
       prot_theta=si_cluster_[0].fPos[0].Theta()*(180/3.14);
    
     }
+    rel_transverse = (si_cluster_[0].fPos[0].Perp()-si_cluster_[1].fPos[0].Perp());
+    rel_z = (si_cluster_[0].fPos[0].Z() - si_cluster_[1].fPos[0].Z());
+    rel_angle = TMath::ATan2(rel_transverse , rel_z) * 180 / 3.14;
+    
+
 
     if(si_cal::prots1)
       protcheck=si_cal::prots1->IsInside(prot_E,prot_dE);
   
     if(si_cal::prots2)
       prot2check=si_cal::prots2->IsInside(prot_E,prot_dE);
-  
+    
     if(si_cal::alphas)
       alphacheck=si_cal::alphas->IsInside(prot_E,prot_dE);
-
-    if(si_cal::thetatheta_cut){
+    
+    if(si_cal::thetatheta_cut)
       thetathetacheck= si_cal::thetatheta_cut->IsInside(si_cluster_[0].fPos[0].Theta()*180/3.14,si_cluster_[1].fPos[0].Theta()*180/3.14);
-    }
+    
+    if(si_cal::ptheta_cut)
+      pthetacheck = si_cal::ptheta_cut->IsInside(prot_theta,prot_E);
 
     //if proton gate is not passed return 0 (abort analyzers)
     if(_require_proton && !protcheck){
@@ -298,10 +340,17 @@ namespace si_cal{
       return 0;
     }
 
+    if(_require_ptheta && !pthetacheck){
+      return 0;
+    }
+
 
     return 1;
   }
   bool S2_Analyzer::ProcessFill(){
+
+    h_chS1_chS2_rings->Fill(si_[0].front.Ch(),si_[1].front.Ch());
+    h_chS1_chS2_segments->Fill(si_[0].back.Ch(),si_[1].back.Ch()); 
  
     h_s1_t->Fill(si_[0].Back_T(0));
     if(!unpacker::TDC1[4]>0)
@@ -313,7 +362,15 @@ namespace si_cal{
 	front[i][idx]->Fill(si_[i].back.fChlist[0],(si_[i].Back_E(0)/si_[i].Front_E(0)));
 	h_chlistf[i]->Fill(si_[i].front.Ch());
 	h_chlistb[i]->Fill(si_[i].back.Ch());
-			 
+	
+	h_ch_f0vQuadrant[i]->Fill(si_[i].front.Ch(),si_[i].Quadrant());
+	h_e_f0vQuadrant[i]->Fill(si_[i].Front_E(),si_[i].Quadrant());
+	
+	if(si_[i].front.fMult>1){
+	  h_ch_f0vf1[i]->Fill(si_[i].front.Ch(),si_[i].front.Ch(1));
+	  h_e_f0vf1[i]->Fill(si_[i].Front_E(),si_[i].Front_E(1));
+	  
+	}	 
 	if(si_cluster_[i].fMult>0){
 	  h_chlist_cluster_ring[i]->Fill(si_cluster_[i].fChlist[0]);
 	  h_chlist_cluster_segment[i]->Fill(si_cluster_[i].fChlist_b[0]);
@@ -324,6 +381,8 @@ namespace si_cal{
 	    h_si_x_y_prot[i]->Fill(si_cluster_[i].fPos[0].X(),si_cluster_[i].fPos[0].Y());
 	  }
 	}
+
+
 	h_si_[i]->Fill(si_[i].Front_E(0));
 	h_si_a[i]->Fill(si_[i].Front_E(0));
 	h_si_fmult[i]->Fill(si_[i].front.fMult);
@@ -422,6 +481,11 @@ namespace si_cal{
     _require_thetatheta=1;
   }
 
+  void RequirePThetaCut(){
+    _require_ptheta=1;
+  }
+
+
 
   void LoadGates(const std::string& input){
     sak::LoadCuts in(input.c_str());    
@@ -429,6 +493,8 @@ namespace si_cal{
       prots1=new TCutG(*in.getCut("prots1"));
     if(in.getCut("prots2") && !prots2)
       prots2=new TCutG(*in.getCut("prots2"));
+    if(in.getCut("ptheta_cut") && !ptheta_cut)
+      ptheta_cut=new TCutG(*in.getCut("ptheta_cut"));
     if(in.getCut("alphas") && !alphas)
       alphas=new TCutG(*in.getCut("alphas"));   
     if(in.getCut("thetatheta_cut") && !thetatheta_cut)
@@ -439,6 +505,7 @@ namespace si_cal{
   void ClearGates(){
     if(prots1)delete prots1;
     if(prots2)delete prots2;
+    if(ptheta_cut)delete ptheta_cut;
     if(alphas)delete alphas;
     if(thetatheta_cut)delete thetatheta_cut;
 

@@ -59,7 +59,7 @@ namespace coinc{
     
   }
   void S2_IC_Analyzer::ResetGlobals(){
-
+    si_ic_tcheck=0;
   }
 
   bool S2_IC_Analyzer::Begin(){   
@@ -110,11 +110,10 @@ namespace coinc{
 
 
   bool S2_IC_Analyzer::Process(){
-    si_ic_tcheck=0;
+   
 
-    si_ic_tcheck=((si_ic_time1 && si_ic_time2) && (si_ic_time1->IsInside(rftime[0].fT -si_[0].Back_T(0),unpacker::TDC1[1]) || 
-						   si_ic_time2->IsInside(rftime[0].fT -si_[0].Back_T(0),unpacker::TDC1[1]))); 
-		  
+    si_ic_tcheck = (si_ic_time1 &&si_ic_time1->IsInside(rftime[0].fT -si_[0].Back_T(0),unpacker::TDC1[1])); 
+    si_ic_tcheck = si_ic_tcheck || (si_ic_time2 && si_ic_time2->IsInside(rftime[0].fT -si_[0].Back_T(0),unpacker::TDC1[1]));
 
 
     return 1;

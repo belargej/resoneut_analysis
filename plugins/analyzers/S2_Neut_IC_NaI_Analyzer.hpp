@@ -45,8 +45,15 @@ namespace coinc{
     
     
     ClassDef(S2_Neut_IC_NaI_Analyzer,0);
+
   };
 
+  extern int s1_n_time_check;
+  extern int s2_n_time_check;
+  extern double si_t;
+
+  void Require_S1_N_TimePeak();
+  void Load_S2_Neut_IC_Gates(const std::string & input);
 
 }
 

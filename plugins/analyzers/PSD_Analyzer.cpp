@@ -86,6 +86,11 @@ namespace psd{
   int neut_sansgamma_orcheck(0);
   int rawneut_sansrawgamma_orcheck(0);
   
+  int _require_neut_orcheck(0);
+  int _require_rawneut_orcheck(0);
+  int _require_neut_sansgamma_orcheck(0);
+  int _require_rawneut_sansrawgamma_orcheck(0);
+
   std::vector<int>OmitNeutDet;
 
 
@@ -263,6 +268,20 @@ namespace psd{
       neut_sansgamma_orcheck = neut_sansgamma[i] || neut_sansgamma_orcheck;
       rawneut_sansrawgamma_orcheck = rawneut_sansrawgamma[i] || rawneut_sansrawgamma_orcheck;
     }
+    
+    if (_require_neut_orcheck &&!neut_orcheck){
+      return 0;
+    }
+    if (_require_rawneut_orcheck &&!rawneut_orcheck){
+      return 0;
+    }
+    if (_require_neut_sansgamma_orcheck &&!neut_sansgamma_orcheck){
+      return 0;
+    }
+    if (_require_rawneut_sansrawgamma_orcheck &&!rawneut_sansrawgamma_orcheck){
+      return 0;
+   }
+
 		           
     return 1; 
   }
@@ -413,6 +432,25 @@ namespace psd{
   
     in.Close();
   }
+
+  void Require_RawNeut_ORCheck(){
+    _require_rawneut_orcheck = 1; 
+  }
+
+
+  void Require_Neut_ORCheck(){
+    _require_neut_orcheck = 1;
+  }
+
+  void Require_Neut_SansGamma_ORCheck(){
+    _require_neut_sansgamma_orcheck = 1;
+    
+  }
+  
+  void Require_RawNeut_SansRawGamma_ORCheck(){
+    _require_rawneut_sansrawgamma_orcheck = 1;
+  }
+
 
   void ClearGates(){
     if(n0_neuts)delete n0_neuts;

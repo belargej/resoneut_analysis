@@ -27,6 +27,15 @@
 
 namespace coinc{
 
+  TCutG* s1_n_time_cut;
+  TCutG* s2_n_time_cut;
+  
+  double si_t(0);
+
+  int s1_n_time_check(0);
+  int s2_n_time_check(0);
+  int _require_s1_n_time_check(0);
+
   sak::Histogram1D *h_n_minus_sit;
   sak::Histogram1D *h_n_minus_sitfirst;
 
@@ -46,6 +55,8 @@ namespace coinc{
   sak::Histogram2D *h_n_t_v_si_trel_n_F17_gated;
   sak::Histogram2D *h_n_trel_v_si_t_n_F17_gated;
 
+  sak::Histogram2D *hevt_rawneut;
+
 
   sak::Histogram2D *h_n_t_v_si_t_F17_gated;
   sak::Histogram2D *h_n_t_v_si_trel_F17_gated;
@@ -64,6 +75,9 @@ namespace coinc{
     
   }
   void S2_Neut_IC_NaI_Analyzer::ResetGlobals(){
+    s1_n_time_check = 0;
+    s2_n_time_check = 0;
+    si_t = 0;
 
   }
 
@@ -103,6 +117,8 @@ namespace coinc{
     hpede_rawneut=new sak::Hist2D("hpEdE_rawneut","E [MeV]","dE [MeV]",64,0,20,64,0,6);
     hpede_rawneutsansgamma=new sak::Hist2D("hpEdE_rawneut_sansgamma","E [MeV]","dE [MeV]",64,0,20,64,0,6);
     hpede_rawgamma=new sak::Hist2D("hpEdE_rawgamma","E [MeV]","dE [MeV]",64,0,20,64,0,6);
+    hevt_rawneut=new sak::Hist2D("hpEvT_rawneut","Theta","E [MeV]",180,0,179,256,0,20);
+
 
     rootfile->cd("coinc/S2_Neut/timing");
     h_n_t_v_si_t = new  sak::Hist2D("h_n_t_v_si_t","n_t","si_t",1024,0,4095,1024,0,4095);
@@ -140,12 +156,22 @@ namespace coinc{
   }
 
 
+
+
   bool S2_Neut_IC_NaI_Analyzer::Process(){
+    si_t=si_[0].Back_T(0);    
+    s1_n_time_check = (s1_n_time_cut && s1_n_time_cut->IsInside(neut_t,si_t));
+
+    
+    if(_require_s1_n_time_check && !s1_n_time_check){
+      return 0;
+    }
+    
     return 1 ; 
   }    
 
   bool S2_Neut_IC_NaI_Analyzer::ProcessFill(){
-    double si_t=si_[0].Back_T(0);
+    
     if(nai_t>0&&si_t>0)
       h_nai_t_v_si_t->Fill(nai_t,si_t);
     
@@ -177,6 +203,9 @@ namespace coinc{
       }
     }
      
+    if(si_cal::protcheck && psd::rawneut_orcheck){
+      hevt_rawneut->Fill(si_cal::prot_theta,si_cal::prot_E);
+    }
    
 	
       for(int i=0;i<NEUTNUM;i++){
@@ -253,6 +282,21 @@ namespace coinc{
     
   }
   
+  void Require_S1_N_TimePeak(){
+    _require_s1_n_time_check = 1;
+
+  }
+
+
+  void Load_S2_Neut_IC_Gates(const std::string & input){
+    sak::LoadCuts in(input.c_str());    
+    if(in.getCut("s1_n_time_cut") && !s1_n_time_cut)
+      s1_n_time_cut=new TCutG(*in.getCut("s1_n_time_cut"));
+    if(in.getCut("s2_n_time_cut") && !s2_n_time_cut)
+      s2_n_time_cut=new TCutG(*in.getCut("s2_n_time_cut"));
+    in.Close();
+  }
+
 
 }
 #endif

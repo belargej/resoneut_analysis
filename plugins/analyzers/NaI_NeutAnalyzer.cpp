@@ -4,8 +4,7 @@
 //Author:Sean Kuvin
 //
 //NaI_Neut_Analyzer is added to the analyzer list just as NaI_Analyzer
-//is except now we are looking at Silicon detector parameters
-//alongside Ion Chamber parameters.  The results of sorting through
+//is except now we are looking at Neut and NaI.  The results of sorting through
 //the Neut_analyzer is necessary for proper function
 //of this class. Therefore, Neut_Analyzer must be 
 //added to the analyzer list and must be added before this analyzer
@@ -55,7 +54,7 @@ namespace coinc{
 
     for(RN_NaICollectionRef it=nai.begin();it!=nai.end();it++){
       if((*it).SumE()>750 && (*it).fT[0] > 0 ){
-	nai_t=((*it).T(0));
+	nai_t=((*it).T());
 	break;
       }
     }

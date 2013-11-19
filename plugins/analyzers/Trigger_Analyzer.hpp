@@ -60,6 +60,9 @@ public:
   void Require_NTMult(int mult);
   void Require_NEMult(int mult);  
 
+  void RequireOFF_NaI();
+
+
   //extern double n_triggerloc;
   //extern double nai_up_triggerloc;
   //extern double nai_down_triggerloc;
