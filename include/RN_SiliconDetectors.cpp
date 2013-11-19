@@ -356,6 +356,7 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
       float ecluster=in.Back_E(i)+in.Back_E(i+1);
       float tcluster=(in.Back_T(i+1)+in.Back_T(i))/2;
       float chnew=(in.back.Ch(i+1)+in.back.Ch(i))/2.0;
+      //float chnew = in.back.Ch(i);
       BackClusters.InsertHit(ecluster,tcluster,chnew);
       // we analyzed the i+1 hit along with the i, so 
       i++;
@@ -381,6 +382,7 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
       float ecluster=in.Front_E(i+1)+in.Front_E(i);
       float tcluster=(in.Front_T(i+1)+in.Front_T(i))/2;
       float chnew=(in.front.Ch(i+1)+in.front.Ch(i))/2.0;
+      //float chnew = in.front.Ch(i);
       FrontClusters.InsertHit(ecluster,tcluster,chnew);
       // we analyzed the i+1 hit along with the i, so 
       i++;

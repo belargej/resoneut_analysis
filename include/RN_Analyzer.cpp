@@ -116,6 +116,7 @@ bool RN_Analyzer::Begin(){
 }
 
 void RN_Analyzer::Loop(Long64_t start,Long64_t evnum){
+  
   Long64_t totentries= TotEntries();    
   if (start!=0&&evnum!=0)
     if(start+evnum<totentries)
@@ -125,13 +126,15 @@ void RN_Analyzer::Loop(Long64_t start,Long64_t evnum){
   TIter next(analyzers); // point to analyzers added to the list
   int fillbit = 1;
   //loop over all analyzer Begin() 's;
+  
   while(RN_Analyzer * obj =  (RN_Analyzer*)next()){
     obj->Begin();
   }
+  
   next.Reset();
   
   for (Long64_t i=start;i<totentries;i++){
-    fillbit = 1;
+    fillbit = 1; //1 means fill histograms
     ResetGlobals();
     //loop over all analyzer ResetGlobals() 's
     while(RN_Analyzer * obj = (RN_Analyzer*)next()){
@@ -145,8 +148,12 @@ void RN_Analyzer::Loop(Long64_t start,Long64_t evnum){
     Process();
     while(RN_Analyzer * obj = (RN_Analyzer*)next()){
       if(!obj->Process()){
+	//0 means process returned 0
+	//do not fill histograms
+	//go ahead and break out of event
+
 	fillbit=0;
-	break;
+       	break;
       }
     }
     next.Reset();
@@ -205,6 +212,7 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
     (*it).Reset();
   }
   
+  nai_array.Reset();
 
 
   //extract from the tree all of the module parameters

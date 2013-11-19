@@ -50,6 +50,7 @@ R__EXTERN RN_S2ClusterCollection si_cluster_;
 R__EXTERN RN_RFCollection rftime;	     
 R__EXTERN RN_IonChamber ic;		     
 R__EXTERN RN_NaICollection nai;		     
+extern RN_NaIArray nai_array;
 R__EXTERN RN_VariableMap DetVar;
 R__EXTERN RN_MassTable MassTable;
 
@@ -84,6 +85,7 @@ namespace global{
   extern double d_ex_set;
   extern double E_fragment;
   extern TRandom3 myRnd;
+  extern TVector3 target_pos;
 
 
   void SetReaction(std::string,

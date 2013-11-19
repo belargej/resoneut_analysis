@@ -17,7 +17,8 @@ RN_S2Collection si_;
 RN_S2ClusterCollection si_cluster_;
 RN_RFCollection rftime;	     
 RN_IonChamber ic("ic");		     
-RN_NaICollection nai;		     
+RN_NaICollection nai;	
+RN_NaIArray nai_array("nai_array",20);	     
 
 RN_VariableMap DetVar;
 RN_MassTable MassTable;
@@ -43,7 +44,7 @@ namespace global{
   double d_ex_set(0);
   double E_fragment(0);
   TRandom3 myRnd(0);
-  
+  TVector3 target_pos(0,0,0);
   
 
   void SetReaction(std::string a,

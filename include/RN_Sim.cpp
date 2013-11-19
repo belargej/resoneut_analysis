@@ -29,16 +29,18 @@ namespace sim{
   TH1D* h_nKE;
   TH1D* h_hiKE;
   TH1D* hQ_proton;
+  TH1D* hQ_proton_guess;
   TF1* TOF_fit_n[NEUTNUM];
   TF1* Q_fit_n[NEUTNUM];
   TF1* Q_fit;
   TF1* TOF_fit;
 
-  double E_deposited;
+  double E_deposited(0);
   double n_cm;
   double n_tof;
   double fNe,fNt;
-  double q_val_p;
+  double q_val_p(0);
+  double q_val_p_guess(0);
 
   Long64_t totevents;
 
@@ -152,7 +154,6 @@ namespace sim{
 
 
   void RN_Sim::FillHistograms(){
-    tree->Fill();
     if(particle.size()>1){
       hE_v_theta->Fill(particle[2].LV.Theta()*180/3.14,particle[2].LV.E()-particle[2].LV.M());
       hn_CM->Fill(n_cm*180/3.14);
@@ -188,8 +189,19 @@ namespace sim{
 	       - (hi_ke * ( 1 - (global::m_frag / global::m_heavy_decay)))
 	       - ((2 / global::m_heavy_decay) * TMath::Sqrt(p_ke * global::m_decay_product * hi_ke * global::m_frag) * cos(p_theta)));
     
-  hQ_proton->Fill(q_val_p);
+  q_val_p_guess = (p_ke* (1 + (global::m_decay_product / global::m_heavy_decay)) 
+		   - (global::E_fragment * ( 1 - (global::m_frag / global::m_heavy_decay)))
+		   - ((2 / global::m_heavy_decay) * TMath::Sqrt(p_ke * global::m_decay_product * global::E_fragment * global::m_frag) * cos(p_theta)));
   
+
+
+  hQ_proton->Fill(q_val_p);
+  hQ_proton_guess->Fill(q_val_p_guess);
+  
+
+
+
+  tree->Fill();
   }
 
 void RN_Sim::initHists(){
@@ -217,35 +229,41 @@ void RN_Sim::initHists(){
   for(unsigned int i=0;i<neut.size();i++){
     tree->Branch(Form("%s.",neut[i].Name().c_str()),"RN_NeutDetector",&neut[i]);
   }
+  tree->Branch("Qp_val_guess",&q_val_p_guess);
+
+
   
+  simfile->mkdir("histograms");
 
-
+  simfile->cd("histograms");
   hn_CM=new TH1D("h_nCM","h_nCM",512,1,180);
   hn_CMvLab=new TH2D("hn_CMvLAB","n_CMvLAB",512,1,180,512,1,180);
   hn_tof=new TH1D("hn_tof","hn_tof",4096,1,128);
-  
-  hE_n=new TH2D("hE_n","hE_n",17,0,16,512,0,5);
-  TOF_fit=new TF1("tof_fit","gaus",1,128);
-  hQ=new TH1D("hQ","hQ",512,-4,4);
-  Q_fit=new TF1("Q_fit","gaus",-4,4);
-  for(unsigned int i=0;i<neut.size();i++){
-    simfile->mkdir(Form("neut%d/tof",i));
-    simfile->cd(Form("neut%d/tof",i));
-    htof_n[i]=new TH1D(Form("htof_n%d",i),Form("htof_n%d",i),512,1,128);  
-    TOF_fit_n[i]=new TF1(Form("tof_fit_n%d",i),"gaus",1,128);
-    simfile->mkdir(Form("neut%d/Q",i));
-    simfile->cd(Form("neut%d/Q",i));
-    hQ_n[i]=new TH1D(Form("hQ_n%d",i),Form("hQ_n%d",i),512,-4,4);
-    Q_fit_n[i]=new TF1(Form("Q_fit_n%d",i),"gaus",-4,4);
-  }
-  simfile->cd();
-  hQ_proton=new TH1D("hQ_proton","hQ_proton;Q",512,-10,10);
+  hQ_proton=new TH1D("hQ_proton","hQ_proton;Q",512,-1,10);
+  hQ_proton_guess=new TH1D("hQ_proton_guess","hQ_proton_guess;Q",512,-1,10);
   h_nKE=new TH1D("h_nKE","h_nKE",1024,0,1);
   h_hiKE=new TH1D("h_hiKE","h_hiKE",1024,0,100);
   hE_v_theta=new TH2D("hE_v_theta","hE_v_theta",180,0,179,512,0,20);
   hT_v_theta=new TH2D("hT_v_theta","hT_v_theta",180,0,179,512,1,128);
   hpos=new TH2D("hpos","hpos",64,-256,256,64,-256,256);
-  hpos_in=new TH2D("hpos_in","hpos_in",64,-256,256,64,-256,256);
+  hpos_in=new TH2D("hpos_in","hpos_in",64,-256,256,64,-256,256);  
+  hE_n=new TH2D("hE_n","hE_n",17,0,16,512,0,5);
+  TOF_fit=new TF1("tof_fit","gaus",1,128);
+  hQ=new TH1D("hQ","hQ",512,-4,4);
+  Q_fit=new TF1("Q_fit","gaus",-4,4);
+
+  for(unsigned int i=0;i<neut.size();i++){
+    simfile->mkdir(Form("histograms/neut%d/tof",i));
+    simfile->cd(Form("histograms/neut%d/tof",i));
+    htof_n[i]=new TH1D(Form("htof_n%d",i),Form("htof_n%d",i),512,1,128);  
+    TOF_fit_n[i]=new TF1(Form("tof_fit_n%d",i),"gaus",1,128);
+    simfile->mkdir(Form("histograms/neut%d/Q",i));
+    simfile->cd(Form("histograms/neut%d/Q",i));
+    hQ_n[i]=new TH1D(Form("hQ_n%d",i),Form("hQ_n%d",i),512,-4,4);
+    Q_fit_n[i]=new TF1(Form("Q_fit_n%d",i),"gaus",-4,4);
+  }
+
+
 
 
 }
@@ -377,6 +395,7 @@ void RN_Sim::Reset(){
   E_deposited=0;
   n_tof=0;
   q_val_p=0;
+  q_val_p_guess = 0;
    
   for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){ 
     (*it).Reset();  
