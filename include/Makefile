@@ -26,7 +26,7 @@ endif
 CFLAGS=`root-config --cflags` -c ${DEBUG}
 GLIBS=`root-config --glibs`
 LINK_DIR=${PWD}/../lib
-LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} -I${ROOTSYS}/include 
+LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} -I${ROOTSYS}/include -lSpectrum
  
 
 all: ${EXE}	
@@ -52,7 +52,7 @@ RN_RootDict.cpp: ${HEADERS} my_LinkDef.h
 	${CXX} ${CFLAGS} $< 
 
 libRNeut.so: ${OBJECTS} RN_RootDict.cpp 
-	 g++ -shared -o ${addprefix ../lib/,$@} $^ `root-config --ldflags --libs --cflags`${DEBUG} -I$(ROOTSYS)/include
+	 g++ -shared -o ${addprefix ../lib/,$@} $^ `root-config --ldflags --libs --cflags`${DEBUG} -I$(ROOTSYS)/include -lSpectrum
 
 
 #####################################################################

@@ -39,7 +39,7 @@ void RN_NaIDetector::SetCalibrations(RN_VariableMap& detvar){
   detvar.GetParam(Form("%s.tshift[1]",Name().c_str()),tshift[1]);
   detvar.GetParam(Form("%s.tzero[0]",Name().c_str()),tzero[0]);
   detvar.GetParam(Form("%s.tzero[1]",Name().c_str()),tzero[1]);
-  detvar.GetParam(Form("%s.mutwo",Name().c_str()),MuTwo);
+
 
 }
 
@@ -51,7 +51,7 @@ void RN_NaIArray::Reset(){
 
   for(unsigned int i=0;i<fMult;i++){
 
-    fPosition[i]=0;
+    fPosition[i]=0xffff;
   }
 
  

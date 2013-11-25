@@ -58,14 +58,22 @@ public:
   void AddHit(const double & e,const double& e1, const int& ch);
   void PerformFit();
   int PrintCoefficients(std::string);
+
+
+};
+
+namespace si_cal{
+
+  void AutoCalibrate(const int&, const int&);
+
   
   void Th228Fit(const double&,const double&,const double&,const double&,
 		const double&,const double&,double&, double&);
   
-  
+  void Th228Fit(TH1D * h1,double &elin,double &eshift);
  
  
-};
+}
 
 typedef std::vector<RN_S2Calibrator> RN_S2CalCollection;
 typedef std::vector<RN_S2Calibrator>::iterator RN_S2CalCollectionRef;

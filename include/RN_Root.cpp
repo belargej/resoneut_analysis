@@ -202,10 +202,20 @@ int AddAnalyzer(TObject *obj){
 //Apply any calibrations loaded into the variable map DetVar 
 
 void SetCalibrations(){
+  double temp(0);
   DetVar.GetParam("global.beam_e",global::beam_e);
   DetVar.GetParam("global.beam_eloss",global::beam_eloss);
   DetVar.GetParam("global.hi_ex_set",global::hi_ex_set);
   DetVar.GetParam("global.E_fragment",global::E_fragment);
+  if(DetVar.GetParam("global.target_pos.x",temp))
+    global::target_pos.SetX(temp);
+  if(DetVar.GetParam("global.target_pos.y",temp))
+    global::target_pos.SetY(temp);
+  if(DetVar.GetParam("global.target_pos.z",temp))
+    global::target_pos.SetZ(temp);
+  
+
+
   if(global::beam_e>0) global::beam_est = global::beam_e - global::beam_eloss*.5;
   
   for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){

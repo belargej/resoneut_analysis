@@ -34,12 +34,12 @@ static const Double_t light_atten = 0.047; //cm^-1
 class RN_NaIDetector:public TObject{
 private:  
   std::string fName;
-  Double32_t elin[2];//!
+  Double32_t elin[2];//!  //up-0 down-1
   Double32_t eshift[2];//!
   Double32_t tlin[2];//!
   Double32_t tshift[2];//!
-  Double32_t tzero[2];//!
-  Double32_t MuTwo;//!
+  Double32_t tzero[2];//! 
+
 
 public:
 
@@ -78,9 +78,9 @@ public:
 
   //T(int i) is deprecated.  still included so that some analyzers won't crash
   inline Double32_t T(int i=0)   const{
-    if (T1()>T2())
+    if (T1()>=T2() || !T1())
       return T2();
-    else if (T1()<T2())
+    else if (T1()<T2() || !T2())
       return T1();
     else 
       return 0;
