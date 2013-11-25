@@ -21,7 +21,7 @@
 #include "plugins/sak/sak_Gates.hpp"
 #include "RN_Calibrator.hpp"
 
-namespace si_cal{
+namespace silicon{
 
 
 
@@ -33,7 +33,7 @@ namespace si_cal{
     
     S2_Analyzer();
     virtual ~S2_Analyzer(){};
-    void AutoCalibrate(int matchfront, int matchback);//auto calibrate all elements of Collection
+    
     
     virtual bool Begin();
     virtual bool Process();
@@ -60,23 +60,19 @@ namespace si_cal{
   extern int protcheck;
   extern int prot2check;
   extern int alphacheck;
-  extern double prot_E;
-  extern double prot_dE;
-  extern double prot_theta;
-  extern double rel_angle;
-  extern double rel_z;
-  extern double rel_transverse;
+
 
 
   void RequireProton();
   void RequireAlpha();
   void RequirePThetaCut();
   void RequireThetaTheta();
+  void SetZMinMax(const double &,const double&);
   void LoadGates(const std::string &input);  
   void ClearGates();  
 
-  void producehists(const char * input,const char* output,int index,const char* config="");
-  void autocalibrate(const char* input,int fmatch,int bmatch);
+
+
   
 }
 

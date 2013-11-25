@@ -51,8 +51,7 @@ namespace ionchamber{
   extern TCutG* ede_hi3;
 
   extern int hi_check[3];
-  extern Double32_t IC_TotalE;
-  extern Double32_t IC_ELoss;
+
 
   void LoadGates(const std::string &input);  
   void ClearGates();  

@@ -21,16 +21,14 @@ namespace ionchamber{
   TCutG* ede_hi2;
   TCutG* ede_hi3;
 
-  Double32_t IC_TotalE(0);
-  Double32_t IC_ELoss(0);
-
   int hi_check[3];
 
   sak::Histogram2D *hIC_ede;  
   sak::Hist1D * h_IC_t_F17gated;
   sak::Hist1D * h_IC_t_O16gated;
-
-
+  
+  TH2D * h_xvy;
+  TH2D * hIC_de_v_xgride;
 
   using unpacker::TDC1;
 
@@ -49,9 +47,14 @@ namespace ionchamber{
  
     rootfile->mkdir("IC/ede");
     rootfile->mkdir("IC/t");
-  
+    rootfile->mkdir("IC/xy");
+
+    rootfile->cd("IC/xy");
+    h_xvy= new TH2D("h_xvy","h_xvy;x_chan;y_chan",65,0,64,65,0,64);
+    
     rootfile->cd("IC/ede");
     hIC_ede=new sak::Hist2D("hIC_EdE","E [arb]","dE [arb]",1024,0,4096,1024,0,4096);
+    hIC_de_v_xgride=new TH2D("hIC_dE_v_xgride","hIC_dE_v_xgride;E [arb];dE [arb]",1024,0,4096,1024,0,4096);
     rootfile->cd("IC/t");
     h_IC_t_F17gated=new sak::Hist1D("h_IC_t_F17","t",1024,0,4095);
     h_IC_t_O16gated=new sak::Hist1D("h_IC_t_O16","t",1024,0,4095);
@@ -64,14 +67,10 @@ namespace ionchamber{
       hi_check[i]=0;
     }
  
-    IC_ELoss = 0;
-    IC_TotalE = 0;
   }
 
   bool IC_Analyzer::Process(){
-    IC_ELoss = ic.fdE;
-    IC_TotalE = ic.fE + IC_ELoss;
-     
+
     hi_check[0]= (ede_hi1 && ede_hi1->IsInside(IC_TotalE,IC_ELoss));
     hi_check[1]= (ede_hi2 && ede_hi2->IsInside(IC_TotalE,IC_ELoss));
     hi_check[2]= (ede_hi3 && ede_hi3->IsInside(IC_TotalE,IC_ELoss));
@@ -82,7 +81,9 @@ namespace ionchamber{
   bool IC_Analyzer::ProcessFill(){
     
     hIC_ede->Fill(IC_TotalE,IC_ELoss);
-    
+    h_xvy->Fill(ic.xgrid.Ch(),ic.ygrid.Ch());
+    hIC_de_v_xgride->Fill(IC_ELoss,ic.xgrid.fE[0]);
+
     if(hi_check[0]){
       h_IC_t_F17gated->Fill(TDC1[1]);
     }

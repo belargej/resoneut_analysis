@@ -35,6 +35,7 @@
 #include "RN_Calibrator.hpp"
 #include "RN_Root.hpp"
 
+
 void RN_S2Calibrator::AddHit(const double& ematch, const double& ech,const int& ch){
   Corr[ch].SetPoint(point[ch],ech,ematch);
   point[ch]++;
@@ -79,12 +80,49 @@ int RN_S2Calibrator::PrintCoefficients(std::string printfile){
 }
 
 namespace si_cal{
+  TH2D * si_fch_v_bch[16];
+  TH2D * si_bch_v_fch[16];
+  
+
+
+  void ProduceCorrelationHistograms(const unsigned int& matchfront, const unsigned int& matchback, const unsigned int & DetID){
+    if (!rootfile){
+      std::cout<<"rootfile path not set, use SetRootOutputFile<>\n";
+      return;
+    }
+    rootfile->mkdir(Form("S%d/FrontMatch",DetID+1));   
+    rootfile->mkdir(Form("S%d/BackMatch",DetID+1));   
+    
+    for(unsigned int i=0;i<16;i++){
+      rootfile->cd(Form("S%d/FrontMatch",DetID+1));   
+      si_fch_v_bch[i]=new TH2D(Form("s[%d]_fch[%d]_v_bch[%d]",DetID+1,matchfront,i),Form("s[%d]_fch[%d]_v_bch[%d];",DetID+1,matchfront,i),2048,0,4095,2048,0,4095);
+      rootfile->cd(Form("S%d/BackMatch",DetID+1));        
+      si_bch_v_fch[i]=new TH2D(Form("s[%d]_bch[%d]_v_fch[%d]",DetID+1,matchback,i),Form("s[%d]_bch[%d]_v_fch[%d];",DetID+1,matchback,i),2048,0,4095,2048,0,4095);
+    }
+    Long64_t totentries= MainAnalyzer.TotEntries();
+    std::cout<<"Total Entries: "<<totentries<<std::endl;
+    
+    for (Long64_t i=0;i<totentries;i++){
+      MainAnalyzer.GetDetectorEntry(i);
+      if(si_[DetID].front.fChlist[0]==matchfront){
+	si_fch_v_bch[(int)si_[DetID].back.fChlist[0]]->Fill(si_[DetID].Back_E(),si_[DetID].Front_E());
+      }
+      if(si_[DetID].back.fChlist[0]==matchback){
+	si_bch_v_fch[(int)si_[DetID].front.fChlist[0]]->Fill(si_[DetID].Front_E(),si_[DetID].Front_E());		  
+      }
+
+    }
+
+
+
+
+  }
 
   //AutoCalibrate function is used to match
   // the highest energy ring hits with the highest
   // energy segment hits and matching the charge.
-
-  void AutoCalibrate(const int& matchfront,const int& matchback){
+  
+  void AutoCalibrate(const unsigned int& matchfront,const unsigned int& matchback){
     std::cout<<"calibrating back to front match channel : "<<matchfront<<std::endl;
     RN_S2CalCollection s2front;
     RN_S2CalCollection s2back;
@@ -150,7 +188,10 @@ namespace si_cal{
     for(RN_S2CalCollectionRef it=s2front.begin();it!=s2front.end();it++){
       (*it).PerformFit();
       (*it).PrintCoefficients(Form("%s_front2back.in",si_[idx].Name().c_str()));
-      
+    
+      DetVar.LoadParams(Form("%s_front2back.in",si_[idx].Name().c_str()));
+      si_[idx].SetCalibrations(DetVar);      
+
       idx++;
       
     }

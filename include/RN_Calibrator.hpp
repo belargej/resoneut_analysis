@@ -64,7 +64,9 @@ public:
 
 namespace si_cal{
 
-  void AutoCalibrate(const int&, const int&);
+  void ProduceCorrelationHistograms(const unsigned int&,const unsigned int&, const unsigned int&);
+
+  void AutoCalibrate(const unsigned int&, const unsigned int&);
 
   
   void Th228Fit(const double&,const double&,const double&,const double&,

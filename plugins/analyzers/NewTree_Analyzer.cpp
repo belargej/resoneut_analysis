@@ -41,9 +41,12 @@ bool NewTree_Analyzer::Begin(){
   
  
   newtree->Branch("Event",&Event,"RunNum/I:flag/I:ScalerIDX/I"); 
-  newtree->Branch("prot_E",&si_cal::prot_E);
-  newtree->Branch("prot_dE",&si_cal::prot_dE);
-  newtree->Branch("prot_Theta",&si_cal::prot_theta);
+  newtree->Branch("prot_E",&silicon::prot_E);
+  newtree->Branch("prot_dE",&silicon::prot_dE);
+  newtree->Branch("prot_Theta",&silicon::prot_theta);
+  newtree->Branch("prot_RelAngle",&silicon::rel_angle);
+  newtree->Branch("IC_TotalE",&ionchamber::IC_TotalE);
+  newtree->Branch("IC_ELoss",&ionchamber::IC_ELoss);
   newtree->Branch("ADC1",&ADC1,"ADC1[32]/F");
   newtree->Branch("ADC2",&ADC2,"ADC2[32]/F");
   newtree->Branch("ADC3",&ADC3,"ADC3[32]/F");

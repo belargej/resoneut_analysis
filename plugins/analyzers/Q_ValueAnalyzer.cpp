@@ -117,11 +117,11 @@ namespace physical{
   bool Q_ValueAnalyzer::Process(){
     //global::E_fragment is ansatz from MC simulation
   
-    if(si_cal::prot_E>0&& si_cal::prot_theta!=0){
+    if(silicon::prot_E>0&& silicon::prot_theta!=0){
     
-      q_val_p = (si_cal::prot_E * (1 + (global::m_decay_product / global::m_heavy_decay)) 
+      q_val_p = (silicon::prot_E * (1 + (global::m_decay_product / global::m_heavy_decay)) 
 		 - (global::E_fragment * ( 1 - (global::m_frag / global::m_heavy_decay)))
-		 - ((2 / global::m_heavy_decay) * TMath::Sqrt(si_cal::prot_E * global::m_decay_product * global::E_fragment * global::m_frag) * cos(3.14*si_cal::prot_theta/180)));
+		 - ((2 / global::m_heavy_decay) * TMath::Sqrt(silicon::prot_E * global::m_decay_product * global::E_fragment * global::m_frag) * cos(3.14*silicon::rel_angle/180)));
     
     }
 
@@ -133,23 +133,23 @@ namespace physical{
     //Q_Value parameter histograms
     Q_Value->Fill(q_val_p);
     
-    if(si_cal::protcheck){
+    if(silicon::protcheck){
       Q_Value_proton->Fill(q_val_p);
-      Q_v_pTheta->Fill(q_val_p,si_cal::prot_theta);   		       
-      Q_v_pE->Fill(q_val_p,si_cal::prot_E);   			       
-      Q_v_pRelAngle->Fill(q_val_p,si_cal::rel_angle);   		       
+      Q_v_pTheta->Fill(q_val_p,silicon::prot_theta);   		       
+      Q_v_pE->Fill(q_val_p,silicon::prot_E);   			       
+      Q_v_pRelAngle->Fill(q_val_p,silicon::rel_angle);   		       
     
       if(ionchamber::hi_check[0]){
 	Q_Value_proton_hi1->Fill(q_val_p);
-	Q_v_pTheta_proton_hi1->Fill(q_val_p,si_cal::prot_theta);   	       
-	Q_v_pE_proton_hi1->Fill(q_val_p,si_cal::prot_E);   	       
-	Q_v_pRelAngle_proton_hi1->Fill(q_val_p,si_cal::rel_angle);   
+	Q_v_pTheta_proton_hi1->Fill(q_val_p,silicon::prot_theta);   	       
+	Q_v_pE_proton_hi1->Fill(q_val_p,silicon::prot_E);   	       
+	Q_v_pRelAngle_proton_hi1->Fill(q_val_p,silicon::rel_angle);   
 	
 	if(coinc::si_ic_tcheck){
 	  Q_Value_proton_hi1_ictime->Fill(q_val_p);
-	  Q_v_pTheta_proton_hi1_ictime->Fill(q_val_p,si_cal::prot_theta);   
-	  Q_v_pE_proton_hi1_ictime->Fill(q_val_p,si_cal::prot_E);          
-	  Q_v_pRelAngle_proton_hi1_ictime->Fill(q_val_p,si_cal::rel_angle);   
+	  Q_v_pTheta_proton_hi1_ictime->Fill(q_val_p,silicon::prot_theta);   
+	  Q_v_pE_proton_hi1_ictime->Fill(q_val_p,silicon::prot_E);          
+	  Q_v_pRelAngle_proton_hi1_ictime->Fill(q_val_p,silicon::rel_angle);   
     
     
 	}

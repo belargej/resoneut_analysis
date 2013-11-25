@@ -77,12 +77,12 @@ public:
   // Methods.
   virtual bool Begin();
   virtual void Loop(Long64_t start=0,Long64_t evnum=0);
-  virtual bool ProcessFill(){return true;};
-  virtual bool Process(){return true;};
+  virtual bool ProcessFill();
+  virtual bool Process();
   virtual bool Terminate(){return true;};
   virtual bool TerminateIfLast(){return true;};
   virtual void Clear(){};
-  virtual void ResetGlobals(){};
+  virtual void ResetGlobals();
   Long64_t TotEntries() const{return fChain->GetEntries();} 
   void AddTree(TString a){fChain->Add(a);}
   virtual void Init(TString rootfile);
@@ -93,6 +93,21 @@ public:
   ClassDef(RN_Analyzer,0);
 };
 
+namespace silicon{
+  extern double prot_E;
+  extern double prot_dE;;
+  extern double prot_theta;
+  extern double rel_angle;
+  extern double rel_transverse;
+  extern double rel_z;
+  extern double target_z[2];
+}
+
+namespace ionchamber{
+  extern Double32_t IC_TotalE;
+  extern Double32_t IC_ELoss;
+  
+}
 
 
 #endif

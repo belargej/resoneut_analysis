@@ -182,10 +182,10 @@ namespace coinc{
       h_n_t_v_si_trel->Fill(neut_t,rftime[0].fT-si_t);
       h_n_trel_v_si_t->Fill(rftime[0].fT-neut_t,si_t);
       
-      if(ionchamber::hi_check[0]&& coinc::si_ic_tcheck&&si_cal::protcheck){
+      if(ionchamber::hi_check[0]&& coinc::si_ic_tcheck&&silicon::protcheck){
 	h_n_t_v_si_t_F17_prot_timing->Fill(neut_t,si_t);
       }
-      if(si_cal::protcheck){
+      if(silicon::protcheck){
 	h_n_t_v_si_t_protongated->Fill(neut_t,si_t);
       }
       
@@ -203,8 +203,8 @@ namespace coinc{
       }
     }
      
-    if(si_cal::protcheck && psd::rawneut_orcheck){
-      hevt_rawneut->Fill(si_cal::prot_theta,si_cal::prot_E);
+    if(silicon::protcheck && psd::rawneut_orcheck){
+      hevt_rawneut->Fill(silicon::prot_theta,silicon::prot_E);
     }
    
 	
@@ -212,13 +212,13 @@ namespace coinc{
 	if(i>=neut.size())
 	  break;
 	if(neut[i].fQ_long>0){
-	  if(coinc::si_ic_tcheck&&ionchamber::hi_check[0]&&si_cal::protcheck){
+	  if(coinc::si_ic_tcheck&&ionchamber::hi_check[0]&&silicon::protcheck){
 	    hPSDq_n_prot_t_F17[i]->Fill(neut[i].fQ_long,neut[i].fQ_short);
 	  }
-	  if(si_cal::protcheck)
+	  if(silicon::protcheck)
 	    hPSDq_n_prot[i]->Fill(neut[i].fQ_long,neut[i].fQ_short);
 	  
-	  if(si_cal::protcheck&&ionchamber::hi_check[0])
+	  if(silicon::protcheck&&ionchamber::hi_check[0])
 	    hPSDq_n_prot_F17[i]->Fill(neut[i].fQ_long,neut[i].fQ_short);
 
 
@@ -235,11 +235,11 @@ namespace coinc{
     
     
     
-    if(si_cal::protcheck&&ionchamber::hi_check[0]){
+    if(silicon::protcheck&&ionchamber::hi_check[0]){
       rfvs1_t_rel_prot_F17->Fill(rftime[0].fT,rftime[0].fT-si_t);
     }
     
-    if(si_cal::protcheck&&ionchamber::hi_check[1]){
+    if(silicon::protcheck&&ionchamber::hi_check[1]){
       rfvs1_t_rel_prot_O16->Fill(rftime[0].fT,rftime[0].fT-si_t);
       
     }
@@ -256,11 +256,11 @@ namespace coinc{
   
   
   if(psd::rawneut_orcheck)
-    hpede_rawneut->Fill(si_cal::prot_E,si_cal::prot_dE);
+    hpede_rawneut->Fill(silicon::prot_E,silicon::prot_dE);
   if(psd::rawgammacheck[0])
-    hpede_rawgamma->Fill(si_cal::prot_E,si_cal::prot_dE);
+    hpede_rawgamma->Fill(silicon::prot_E,silicon::prot_dE);
   if(psd::rawneut_sansrawgamma_orcheck)
-    hpede_rawneutsansgamma->Fill(si_cal::prot_E,si_cal::prot_dE);
+    hpede_rawneutsansgamma->Fill(silicon::prot_E,silicon::prot_dE);
   
 
   return 1;

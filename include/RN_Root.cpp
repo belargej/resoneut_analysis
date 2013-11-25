@@ -182,9 +182,20 @@ void RN_RootInit(){
 
 void LoadVariableFile(const std::string& f){DetVar.LoadParams(f);}
 void SetRootOutputFile(std::string filename){
-  rootfile=new TFile(filename.c_str(),"RECREATE");
+
+  if(rootfile){
+    std::cout<<"root output file already open, please write out and close first"<<std::endl;
+    return ;
+  }
+    rootfile=new TFile(filename.c_str(),"RECREATE");
 }
+
 void SetRootOutputFileAndTree(std::string filename,std::string treename){
+   if(rootfile){
+    std::cout<<"root output file already open, please write out and close first"<<std::endl;
+    return ;
+  }
+ 
   rootfile=new TFile(filename.c_str(),"RECREATE");
   newtree=new TTree(treename.c_str(),treename.c_str());
 }

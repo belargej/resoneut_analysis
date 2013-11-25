@@ -57,7 +57,7 @@ R__EXTERN RN_MassTable MassTable;
 R__EXTERN int RN_RootSet;
 
 R__EXTERN RN_Analyzer MainAnalyzer;
-R__EXTERN TFile * rootfile;
+extern TFile * rootfile;
 R__EXTERN TTree * newtree;
 R__EXTERN TList * analyzers;
 

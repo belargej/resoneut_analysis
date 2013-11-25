@@ -121,24 +121,24 @@ namespace coinc{
 
   bool S2_IC_Analyzer::ProcessFill(){
 
-    if(si_cal::protcheck && ionchamber::hi_check[0]){
+    if(silicon::protcheck && ionchamber::hi_check[0]){
       ic_t_prot_F17->Fill(unpacker::TDC1[1]);
     }
     
     if(si_ic_tcheck && ionchamber::hi_check[0])
-      hpede_F17_timing->Fill(si_cal::prot_E,si_cal::prot_dE);
-    if(si_cal::protcheck&& si_ic_tcheck && ionchamber::hi_check[0])
-      h_evtheta_prot_F17_timing->Fill(si_cluster_[1].fPos[0].Theta()*180/3.14,si_cal::prot_E);
+      hpede_F17_timing->Fill(silicon::prot_E,silicon::prot_dE);
+    if(silicon::protcheck&& si_ic_tcheck && ionchamber::hi_check[0])
+      h_evtheta_prot_F17_timing->Fill(si_cluster_[1].fPos[0].Theta()*180/3.14,silicon::prot_E);
     
-    if(si_cal::protcheck&& si_ic_tcheck && ionchamber::hi_check[1])
-      h_evtheta_prot_O16_timing->Fill(si_cluster_[1].fPos[0].Theta()*180/3.14,si_cal::prot_E);
+    if(silicon::protcheck&& si_ic_tcheck && ionchamber::hi_check[1])
+      h_evtheta_prot_O16_timing->Fill(si_cluster_[1].fPos[0].Theta()*180/3.14,silicon::prot_E);
     
 
 
-    if(si_cal::protcheck)
+    if(silicon::protcheck)
       ic_t_prot->Fill(unpacker::TDC1[1]);
     
-    if(si_cal::protcheck && ionchamber::hi_check[1])
+    if(silicon::protcheck && ionchamber::hi_check[1])
       ic_t_prot_O16->Fill(unpacker::TDC1[1]);
     
     
@@ -148,7 +148,7 @@ namespace coinc{
     if(ionchamber::hi_check[0])
       si_t_v_ic_t_F17->Fill(si_[0].Back_T(0),unpacker::TDC1[1]);
 
-    if(si_cal::protcheck){
+    if(silicon::protcheck){
       si_t_v_ic_t_prot->Fill(si_[0].Back_T(0),unpacker::TDC1[1]);
       si_trel_v_ic_t_prot->Fill(rftime[0].fT - si_[0].Back_T(0),unpacker::TDC1[1]);
       if(ionchamber::hi_check[0])
@@ -157,21 +157,21 @@ namespace coinc{
 	si_trel_v_ic_t_prot_O16->Fill(rftime[0].fT - si_[0].Back_T(0),unpacker::TDC1[1]);
     }
 
-    if(si_cal::prot_E>0){
+    if(silicon::prot_E>0){
       
       if(ionchamber::hi_check[0]){
 	
-	hpede_ic1->Fill(si_cal::prot_E,si_cal::prot_dE); //F17
+	hpede_ic1->Fill(silicon::prot_E,silicon::prot_dE); //F17
 	
 	for(int i=0;i<2;i++){
 	
 	  if(si_cluster_[i].fMult>0){
 	    
-	    h_evtheta_ic1[i]->Fill(si_cluster_[i].fPos[0].Theta()*180/3.14,si_cal::prot_E);
+	    h_evtheta_ic1[i]->Fill(si_cluster_[i].fPos[0].Theta()*180/3.14,silicon::prot_E);
 	 
-	    if(si_cal::protcheck){
+	    if(silicon::protcheck){
 	    
-	      h_evtheta_protgated_ic1[i]->Fill(si_cluster_[i].fPos[0].Theta()*180/3.14,si_cal::prot_E);
+	      h_evtheta_protgated_ic1[i]->Fill(si_cluster_[i].fPos[0].Theta()*180/3.14,silicon::prot_E);
 	     
 	    }
 	  }
@@ -181,12 +181,12 @@ namespace coinc{
       }
       
       if(ionchamber::hi_check[1]){
-	hpede_ic2->Fill(si_cal::prot_E,si_cal::prot_dE);	
+	hpede_ic2->Fill(silicon::prot_E,silicon::prot_dE);	
 	for(int i=0;i<2;i++){
 	  if(si_cluster_[i].fMult>0){
-	    h_evtheta_ic2[i]->Fill(si_cluster_[i].fPos[0].Theta()*180/3.14,si_cal::prot_E);
-	    if(si_cal::protcheck){
-	      h_evtheta_protgated_ic2[i]->Fill(si_cluster_[i].fPos[0].Theta()*180/3.14,si_cal::prot_E);
+	    h_evtheta_ic2[i]->Fill(si_cluster_[i].fPos[0].Theta()*180/3.14,silicon::prot_E);
+	    if(silicon::protcheck){
+	      h_evtheta_protgated_ic2[i]->Fill(si_cluster_[i].fPos[0].Theta()*180/3.14,silicon::prot_E);
 	 
 	    }
 	  }
@@ -194,7 +194,7 @@ namespace coinc{
       }
       
       if(ionchamber::hi_check[2]){
-	hpede_ic3->Fill(si_cal::prot_E,si_cal::prot_dE);    
+	hpede_ic3->Fill(silicon::prot_E,silicon::prot_dE);    
       }
     
       

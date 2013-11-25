@@ -24,6 +24,23 @@ Add user analyzers to the "analyzer" list(which is global in RN_Root)
 using namespace std;
 using namespace unpacker;            
 
+namespace silicon{
+  double prot_E(0);
+  double prot_dE(0);
+  double prot_theta(0);
+  double rel_angle(0);
+  double rel_transverse(0);
+  double rel_z(0);
+  double target_z[2] ={0};
+}
+
+namespace ionchamber{
+  Double32_t IC_TotalE(0);
+  Double32_t IC_ELoss(0);
+
+}
+
+
 RN_Analyzer::RN_Analyzer(const std::string&a,const std::string &b):TNamed(a.c_str(),b.c_str())
 {
 
@@ -311,12 +328,7 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
   if(TDC1[3]>0)triggerbit[0].fBit=TDC1[3];
   if(TDC1[4]>0)triggerbit[1].fBit=TDC1[4];
   
-  //reconstruct neutron detector hits for all neutron detectors 
-  //in NeutCollection
-  Narray.ReconstructHits(neut);
-  if(Narray.fMult>1)
-    RNArray::ReconstructTREL(neut);
-  
+
   //recontruct clusters for all silicon detectors in S2Collection
   unsigned int cref=0;
   for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
@@ -325,8 +337,61 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
     cref++;
     
   }
+
+  //reconstruct neutron detector hits for all neutron detectors 
+  //in NeutCollection
+  Narray.ReconstructHits(neut);
+  if(Narray.fMult>1)
+    RNArray::ReconstructTREL(neut);
+  
   
   return 1;
+}
+
+void RN_Analyzer::ResetGlobals(){
+  //silicon telescope parameters
+  silicon::prot_E = 0;
+  silicon::prot_dE = 0;
+  silicon::prot_theta = 0;  
+  silicon::rel_angle = 0;
+  silicon::rel_z = 0;
+  silicon::rel_transverse = 0;
+  silicon::target_z[0] = 0;
+  silicon::target_z[1] = 0;
+    
+  ionchamber::IC_ELoss = 0;
+  ionchamber::IC_TotalE = 0;
+
+}
+
+bool RN_Analyzer::Process(){
+
+  
+  
+  //DE-E Telescope calculations
+  if(si_cluster_[1].fMult>0&&si_cluster_[0].fMult>0){
+    silicon::prot_dE=si_cluster_[1].fE[0];
+    silicon::prot_E=si_cluster_[0].fE[0]+silicon::prot_dE;
+    silicon::prot_theta=si_cluster_[0].fPos[0].Theta()*(180/3.14);
+    silicon::rel_transverse = (si_cluster_[0].fPos[0].Perp()-si_cluster_[1].fPos[0].Perp());
+    silicon::rel_z = (si_cluster_[0].fPos[0].Z() - si_cluster_[1].fPos[0].Z());
+    silicon::rel_angle = TMath::ATan2(silicon::rel_transverse ,silicon:: rel_z) * 180 / 3.14;
+    silicon::target_z[0] = si_cluster_[0].fPos[0].Perp() / tan ( silicon::rel_angle * 3.14 / 180); 
+    silicon::target_z[1] = si_cluster_[1].fPos[0].Perp() / tan ( silicon::rel_angle * 3.14 / 180); 
+  }
+
+  
+
+//IonChamber Calculations
+  ionchamber::IC_ELoss = ic.fdE;
+  ionchamber::IC_TotalE = ic.fE + ionchamber::IC_ELoss;
+  
+
+  return true;
+}
+
+bool RN_Analyzer::ProcessFill(){
+  return true;
 }
 
 
