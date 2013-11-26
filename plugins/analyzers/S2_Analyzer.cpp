@@ -228,10 +228,6 @@ namespace silicon{
     if (target_z[0] > z_max || target_z[0] < z_min)
       return 0;
 
-    //rf cut al25
-    if(TDC1[0]<1170 || TDC1[0]>1466 || (TDC1[0]>1200 && TDC1[0]<1440))
-      return 0;
-
     if(silicon::prots1)
       protcheck=silicon::prots1->IsInside(prot_E,prot_dE);
   
