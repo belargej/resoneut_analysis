@@ -36,14 +36,6 @@ namespace silicon{
   int alphacheck(0);
   int thetathetacheck(0);
 
-  double prot_E(0);
-  double prot_dE(0);
-  double prot_theta(0);
-  double rel_angle(0);
-  double rel_transverse(0);
-  double rel_z(0);
-  double target_z[2] ={0};
-
   TH2D *hpede;  
   TH1D *h_si_[2];
   TH1D *h_si_a[2];
