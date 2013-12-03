@@ -200,7 +200,29 @@ namespace si_cal{
     
   }
 
+  Double_t GetPulserOffset(TH1D *h1,         //histogram to be searched
+			   const int& Peaks, //number of pulser points
+			   Float_t * inputs,  //V inputs from pulser
+			   double & offset,			   
+			   const double& sigma,
+			   const double& threshold,
+			   const double& xmin,
+			   const double& xmax
+			   ){
+    TSpectrum *s = new TSpectrum();
+    Int_t PeaksFound =  s->Search(h1,sigma," ",threshold);
+    if(Peaks != PeaksFound){
+      std::cout<<"Peaks found: "<<PeaksFound<<" different from peaks expected: "<<Peaks<<std::endl;
+      return 0xffff;
+    }
+    Float_t *xpeaks = s->GetPositionX();
+    TGraph PulserData(PeaksFound,xpeaks,inputs);
+    TF1 *fitter=new TF1("fitter","pol1",xmin,xmax);
+    PulserData.Fit(fitter,"","",xmin,xmax);
+    offset = -1 * (fitter->GetParameter(0) / fitter->GetParameter(1));
 
+    return offset;
+  }
   
   
   void Th228Fit(const double& peak1,
@@ -246,10 +268,7 @@ namespace si_cal{
     peaks.Fit(fitter2,"","",0,4096);
     eshift=fitter2->GetParameter(0);
     elin=fitter2->GetParameter(1);
-    
-  
-  
-
+   
   }
 }
 

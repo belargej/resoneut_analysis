@@ -28,6 +28,7 @@
 #include "RN_VariableMap.hpp"
 #include "RN_BaseDetector.hpp"
 
+
 #define S2INNERRAD 11.0
 #define S2OUTERRAD 35.0
 #define S2MATCHTHRESHOLD 0.1
@@ -72,7 +73,7 @@ public:
   ~RN_S2Detector(){}
   RN_S2Detector(std::string name,const int& fnum, const int& bnum);
   
-  TVector3 GetPosVect()const{return posv_+shiftv_;}
+  TVector3 GetPosVect()const{return posv_ + shiftv_ ;}
   void SetPosVect(TVector3 posv){posv_=posv;}
   void SetShiftVect(TVector3 shiftv){shiftv_=shiftv;}
   void SetRotVect(TVector3 rotv){rotv_=rotv;}

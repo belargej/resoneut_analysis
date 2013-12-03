@@ -64,15 +64,34 @@ public:
 
 namespace si_cal{
 
-  void ProduceCorrelationHistograms(const unsigned int&,const unsigned int&, const unsigned int&);
+  void ProduceCorrelationHistograms(const unsigned int&,
+				    const unsigned int&, 
+				    const unsigned int&);
 
   void AutoCalibrate(const unsigned int&, const unsigned int&);
 
+  Double_t GetPulserOffset(TH1D * h1,
+			   const int&Peaks,
+			   Float_t * inputs, 
+			   double & offset,
+			   const double& sigma = 2, 
+			   const double& threshold = 0.05,
+			   const double& xmin=0,
+			   const double & xmax=4095);
+    
   
-  void Th228Fit(const double&,const double&,const double&,const double&,
-		const double&,const double&,double&, double&);
+  void Th228Fit(const double&,
+		const double&,
+		const double&,
+		const double&,
+		const double&,
+		const double&,
+		double&, 
+		double&);
   
-  void Th228Fit(TH1D * h1,double &elin,double &eshift);
+  void Th228Fit(TH1D * h1,
+		double &elin,
+		double &eshift);
  
  
 }
