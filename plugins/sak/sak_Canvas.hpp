@@ -1,10 +1,12 @@
 #ifndef sak_CANVAS_H
 #define sak_CANVAS_H
 
+#include <cstdlib>
+#include <iostream>
 #include <TCanvas.h>
 #include <TH1.h>
 #include <TROOT.h>
-
+#include <TSpectrum.h>
 namespace sak{
 
   extern TCanvas* canvas;
@@ -18,6 +20,10 @@ namespace sak{
 
 
   int CloseCanvas();
+
+
+  void GetAllPeaks(const std::string& module);
+
 
 }
 

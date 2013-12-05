@@ -85,7 +85,7 @@ namespace si_cal{
   
 
 
-  void ProduceCorrelationHistograms(const unsigned int& matchfront, const unsigned int& matchback, const unsigned int & DetID){
+  void ProduceCorrelationHistograms(const unsigned int& matchfront, const unsigned int& matchback, const unsigned int & DetID,const double & xbins,const double& xmin,const double&xmax,const double&ybins,const double & ymin, const double & ymax){
     if (!rootfile){
       std::cout<<"rootfile path not set, use SetRootOutputFile<>\n";
       return;
@@ -95,20 +95,22 @@ namespace si_cal{
     
     for(unsigned int i=0;i<16;i++){
       rootfile->cd(Form("S%d/FrontMatch",DetID+1));   
-      si_fch_v_bch[i]=new TH2D(Form("s[%d]_fch[%d]_v_bch[%d]",DetID+1,matchfront,i),Form("s[%d]_fch[%d]_v_bch[%d];",DetID+1,matchfront,i),2048,0,4095,2048,0,4095);
+      si_fch_v_bch[i]=new TH2D(Form("s[%d]_fch[%d]_v_bch[%d]",DetID+1,matchfront,i),Form("s[%d]_fch[%d]_v_bch[%d];",DetID+1,matchfront,i),xbins,xmin,xmax,ybins,ymin,ymax);
       rootfile->cd(Form("S%d/BackMatch",DetID+1));        
-      si_bch_v_fch[i]=new TH2D(Form("s[%d]_bch[%d]_v_fch[%d]",DetID+1,matchback,i),Form("s[%d]_bch[%d]_v_fch[%d];",DetID+1,matchback,i),2048,0,4095,2048,0,4095);
+      si_bch_v_fch[i]=new TH2D(Form("s[%d]_bch[%d]_v_fch[%d]",DetID+1,matchback,i),Form("s[%d]_bch[%d]_v_fch[%d];",DetID+1,matchback,i),xbins,xmin,xmax,ybins,ymin,ymax);
     }
     Long64_t totentries= MainAnalyzer.TotEntries();
     std::cout<<"Total Entries: "<<totentries<<std::endl;
     
     for (Long64_t i=0;i<totentries;i++){
       MainAnalyzer.GetDetectorEntry(i);
+      if(si_[DetID].front.fMult < 1 || si_[DetID].back.fMult < 1)
+	continue;
       if(si_[DetID].front.fChlist[0]==matchfront){
 	si_fch_v_bch[(int)si_[DetID].back.fChlist[0]]->Fill(si_[DetID].Back_E(),si_[DetID].Front_E());
       }
       if(si_[DetID].back.fChlist[0]==matchback){
-	si_bch_v_fch[(int)si_[DetID].front.fChlist[0]]->Fill(si_[DetID].Front_E(),si_[DetID].Front_E());		  
+	si_bch_v_fch[(int)si_[DetID].front.fChlist[0]]->Fill(si_[DetID].Front_E(),si_[DetID].Back_E());		  
       }
 
     }
@@ -143,7 +145,7 @@ namespace si_cal{
 	if(idx<si_.size()){
 	  if(si_[idx].front.fMult>0&&si_[idx].front.fChlist[0]==matchfront){
 	    if(si_[idx].back.fMult>0)
-	      (*it).AddHit(si_[idx].front.fE[0],si_[idx].back.fE[0],(int)si_[idx].back.fChlist[0]);
+	      (*it).AddHit(si_[idx].Front_E(),si_[idx].Back_E(),(int)si_[idx].back.fChlist[0]);
 	  }
 	}
 	idx++;
@@ -155,10 +157,6 @@ namespace si_cal{
       (*it).PerformFit();
       (*it).PrintCoefficients(Form("%s_back2front.in",si_[idx].Name().c_str()));
       //now load file and apply it to that detector
-      
-      std::cout<<"sleeping for 2 seconds"<<std::endl;
-      usleep(2000000);
-      
       
       DetVar.LoadParams(Form("%s_back2front.in",si_[idx].Name().c_str()));
       si_[idx].SetCalibrations(DetVar);
@@ -246,6 +244,53 @@ namespace si_cal{
     
 
   }
+
+  
+  void Th228Fit_corr(const double& peak1,
+		const double& peak2,
+		const double& peak3,
+		const double& peak4,
+		const double& peak5,
+		const double& peak6,
+		double& elin,
+		double& eshift){
+    
+    double xset[6]={peak1,peak2,peak3,peak4,peak5,peak6};
+    double yset[6]={5.27815,5.54170,5.91958,6.1523,6.64851,8.67163};
+    TF1 *fitter2=new TF1("fitter2","pol1",0,4096);
+    TGraph peaks(6,xset,yset);
+    peaks.Fit(fitter2,"","",0,4096);
+    eshift=fitter2->GetParameter(0);
+    elin=fitter2->GetParameter(1);
+    
+    
+    
+
+  }
+
+  void Th228Fit_proton(const double& peak1,
+		       const double& peak2,
+		       const double& peak3,
+		       const double& peak4,
+		       const double& peak5,
+		       const double& peak6,
+		       double& elin,
+		       double& eshift){
+    
+    double xset[6]={peak1,peak2,peak3,peak4,peak5,peak6};
+    double yset[6]={5.29775,5.56047,5.93717,6.16916,6.66382,8.67163};
+    TF1 *fitter2=new TF1("fitter2","pol1",0,4096);
+    TGraph peaks(6,xset,yset);
+    peaks.Fit(fitter2,"","",0,4096);
+    eshift=fitter2->GetParameter(0);
+    elin=fitter2->GetParameter(1);
+    
+    
+    
+
+  }
+
+
 
   void Th228Fit(TH1D * h1,double &elin,double &eshift){
     int npeaks=6;

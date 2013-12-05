@@ -10,10 +10,10 @@
 //parameters on their own. 
 /***********************************************************/
 
-#ifndef _S2_ANALYZER_CXX
-#define _S2_ANALYZER_CXX
+#ifndef _SiPID_ANALYZER_CXX
+#define _SiPID_ANALYZER_CXX
 
-#include "S2_Analyzer.hpp"
+#include "SiPID_Analyzer.hpp"
 #include "../../include/RN_Root.hpp"
 using unpacker::TDC1;
 
@@ -37,10 +37,6 @@ namespace silicon{
   int thetathetacheck(0);
 
   TH2D *hpede;  
-  TH1D *h_si_back[2];
-  TH1D *h_si_back_a[2];
-  TH1D *h_si_front[2];
-  TH1D *h_si_front_a[2];
   TH2D *h_evtheta[2];
   TH2D *h_evtheta_protgated[2];
   TH2D *h_evtheta_neutgated[2];
@@ -70,21 +66,6 @@ namespace silicon{
   TH2D *hS1Theta_vS2Theta; 
   TH2D *hS1Theta_vS2Theta_prot; 
 
-  TH2D* rfvs1_t;
-  TH2D *rfvs2_t;
-  TH2D *rfvs1_t_rel;
-  TH2D *rfvs2_t_rel;
-  
-  TH2D *rfvs1_t_prot;
-  TH2D *rfvs2_t_prot;
-  TH2D *rfvs1_t_rel_prot;
-  TH2D *rfvs2_t_rel_prot;
-  
-  TH2D *rfvs1_t_prot2;
-  TH2D *rfvs1_t_alpha;
-  TH2D *rfvs1_t_rel_prot2;
-  TH2D *rfvs1_t_rel_alpha;
-
   TH1D *h_s1_t;
   TH1D *h_s1_t_noticds;
 
@@ -100,16 +81,6 @@ namespace silicon{
 
   void S2_Analyzer::ResetGlobals(){
     
-    //silicon telescope parameters
-    prot_E = 0;
-    prot_dE = 0;
-    prot_theta = 0;  
-    rel_angle = 0;
-    rel_z = 0;
-    rel_transverse = 0;
-    target_z[0] = 0;
-    target_z[1] = 0;
-
     //silicon telescope gate results
     protcheck = 0;
     prot2check = 0;
@@ -134,20 +105,11 @@ namespace silicon{
     rootfile->mkdir("Silicon/f2b_ratio/S2");
     rootfile->mkdir("Silicon/ede");
     rootfile->mkdir("Silicon/evtheta");
-    rootfile->mkdir("Silicon/Timing");
     rootfile->mkdir("mult/Silicon");
     rootfile->mkdir("Silicon/Chlist");
     rootfile->mkdir("Silicon/Theta");
-   
-    rootfile->cd("Silicon");
-    h_si_back_a[0]=new TH1D("h_si_1_back_a","si_1_e_before;E",4096,-20,4095);
-    h_si_back_a[1]=new TH1D("h_si_2_back_a","si_2_e_before;E[MeV]",4096,-20,4095);
-    h_si_back[0]=new TH1D("h_si_1_back","si_1_e_after;E[MeV]",512,-1,16);
-    h_si_back[1]=new TH1D("h_si_2_back","si_2_e_after;E[MeV]",512,-1,16);
-    h_si_front_a[0]=new TH1D("h_si_1_front_a","si_1_e_before;E",4096,-20,4095);
-    h_si_front_a[1]=new TH1D("h_si_2_front_a","si_2_e_before;E[MeV]",4096,-20,4095);
-    h_si_front[0]=new TH1D("h_si_1_front","si_1_e_after;E[MeV]",512,-1,16);
-    h_si_front[1]=new TH1D("h_si_2_front","si_2_e_after;E[MeV]",512,-1,16);
+    rootfile->mkdir("Silicon/Timing");
+
     rootfile->cd("Silicon/Chlist");
     h_chlistf[0]=new TH1D("h_chlistf_1","Chlistf_S1;Ch",20,-1,18);
     h_chlistf[1]=new TH1D("h_chlistf_2","Chlistf_S2;Ch",20,-1,18);
@@ -157,7 +119,6 @@ namespace silicon{
     h_chlist_cluster_ring[1]=new TH1D("h_chlist_cluster_ring_S2","Chlist_cluster_ring_S2;Ch",20,-1,18);
     h_chlist_cluster_segment[0]=new TH1D("h_chlist_cluster_segment_S1","Chlist_cluster_segment_S1;Ch",20,-1,18);
     h_chlist_cluster_segment[1]=new TH1D("h_chlist_cluster_segment_S2","Chlist_cluster_segment_S2;Ch",20,-1,18);
-
 
     h_chS1_chS2_rings=new TH2D("h_chS1_chS2_rings","h_chS1_chS2_rings;s1rings;s2rings",17,0,16,17,0,16);
     h_chS1_chS2_segments = new TH2D("h_chS1_chS2_segments","h_chS1_chS2_segments;s1segments;s2segments",17,0,16,17,0,16);
@@ -213,25 +174,7 @@ namespace silicon{
     rootfile->cd("Silicon/Timing");
     h_s1_t=new TH1D("h_s1_t","s1_t;time",1024,0,4096);
     h_s1_t_noticds=new TH1D("h_s1_t_noticds","s1_t_noticds;time",1024,0,4096);
-    
-
-    rootfile->cd("Silicon/Timing/rftime");
-    
-    rfvs1_t=new TH2D("rfvs1_t","rfvs1_t;rftime;s1_t",1024,256,2304,1024,0,4096);
-    rfvs2_t=new TH2D("rfvs2_t","rfvs2_t;rftime;s2_t",1024,256,2304,1024,0,4096);
-    rfvs1_t_rel=new TH2D("rfvs1_t_rel","rfvs1_t_rel;rftime;s1_t_rel",1024,256,2304,1024,-2048,2047);
-    rfvs2_t_rel=new TH2D("rfvs2_t_rel","rfvs2_t_rel;rftime;s2_t_rel",1024,256,2304,1024,-2048,2047);
-    
-    rfvs1_t_prot=new TH2D("rfvs1_t_prot","rfvs1_t_prot;rftime;s1_t",1024,256,2304,1024,0,4096);
-    rfvs2_t_prot=new TH2D("rfvs2_t_prot","rfvs2_t_prot;rftime;s2_t",1024,256,2304,1024,0,4096);
-    rfvs1_t_rel_prot=new TH2D("rfvs1_t_rel_prot","rfvs1_t_rel_prot;rftime;s1_t_rel",1024,256,2304,1024,-2048,2047);
-    rfvs2_t_rel_prot=new TH2D("rfvs2_t_rel_prot","rfvs2_t_rel_prot;rftime;s2_t_rel",1024,256,2304,1024,-2048,2047);
-    
-    rfvs1_t_prot2=new TH2D("rfvs1_t_prot2","rfvs1_t_prot2;rftime;s1_t",1024,256,2304,1024,0,4096);
-    rfvs1_t_rel_prot2=new TH2D("rfvs1_t_rel_prot2","rfvs1_t_rel_prot2;rftime;s1_t_rel",1024,256,2304,1024,-2048,2047);
-    rfvs1_t_alpha=new TH2D("rfvs1_t_alpha","rfvs1_t_alpha;rftime;s1_t",1024,256,2304,1024,0,4096);
-    rfvs1_t_rel_alpha=new TH2D("rfvs1_t_rel_alpha","rfvs1_t_rel_alpha;rftime;s1_t_rel",1024,256,2304,1024,-2048,2047);
-    
+     
     return 1;
   }  
   
@@ -350,38 +293,6 @@ namespace silicon{
       h_zest_v_theta[1]->Fill(target_z[1],si_cluster_[1].fPos[0].Theta()*180/3.14);
     }
   
-    if(si_[0].Back_T(0)>0){
-      rfvs1_t->Fill(rftime[0].fT,si_[0].Back_T(0));
-      rfvs2_t->Fill(rftime[0].fT,si_[1].Back_T(0));
-      rfvs1_t_rel->Fill(rftime[0].fT,rftime[0].fT-si_[0].Back_T(0));
-      rfvs2_t_rel->Fill(rftime[0].fT,rftime[0].fT-si_[1].Back_T(0));
-
-      if(protcheck){
-	rfvs1_t_prot->Fill(rftime[0].fT,si_[0].Back_T(0));
-	rfvs2_t_prot->Fill(rftime[0].fT,si_[1].Back_T(0));
-	rfvs1_t_rel_prot->Fill(rftime[0].fT,rftime[0].fT-si_[0].Back_T(0));
-	rfvs2_t_rel_prot->Fill(rftime[0].fT,rftime[0].fT-si_[1].Back_T(0));
-
-
-	hS1Theta_vS2Theta_prot->Fill(si_cluster_[0].fPos[0].Theta()*180/3.14,si_cluster_[1].fPos[0].Theta()*180/3.14);
-
-      }
-    
-      if(prot2check){
-	rfvs1_t_prot2->Fill(rftime[0].fT,si_[0].Back_T(0));
-	rfvs1_t_rel_prot2->Fill(rftime[0].fT,rftime[0].fT-si_[0].Back_T(0));
-      }
-    
-    
-      if(alphacheck){
-	rfvs1_t_alpha->Fill(rftime[0].fT,si_[0].Back_T(0));
-	rfvs1_t_rel_alpha->Fill(rftime[0].fT,rftime[0].fT-si_[0].Back_T(0));
-      
-      }
-
-    
-    }
-  
     return 1;
 
   }
@@ -426,7 +337,7 @@ namespace silicon{
   }
 
 
-  void LoadGates(const std::string& input){
+  void LoadSiPIDGates(const std::string& input){
     sak::LoadCuts in(input.c_str());    
     if(in.getCut("prots1") && !prots1)
       prots1=new TCutG(*in.getCut("prots1"));

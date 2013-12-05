@@ -16,13 +16,13 @@ INC_DIR=-I${ROOTSYS}/include -I$(PWD)/../../include -I$(PWD)/../../
 all: libSAK.so	
 
 libSAK.so: ${OBJECTS} SAK_d.cpp 
-	 g++ -shared -o ${addprefix ../../lib/,$@} $^ `root-config --ldflags --libs --cflags` ${DEBUG} $(INC_DIR)
+	 g++ -shared -o ${addprefix ../../lib/,$@} $^ `root-config --ldflags --libs --cflags` ${DEBUG} $(INC_DIR) -lSpectrum
 
 SAK_d.cpp: ${HEADERS} my_LinkDef.h
 	rootcint SAK_d.cpp -c $(INC_DIR) `root-config --cflags` -p $^
 
 %.o: %.cpp	
-	${CXX} ${CFLAGS} $< $(INC_DIR)
+	${CXX} ${CFLAGS} $< $(INC_DIR) -lSpectrum
 
  #####################################################################
 ###Other Functions###################################################

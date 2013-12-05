@@ -53,8 +53,8 @@ protected:
   std::vector<Double32_t> frontt1;//!
   std::vector<Double32_t> backt0;//!
   std::vector<Double32_t> backt1;//!
-  std::vector<Double32_t> fch;//!
-  std::vector<Double32_t> bch;//!
+  std::vector<Double32_t> fQ_front;//!
+  std::vector<Double32_t> fQ_back;//!
   TVector3 normv_;//!
   TVector3 shiftv_;//!
   TVector3 posv_;//!
@@ -84,7 +84,9 @@ public:
   Double_t InnerTheta()const;
   Double_t OuterTheta()const;
   int Quadrant(int i=0)const;
+  int Side(int i=0)const;
   Double_t Ring_Ch(int i=0)const;
+
 
   virtual TVector3 chVect(const double&cf,const double& cb) const;
   void Calcnormv();
@@ -112,7 +114,7 @@ public:
   {
     outerrad=S1OUTERRAD;
     innerrad=S1INNERRAD;
-    _s1switch=1;
+    _s1switch=1;//needed to correct for mistake in cable plugin
     ring_pitch_ = (S1OUTERRAD - S1INNERRAD) / static_cast<double>(front.NumOfCh());
     delta_phi_ = 360. / static_cast<double>(back.NumOfCh());
   }
@@ -167,7 +169,9 @@ public:
 			 float addback_back);
   void Reset();
   void SetCalibrations(RN_VariableMap&);
-    
+  Double_t Phi(int i=0)const {return fPos[i].Phi();};
+  Double_t Theta(int i=0)const {return fPos[i].Theta();};
+  
   ClassDef(RN_S2Cluster,1);
 };
 

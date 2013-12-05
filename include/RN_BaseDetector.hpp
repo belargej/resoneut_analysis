@@ -49,7 +49,7 @@ public:
   std::vector<Double32_t>fT;//[fMult]
 
   
-  Double32_t Ch(int i=0)const {return fCh_cal[(int)fChlist[i]];}
+  Double32_t Ch(int i=0)const {return fMult>0 ? fCh_cal[(int)fChlist[i]] : -1 ;}
   void SetELimits(const double&,const double&);
   void Init(const double& num);
   void Reset();

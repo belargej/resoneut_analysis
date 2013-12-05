@@ -52,4 +52,26 @@ namespace sak{
     
     
   }
+
+
+
+  void GetAllPeaks(const std::string& module){
+    TSpectrum *s = new TSpectrum();
+    for(unsigned int i=0;i<32;i++){
+      if(!gDirectory->Get(Form("h%s[%d]",module.c_str(),i))){
+	std::cout<<"histograms not found: "<<Form("h%s[%d]",module.c_str(),i)<<"\n";
+	break;
+      }
+      TH1D* hist = (TH1D*)gDirectory->Get(Form("h%s[%d]",module.c_str(),i));
+      Int_t PeaksFound =  s->Search(hist);
+      std::cout<<module<<"."<<i<<": \n";
+      Float_t *xpeaks = s->GetPositionX();
+      for(unsigned int j=0;j<PeaksFound;j++){
+      std::cout<<"peak."<<j<<": :"<<xpeaks[j]<<"\n";
+      }
+      
+    }
+    
+    
+  }
 }

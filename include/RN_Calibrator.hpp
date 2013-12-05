@@ -64,9 +64,15 @@ public:
 
 namespace si_cal{
 
-  void ProduceCorrelationHistograms(const unsigned int&,
-				    const unsigned int&, 
-				    const unsigned int&);
+  void ProduceCorrelationHistograms(const unsigned int& matchfront,
+				    const unsigned int& matchback, 
+				    const unsigned int& DetID,
+				    const double& xbins=2048,
+				    const double& xmin=0,
+				    const double& xmax=4095,
+				    const double& ybins=2048,
+				    const double& ymin=0,
+				    const double& ymax=4095);
 
   void AutoCalibrate(const unsigned int&, const unsigned int&);
 
@@ -88,7 +94,25 @@ namespace si_cal{
 		const double&,
 		double&, 
 		double&);
-  
+  void Th228Fit_corr(const double&,
+		const double&,
+		const double&,
+		const double&,
+		const double&,
+		const double&,
+		double&, 
+		double&);
+  void Th228Fit_proton(const double&,
+		const double&,
+		const double&,
+		const double&,
+		const double&,
+		const double&,
+		double&, 
+		double&);
+    
+
+
   void Th228Fit(TH1D * h1,
 		double &elin,
 		double &eshift);
