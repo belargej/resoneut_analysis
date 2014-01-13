@@ -42,7 +42,8 @@ namespace trigger{
   int s1raw_tmult(0);
   int nai_up_tmult(0);
   int nai_down_tmult(0);
-  
+  int s2_tmult(0);
+
   int n_emult(0);
   int s1_emult(0);
   int s1raw_emult(0);
@@ -51,12 +52,16 @@ namespace trigger{
   
   int icds_OFF(0);
   int require_S1(0);
+  int _require_S2(0);
   int require_neut(0);
   int require_nai(0);
-  int require_ic(0);
+  int _require_ic(0);
   int require_ntmult(0);
   int require_nemult(0);
   int _requireOFF_nai(0);
+  int _requireOFF_S2(0);
+
+
 
   double S1_eps(0.0);
   double neut_eps(0.0);
@@ -73,16 +78,16 @@ namespace trigger{
   std::vector<float> triggerinfo(6,0);
   std::vector<std::string> triggernames;
   
-  void SetICdsOFF(){icds_OFF=1;}
-  void RequireS1(){require_S1=1;}
-  void RequireNeut(){require_neut=1;}
-  void RequireNaI(){require_nai=1;}
+  void SetICdsOFF(){icds_OFF = 1;}
+  void RequireS1(){require_S1 = 1;}
+  void RequireNeut(){require_neut = 1 ;}
+  void RequireNaI(){require_nai = 1;}
   void Require_NTMult(int mult){require_ntmult=mult;}
   void Require_NEMult(int mult){require_nemult=mult;}
   void RequireOFF_NaI(){_requireOFF_nai = 1;}
-  
-
-
+  void RequireS2(){_require_S2 = 1;}
+  void RequireOFF_S2(){_requireOFF_S2 = 1;}
+  void RequireIC_E(){_require_ic = 1;}
   Trigger_Analyzer::Trigger_Analyzer()
   {
     
@@ -117,7 +122,8 @@ namespace trigger{
     s1raw_tfirst=5000;
 
     n_tmult=0;       
-    s1_tmult=0;      
+    s1_tmult=0;   
+    s2_tmult = 0;
     s1raw_tmult=0;   
     nai_up_tmult=0;  
     nai_down_tmult=0;
@@ -190,6 +196,11 @@ namespace trigger{
 	  s1raw_tfirst=unpacker::TDC2[i];
 	}
       }
+      if(unpacker::TDC2[i+16]>0){
+	s2_tmult++;	
+      }
+      
+      
     }
 
 
@@ -242,7 +253,15 @@ namespace trigger{
 
     if(_requireOFF_nai && (triggerinfo[2]||triggerinfo[3]))
       return 0;
-
+    
+    if(_requireOFF_S2 && si_cluster_[1].fMult>0)
+      return 0;
+    
+    if(_require_S2 && !si_cluster_[1].fMult>0)
+      return 0;
+    
+    if(_require_ic && !(ic.fE && ic.fdE))
+      return 0;
 
     /*
     std::cout<<"*******************\n";

@@ -7,6 +7,14 @@ ClassImp(RN_S2Detector);
 
 using global::myRnd;
 
+#if 1
+#define RNDMNUM global::myRnd.Rndm()
+#else
+#define RNDMNUM 0
+#endif
+
+
+
 ////////////////////////////////////////////////////////////////////
 ///RN_S2Detector
 ////////////////////////////////////////////////////////////////////
@@ -96,9 +104,10 @@ void RN_S2Detector::SetCalibrations(RN_VariableMap& detvar){
   detvar.GetParam(Form("%s.shiftz",Name().c_str()),tempz);
   SetShiftVect(TVector3(tempx,tempy,tempz));
   tempx=0,tempy=0,tempz=0,temp=0;
-  detvar.GetParam(Form("%s.rot_theta",Name().c_str()),tempx);
-  detvar.GetParam(Form("%s.rot_phi",Name().c_str()),tempy);
- 
+  detvar.GetParam(Form("%s.rotx",Name().c_str()),tempx);
+  detvar.GetParam(Form("%s.roty",Name().c_str()),tempy);
+  detvar.GetParam(Form("%s.rotz",Name().c_str()),tempz);
+  SetRotVect(TVector3(tempx,tempy,tempz));
   
   Calcnormv();
 
@@ -126,7 +135,11 @@ Double_t RN_S2Detector::Front_E(int i) const{
     return -1;
   if (!front.fE[i]>0)
     return 0;
-  return (((fronta1[(int)front.fChlist[i]] * (front.fE[i]+fQ_front[(int)front.fChlist[i]])) + fronta0[(int)front.fChlist[i]]) * elin + eshift);
+  return (((fronta1[(int)front.fChlist[i]] * 
+	    (front.fE[i]+fQ_front[(int)front.fChlist[i]])) 
+	   + fronta0[(int)front.fChlist[i]]) 
+	  * elin 
+	  + eshift);
 }
 
 Double_t RN_S2Detector::Front_T(int i) const{
@@ -143,7 +156,11 @@ Double_t RN_S2Detector::Back_E(int i) const{
     return -1;
   if(!back.fE[i]>0)
     return 0;
-  return (((backa1[(int)back.fChlist[i]] * back.fE[i]+fQ_back[(int)back.fChlist[i]])+backa0[(int)back.fChlist[i]])*elin+eshift);   
+  return ((backa1[(int)back.fChlist[i]] * 
+	   (back.fE[i]+fQ_back[(int)back.fChlist[i]])
+	   +backa0[(int)back.fChlist[i]])
+	  *elin
+	  +eshift);   
 }
 
 Double_t RN_S2Detector::Back_T(int i) const{
@@ -156,12 +173,12 @@ Double_t RN_S2Detector::Back_T(int i) const{
 
 Double_t RN_S2Detector::InnerTheta()const{
   if(GetPosVect().Z()>0)
-    return TMath::ATan(innerrad/GetPosVect().Z())*180/3.14;
+    return TMath::ATan(innerrad/GetPosVect().Z())*180.0/3.14;
   else return 0;
 }
 Double_t RN_S2Detector::OuterTheta()const{
   if(GetPosVect().Z()>0)
-    return TMath::ATan(outerrad/GetPosVect().Z())*180/3.14;
+    return TMath::ATan(outerrad/GetPosVect().Z())*180.0/3.14;
   else return 0;
 }
 
@@ -276,11 +293,12 @@ TVector3 RN_S2Detector::chVect(const double& cf,const double& cb) const{
   //First make a vector to the channel for a detector at the origin
   double s;
   double phi;
+
   if((cf < static_cast<double>(front.NumOfCh())) 
      && (cb < static_cast<double>(back.NumOfCh()))){
-    s = innerrad + (cf + (double)myRnd.Rndm())*ring_pitch_;
+    s = innerrad + (cf + (double)RNDMNUM)*ring_pitch_;
     phi = (static_cast<double>(front.NumOfCh()) - cb 
-	   - (double)myRnd.Rndm())*delta_phi_;
+	   - (double)RNDMNUM) * delta_phi_;
   }
   else{ 
     std::cerr << "InValid channels sent to S2DetectorPar::chVect" << std::endl;
@@ -292,15 +310,16 @@ TVector3 RN_S2Detector::chVect(const double& cf,const double& cb) const{
   
   //then calibrate the vector 
   //add it to the detector position vector
+  if(rotv_[2]){
+    resultv.RotateZ(rotv_[2]*M_PI/180.);
+  }
   if(rotv_[0]){
     resultv.RotateX(rotv_[0]*M_PI/180.);
   }
   if(rotv_[1]){
     resultv.RotateY(rotv_[1]*M_PI/180.);
   }
-  if(rotv_[2]){
-    resultv.RotateZ(rotv_[2]*M_PI/180.);
-  }
+
   resultv = resultv + shiftv_;
   resultv = resultv + posv_;
     
@@ -365,7 +384,7 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
     if (addback_back&&
 	(i+1<in.back.fMult)&&(in.back.Ch(i+1)==in.back.Ch(i)+1 || in.back.Ch(i+1)==in.back.Ch(i)-1)){
       float ecluster=in.Back_E(i)+in.Back_E(i+1);
-      float tcluster=(in.Back_T(i+1)+in.Back_T(i))/2;
+      float tcluster=(in.Back_T(i+1)+in.Back_T(i))/2.0;
       float chnew=(in.back.Ch(i+1)+in.back.Ch(i))/2.0;
       //float chnew = in.back.Ch(i);
       BackClusters.InsertHit(ecluster,tcluster,chnew);
@@ -391,7 +410,7 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
  
  
       float ecluster=in.Front_E(i+1)+in.Front_E(i);
-      float tcluster=(in.Front_T(i+1)+in.Front_T(i))/2;
+      float tcluster=(in.Front_T(i+1)+in.Front_T(i))/2.0;
       float chnew=(in.front.Ch(i+1)+in.front.Ch(i))/2.0;
       //float chnew = in.front.Ch(i);
       FrontClusters.InsertHit(ecluster,tcluster,chnew);
@@ -418,6 +437,22 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
       float match_ch= FrontClusters.chlist[front_match];
       float cb=BackClusters.chlist[i];
       float back_t=BackClusters.tlist[i];
+
+      //temporary fix for the S1 mistake made during 2013 runs
+      //swapping odd-even ring pairs depending on what half
+      //of the detector was hit.
+      if(in.IsS1()){
+	if( floor((int)cb / 8) == 0){
+	  if((int)match_ch % 2 !=0 ){
+	    match_ch = match_ch - 1;
+	  }
+	  else
+	    match_ch = match_ch + 1;
+	}
+      }
+      
+      
+      
       fPos[fMult] = in.chVect(match_ch,cb);
       fChlist[fMult]=match_ch;
       fChlist_b[fMult]=cb;
@@ -467,7 +502,7 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
 void RN_S2Cluster::Reset(){
   
   for(int i=0;i<fMult;i++){
-    fPos[i].SetXYZ(0,0,0);
+    fPos[i].SetXYZ(0.,0.,0.);
     fChlist_b[i]=-1;
   }
    

@@ -109,5 +109,10 @@ namespace ionchamber{
   
 }
 
+namespace coinc{
+  extern Double32_t S1_neut_trel;
+  
+}
+
 
 #endif

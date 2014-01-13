@@ -50,20 +50,23 @@ namespace silicon{
   extern TCutG* prots1;
   extern TCutG* prots2;
   extern TCutG* alphas;
+  extern TCutG* deuterons;
   extern TCutG* ptheta_cut;
   extern TCutG* thetatheta_cut;
 
   extern int _require_proton;
   extern int _require_alpha;
+  extern int _require_deuteron;
   extern int _require_thetatheta;
   extern int _require_ptheta;
   extern int protcheck;
   extern int prot2check;
   extern int alphacheck;
-
+  extern int deut_check;
 
 
   void RequireProton();
+  void RequireDeuteron();
   void RequireAlpha();
   void RequirePThetaCut();
   void RequireThetaTheta();

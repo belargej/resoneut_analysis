@@ -40,6 +40,11 @@ namespace ionchamber{
 
 }
 
+namespace coinc{
+  Double32_t S1_neut_trel(0);
+
+}
+
 
 RN_Analyzer::RN_Analyzer(const std::string&a,const std::string &b):TNamed(a.c_str(),b.c_str())
 {
@@ -312,10 +317,10 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
   }
 
   //IonChamber E+dE hits
-  // if(ADC4[14]>0)ic.fE=ADC4[14];
-  //if(ADC4[15]>0)ic.fdE=ADC4[15];
-  if(ADC4[13]>0)ic.fE=ADC4[13];
-  if(ADC4[14]>0)ic.fdE=ADC4[14];  
+  if(ADC4[14]>0)ic.fE=ADC4[14];
+  if(ADC4[15]>0)ic.fdE=ADC4[15];
+  //if(ADC4[13]>0)ic.fE=ADC4[13];
+  //if(ADC4[14]>0)ic.fdE=ADC4[14];  
 
 
   //rftime
@@ -362,6 +367,7 @@ void RN_Analyzer::ResetGlobals(){
   ionchamber::IC_ELoss = 0;
   ionchamber::IC_TotalE = 0;
 
+  coinc::S1_neut_trel = 0;
 }
 
 bool RN_Analyzer::Process(){
@@ -372,12 +378,19 @@ bool RN_Analyzer::Process(){
   if(si_cluster_[1].fMult>0&&si_cluster_[0].fMult>0){
     silicon::prot_dE=si_cluster_[1].fE[0];
     silicon::prot_E=si_cluster_[0].fE[0]+silicon::prot_dE;
-    silicon::prot_theta=si_cluster_[0].fPos[0].Theta()*(180/3.14);
+    silicon::prot_theta=si_cluster_[0].fPos[0].Theta()*(180.0 / TMath::Pi());
     silicon::rel_transverse = (si_cluster_[0].fPos[0].Perp()-si_cluster_[1].fPos[0].Perp());
-    silicon::rel_z = (si_cluster_[0].fPos[0].Z() - si_cluster_[1].fPos[0].Z());
-    silicon::rel_angle = TMath::ATan2(silicon::rel_transverse ,silicon:: rel_z) * 180 / 3.14;
-    silicon::target_z[0] = si_cluster_[0].fPos[0].Perp() / tan ( silicon::rel_angle * 3.14 / 180); 
-    silicon::target_z[1] = si_cluster_[1].fPos[0].Perp() / tan ( silicon::rel_angle * 3.14 / 180); 
+    silicon::rel_z = (si_cluster_[0].fPos[0] - si_cluster_[1].fPos[0]).Z();
+    silicon::rel_angle = (si_cluster_[0].fPos[0] - si_cluster_[1].fPos[0]).Theta() * (180.0 / TMath::Pi())
+;
+    //silicon::rel_angle = TMath::ATan2(silicon::rel_transverse ,) * 180 / 3.14;
+    // silicon::target_z[0] = (si_cluster_[0].fPos[0].Perp() )/ tan ( silicon::rel_angle * 3.14 / 180); 
+    // silicon::target_z[1] = (si_cluster_[1].fPos[0].Perp() )/ tan ( silicon::rel_angle * 3.14 / 180); 
+    silicon::target_z[0] = (si_cluster_[0].fPos[0]-global::target_pos).Perp()/ tan ( silicon::rel_angle * 3.14 / 180); 
+    silicon::target_z[1] = (si_cluster_[1].fPos[0]-global::target_pos).Perp() / tan ( silicon::rel_angle * 3.14 / 180); 
+    
+    coinc::S1_neut_trel = si_cluster_[0].fT[0] - Narray.fT[0];
+
   }
 
   

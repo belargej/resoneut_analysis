@@ -1,44 +1,45 @@
 CXX=g++
 
-SOURCES=sak_Gates.cpp sak_Histograms.cpp sak_Canvas.cpp sak_Kinematic_Curve.cpp
+SOURCES=S1Test.cpp S1Test.hpp
+
+
 OBJECTS=${SOURCES:.cpp=.o}
 HEADERS=${SOURCES:.cpp=.hpp}
 LIBS=${addprefix -l,${SOURCES:.cpp=}}
 
-
 CFLAGS=`root-config --cflags` -c ${DEBUG}
 GLIBS=`root-config --glibs`
-LINK_DIR=${PWD}/../lib
+LINK_DIR=${PWD}/../../lib
 
 LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} 
 INC_DIR=-I${ROOTSYS}/include -I$(PWD)/../../include -I$(PWD)/../../
 
-all: libSAK.so	
+all: libRNTesting.so
 
-libSAK.so: ${OBJECTS} SAK_d.cpp 
-	 g++ -shared -o ${addprefix ../../lib/,$@} $^ `root-config --ldflags --libs --cflags` ${DEBUG} $(INC_DIR) -lSpectrum
+libRNTesting.so: ${OBJECTS} RNTesting_d.cpp 
+	 g++ -shared -o ${addprefix ../../lib/,$@} $^ `root-config --ldflags --libs --cflags` ${DEBUG} $(INC_DIR)
 
-SAK_d.cpp: ${HEADERS} my_LinkDef.h
-	rootcint SAK_d.cpp -c $(INC_DIR) `root-config --cflags` -p $^
+RNTesting_d.cpp: ${HEADERS} my_LinkDef.h
+	rootcint RNTesting_d.cpp -c $(INC_DIR) `root-config --cflags` -p $^
 
-%.o: %.cpp	
-	${CXX} ${CFLAGS} $< $(INC_DIR) -lSpectrum
+%.o: %.cpp %.hpp	
+	${CXX} ${CFLAGS} $< $(INC_DIR)
 
  #####################################################################
 ###Other Functions###################################################
 #####################################################################
 
 clean: 
-	rm ${OBJECTS} SAK_d.* ../../lib/libSAK.so
+	rm ${OBJECTS} RNTesting_d.* ../../lib/libRNTesting.so
 
 newdict:
-	rm SAK_d.*
+	rm RNTesting_d.*
 
 install:	
-	ln -s ${PWD}/../../lib/libSAK.so ${HOME}/lib
+	ln -s ${PWD}/../../lib/libRNTesting.so ${HOME}/lib
 
 uninstall:	
-	rm ${HOME}/lib/libSAK.so
+	rm ${HOME}/lib/libRNTesting.so
 
 
 help:

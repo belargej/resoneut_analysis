@@ -29,7 +29,7 @@ namespace coinc{
   TCutG* si_ic_time1;
   TCutG* si_ic_time2;
   int si_ic_tcheck(0);
-  
+  int _require_si_ic_time(0);
 
   sak::Histogram2D *hpede_ic1;    
   sak::Histogram2D *hpede_ic2;  
@@ -53,6 +53,10 @@ namespace coinc{
   sak::Hist2D* h_evtheta_prot_F17_timing;
   sak::Hist2D* h_evtheta_prot_O16_timing;
   sak::Hist2D* hpede_F17_timing; 
+
+  void Require_Si_IC_Time(){
+    _require_si_ic_time = 1;
+  }
 
   S2_IC_Analyzer::S2_IC_Analyzer()
   {
@@ -114,7 +118,10 @@ namespace coinc{
 
     si_ic_tcheck = (si_ic_time1 &&si_ic_time1->IsInside(rftime[0].fT -si_[0].Back_T(0),unpacker::TDC1[1])); 
     si_ic_tcheck = si_ic_tcheck || (si_ic_time2 && si_ic_time2->IsInside(rftime[0].fT -si_[0].Back_T(0),unpacker::TDC1[1]));
-
+    
+    if(_require_si_ic_time && !si_ic_tcheck){
+      return 0;
+    }
 
     return 1;
   }

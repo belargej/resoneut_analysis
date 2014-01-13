@@ -31,7 +31,7 @@ namespace coinc{
   TCutG* s2_n_time_cut;
   
   double si_t(0);
-
+  
   int s1_n_time_check(0);
   int s2_n_time_check(0);
   int _require_s1_n_time_check(0);
@@ -126,7 +126,7 @@ namespace coinc{
     h_n_t_v_si_t_F17_prot_timing = new  sak::Hist2D("h_n_t_v_si_t_F17_prot_timing","n_t","si_t",1024,0,4095,1024,0,4095);
     h_n_t_v_si_trel = new  sak::Hist2D("h_n_t_v_si_trel","n_t","si_t - rftime",1024,0,4095,1024,-2097,2098);
     h_n_trel_v_si_t = new  sak::Hist2D("h_n_trel_v_si_t","n_t-rftime","si_t",1024,-2097,2098,1024,0,4096);
-    h_n_minus_sit=new sak::Histogram1D("h_n_minus_sit","nt-sit",256,-2048,2047);
+    h_n_minus_sit=new sak::Histogram1D("h_n_minus_sit","nt-sit",4096,-2048,2047);
     h_n_minus_sitfirst=new sak::Histogram1D("h_n_minus_sitfirst","nt-sitfirst",256,-2048,2047);
 
 
@@ -176,7 +176,7 @@ namespace coinc{
       h_nai_t_v_si_t->Fill(nai_t,si_t);
     
     if(neut_t>0 && si_t>0){
-      h_n_minus_sit->Fill(neut_t-si_t);
+      h_n_minus_sit->Fill(S1_neut_trel);
       h_n_minus_sitfirst->Fill(neut_t-trigger::s1_tfirst);
       h_n_t_v_si_t->Fill(neut_t,si_t);
       h_n_t_v_si_trel->Fill(neut_t,rftime[0].fT-si_t);

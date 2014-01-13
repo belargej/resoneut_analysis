@@ -49,6 +49,8 @@ namespace coinc{
 
   extern int si_ic_tcheck;
 
+  void Require_Si_IC_Time();
+
   void Load_Si_IC_Gates(const std::string& input);
   
 }

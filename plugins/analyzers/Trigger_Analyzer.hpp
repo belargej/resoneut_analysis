@@ -59,9 +59,10 @@ public:
   void RequireNaI();
   void Require_NTMult(int mult);
   void Require_NEMult(int mult);  
-
+  void RequireS2();
   void RequireOFF_NaI();
-
+  void RequireOFF_S2();
+  void RequireIC_E();
 
   //extern double n_triggerloc;
   //extern double nai_up_triggerloc;
@@ -89,7 +90,7 @@ public:
   extern int require_S1;
   extern int require_neut;
   extern int require_nai;
-  extern int require_ic;
+  extern int _require_ic;
   extern int require_ntmult;
   extern int require_nemult;
 

@@ -17,6 +17,13 @@
 #include "S2_Analyzer.hpp"
 #include "IC_Analyzer.hpp"
 
+#if 1
+#define USEANGLE silicon::prot_theta
+#else
+#define USEANGLE silicon::rel_angle
+#endif
+
+
 namespace physical{
 
   sak::Hist1D *Q_Value;
@@ -28,6 +35,9 @@ namespace physical{
   sak::Hist1D *Q_Value_proton_hi2;
 
   //Q v Parameters
+  sak::Hist2D *Q_v_Phi;	
+  sak::Hist2D *Q_v_cosTheta;
+  sak::Hist2D *Q_v_EcosTheta;
   sak::Hist2D *Q_v_pTheta;		       
   sak::Hist2D *Q_v_pE;			       
   sak::Hist2D *Q_v_pRelAngle;		       
@@ -87,7 +97,9 @@ namespace physical{
 
 
     rootfile->cd("physical/QvParameters");
-
+    Q_v_Phi=new sak::Hist2D("Q_v_Phi","Q","Phi",512,-1,10,180,-180,180);
+    Q_v_cosTheta=new sak::Hist2D("Q_v_cosTheta","Q","cosTheta",512,-1,10,256,0.5,1);
+    Q_v_EcosTheta=new sak::Hist2D("Q_v_EcosTheta","Q","EcosTheta",512,-1,10,512,0,20);
     Q_v_pTheta=new sak::Hist2D("Q_v_pTheta","Q","Theta",512,-1,10,180,0,179);
     Q_v_pE=new sak::Hist2D("Q_v_pE","Q","E",512,-1,10,512,0,32);
     Q_v_pRelAngle=new sak::Hist2D("Q_v_pRelAngle","Q","RelAngle",512,-1,10,180,0,179);;
@@ -119,9 +131,9 @@ namespace physical{
   
     if(silicon::prot_E>0&& silicon::prot_theta!=0){
     
-      q_val_p = (silicon::prot_E * (1 + (global::m_decay_product / global::m_heavy_decay)) 
-		 - (global::E_fragment * ( 1 - (global::m_frag / global::m_heavy_decay)))
-		 - ((2 / global::m_heavy_decay) * TMath::Sqrt(silicon::prot_E * global::m_decay_product * global::E_fragment * global::m_frag) * cos(3.14*silicon::rel_angle/180)));
+      q_val_p = (silicon::prot_E * (1.0 + (global::m_decay_product / global::m_heavy_decay)) 
+		 - (global::E_fragment * ( 1.0 - (global::m_frag / global::m_heavy_decay)))
+		 - ((2.0 / global::m_heavy_decay) * TMath::Sqrt(silicon::prot_E * global::m_decay_product * global::E_fragment * global::m_frag) * cos(TMath::Pi()*USEANGLE / 180)));
     
     }
 
@@ -132,13 +144,16 @@ namespace physical{
 
     //Q_Value parameter histograms
     Q_Value->Fill(q_val_p);
-    
+    Q_v_Phi->Fill(q_val_p,si_cluster_[0].fPos[0].Phi()*180/TMath::Pi());
+    Q_v_cosTheta->Fill(q_val_p,cos(TMath::Pi()*silicon::rel_angle/180));
+    Q_v_EcosTheta->Fill(q_val_p,TMath::Sqrt(silicon::prot_E)*cos(TMath::Pi()*silicon::rel_angle/180));
+
     if(silicon::protcheck){
       Q_Value_proton->Fill(q_val_p);
       Q_v_pTheta->Fill(q_val_p,silicon::prot_theta);   		       
       Q_v_pE->Fill(q_val_p,silicon::prot_E);   			       
       Q_v_pRelAngle->Fill(q_val_p,silicon::rel_angle);   		       
-    
+      
       if(ionchamber::hi_check[0]){
 	Q_Value_proton_hi1->Fill(q_val_p);
 	Q_v_pTheta_proton_hi1->Fill(q_val_p,silicon::prot_theta);   	       

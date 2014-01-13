@@ -134,8 +134,42 @@ namespace si_cal{
       
     }
     int idx=0;
-    
     Long64_t totentries= MainAnalyzer.TotEntries();
+    
+    for (Long64_t i=0;i<totentries;i++){
+      MainAnalyzer.GetDetectorEntry(i);
+      idx=0;
+      for(RN_S2CalCollectionRef it=s2front.begin();it!=s2front.end();it++){
+	
+	if(idx<si_.size()){
+	  if(si_[idx].back.fMult==1&&si_[idx].back.fChlist[0]==matchback){
+	    if(si_[idx].front.fMult==1)
+	      (*it).AddHit(si_[idx].Back_E(0),si_[idx].Front_E(0),(int)si_[idx].front.fChlist[0]);
+	  }
+	}
+	idx++;
+	
+      } 
+    }
+    idx=0;
+    for(RN_S2CalCollectionRef it=s2front.begin();it!=s2front.end();it++){
+      (*it).PerformFit();
+      (*it).PrintCoefficients(Form("%s_front2back.in",si_[idx].Name().c_str()));
+      
+      DetVar.LoadParams(Form("%s_front2back.in",si_[idx].Name().c_str()));
+      si_[idx].SetCalibrations(DetVar);      
+      
+      idx++;
+      
+    }
+    
+    
+    
+    
+
+    //match all back to one lead front channel
+    std::cout<<"repeating now for back 2 front channel : "<<matchfront<<std::endl;
+    
     for (Long64_t i=0;i<totentries;i++){
       MainAnalyzer.GetDetectorEntry(i);
       
@@ -143,8 +177,8 @@ namespace si_cal{
       for(RN_S2CalCollectionRef it=s2back.begin();it!=s2back.end();it++){
 	
 	if(idx<si_.size()){
-	  if(si_[idx].front.fMult>0&&si_[idx].front.fChlist[0]==matchfront){
-	    if(si_[idx].back.fMult>0)
+	  if(si_[idx].front.fMult==1&&si_[idx].front.fChlist[0]==matchfront){
+	    if(si_[idx].back.fMult==1)
 	      (*it).AddHit(si_[idx].Front_E(),si_[idx].Back_E(),(int)si_[idx].back.fChlist[0]);
 	  }
 	}
@@ -164,35 +198,6 @@ namespace si_cal{
       
     }
     
-    
-    std::cout<<"repeating now for front 2 back channel : "<<matchback<<std::endl;
-    
-    for (Long64_t i=0;i<totentries;i++){
-      MainAnalyzer.GetDetectorEntry(i);
-      idx=0;
-      for(RN_S2CalCollectionRef it=s2front.begin();it!=s2front.end();it++){
-	
-	if(idx<si_.size()){
-	  if(si_[idx].back.fMult>0&&si_[idx].back.fChlist[0]==matchback){
-	    if(si_[idx].front.fMult>0)
-	      (*it).AddHit(si_[idx].Back_E(0),si_[idx].Front_E(0),(int)si_[idx].front.fChlist[0]);
-	  }
-	}
-	idx++;
-	
-      } 
-    }
-    idx=0;
-    for(RN_S2CalCollectionRef it=s2front.begin();it!=s2front.end();it++){
-      (*it).PerformFit();
-      (*it).PrintCoefficients(Form("%s_front2back.in",si_[idx].Name().c_str()));
-    
-      DetVar.LoadParams(Form("%s_front2back.in",si_[idx].Name().c_str()));
-      si_[idx].SetCalibrations(DetVar);      
-
-      idx++;
-      
-    }
     
     
     

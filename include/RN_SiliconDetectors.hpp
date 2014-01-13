@@ -94,7 +94,8 @@ public:
   bool Vect_to_ch(const TVector3&, double&, double&);
   void Reset();
   void SetCalibrations(double,double,double,double); 
- 
+  inline Int_t IsS1()const {return _s1switch;}
+  
   void SetCalibrations(RN_VariableMap& detvar);
   std::string Name()const{return fName;}//!
   ClassDef(RN_S2Detector,1);

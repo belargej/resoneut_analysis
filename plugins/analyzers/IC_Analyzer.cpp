@@ -21,9 +21,14 @@ namespace ionchamber{
   TCutG* ede_hi2;
   TCutG* ede_hi3;
 
+  int  _require_hi1(0);
+  int  _require_hi2(0);
+  int  _require_hi3(0);
+
   int hi_check[3];
 
   sak::Histogram2D *hIC_ede;  
+  sak::Histogram2D *hIC_fefde;  
   sak::Hist1D * h_IC_t_F17gated;
   sak::Hist1D * h_IC_t_O16gated;
   
@@ -54,6 +59,7 @@ namespace ionchamber{
     
     rootfile->cd("IC/ede");
     hIC_ede=new sak::Hist2D("hIC_EdE","E [arb]","dE [arb]",1024,0,4096,1024,0,4096);
+    hIC_fefde=new sak::Hist2D("hIC_fEdE","fE [arb]","fdE [arb]",1024,0,4096,1024,0,4096);
     hIC_de_v_xgride=new TH2D("hIC_dE_v_xgride","hIC_dE_v_xgride;E [arb];dE [arb]",1024,0,4096,1024,0,4096);
     rootfile->cd("IC/t");
     h_IC_t_F17gated=new sak::Hist1D("h_IC_t_F17","t",1024,0,4095);
@@ -75,12 +81,20 @@ namespace ionchamber{
     hi_check[1]= (ede_hi2 && ede_hi2->IsInside(IC_TotalE,IC_ELoss));
     hi_check[2]= (ede_hi3 && ede_hi3->IsInside(IC_TotalE,IC_ELoss));
     
+    if (_require_hi1 && !hi_check[0])
+      return 0;
+    if (_require_hi2 && !hi_check[1])
+      return 0;
+    if (_require_hi3 && !hi_check[2])
+      return 0;
+
     return 1;
   }
   
   bool IC_Analyzer::ProcessFill(){
     
     hIC_ede->Fill(IC_TotalE,IC_ELoss);
+    hIC_fefde->Fill(ic.fE,ic.fdE);
     h_xvy->Fill(ic.xgrid.Ch(),ic.ygrid.Ch());
     hIC_de_v_xgride->Fill(IC_ELoss,ic.xgrid.fE[0]);
 
@@ -115,6 +129,16 @@ namespace ionchamber{
     
   }
   
+  void RequireHI1(){
+    _require_hi1=1;
+  }
+ void RequireHI2(){
+    _require_hi2=1;
+  }
+ void RequireHI3(){
+    _require_hi3=1;
+  }
+
 
   void LoadGates(const std::string& input){
     sak::LoadCuts in(input.c_str());    
