@@ -29,8 +29,7 @@ namespace ionchamber{
 
   sak::Histogram2D *hIC_ede;  
   sak::Histogram2D *hIC_fefde;  
-  sak::Hist1D * h_IC_t_F17gated;
-  sak::Hist1D * h_IC_t_O16gated;
+  sak::Hist1D * h_IC_t;
   
   TH2D * h_xvy;
   TH2D * hIC_de_v_xgride;
@@ -62,8 +61,8 @@ namespace ionchamber{
     hIC_fefde=new sak::Hist2D("hIC_fEdE","fE [arb]","fdE [arb]",1024,0,4096,1024,0,4096);
     hIC_de_v_xgride=new TH2D("hIC_dE_v_xgride","hIC_dE_v_xgride;E [arb];dE [arb]",1024,0,4096,1024,0,4096);
     rootfile->cd("IC/t");
-    h_IC_t_F17gated=new sak::Hist1D("h_IC_t_F17","t",1024,0,4095);
-    h_IC_t_O16gated=new sak::Hist1D("h_IC_t_O16","t",1024,0,4095);
+    h_IC_t = new sak::Hist1D("h_IC_t","t",1024,0,4095);
+
 
     return 1;
   }
@@ -98,16 +97,11 @@ namespace ionchamber{
     h_xvy->Fill(ic.xgrid.Ch(),ic.ygrid.Ch());
     hIC_de_v_xgride->Fill(IC_ELoss,ic.xgrid.fE[0]);
 
-    if(hi_check[0]){
-      h_IC_t_F17gated->Fill(TDC1[1]);
-    }
-    if(hi_check[1]){
-      h_IC_t_O16gated->Fill(TDC1[1]);
+    h_IC_t->Fill(ic.T());
+    
 
-
-    }
-
-
+    
+    
     return 1;
   }
 

@@ -13,8 +13,8 @@
 #include "Q_ValueAnalyzer.hpp"
 #include "../../include/RN_Root.hpp"
 #include "../../include/RN_Unpack2Root.hpp"
-#include "S2_IC_Analyzer.hpp"
-#include "S2_Analyzer.hpp"
+#include "Si_IC_Analyzer.hpp"
+#include "Si_Analyzer.hpp"
 #include "IC_Analyzer.hpp"
 
 #if 1

@@ -126,15 +126,15 @@ namespace psd{
       exit(EXIT_FAILURE);
     }
     
-    rootfile->mkdir("neut_PSD/raw");
-    rootfile->mkdir("neut_PSD/cal");
+    rootfile->mkdir("neut/PSD/raw");
+    rootfile->mkdir("neut/PSD/cal");
     rootfile->mkdir("neut/TRel");
-    rootfile->mkdir("mult/neut");
+    rootfile->mkdir("neut/mult");
 
     rootfile->cd("neut/TRel");
    
 
-    rootfile->cd("mult/neut");
+    rootfile->cd("neut/mult");
     h_ndetMult=new TH1D("h_ndetmult","nmult;mult",NEUTNUM+1,0,NEUTNUM);
     h_ndetMult_ngated=new TH1D("h_ndetmult_ngated","nmult_ngated;mult",NEUTNUM+1,0,NEUTNUM);
     
@@ -143,11 +143,11 @@ namespace psd{
       rootfile->cd("neut/TRel");
       hQvT_n[i]=new TH2D(Form("hQvT_n%d",i),Form("hQvT_n%d;T;Q",i),128,0,128,1024,0,4095);
       hQvT_ngated[i]=new TH2D(Form("hQvT_n%d_ngated",i),Form("hQvT_n%d_ngated;T;Q",i),128,0,128,1024,0,4095);
-      rootfile->cd("neut_PSD/raw");
+      rootfile->cd("neut/PSD/raw");
       hPSDq_n[i]=new TH2D(Form("hPSDq_n%d",i),Form("hPSDq_n%d",i),1024,0,4096,1024,0,4096);
       hPSDq_n_evtgated[i]=new TH2D(Form("hPSDq_n%d_evtgated",i),Form("hPSDq_n%d_evtgated",i),1024,0,4096,1024,0,4096);
   
-      rootfile->cd("neut_PSD/cal");
+      rootfile->cd("neut/PSD/cal");
       hPSD_n_[i]=new TH2D(Form("hPSD_neut%d",i),Form("hPSD_neut%d",i),256,-2.,2.,1024,50,4096);
     } 
     rootfile->cd();

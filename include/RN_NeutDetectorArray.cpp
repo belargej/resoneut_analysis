@@ -104,7 +104,7 @@ Double_t RN_NeutDetector::Q_Short_Off() const{
 }
 
 Double_t RN_NeutDetector::T() const{
-  return fT_Q * tlin + tshift;//from TDC
+  return fT_Q>0 ? (fT_Q * tlin + tshift) : 0;//from TDC
 }
 
 Double_t RN_NeutDetector::nKE(double tof) const{
@@ -172,7 +172,7 @@ RN_NeutDetectorArray::RN_NeutDetectorArray():fMult(0),
 int RN_NeutDetectorArray::ReconstructHits(RN_NeutCollection& in){
 
   int cref=0;
-  for(RN_NeutCollectionRef it=in.begin();it!=in.end();it++){
+  for(RN_NeutCollectionRef it=in.begin();it!=in.end();it++){  
     if((*it).fQ_long>0){
       double ql=(*it).Q_Long();
       double qs=(*it).Q_Short_Off();
@@ -429,13 +429,19 @@ namespace RNArray{
   
   Double32_t tfirst(4096.0);
   Short_t detfirst(-1);
-  
+  int n_tmult(0);
+
   void ReconstructTREL(RN_NeutCollection&in){
-    tfirst=4096.0;
+    n_tmult = 0;
+    tfirst = 4096.0;
+    detfirst = -1;
     for(unsigned int i=0;i<in.size();i++){
-      if(in[i].fQ_long>0 &&in[i].T()>0 &&in[i].T()<tfirst){
-	tfirst=in[i].T();
-	detfirst=i;
+      if(in[i].T()>0){
+	n_tmult++;
+	if(in[i].T()<tfirst){
+	  tfirst=in[i].T();
+	  detfirst=i;
+	}
       }
     }
     if(tfirst<4096.0){    

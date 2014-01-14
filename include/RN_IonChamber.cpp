@@ -10,6 +10,7 @@ ClassImp(RN_IonChamber);
 void RN_IonChamber::Reset(){
   fE=0;
   fdE=0;
+  fT=0;
   xgrid.Reset();
   ygrid.Reset();
 

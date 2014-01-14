@@ -42,7 +42,13 @@ namespace ionchamber{
 
 namespace coinc{
   Double32_t S1_neut_trel(0);
-
+  Double32_t sia_ic_trel(0);
+  Double32_t sib_neut_trel(0);
+  Double32_t sib_ic_trel(0);
+  Double32_t sia_rf_trel(0);
+  Double32_t sib_rf_trel(0);
+  Double32_t ic_rf_trel(0);
+  Double32_t neut_rf_trel(0);
 }
 
 
@@ -321,7 +327,7 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
   if(ADC4[15]>0)ic.fdE=ADC4[15];
   //if(ADC4[13]>0)ic.fE=ADC4[13];
   //if(ADC4[14]>0)ic.fdE=ADC4[14];  
-
+  if(TDC1[1]>0) ic.fT = TDC1[1];
 
   //rftime
   if(TDC1[0]>0)rftime[0].InsertHit(TDC1[0]);
@@ -346,8 +352,7 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
   //reconstruct neutron detector hits for all neutron detectors 
   //in NeutCollection
   Narray.ReconstructHits(neut);
-  if(Narray.fMult>1)
-    RNArray::ReconstructTREL(neut);
+  RNArray::ReconstructTREL(neut);
   
   
   return 1;
@@ -368,6 +373,16 @@ void RN_Analyzer::ResetGlobals(){
   ionchamber::IC_TotalE = 0;
 
   coinc::S1_neut_trel = 0;
+  coinc::sia_ic_trel = 0;
+  coinc::sib_neut_trel = 0;
+  coinc::sib_ic_trel = 0;
+  coinc::sia_rf_trel = 0;
+  coinc::sib_rf_trel = 0;
+  coinc::ic_rf_trel = 0;
+  coinc::neut_rf_trel = 0;
+
+
+
 }
 
 bool RN_Analyzer::Process(){
@@ -384,15 +399,24 @@ bool RN_Analyzer::Process(){
     silicon::rel_angle = (si_cluster_[0].fPos[0] - si_cluster_[1].fPos[0]).Theta() * (180.0 / TMath::Pi())
 ;
     //silicon::rel_angle = TMath::ATan2(silicon::rel_transverse ,) * 180 / 3.14;
-    // silicon::target_z[0] = (si_cluster_[0].fPos[0].Perp() )/ tan ( silicon::rel_angle * 3.14 / 180); 
-    // silicon::target_z[1] = (si_cluster_[1].fPos[0].Perp() )/ tan ( silicon::rel_angle * 3.14 / 180); 
+    //silicon::target_z[0] = (si_cluster_[0].fPos[0].Perp() )/ tan ( silicon::rel_angle * 3.14 / 180); 
+    //silicon::target_z[1] = (si_cluster_[1].fPos[0].Perp() )/ tan ( silicon::rel_angle * 3.14 / 180); 
     silicon::target_z[0] = (si_cluster_[0].fPos[0]-global::target_pos).Perp()/ tan ( silicon::rel_angle * 3.14 / 180); 
     silicon::target_z[1] = (si_cluster_[1].fPos[0]-global::target_pos).Perp() / tan ( silicon::rel_angle * 3.14 / 180); 
-    
-    coinc::S1_neut_trel = si_cluster_[0].fT[0] - Narray.fT[0];
+
+    if(RNArray::n_tmult>0){
+      coinc::S1_neut_trel = si_cluster_[0].fT[0] - RNArray::tfirst;  
+      coinc::sib_neut_trel = si_cluster_[1].fT[0] - RNArray::tfirst;
+    }
+    coinc::sia_ic_trel = si_cluster_[0].fT[0] - ic.T();
+    coinc::sib_ic_trel = si_cluster_[1].fT[0] - ic.T();
+    coinc::sia_rf_trel = si_cluster_[0].fT[0] - rftime[0].T() ;
+    coinc::sib_rf_trel = si_cluster_[1].fT[0] - rftime[0].T();
 
   }
-
+  coinc::ic_rf_trel = ic.T()-rftime[0].T();
+  if(RNArray::n_tmult>0)
+    coinc::neut_rf_trel = RNArray::tfirst - rftime[0].T();
   
 
 //IonChamber Calculations

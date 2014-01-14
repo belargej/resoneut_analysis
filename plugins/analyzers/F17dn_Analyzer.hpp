@@ -38,10 +38,8 @@ public:
 
   ClassDef(F17dn_Analyzer,0);
 };
-//declare global parameters as extern
 
-
-void LoadTemplateGates();
+void Load_F17_dn_Gates();
 
 
 }
