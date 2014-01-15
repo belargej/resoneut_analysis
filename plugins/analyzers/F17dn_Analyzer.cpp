@@ -70,7 +70,7 @@ bool F17dn_Analyzer::ProcessFill(){
     hneut_trel_v_sia_trel->Fill(coinc::neut_rf_trel,coinc::sia_rf_trel);
 
   if(RNArray::n_tmult>0){
-    hsia_neut_trel_v_neut_t->Fill(coinc::S1_neut_trel,RNArray::tfirst);
+    hsia_neut_trel_v_neut_t->Fill(coinc::sia_neut_trel,RNArray::tfirst);
   }
  
   

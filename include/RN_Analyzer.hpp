@@ -110,7 +110,7 @@ namespace ionchamber{
 }
 
 namespace coinc{
-  extern Double32_t S1_neut_trel;
+  extern Double32_t sia_neut_trel;
   extern Double32_t sia_ic_trel;
   extern Double32_t sib_neut_trel;
   extern Double32_t sib_ic_trel;

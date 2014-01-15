@@ -373,7 +373,7 @@ void RN_Analyzer::ResetGlobals(){
   ionchamber::IC_ELoss = 0;
   ionchamber::IC_TotalE = 0;
 
-  coinc::S1_neut_trel = 0;
+  coinc::sia_neut_trel = 0;
   coinc::sia_ic_trel = 0;
   coinc::sib_neut_trel = 0;
   coinc::sib_ic_trel = 0;
@@ -406,7 +406,7 @@ bool RN_Analyzer::Process(){
     silicon::target_z[1] = (si_cluster_[1].fPos[0]-global::target_pos).Perp() / tan ( silicon::rel_angle * 3.14 / 180); 
 
     if(RNArray::n_tmult>0){
-      coinc::S1_neut_trel = si_cluster_[0].fT[0] - RNArray::tfirst;  
+      coinc::sia_neut_trel = si_cluster_[0].fT[0] - RNArray::tfirst;  
       coinc::sib_neut_trel = si_cluster_[1].fT[0] - RNArray::tfirst;
     }
     coinc::sia_ic_trel = si_cluster_[0].fT[0] - ic.T();
