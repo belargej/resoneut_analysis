@@ -151,6 +151,7 @@ namespace RNArray{
   
   extern Double32_t tfirst;
   extern Short_t detfirst;
+  extern int n_tmult;
 
   void ReconstructTREL(RN_NeutCollection& in);
   int PositionMap(int slot,TVector3 & pos);

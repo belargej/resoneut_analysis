@@ -1,21 +1,21 @@
 /***************************************************************
-//Class: S2_NEUT_IC_NAI_Analyzer
+//Class: Si_NEUT_IC_NAI_Analyzer
 //
 //Author:Sean Kuvin
 //
-//S2_NEUT_IC_Analyzer is added to the analyzer list just as S2_Analyzer
+//Si_NEUT_IC_Analyzer is added to the analyzer list just as S2_Analyzer
 //is except now we are looking at Silicon detector parameters,Ion 
 //Chamber parameters and Neutron Detector parameters.  
 //The results of sorting through
-//the S2_Analyzer,the IC_analyzer,S2_IC_Analyzer, and the NeutAnalyzer 
+//the Si_Analyzer,the IC_analyzer,S2_IC_Analyzer, and the NeutAnalyzer 
 //are necessary for proper function of this class. 
 //Therefore, all 4 analyzers must be 
 //added to the analyzer list and they all must be
 // added before this analyzer is added
 ********************************************************************/
 
-#ifndef _S2_Neut_NAI_IC_ANALYZER_H
-#define _S2_Neut_NAI_IC_ANALYZER_H
+#ifndef _Si_Neut_NAI_IC_ANALYZER_H
+#define _Si_Neut_NAI_IC_ANALYZER_H
 #include <TH2.h>
 #include <cstdlib>
 #include <string>
@@ -27,13 +27,13 @@
 
 namespace coinc{
 
-  class S2_Neut_IC_NaI_Analyzer:public RN_Analyzer{
+  class Si_Neut_IC_NaI_Analyzer:public RN_Analyzer{
   private:
     
   public:
     
-    S2_Neut_IC_NaI_Analyzer();
-    virtual ~S2_Neut_IC_NaI_Analyzer(){};
+    Si_Neut_IC_NaI_Analyzer();
+    virtual ~Si_Neut_IC_NaI_Analyzer(){};
     
     virtual bool Begin();
     virtual bool Process();
@@ -44,16 +44,16 @@ namespace coinc{
     virtual void ResetGlobals();
     
     
-    ClassDef(S2_Neut_IC_NaI_Analyzer,0);
+    ClassDef(Si_Neut_IC_NaI_Analyzer,0);
 
   };
 
-  extern int s1_n_time_check;
-  extern int s2_n_time_check;
-  extern double si_t;
+  extern int sia_n_time_check;
+  extern int sib_n_time_check;
 
-  void Require_S1_N_TimePeak();
-  void Load_S2_Neut_IC_Gates(const std::string & input);
+  void Require_SIA_N_TimePeak();
+  void Require_SIB_N_TimePeak();
+  void Load_Si_Neut_IC_NaI_Gates(const std::string & input);
 
 }
 

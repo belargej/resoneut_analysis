@@ -53,10 +53,7 @@ namespace coinc{
 
   };
 
-  
-  extern Double32_t nai_t;
-  extern Double32_t neut_t;
-
+ 
 
 }
 

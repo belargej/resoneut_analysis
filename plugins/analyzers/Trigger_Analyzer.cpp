@@ -37,7 +37,7 @@ namespace trigger{
   double nai_down_triggerloc(0);
   double s1_triggerloc(0);
   
-  int n_tmult(0);
+
   int s1_tmult(0);
   int s1raw_tmult(0);
   int nai_up_tmult(0);
@@ -121,7 +121,7 @@ namespace trigger{
     s1_tfirst=5000;
     s1raw_tfirst=5000;
 
-    n_tmult=0;       
+   
     s1_tmult=0;   
     s2_tmult = 0;
     s1raw_tmult=0;   
@@ -143,12 +143,6 @@ namespace trigger{
     for(unsigned int i=0;i<neut.size();i++){
       if(neut[i].fQ_long>0){
 	n_emult++;
-      }
-      if(neut[i].fT_Q>0){
-	n_tmult++;
-	if(neut[i].T()<n_tfirst){
-	  n_tfirst=neut[i].T();
-	}
       }
     }
     
@@ -230,7 +224,7 @@ namespace trigger{
       triggerinfo[1]=1;
 
 
-    if(n_tmult<require_ntmult){
+    if(RNArray::n_tmult<require_ntmult){
       return 0;
     }
     if(n_emult<require_nemult){
@@ -267,7 +261,7 @@ namespace trigger{
     std::cout<<"*******************\n";
     std::cout<<"tfirsts:  "<<n_tfirst<<" "<<s1_tfirst<<" "<<nai_up_tfirst<<" "<<nai_down_tfirst<<" "<<unpacker::TDC1[4]<<" "<<s1raw_tfirst<<"\n";
     std::cout<<"triggers: "<<triggerinfo[0]<<" "<<triggerinfo[1]<<" "<<triggerinfo[2]<<" "<<triggerinfo[3]<<" "<<triggerinfo[4]<<" "<<triggerinfo[5]<<"\n";
-    std::cout<<"tmults:    "<<n_tmult<<" "<<s1_tmult<<" "<<nai_up_tmult<<" "<<nai_down_tmult<<" "<<"  "<<" "<<s1raw_tmult<<"\n";
+    std::cout<<"tmults:    "<<RNArray::n_tmult<<" "<<s1_tmult<<" "<<nai_up_tmult<<" "<<nai_down_tmult<<" "<<"  "<<" "<<s1raw_tmult<<"\n";
     std::cout<<"emults:    "<<n_emult<<" "<<s1_emult<<" "<<nai_up_emult<<" "<<nai_down_emult<<" "<<"  "<<" "<<"  "<<std::endl;
     */
     return 1;

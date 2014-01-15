@@ -1,5 +1,5 @@
 /***********************************************************/
-//Class: S2_Analyzer
+//Class: Si_Analyzer
 //
 //Author:Sean Kuvin
 //
@@ -10,8 +10,8 @@
 //parameters on their own. 
 /***********************************************************/
 
-#ifndef _S2ANALYZER
-#define _S2ANALYZER
+#ifndef _SIANALYZER_H
+#define _SIANALYZER_H
 #include <TH2.h>
 #include <cstdlib>
 #include <string>
@@ -25,14 +25,14 @@ namespace silicon{
 
 
 
-  class S2_Analyzer:public RN_Analyzer{
+  class Si_Analyzer:public RN_Analyzer{
   private:
     int ind_;
     
   public:
     
-    S2_Analyzer();
-    virtual ~S2_Analyzer(){};
+    Si_Analyzer();
+    virtual ~Si_Analyzer(){};
     
     
     virtual bool Begin();
@@ -44,7 +44,7 @@ namespace silicon{
     virtual void ResetGlobals();
     
     
-    ClassDef(S2_Analyzer,0);
+    ClassDef(Si_Analyzer,0);
   };
 
   extern TCutG* prots1;

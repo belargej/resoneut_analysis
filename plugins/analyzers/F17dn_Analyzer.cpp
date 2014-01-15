@@ -9,16 +9,16 @@
 #include "../../include/RN_Root.hpp"
 #include "F17dn_Analyzer.hpp"
 
+
 namespace _F17{
-
-////////////////////////////////////////////////
-/*
-  Declare any root objects (histograms, cuts, etc) that
-are going to be used in this analysis,
-also any global parameters.  If these parameters are wanted in follow up analysis scripts make sure to declare these parameters as extern in the .hpp file
- */
-
-/////////////////////////////////////////////////
+  TH2D *hneut_trel_v_ic_trel;
+  TH2D *hneut_trel_v_sia_trel;
+ 
+  TH2D *hsia_neut_trel_v_neut_t;
+  TH2D *hproton_ede_ntime;
+  TH2D *hn1QvT;
+  TH1D *hneut_time;
+  
 
 F17dn_Analyzer::F17dn_Analyzer()
 {
@@ -27,30 +27,27 @@ F17dn_Analyzer::F17dn_Analyzer()
 
 
 void F17dn_Analyzer::ResetGlobals(){
-  /*any global parameters unique to this analysis
-    which you want reset at the beginning of each 
-    event entry should be reset here
-  */
 
 }
 
 bool F17dn_Analyzer::Begin(){
 
-  /*
-    if you want to add your histograms to the global rootfile uncomment the following block.  It checks if the rootfile has been created and exits if it has not.
-   */
-  /*
-  if(!rootfile){
-    std::cout<<"output file has not been created"<<std::endl;
-    Clear();
-    exit(EXIT_FAILURE);
-  }
-  */
+  rootfile->mkdir("F17_dn_Analysis");
+  rootfile->mkdir("F17_dn_Analysis/ede");
+  rootfile->mkdir("F17_dn_Analysis/QvT");
+  rootfile->cd("F17_dn_Analysis");
+ hneut_trel_v_ic_trel = new TH2D("neut_rf_trel_v_ic_rf_trel","neut_rf_trel_v_ic_rf_trel;neut_trel[ns];ic_trel[ns]",1024,-1023.,1023.,1024,-1023.,1023.);
+  hneut_trel_v_sia_trel = new TH2D("neut_rf_trel_v_sia_rf_trel","neut_rf_trel_v_sia_rf_trel;neut_trel[ns];sia_trel[ns]",1024,-1023.,1023.,1024,-1023.,1023.);
+ 
+  hsia_neut_trel_v_neut_t = new TH2D("sia_neut_trel_v_neut_t","sia_neut_trel_v_neut_t;sia_neut_trel[ns];neut_t[ns]",1024,-1023.,1023.,1024,-2049.,2049.);
+  
+  hneut_time=new TH1D("neut_time","neut_time;nt[ns]",1024,0,1023);
 
-  /*create your root file structure here and
-    set your memory allocations for the root objects
-    declared above.
-  */
+  rootfile->cd("F17_dn_Analysis/ede");
+  hproton_ede_ntime=new TH2D("proton_EdE_ntime","siPID;E[MeV];dE[MeV]",1024,0.,32.,1024,0.,32.);
+  
+  rootfile->cd("QvT");
+ hn1QvT = new TH2D("n1_QvT","n1_QvT;T;Q",1024,0.,1023.,1024,0.,1023.);
 
 
   return 1;
@@ -58,71 +55,54 @@ bool F17dn_Analyzer::Begin(){
 }
 
 bool F17dn_Analyzer::Process(){
-  //perform calculations for this analysis' parameters
-
-  /*check any Gates and save the results of those checks
-    doing so will speed up the analysis since you won't have to check the result of your gate repeatedly
-   */
-  
-  /*
-    The return for this process gives you the 
-    control over the filtering process for the 
-    cumulative analysis.  If you impose some 
-    requirement on the parameters here or the
-    gate result and the requirement fails, then you 
-    can abort the analysis of that entry.  Doing
-    so will skip the ProcessFill() for ALL analyzers 
-    in the list.
-    this is done by returning a 0,kFalse for a 
-    requirement that fails.
-
-   */
-  //if(0)
-  //return 0;
+  if(RNArray::tfirst>60&&RNArray::tfirst<150)
+    return 1;
+  else return 0;
   
   return 1;
 }
 
 bool F17dn_Analyzer::ProcessFill(){
+  if(RNArray::n_tmult>0 && ic.T()>0)
+    hneut_trel_v_ic_trel->Fill(coinc::neut_rf_trel,coinc::ic_rf_trel);
 
-  /*if your analyzer list has passed the Process() 
-portion then it will loop over all ProcessFill()s.  
-This is where you should fill your histograms.
-  */
+  if(RNArray::n_tmult>0 && si_cluster_[0].fT[0]>0)
+    hneut_trel_v_sia_trel->Fill(coinc::neut_rf_trel,coinc::sia_rf_trel);
+
+  if(RNArray::n_tmult>0){
+    hsia_neut_trel_v_neut_t->Fill(coinc::S1_neut_trel,RNArray::tfirst);
+  }
+ 
+  
+  hn1QvT->Fill(neut[0].fT_Q,neut[0].fQ_long);
+  if(RNArray::n_tmult>0)
+    hneut_time->Fill(RNArray::tfirst);
+ 
+  if(si_cluster_[1].fMult>0 && si_cluster_[0].fMult>0 && RNArray::n_tmult>0)
+    hproton_ede_ntime->Fill(silicon::prot_E,silicon::prot_dE);
+
   return 1;
 }
   
 
 
 bool F17dn_Analyzer::Terminate(){
-  /*
-    any memory cleanup unique to this analysis
-    that NEEDS to happen
-    
 
-   */
   return 1;
   
 }
 
 bool F17dn_Analyzer::TerminateIfLast(){
-  /*
-    any cleanup(such as writing to the rootfile) that 
-    should be reserved to the last analyzer in the list
-   
-    serious memory management decisions should be performed in the Terminate() function instead of this one.  This function will NOT be called if it is not the last analyzer in the list
-   */
+  rootfile->Write();
+  rootfile->Close();
 
   return 1;
   
 }
 
 
-void LoadTemplateGates(){
-  /*
-    not a member of the F17dn_Analyzer class, this function serves to Load any gates that are unique to this analysis. The gates should be declared at the top of this file.
+void Load_F17_dn_Gates(){
 
-   */
 
 }
 }

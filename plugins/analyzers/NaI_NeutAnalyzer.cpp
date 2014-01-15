@@ -20,10 +20,6 @@ namespace coinc{
 
   sak::Hist2D *h_nai_t_v_neut_t;			 
   sak::Hist2D *h_nai_t_v_neut_t_neutgated;	 
-  Double32_t nai_t(0);
-  Double32_t neut_t(0);
-
-
 
   NaI_NeutAnalyzer::NaI_NeutAnalyzer()
   {
@@ -31,8 +27,7 @@ namespace coinc{
   }
 
   void NaI_NeutAnalyzer::ResetGlobals(){
-    nai_t=0;
-    neut_t=0;
+
   }
 
   bool NaI_NeutAnalyzer::Begin(){
@@ -51,23 +46,12 @@ namespace coinc{
   }
 
   bool NaI_NeutAnalyzer::Process(){ 
-
-    for(RN_NaICollectionRef it=nai.begin();it!=nai.end();it++){
-      if((*it).SumE()>750 && (*it).fT[0] > 0 ){
-	nai_t=((*it).T());
-	break;
-      }
-    }
-    neut_t=Narray.fT[0];
-    
-
-  
     return 1;
   }
   bool NaI_NeutAnalyzer::ProcessFill(){
     
-    if(nai_t>0&&neut_t>0){
-      h_nai_t_v_neut_t->Fill(nai_t,neut_t);
+    if(nai_array.fT[0]>0&&RNArray::tfirst<4096){
+      h_nai_t_v_neut_t->Fill(nai_array.fT[0],RNArray::tfirst);
     }
 
     return 1;

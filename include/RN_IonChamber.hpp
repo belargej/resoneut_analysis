@@ -57,6 +57,7 @@ class RN_IonChamber:public TObject{
   }
   Double32_t fE;
   Double32_t fdE;
+  Double32_t fT;
   RN_BaseDetector xgrid;
   RN_BaseDetector ygrid;
 
@@ -66,6 +67,8 @@ class RN_IonChamber:public TObject{
   void SetCalibrations(float, float, float, float);
   void SetCalibrations(RN_VariableMap& detvar);
  
+  inline Double32_t T() const{return fT>0 ? ((fT * tlin) + tshift): 0;}
+
   ClassDef(RN_IonChamber,1);
   
 };

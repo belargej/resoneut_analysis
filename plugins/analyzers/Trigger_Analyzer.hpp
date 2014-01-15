@@ -74,7 +74,7 @@ public:
   extern double s1_tfirst;
   extern double s1raw_tfirst;
 
-  extern int n_tmult;       
+  
   extern int s1_tmult;      
   extern int s1raw_tmult;   
   extern int nai_up_tmult;  

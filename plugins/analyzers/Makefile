@@ -1,8 +1,8 @@
 CXX=g++
 
-SOURCES=PSD_Analyzer.cpp IC_Analyzer.cpp S2_Analyzer.cpp \
-	Trigger_Analyzer.cpp S2_IC_Analyzer.cpp Module_Analyzer.cpp \
-	NaI_Analyzer.cpp S2_Neut_IC_NaI_Analyzer.cpp Q_ValueAnalyzer.cpp\
+SOURCES=PSD_Analyzer.cpp IC_Analyzer.cpp Si_Analyzer.cpp \
+	Trigger_Analyzer.cpp Si_IC_Analyzer.cpp Module_Analyzer.cpp \
+	NaI_Analyzer.cpp Si_Neut_IC_NaI_Analyzer.cpp Q_ValueAnalyzer.cpp\
 	NewTree_Analyzer.cpp NaI_NeutAnalyzer.cpp F17dn_Analyzer.cpp
 
 

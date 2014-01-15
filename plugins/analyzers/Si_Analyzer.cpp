@@ -1,5 +1,5 @@
 /***********************************************************/
-//Class: S2_Analyzer
+//Class: Si_Analyzer
 //
 //Author:Sean Kuvin
 //
@@ -10,10 +10,10 @@
 //parameters on their own. 
 /***********************************************************/
 
-#ifndef _S2_ANALYZER_CXX
-#define _S2_ANALYZER_CXX
+#ifndef _Si_ANALYZER_CXX
+#define _Si_ANALYZER_CXX
 
-#include "S2_Analyzer.hpp"
+#include "Si_Analyzer.hpp"
 #include "../../include/RN_Root.hpp"
 using unpacker::TDC1;
 
@@ -100,12 +100,12 @@ namespace silicon{
   TH2D *h_thetadiff_v_phi;
   TH2D *h_phi_v_phi;
 
-  S2_Analyzer::S2_Analyzer():ind_(0)
+  Si_Analyzer::Si_Analyzer():ind_(0)
   {
     
   }
 
-  void S2_Analyzer::ResetGlobals(){
+  void Si_Analyzer::ResetGlobals(){
     
     //silicon telescope parameters
     prot_E = 0;
@@ -127,7 +127,7 @@ namespace silicon{
   }
 
   
-  bool S2_Analyzer::Begin(){   
+  bool Si_Analyzer::Begin(){   
     
     if(!rootfile){
       std::cout<<"output file has not been created"<<std::endl;
@@ -253,7 +253,7 @@ namespace silicon{
   
   
 
-  bool S2_Analyzer::Process(){
+  bool Si_Analyzer::Process(){
     
     if (target_z[0] > z_max || target_z[0] < z_min)
       return 0;
@@ -301,7 +301,7 @@ namespace silicon{
 
     return 1;
   }
-  bool S2_Analyzer::ProcessFill(){
+  bool Si_Analyzer::ProcessFill(){
 
     if(rel_angle && prot_E){
       h_e_v_relangle->Fill(rel_angle,prot_E);	
@@ -418,18 +418,18 @@ namespace silicon{
   }
 
 
-  bool S2_Analyzer::Terminate(){
+  bool Si_Analyzer::Terminate(){
     return 1;
   }
 
-  bool S2_Analyzer::TerminateIfLast(){
+  bool Si_Analyzer::TerminateIfLast(){
     rootfile->Write();
     rootfile->Close();
     
     return 1;
   }
   
-  void S2_Analyzer::Clear(){
+  void Si_Analyzer::Clear(){
     
   }
   

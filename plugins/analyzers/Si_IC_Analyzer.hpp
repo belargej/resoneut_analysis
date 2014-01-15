@@ -1,9 +1,9 @@
 /***************************************************************/
-//Class: S2_IC_Analyzer
+//Class: Si_IC_Analyzer
 //
 //Author:Sean Kuvin
 //
-//S2_IC_Analyzer is added to the analyzer list just as S2_Analyzer
+//Si_IC_Analyzer is added to the analyzer list just as S2_Analyzer
 //is except now we are looking at Silicon detector parameters
 //alongside Ion Chamber parameters.  The results of sorting through
 //the S2_Analyzer and the IC_analyzer are necessary for proper function
@@ -13,8 +13,8 @@
 /********************************************************************/
 
 
-#ifndef _S2_IC_ANALYZER
-#define _S2_IC_ANALYZER
+#ifndef _Si_IC_ANALYZER
+#define _Si_IC_ANALYZER
 #include <TH2.h>
 #include <cstdlib>
 #include <string>
@@ -26,13 +26,13 @@
 
 namespace coinc{
 
-  class S2_IC_Analyzer:public RN_Analyzer{
+  class Si_IC_Analyzer:public RN_Analyzer{
   private:
     
   public:
     
-    S2_IC_Analyzer();
-    virtual ~S2_IC_Analyzer(){};
+    Si_IC_Analyzer();
+    virtual ~Si_IC_Analyzer(){};
     
     virtual bool Begin();
     virtual bool Process();
@@ -43,7 +43,7 @@ namespace coinc{
     virtual void ResetGlobals();
     
     
-    ClassDef(S2_IC_Analyzer,0);
+    ClassDef(Si_IC_Analyzer,0);
   };
 
 
