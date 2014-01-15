@@ -41,7 +41,7 @@ namespace ionchamber{
 }
 
 namespace coinc{
-  Double32_t S1_neut_trel(0);
+  Double32_t sia_neut_trel(0);
   Double32_t sia_ic_trel(0);
   Double32_t sib_neut_trel(0);
   Double32_t sib_ic_trel(0);
@@ -98,7 +98,8 @@ void RN_Analyzer::Init(TString rootfilename)
    if(fChain->GetBranch("ADC5"))   
      fChain->SetBranchAddress("ADC5", &ADC5, &b_ADC5);
    else
-     std::cout<<"no ADC5 present, do not extract in channel mapping"<<std::endl;   if(fChain->GetBranch("ADC6"))   
+     std::cout<<"no ADC5 present, do not extract in channel mapping"<<std::endl;   
+   if(fChain->GetBranch("ADC6"))   
      fChain->SetBranchAddress("ADC6", &ADC6, &b_ADC6);
    else
      std::cout<<"no ADC6 present, do not extract in channel mapping"<<std::endl;
