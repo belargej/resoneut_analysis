@@ -50,8 +50,8 @@ namespace coinc{
   }
   bool NaI_NeutAnalyzer::ProcessFill(){
     
-    if(nai_array.fT[0]>0&&RNArray::tfirst<4096){
-      h_nai_t_v_neut_t->Fill(nai_array.fT[0],RNArray::tfirst);
+    if(nai_array.fT[0]>0 && Narray.fT_mult>0){
+      h_nai_t_v_neut_t->Fill(nai_array.fT[0], Narray.fT_first);
     }
 
     return 1;

@@ -49,6 +49,8 @@ namespace coinc{
   Double32_t sib_rf_trel(0);
   Double32_t ic_rf_trel(0);
   Double32_t neut_rf_trel(0);
+  Double32_t neut_nai_trel(0);
+  Double32_t nai_rf_trel(0);
 }
 
 
@@ -353,8 +355,9 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
   //reconstruct neutron detector hits for all neutron detectors 
   //in NeutCollection
   Narray.ReconstructHits(neut);
-  RNArray::ReconstructTREL(neut);
+  RNArray::ReconstructTREL(neut,Narray.fT_mult,Narray.fT_first,Narray.fDetfirst);
   
+  nai_array.ReconstructHits(nai);
   
   return 1;
 }
@@ -381,7 +384,8 @@ void RN_Analyzer::ResetGlobals(){
   coinc::sib_rf_trel = 0;
   coinc::ic_rf_trel = 0;
   coinc::neut_rf_trel = 0;
-
+  coinc::neut_nai_trel = 0;
+  coinc::nai_rf_trel = 0;
 
 
 }
@@ -405,9 +409,9 @@ bool RN_Analyzer::Process(){
     silicon::target_z[0] = (si_cluster_[0].fPos[0]-global::target_pos).Perp()/ tan ( silicon::rel_angle * 3.14 / 180); 
     silicon::target_z[1] = (si_cluster_[1].fPos[0]-global::target_pos).Perp() / tan ( silicon::rel_angle * 3.14 / 180); 
 
-    if(RNArray::n_tmult>0){
-      coinc::sia_neut_trel = si_cluster_[0].fT[0] - RNArray::tfirst;  
-      coinc::sib_neut_trel = si_cluster_[1].fT[0] - RNArray::tfirst;
+    if(Narray.fT_mult>0){
+      coinc::sia_neut_trel = si_cluster_[0].fT[0] - Narray.fT_first;  
+      coinc::sib_neut_trel = si_cluster_[1].fT[0] - Narray.fT_first;
     }
     coinc::sia_ic_trel = si_cluster_[0].fT[0] - ic.T();
     coinc::sib_ic_trel = si_cluster_[1].fT[0] - ic.T();
@@ -416,8 +420,15 @@ bool RN_Analyzer::Process(){
 
   }
   coinc::ic_rf_trel = ic.T()-rftime[0].T();
-  if(RNArray::n_tmult>0)
-    coinc::neut_rf_trel = RNArray::tfirst - rftime[0].T();
+  if(nai_array.fT[0])
+    coinc::nai_rf_trel = nai_array.fT[0] - rftime[0].T();
+  
+  if(Narray.fT_mult>0){
+    coinc::neut_rf_trel = Narray.fT_first - rftime[0].T();
+    if(nai_array.fT[0])
+      coinc::neut_nai_trel = Narray.fT_first - nai_array.fT[0];
+}
+
   
 
 //IonChamber Calculations

@@ -118,6 +118,8 @@ namespace coinc{
   extern Double32_t sib_rf_trel;
   extern Double32_t ic_rf_trel;
   extern Double32_t neut_rf_trel;
+  extern Double32_t neut_nai_trel;
+  extern Double32_t nai_rf_trel;
 }
 
 

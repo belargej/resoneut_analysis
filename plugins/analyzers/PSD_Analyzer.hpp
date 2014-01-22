@@ -102,13 +102,13 @@ namespace psd{
   extern int rawneut_orcheck;
   extern int neut_sansgamma_orcheck;
   extern int rawneut_sansrawgamma_orcheck;
-  
+  extern int rawgamma_orcheck;
 
   void Require_RawNeut_ORCheck();
   void Require_Neut_ORCheck();
   void Require_Neut_SansGamma_ORCheck();
   void Require_RawNeut_SansRawGamma_ORCheck();
-
+  void Require_RawGamma_ORCheck();
 
  
   void LoadGates(const std::string&);

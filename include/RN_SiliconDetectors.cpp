@@ -453,6 +453,7 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
       
       
       
+      
       fPos[fMult] = in.chVect(match_ch,cb);
       fChlist[fMult]=match_ch;
       fChlist_b[fMult]=cb;

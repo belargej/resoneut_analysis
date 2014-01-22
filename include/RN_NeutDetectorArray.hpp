@@ -124,6 +124,9 @@ typedef std::vector<RN_NeutDetector>::iterator RN_NeutCollectionRef;
 class RN_NeutDetectorArray:public TObject{
 private:
 public:
+  Double32_t fT_first;
+  int fDetfirst;
+  int fT_mult;
   int fMult;
   std::vector<TVector3>fPos;//!
   std::vector<Double32_t>fQ_long;//[fMult]
@@ -148,12 +151,8 @@ public:
 
 
 namespace RNArray{
-  
-  extern Double32_t tfirst;
-  extern Short_t detfirst;
-  extern int n_tmult;
 
-  void ReconstructTREL(RN_NeutCollection& in);
+  int ReconstructTREL(RN_NeutCollection& in,int&t_mult,double&t_first,int& det_first);
   int PositionMap(int slot,TVector3 & pos);
 
 }

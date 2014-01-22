@@ -158,7 +158,10 @@ Double_t RN_NeutDetector::keVee() const {
 }
 
 
-RN_NeutDetectorArray::RN_NeutDetectorArray():fMult(0),
+RN_NeutDetectorArray::RN_NeutDetectorArray():fT_first(0),
+					     fDetfirst(-1),
+					     fT_mult(0),
+					     fMult(0),
 					     fPos(16,0),
 					     fQ_long(16,0),
 					     fPSD(16,0),
@@ -196,6 +199,9 @@ int RN_NeutDetectorArray::Reset(){
     fT[i]=0;
  }
   fMult=0;
+  fT_mult=0;
+  fT_first=0;
+  fDetfirst = -1;
 
   return 1;
 }
@@ -427,14 +433,10 @@ int RN_NeutDetector::C_hit(TLorentzVector& inLV,double step/*mm*/){
 
 namespace RNArray{
   
-  Double32_t tfirst(4096.0);
-  Short_t detfirst(-1);
-  int n_tmult(0);
-
-  void ReconstructTREL(RN_NeutCollection&in){
-    n_tmult = 0;
-    tfirst = 4096.0;
-    detfirst = -1;
+  int ReconstructTREL(RN_NeutCollection&in,int&t_mult,double &t_first,int&det_first){
+    int n_tmult = 0;
+    double tfirst = 4096.0;
+    int detfirst = -1;
     for(unsigned int i=0;i<in.size();i++){
       if(in[i].T()>0){
 	n_tmult++;
@@ -449,8 +451,17 @@ namespace RNArray{
       for(RN_NeutCollectionRef it = in.begin(); it != in.end();it++){
 	(*it).CalculateTRel(tfirst);
       }
-    }
+      t_mult = n_tmult;
+      t_first = tfirst;
+      det_first = detfirst;
+      return 1;
     
+    }
+    t_mult = 0;
+    t_first = 0;
+    det_first = -1;
+    
+    return 0;
   }
   
   

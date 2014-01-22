@@ -34,10 +34,12 @@ namespace physical{
     virtual bool TerminateIfLast();
     virtual void ResetGlobals();
     
-    
+
     ClassDef(Q_ValueAnalyzer,0);
   };
   
+    extern Double32_t q_val_p;
+    extern Double32_t q_val_n;
 }
 
 

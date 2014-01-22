@@ -60,21 +60,8 @@ public:
   }
 
   inline Double32_t TZero(int id) const{return tzero[id];}
-
-  inline Double32_t T1()   const{
-    if(!fT[0]>0)
-      return 0;
-    else
-      return (fT[0] * tlin[0] + tshift[0]);
-  }
-
-  inline Double32_t T2()   const{
-    if(!fT[1]>0)
-      return 0;
-    else
-      return (fT[1] * tlin[1] + tshift[1]);
-    
-  }
+  inline Double32_t T1()   const{ return fT[0]>0 ? (fT[0] * tlin[0] + tshift[0]):0; }
+  inline Double32_t T2()   const{ return fT[1]>0 ? (fT[1] * tlin[1] + tshift[1]):0; }
 
   //T(int i) is deprecated.  still included so that some analyzers won't crash
   inline Double32_t T(int i=0)   const{
@@ -86,24 +73,9 @@ public:
       return 0;
     
   }
-  
-  inline Double32_t E1()   const{
-    if(!fE[0]>0)
-    return 0;
-    else 
-      return (fE[0] * elin[0] +eshift[0]);
-    
-  }
-
-  inline Double32_t E2()   const{
-    if(!fE[1]>0)
-      return 0;
-    else 
-      return (fE[1] * elin[1] +eshift[1]);
-  }
-
+  inline Double32_t E1()   const{ return fE[0]>0 ? (fE[0] * elin[0] + eshift[0]):0; }
+  inline Double32_t E2()   const{ return fE[1]>0 ? (fE[1] * elin[1] + eshift[1]):0;}
   inline Double32_t SumE() const{return E1()+E2();};
-
   inline Double32_t E_Gamma() const{return TMath::Sqrt(E1()*E2());}
   Double32_t Position() const;
 
@@ -127,8 +99,11 @@ class RN_NaIArray:public RN_BaseDetector{
   Double32_t eshift;//!
   Double32_t tlin;//!
   Double32_t tshift;//!
+
+  Double32_t tfirst;
+  Double32_t t_mult;
  public:
- 
+  
   std::vector<Double32_t> fPosition;
 
   RN_NaIArray(){}
@@ -137,13 +112,17 @@ class RN_NaIArray:public RN_BaseDetector{
 						eshift(0),
 						tlin(1),
 						tshift(0),	
+						tfirst(4096),
+						t_mult(0),
 						fPosition(20,(double)0.)
   {
   } 
   void Reset();
   void SetCalibrations(Double32_t, Double32_t, Double32_t, Double32_t);
   void SetCalibrations(RN_VariableMap& detvar);
-
+  int FindTFirst(const double& t);
+  inline Double32_t TFirst() const{return tfirst;};
+  inline Double32_t TMult() const{return t_mult;};
   void ReconstructHits(const RN_NaICollection&in);
   int InsertHit(const Double32_t&,const Double32_t&,const Double32_t&,const Int_t&);
 

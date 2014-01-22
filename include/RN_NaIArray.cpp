@@ -48,13 +48,13 @@ void RN_NaIDetector::SetCalibrations(RN_VariableMap& detvar){
 
 void RN_NaIArray::Reset(){
   //don't call BaseReset before using fMultx
-
-  for(unsigned int i=0;i<fMult;i++){
-
+  
+  for(unsigned int i=0;i<fMult;i++){  
     fPosition[i]=0xffff;
   }
 
- 
+  tfirst=4096;
+  t_mult=0;
 
   RN_BaseDetector::Reset();
  
@@ -81,9 +81,9 @@ void RN_NaIArray::SetCalibrations(RN_VariableMap& detvar){
 
 
 void RN_NaIArray::ReconstructHits(const RN_NaICollection& in){
-
     unsigned int idx(0);
     for(RN_NaICollectionCRef it=in.begin();it!=in.end();it++){
+      FindTFirst((*it).T());
       if((*it).E_Gamma()>0){
 	InsertHit((*it).E_Gamma(),(*it).T(),(*it).Position(),idx);
       }
@@ -92,6 +92,17 @@ void RN_NaIArray::ReconstructHits(const RN_NaICollection& in){
     
   
 }
+int RN_NaIArray::FindTFirst(const double& t){
+  t_mult++;
+  if(t<tfirst){
+    tfirst = t;
+    return 1;
+  }
+  else
+    return 0;
+  
+}
+
 
 int RN_NaIArray::InsertHit(const Double32_t&egamma,const Double32_t&tgamma,const Double32_t&pos_gamma,const Int_t&ch){
   if (!egamma>0)

@@ -21,6 +21,8 @@ namespace gamma_nai{
   TH1D *hNaIArray_Detector;
 
   TH1D *hNaI_T[20];	      
+  TH1D *hNaI_T1[20];	      
+  TH1D *hNaI_T2[20];	      
   TH1D *hNaI_ESum[20];	      
   TH1D *hNaI_EGamma[20];	      
   TH1D *hNaI_Position[20];
@@ -56,7 +58,9 @@ namespace gamma_nai{
       
       rootfile->mkdir(Form("NaIArray/NaI[%d]",i));
       rootfile->cd(Form("NaIArray/NaI[%d]",i));
-      hNaI_T[i] = new TH1D(Form("hNaI[%d]_T",i),Form("hNaI[%d]_T;T",i),4096,0,4095);	          
+      hNaI_T[i] = new TH1D(Form("hNaI[%d]_T",i),Form("hNaI[%d]_T;T",i),4096,0,4095);	     
+      hNaI_T1[i] = new TH1D(Form("hNaI[%d]_T1",i),Form("hNaI[%d]_T1;T1",i),4096,0,4095);	  
+      hNaI_T2[i] = new TH1D(Form("hNaI[%d]_T2",i),Form("hNaI[%d]_T2;T2",i),4096,0,4095);	         
       hNaI_ESum[i] = new TH1D(Form("hNaI[%d]_ESum",i),Form("hNaI[%d]_ESum;E",i),4096,0,4095);	      
       hNaI_EGamma[i] = new TH1D(Form("hNaI[%d]_EGamma",i),Form("hNaI[%d]_EGamma;E",i),4096,0,4095);	      
       hNaI_Position[i] = new TH1D(Form("hNaI[%d]_Position",i),Form("hNaI[%d]_Position;T",i),4096,-1024,1024);	             
@@ -66,9 +70,7 @@ namespace gamma_nai{
     return 1;
   }
   
-  bool NaI_Analyzer::Process(){ 
-    nai_array.ReconstructHits(nai);
-    
+  bool NaI_Analyzer::Process(){     
     return 1;
   }
   bool NaI_Analyzer::ProcessFill(){
@@ -82,6 +84,8 @@ namespace gamma_nai{
       if(nai[i].SumE()>0){
 	
 	hNaI_T[i]->Fill(nai[i].T());
+	hNaI_T1[i]->Fill(nai[i].T1());
+	hNaI_T2[i]->Fill(nai[i].T2());
 	hNaI_ESum[i]->Fill(nai[i].SumE());
 	hNaI_EGamma[i]->Fill(nai[i].E_Gamma());
 	hNaI_Position[i]->Fill(nai[i].Position()); 

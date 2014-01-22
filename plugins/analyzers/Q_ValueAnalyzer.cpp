@@ -23,6 +23,8 @@
 #define USEANGLE silicon::rel_angle
 #endif
 
+#define Q_MIN 1.2
+#define Q_MAX 1.6
 
 namespace physical{
 
@@ -136,6 +138,9 @@ namespace physical{
 		 - ((2.0 / global::m_heavy_decay) * TMath::Sqrt(silicon::prot_E * global::m_decay_product * global::E_fragment * global::m_frag) * cos(TMath::Pi()*USEANGLE / 180)));
     
     }
+
+    // if(q_val_p<Q_MIN||q_val_p>Q_MAX)
+    // return 0;
 
     return 1;
   }

@@ -78,7 +78,7 @@ namespace coinc{
 
   bool Si_Neut_IC_NaI_Analyzer::Process(){
  
-    sia_n_time_check = (sia_n_time_cut && sia_n_time_cut->IsInside(RNArray::tfirst,si_cluster_[0].fT[0]));
+    sia_n_time_check = (sia_n_time_cut && sia_n_time_cut->IsInside(Narray.fT_first,si_cluster_[0].fT[0]));
 
     
     if(_require_sia_n_time_check && !sia_n_time_check){
@@ -93,9 +93,9 @@ namespace coinc{
     if(nai_array.fT[0]>0&&si_cluster_[0].fT[0]>0)
       h_nai_t_v_si_t->Fill(nai_array.fT[0],si_cluster_[0].fT[0]);
     
-    if(RNArray::tfirst<4096 && si_cluster_[0].fT[0]>0){
-      h_n_minus_sit->Fill(RNArray::tfirst-si_cluster_[0].fT[0]);
-      h_n_t_v_si_t->Fill(RNArray::tfirst,si_cluster_[0].fT[0]);
+    if(Narray.fT_mult > 0 && si_cluster_[0].fT[0]>0){
+      h_n_minus_sit->Fill(Narray.fT_first-si_cluster_[0].fT[0]);
+      h_n_t_v_si_t->Fill(Narray.fT_first,si_cluster_[0].fT[0]);
 
     }
  

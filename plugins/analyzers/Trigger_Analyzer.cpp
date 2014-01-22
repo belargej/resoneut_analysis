@@ -224,7 +224,7 @@ namespace trigger{
       triggerinfo[1]=1;
 
 
-    if(RNArray::n_tmult<require_ntmult){
+    if(Narray.fT_mult<require_ntmult){
       return 0;
     }
     if(n_emult<require_nemult){
@@ -261,7 +261,7 @@ namespace trigger{
     std::cout<<"*******************\n";
     std::cout<<"tfirsts:  "<<n_tfirst<<" "<<s1_tfirst<<" "<<nai_up_tfirst<<" "<<nai_down_tfirst<<" "<<unpacker::TDC1[4]<<" "<<s1raw_tfirst<<"\n";
     std::cout<<"triggers: "<<triggerinfo[0]<<" "<<triggerinfo[1]<<" "<<triggerinfo[2]<<" "<<triggerinfo[3]<<" "<<triggerinfo[4]<<" "<<triggerinfo[5]<<"\n";
-    std::cout<<"tmults:    "<<RNArray::n_tmult<<" "<<s1_tmult<<" "<<nai_up_tmult<<" "<<nai_down_tmult<<" "<<"  "<<" "<<s1raw_tmult<<"\n";
+    std::cout<<"tmults:    "<<Narray.fT_mult<<" "<<s1_tmult<<" "<<nai_up_tmult<<" "<<nai_down_tmult<<" "<<"  "<<" "<<s1raw_tmult<<"\n";
     std::cout<<"emults:    "<<n_emult<<" "<<s1_emult<<" "<<nai_up_emult<<" "<<nai_down_emult<<" "<<"  "<<" "<<"  "<<std::endl;
     */
     return 1;

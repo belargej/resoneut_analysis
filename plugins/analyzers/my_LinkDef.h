@@ -15,6 +15,7 @@
 #pragma link C++ defined_in "Q_ValueAnalyzer.hpp";
 #pragma link C++ defined_in "NewTree_Analyzer.hpp";
 #pragma link C++ defined_in "F17dn_Analyzer.hpp";
+#pragma link C++ defined_in "Mg24dn_Analyzer.hpp";
 
 
 
