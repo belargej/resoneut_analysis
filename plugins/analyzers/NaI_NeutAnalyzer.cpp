@@ -37,8 +37,15 @@ namespace coinc{
       Clear();
       exit(EXIT_FAILURE);
     }
-    rootfile->mkdir("coinc/NaI_Neut/timing");
-    rootfile->cd("coinc/NaI_Neut/timing");
+
+    //make directory structure
+    if(!rootfile->GetDirectory("coinc"))
+      rootfile->mkdir("coinc");
+    rootfile->cd("coinc");
+    gDirectory->mkdir("NaI_Neut");
+   
+    //create histrograms
+    rootfile->cd("coinc/NaI_Neut");
     h_nai_t_v_neut_t=new sak::Hist2D("h_nai_t_v_neut_t","nai_t","neut_t",1024,0,4095,1024,0,4095);			 
     h_nai_t_v_neut_t_neutgated=new sak::Hist2D("h_nai_t_v_neut_t_neutgated","nai_t","neut_t",1024,0,4095,1024,0,4095);	   
   

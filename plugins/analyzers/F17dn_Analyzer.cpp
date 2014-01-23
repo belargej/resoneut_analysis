@@ -34,10 +34,16 @@ void F17dn_Analyzer::ResetGlobals(){
 }
 
 bool F17dn_Analyzer::Begin(){
-
+  
+  //make directory structure
   rootfile->mkdir("F17_dn_Analysis");
-  rootfile->mkdir("F17_dn_Analysis/ede");
-  rootfile->mkdir("F17_dn_Analysis/QvT");
+  rootfile->cd("F17_dn_Analysis");
+  gDirectory->mkdir("ede");
+  gDirectory->mkdir("QvT");
+
+
+
+  //create histrograms
   rootfile->cd("F17_dn_Analysis");
   hneut_trel_v_ic_trel = new TH2D("neut_rf_trel_v_ic_rf_trel","neut_rf_trel_v_ic_rf_trel;neut_trel[ns];ic_trel[ns]",1024,-1023.,1023.,1024,-1023.,1023.);
   hneut_trel_v_sia_trel = new TH2D("neut_rf_trel_v_sia_rf_trel","neut_rf_trel_v_sia_rf_trel;neut_trel[ns];sia_trel[ns]",1024,-1023.,1023.,1024,-1023.,1023.);
@@ -56,7 +62,7 @@ bool F17dn_Analyzer::Begin(){
   rootfile->cd("F17_dn_Analysis/ede");
   hproton_ede_ntime=new TH2D("proton_EdE_ntime","siPID;E[MeV];dE[MeV]",1024,0.,32.,1024,0.,32.);
   
-  rootfile->cd("QvT");
+  rootfile->cd("F17_dn_Analysis/QvT");
   hn1QvT = new TH2D("n1_QvT","n1_QvT;T;Q",1024,0.,1023.,1024,0.,1023.);
 
 

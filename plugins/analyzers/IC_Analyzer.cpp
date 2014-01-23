@@ -48,11 +48,15 @@ namespace ionchamber{
       exit(EXIT_FAILURE);
     }
     
- 
-    rootfile->mkdir("IC/ede");
-    rootfile->mkdir("IC/t");
-    rootfile->mkdir("IC/xy");
+    //make directory structure
+    rootfile->mkdir("IC");
+    rootfile->cd("IC");
+    gDirectory->mkdir("ede");
+    gDirectory->mkdir("t");
+    gDirectory->mkdir("xy");
 
+
+    //create histograms
     rootfile->cd("IC/xy");
     h_xvy= new TH2D("h_xvy","h_xvy;x_chan;y_chan",65,0,64,65,0,64);
     

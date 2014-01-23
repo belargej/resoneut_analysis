@@ -54,8 +54,13 @@ namespace coinc{
       Clear();
       exit(EXIT_FAILURE);
     }
-    rootfile->mkdir("coinc/Si_IC");
-    rootfile->mkdir("coinc/Si_IC/timing");
+
+    if(!rootfile->GetDirectory("coinc"))
+      rootfile->mkdir("coinc");
+    rootfile->cd("coinc");
+    gDirectory->mkdir("Si_IC");
+    gDirectory->cd("Si_IC");
+    gDirectory->mkdir("timing");
 
 
     rootfile->cd("coinc/Si_IC/timing");

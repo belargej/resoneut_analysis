@@ -45,23 +45,27 @@ bool Module_Analyzer::Begin(){
     Clear();
     exit(EXIT_FAILURE);
   }
+
+  //make directory structure
   rootfile->mkdir("Parameters");
-  rootfile->mkdir("Parameters/TDC1");
-  rootfile->mkdir("Parameters/TDC2");
-  rootfile->mkdir("Parameters/TDC3");
-  rootfile->mkdir("Parameters/TDC4");
-  rootfile->mkdir("Parameters/ADC1");
-  rootfile->mkdir("Parameters/ADC2");  
-  rootfile->mkdir("Parameters/ADC3");
-  rootfile->mkdir("Parameters/ADC4");
-  rootfile->mkdir("Parameters/ADC5");
-  rootfile->mkdir("Parameters/ADC6");
-  rootfile->mkdir("Parameters/ADC7");
-  rootfile->mkdir("Parameters/QDC1");
-  rootfile->mkdir("Parameters/QDC2");
-  rootfile->mkdir("Parameters/QDC3");
+  rootfile->cd("Parameters");
+  gDirectory->mkdir("TDC1");
+  gDirectory->mkdir("TDC2");
+  gDirectory->mkdir("TDC3");
+  gDirectory->mkdir("TDC4");
+  gDirectory->mkdir("ADC1");
+  gDirectory->mkdir("ADC2");  
+  gDirectory->mkdir("ADC3");
+  gDirectory->mkdir("ADC4");
+  gDirectory->mkdir("ADC5");
+  gDirectory->mkdir("ADC6");
+  gDirectory->mkdir("ADC7");
+  gDirectory->mkdir("QDC1");
+  gDirectory->mkdir("QDC2");
+  gDirectory->mkdir("QDC3");
 
   
+  //create histograms
   for(unsigned int i=0;i<32;i++){
     rootfile->cd("Parameters/TDC1");
     hTDC1[i]=new sak::Hist1D(Form("hTDC1[%d]",i),Form("TDC1[%d]",i),4096,0,4095);    

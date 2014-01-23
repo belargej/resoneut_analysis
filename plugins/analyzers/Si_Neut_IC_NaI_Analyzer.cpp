@@ -58,11 +58,19 @@ namespace coinc{
       exit(EXIT_FAILURE);
     }
 
-    rootfile->mkdir("coinc/Si_Neut");
-    rootfile->mkdir("coinc/Si_Neut/timing");
-    rootfile->mkdir("coinc/Si_NaI");
-    rootfile->mkdir("coinc/Si_NaI/timing");
+    //create directory structure
+    if(!rootfile->GetDirectory("coinc"))
+      rootfile->mkdir("coinc");
+    rootfile->cd("coinc");
+    gDirectory->mkdir("Si_Neut");
+    gDirectory->mkdir("Si_NaI");
+    gDirectory->cd("Si_Neut");
+    gDirectory->mkdir("timing");
+    rootfile->cd("coinc/Si_NaI");
+    gDirectory->mkdir("timing");
 
+    //create histograms
+    
     rootfile->cd("coinc/Si_NaI/timing");
     h_nai_t_v_si_t = new  TH2D("h_nai_t_v_si_t","h_nai_t_v_si_t;nai_t;si_t",1024,0,4095,1024,0,4095);
     rootfile->cd("coinc/Si_Neut/timing");

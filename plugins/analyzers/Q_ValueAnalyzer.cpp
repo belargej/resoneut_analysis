@@ -85,11 +85,14 @@ namespace physical{
       newtree->Branch("q_value_p",&q_val_p);
     }
 
-
+    //create directory structure
     rootfile->mkdir("physical");
-    rootfile->mkdir("physical/Q");
-    rootfile->mkdir("physical/QvParameters");
-  
+    rootfile->cd("physical");
+    gDirectory->mkdir("Q");
+    gDirectory->mkdir("QvParameters");
+
+
+    //create histograms  
     rootfile->cd("physical/Q");
     Q_Value=new sak::Hist1D("Q_val_p","Q_value",512,-1,10);
     Q_Value_proton=new sak::Hist1D("Q_val_proton","Q_value",512,-1,10);

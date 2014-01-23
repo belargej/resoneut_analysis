@@ -135,17 +135,27 @@ namespace silicon{
       exit(EXIT_FAILURE);
     }
     
-    rootfile->mkdir("Silicon/f2b_ratio");
-    rootfile->mkdir("Silicon/f2b_ratio/charge_sharing");
-    rootfile->mkdir("Silicon/f2b_ratio/S1");
-    rootfile->mkdir("Silicon/f2b_ratio/S2");
-    rootfile->mkdir("Silicon/ede");
-    rootfile->mkdir("Silicon/evtheta");
-    rootfile->mkdir("Silicon/Timing");
-    rootfile->mkdir("mult/Silicon");
-    rootfile->mkdir("Silicon/Chlist");
-    rootfile->mkdir("Silicon/Theta");
+    //make directory structure
+    rootfile->mkdir("Silicon");
+    rootfile->cd("Silicon");
+    gDirectory->mkdir("f2b_ratio");
+    gDirectory->mkdir("ede");
+    gDirectory->mkdir("evtheta");
+    gDirectory->mkdir("Timing");
+    gDirectory->mkdir("mult");
+    gDirectory->mkdir("Chlist");
+    gDirectory->mkdir("Theta");
+    gDirectory->cd("f2b_ratio");
+    gDirectory->mkdir("charge_sharing");
+    gDirectory->mkdir("S1");
+    gDirectory->mkdir("S2");
+    rootfile->cd("Silicon/Timing/");
+    gDirectory->mkdir("rftime");
+    
    
+
+    //create histograms
+
     rootfile->cd("Silicon");
     h_si_back_a[0]=new TH1D("h_si_1_back_a","si_1_e_before;E",4096,-20,4095);
     h_si_back_a[1]=new TH1D("h_si_2_back_a","si_2_e_before;E[MeV]",4096,-20,4095);
@@ -220,7 +230,7 @@ namespace silicon{
       h_si_x_y_prot[i]=new TH2D(Form("h_si_x_y_prot[%d]",i+1),Form("h_si_x_y_prot[%d];X;Y",i+1),512,-100,100,512,-100,100);
       
       
-      rootfile->cd("mult/Silicon");
+      rootfile->cd("Silicon/mult");
       h_si_fmult[i]= new TH1D(Form("h_si_fmult_%d",i),Form("h_si_fmult_%d;fmult",i),32,0,31);
       h_si_bmult[i]= new TH1D(Form("h_si_bmult_%d",i),Form("h_si_bmult_%d;bmult",i),32,0,31);
       h_si_cluster_mult[i] = new TH1D(Form("h_si_%d_cluster_mult",i),Form("h_si_%d_cluster_mult;mult",i),32,0,31);

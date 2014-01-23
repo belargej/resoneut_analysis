@@ -55,9 +55,9 @@ namespace gamma_nai{
     hNaIArray_Position = new TH1D("hNaIArray_Position","hNaIArray_Position;T",4096,-1024,1024);	             
  
     for (unsigned int i=0;i<20;i++){
-      
-      rootfile->mkdir(Form("NaIArray/NaI[%d]",i));
-      rootfile->cd(Form("NaIArray/NaI[%d]",i));
+      rootfile->cd("NaIArray");
+      gDirectory->mkdir(Form("NaI[%d]",i));
+      gDirectory->cd(Form("NaI[%d]",i));
       hNaI_T[i] = new TH1D(Form("hNaI[%d]_T",i),Form("hNaI[%d]_T;T",i),4096,0,4095);	     
       hNaI_T1[i] = new TH1D(Form("hNaI[%d]_T1",i),Form("hNaI[%d]_T1;T1",i),4096,0,4095);	  
       hNaI_T2[i] = new TH1D(Form("hNaI[%d]_T2",i),Form("hNaI[%d]_T2;T2",i),4096,0,4095);	         

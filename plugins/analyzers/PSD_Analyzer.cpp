@@ -127,14 +127,21 @@ namespace psd{
       exit(EXIT_FAILURE);
     }
     
-    rootfile->mkdir("neut/PSD/raw");
-    rootfile->mkdir("neut/PSD/cal");
-    rootfile->mkdir("neut/TRel");
-    rootfile->mkdir("neut/mult");
+    //create directory structure
+    rootfile->mkdir("neut");
+    rootfile->cd("neut");
+    gDirectory->mkdir("PSD");
+    gDirectory->cd("PSD");
+    gDirectory->mkdir("raw");
+    gDirectory->mkdir("cal");
+    
+    rootfile->cd("neut");
+    gDirectory->mkdir("TRel");
+    gDirectory->mkdir("mult");
+ 
 
-    rootfile->cd("neut/TRel");
-   
 
+    //create histograms
     rootfile->cd("neut/mult");
     h_ndetMult=new TH1D("h_ndetmult","nmult;mult",NEUTNUM+1,0,NEUTNUM);
     h_ndetMult_ngated=new TH1D("h_ndetmult_ngated","nmult_ngated;mult",NEUTNUM+1,0,NEUTNUM);
