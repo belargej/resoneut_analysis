@@ -7,6 +7,9 @@ ClassImp(RN_S2Detector);
 
 using global::myRnd;
 
+#define S1FIXENABLE 0
+
+
 #if 1
 #define RNDMNUM global::myRnd.Rndm()
 #else
@@ -441,6 +444,7 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
       //temporary fix for the S1 mistake made during 2013 runs
       //swapping odd-even ring pairs depending on what half
       //of the detector was hit.
+#if S1FIXENABLE
       if(in.IsS1()){
 	if( floor((int)cb / 8) == 0){
 	  if((int)match_ch % 2 !=0 ){
@@ -450,6 +454,7 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
 	    match_ch = match_ch + 1;
 	}
       }
+#endif
       
       
       

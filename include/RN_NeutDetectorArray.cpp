@@ -347,7 +347,7 @@ int RN_NeutDetector::H_hit(TLorentzVector& inLV,double step/*mm*/){
   
   //Get the neutron KE in CM frame for probability calculation
   double nKE=neut_LVcopy.E()-neut_LVcopy.M();
-  if(nKE>=.005 && nKE<.400){
+  if(nKE>=fThreshold/2 && nKE<.400){
     if(global::myRnd.Rndm()>(0.004508869*exp(2.91109-3.12513*nKE)*step))
       return 0;
   }
@@ -355,7 +355,7 @@ int RN_NeutDetector::H_hit(TLorentzVector& inLV,double step/*mm*/){
     if(global::myRnd.Rndm()>(0.004508869*exp(2.1646-.67*nKE)*step))
       return 0;
   }
-  else if(nKE<0.005 || nKE>1.4){
+  else if(nKE<fThreshold/2 || nKE>1.4){
     return 0;
   }
   

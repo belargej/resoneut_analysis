@@ -401,14 +401,10 @@ bool RN_Analyzer::Process(){
     silicon::prot_theta=si_cluster_[0].fPos[0].Theta()*(180.0 / TMath::Pi());
     silicon::rel_transverse = (si_cluster_[0].fPos[0].Perp()-si_cluster_[1].fPos[0].Perp());
     silicon::rel_z = (si_cluster_[0].fPos[0] - si_cluster_[1].fPos[0]).Z();
-    silicon::rel_angle = (si_cluster_[0].fPos[0] - si_cluster_[1].fPos[0]).Theta() * (180.0 / TMath::Pi())
-;
-    //silicon::rel_angle = TMath::ATan2(silicon::rel_transverse ,) * 180 / 3.14;
-    //silicon::target_z[0] = (si_cluster_[0].fPos[0].Perp() )/ tan ( silicon::rel_angle * 3.14 / 180); 
-    //silicon::target_z[1] = (si_cluster_[1].fPos[0].Perp() )/ tan ( silicon::rel_angle * 3.14 / 180); 
+    silicon::rel_angle = (si_cluster_[0].fPos[0] - si_cluster_[1].fPos[0]).Theta() * (180.0 / TMath::Pi());
     silicon::target_z[0] = (si_cluster_[0].fPos[0]-global::target_pos).Perp()/ tan ( silicon::rel_angle * 3.14 / 180); 
     silicon::target_z[1] = (si_cluster_[1].fPos[0]-global::target_pos).Perp() / tan ( silicon::rel_angle * 3.14 / 180); 
-
+    
     if(Narray.fT_mult>0){
       coinc::sia_neut_trel = si_cluster_[0].fT[0] - Narray.fT_first;  
       coinc::sib_neut_trel = si_cluster_[1].fT[0] - Narray.fT_first;
@@ -427,7 +423,7 @@ bool RN_Analyzer::Process(){
     coinc::neut_rf_trel = Narray.fT_first - rftime[0].T();
     if(nai_array.fT[0])
       coinc::neut_nai_trel = Narray.fT_first - nai_array.fT[0];
-}
+  }
 
   
 
@@ -435,7 +431,7 @@ bool RN_Analyzer::Process(){
   ionchamber::IC_ELoss = ic.fdE;
   ionchamber::IC_TotalE = ic.fE + ionchamber::IC_ELoss;
   
-
+  
   return true;
 }
 

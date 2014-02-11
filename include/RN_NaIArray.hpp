@@ -65,9 +65,9 @@ public:
 
   //T(int i) is deprecated.  still included so that some analyzers won't crash
   inline Double32_t T(int i=0)   const{
-    if (T1()>=T2() || !T1())
+    if ((T1()>=T2() || !T1()) && T2())
       return T2();
-    else if (T1()<T2() || !T2())
+    else if ((T1()<T2() || !T2()) && T1())
       return T1();
     else 
       return 0;
@@ -101,7 +101,8 @@ class RN_NaIArray:public RN_BaseDetector{
   Double32_t tshift;//!
 
   Double32_t tfirst;
-  Double32_t t_mult;
+  Int_t t_mult;
+  Int_t detfirst; 
  public:
   
   std::vector<Double32_t> fPosition;
@@ -121,7 +122,9 @@ class RN_NaIArray:public RN_BaseDetector{
   void SetCalibrations(Double32_t, Double32_t, Double32_t, Double32_t);
   void SetCalibrations(RN_VariableMap& detvar);
   int FindTFirst(const double& t);
+  int FindTFirst(const double& t,const int& det);
   inline Double32_t TFirst() const{return tfirst;};
+  inline Int_t DetFirst() const{return detfirst;};
   inline Double32_t TMult() const{return t_mult;};
   void ReconstructHits(const RN_NaICollection&in);
   int InsertHit(const Double32_t&,const Double32_t&,const Double32_t&,const Int_t&);
