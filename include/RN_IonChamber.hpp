@@ -66,7 +66,9 @@ class RN_IonChamber:public TObject{
   void Reset();
   void SetCalibrations(float, float, float, float);
   void SetCalibrations(RN_VariableMap& detvar);
- 
+  Double32_t SumE_X();
+  Double32_t SumE_Y();
+   
   inline Double32_t T() const{return fT>0 ? ((fT * tlin) + tshift): 0;}
 
   ClassDef(RN_IonChamber,1);
