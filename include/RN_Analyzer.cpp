@@ -326,10 +326,10 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
   }
 
   //IonChamber E+dE hits
-  if(ADC4[14]>0)ic.fE=ADC4[14];
-  if(ADC4[15]>0)ic.fdE=ADC4[15];
-  //if(ADC4[13]>0)ic.fE=ADC4[13];
-  //if(ADC4[14]>0)ic.fdE=ADC4[14];  
+  //if(ADC4[14]>0)ic.fE=ADC4[14];
+  //if(ADC4[15]>0)ic.fdE=ADC4[15];
+  if(ADC4[13]>0)ic.fE=ADC4[13];
+  if(ADC4[14]>0)ic.fdE=ADC4[14];  
   if(TDC1[1]>0) ic.fT = TDC1[1];
 
   //rftime

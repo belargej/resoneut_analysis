@@ -21,6 +21,13 @@ RN_BaseDetector::RN_BaseDetector(std::string name, int num):fName(name),
 							    lowlimit(0),
 							    highlimit(4096),		
 							    fCh_cal(num,int(0)),
+							    a0(num,double(0)),
+							    a1(num,double(1)),
+							    t0(num,double(0)),
+							    t1(num,double(1)),
+							    q_offset(num,double(0)),
+							    t_offset(num,double(0)),
+
 							    fMult(0),
 							    fChlist(num,double(0)),
 							    fE(num,double(0)),
@@ -63,6 +70,12 @@ void RN_BaseDetector::SetELimits(const double& elow,const double& ehigh){
 void RN_BaseDetector::SetCalibrations(RN_VariableMap& detvar){
   for(unsigned int i=0;i<fNumOfCh;i++){
     detvar.GetParam(Form("%s.ch[%d]",Name().c_str(),i),fCh_cal[i]);
+    detvar.GetParam(Form("%s.a0[%d]",Name().c_str(),i),a0[i]);  
+    detvar.GetParam(Form("%s.a1[%d]",Name().c_str(),i),a1[i]);
+    detvar.GetParam(Form("%s.t0[%d]",Name().c_str(),i),t0[i]);  
+    detvar.GetParam(Form("%s.t1[%d]",Name().c_str(),i),t1[i]);
+    detvar.GetParam(Form("%s.q_offset[%d]",Name().c_str(),i),q_offset[i]); 
+    detvar.GetParam(Form("%s.t_offset[%d]",Name().c_str(),i),t_offset[i]);  
   } 
   detvar.GetParam(Form("%s.elowlimit",Name().c_str()),lowlimit);
   detvar.GetParam(Form("%s.ehighlimit",Name().c_str()),highlimit);
@@ -70,7 +83,7 @@ void RN_BaseDetector::SetCalibrations(RN_VariableMap& detvar){
 }
 
 int RN_BaseDetector::InsertHit(const double& e,const double& t,const double& ch){
-  
+
   if(e <= lowlimit || e > highlimit) 
     return -1;
   int i,j;
