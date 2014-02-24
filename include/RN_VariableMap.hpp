@@ -32,10 +32,11 @@
 
 
 class RN_VariableMap{
-public:
-  RN_VariableMap(){}
+protected:
   std::map<std::string,double>vmap;
   std::map<std::string,double>::iterator it;
+public:
+  RN_VariableMap(){}
   int GetParam(std::string,float&);
   int GetParam(std::string,double&);
   void LoadParams(std::string filename);
