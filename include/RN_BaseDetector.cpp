@@ -79,6 +79,7 @@ void RN_BaseDetector::SetCalibrations(RN_VariableMap& detvar){
   } 
   detvar.GetParam(Form("%s.elowlimit",Name().c_str()),lowlimit);
   detvar.GetParam(Form("%s.ehighlimit",Name().c_str()),highlimit);
+  detvar.GetParam(Form("%s.sorted_by_channel",Name().c_str(),sorted_by_channel);
 
 }
 
