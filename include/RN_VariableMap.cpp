@@ -40,6 +40,19 @@ int RN_VariableMap::GetParam(std::string param,float& var){
   
 }
 
+int RN_VariableMap::GetParam(std::string param,int& var){
+
+  it=vmap.begin();
+  it=vmap.find(param);
+  if (it!=vmap.end()){
+    var=(int)it->second;
+    return 1;
+  }
+  else return 0;
+  
+}
+
+
 int RN_VariableMap::GetParam(std::string param,double& var){
 
   it=vmap.begin();
@@ -51,6 +64,7 @@ int RN_VariableMap::GetParam(std::string param,double& var){
   else return 0;
   
 }
+
 
 
 int RN_VariableMap::AddParam(std::string param,double var){

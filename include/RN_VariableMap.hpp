@@ -39,6 +39,7 @@ public:
   RN_VariableMap(){}
   int GetParam(std::string,float&);
   int GetParam(std::string,double&);
+  int GetParam(std::string,int&);
   void LoadParams(std::string filename);
   int AddParam(std::string,double);
   void ClearParams();
