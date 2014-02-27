@@ -18,8 +18,7 @@ Double_t RN_RFTime::T() const{
   if(fT>0)
     return ((fT * tlin) + tshift);
   else
-    return -1;
-}
+    return 0}
 
 Double_t RN_RFTime::T_Wrapped() const{
   double time=T();

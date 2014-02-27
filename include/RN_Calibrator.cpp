@@ -115,6 +115,24 @@ namespace si_cal{
 
     }
 
+    int response(2);
+    while(response!=1 || response !=0){
+      std::cout<<"1: Write out rootfile and close, 0: Keep rootfile open 
+and write manually\n";	
+      std::cin>>response;
+      if(response==1){
+	rootfile->Write();
+	rootfile->Close();
+	delete rootfile;
+	break;
+      }
+      else if(response==0)
+	break;
+      else 
+	continue;
+  }
+    
+    
 
 
 
