@@ -28,8 +28,27 @@
 #include <TLorentzVector.h>
 #include <TCutG.h>
 
+///////////////////////////////////////////////////////////
+//Geant Libraries
+#ifdef GEANT_SIM_ON
+#include <globals.hh>
+#include <G4VUserDetectorConstruction.hh>
+
+#include <G4Material.hh>
+#include <G4NistManager.hh>
+
+#include <G4Box.hh>
+#include <G4LogicalVolume.hh>
+#include <G4PhysicalConstants.hh>
+#include <G4SystemOfUnits.hh>
+
+#endif
+//////////////////////////////////////////////////////////
+
+
 #include "RN_VariableMap.hpp"
 #include "RN_BaseDetector.hpp"
+
 
 
 
@@ -144,18 +163,27 @@ public:
   ClassDef(RN_NeutDetectorArray,1);
 };
 
-
-
-
-
-
-
 namespace RNArray{
 
   int ReconstructTREL(RN_NeutCollection& in,int&t_mult,double&t_first,int& det_first);
   int PositionMap(int slot,TVector3 & pos);
 
 }
+
+#ifdef GEANT_SIM_ON
+namespace RN_Geant{
+
+
+G4Material* DefinePTerphenyl();
+G4VLogicalVolume* DefineRNArray();
+
+}
+
+#endif
+
+
+
+
 
 
 #endif
