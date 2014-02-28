@@ -148,9 +148,8 @@ bool RN_Analyzer::Begin(){
 
 void RN_Analyzer::Loop(Long64_t start,Long64_t evnum){
   if(!fChain){
-     std::cout<<"fChain not initialized, no root files added to 
-Analyzer\n"
-   return;  	
+    std::cout<<"fChain not initialized, no root files added to Analyzer\n";
+    return;  	
   }
   
   Long64_t totentries= TotEntries();    

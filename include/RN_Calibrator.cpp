@@ -117,8 +117,7 @@ namespace si_cal{
 
     int response(2);
     while(response!=1 || response !=0){
-      std::cout<<"1: Write out rootfile and close, 0: Keep rootfile open 
-and write manually\n";	
+      std::cout<<"1: Write out rootfile and close, 0: Keep rootfile open and write manually\n";	
       std::cin>>response;
       if(response==1){
 	rootfile->Write();
@@ -130,7 +129,7 @@ and write manually\n";
 	break;
       else 
 	continue;
-  }
+    }
     
     
 
