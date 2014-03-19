@@ -33,6 +33,7 @@
 
 
 
+
 class RN_NeutDetector:public RN_BaseDetector{
  private:
   double elin;//!
@@ -144,18 +145,11 @@ public:
   ClassDef(RN_NeutDetectorArray,1);
 };
 
-
-
-
-
-
-
 namespace RNArray{
 
   int ReconstructTREL(RN_NeutCollection& in,int&t_mult,double&t_first,int& det_first);
   int PositionMap(int slot,TVector3 & pos);
 
 }
-
 
 #endif

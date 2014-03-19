@@ -1,0 +1,35 @@
+# Macro file for RN_SingleDet
+# 
+# Can be run in batch, without graphic
+# or interactively: Idle> /control/execute run1.mac
+#
+# Default kinematics: 
+# neutron 1 MeV in direction (0.,0.,1.)
+# 1 event with tracking/verbose
+#
+/tracking/verbose 1
+/run/beamOn 1
+#
+#
+# muon 100 keV in direction (0.,0.,-1.)
+# 3 events
+#
+/gun/particle neutron
+/gun/energy .1 MeV
+/run/beamOn 3
+#
+# 20 events
+#
+/tracking/verbose 0
+/B4/event/setPrintModulo 5
+/run/beamOn 20
+#
+#
+#
+# Activate/inactivate physics processes
+#
+/process/list
+/process/inactivate eBrem
+#
+/run/beamOn 20
+#

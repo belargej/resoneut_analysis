@@ -33,6 +33,37 @@ Double32_t RN_IonChamber::SumE_Y(){
   return e; 
 }
 
+
+Double32_t RN_IonChamber::Pos_X(){          
+  Double32_t ch = 0;
+  Double32_t chA = 0;
+  Double32_t chB = 0;
+  for(unsigned int i=0;i<xgrid.fMult;i++){
+    chA += xgrid.E(i)*xgrid.Ch(i);
+    chB += xgrid.E(i);
+  }
+  if(chB>0){
+    ch = chA/chB;
+  }
+  return ch; 
+}
+
+
+Double32_t RN_IonChamber::Pos_Y(){
+  Double32_t ch = 0;
+  Double32_t chA = 0;
+  Double32_t chB = 0;
+  for(unsigned int i=0;i<ygrid.fMult;i++){
+    chA += ygrid.E(i)*ygrid.Ch(i);
+    chB += ygrid.E(i);
+  }
+  if(chB>0){
+    ch = chA/chB;
+  }
+  return ch; 
+}                                               
+
+
 void RN_IonChamber::SetCalibrations(float elin, float eshift, float tlin, float tshift){
   this->elin=elin;
   this->eshift=eshift;
