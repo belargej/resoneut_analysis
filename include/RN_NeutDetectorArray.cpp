@@ -11,7 +11,7 @@ namespace sim{
   double z_pos(0);
   double stepcounter(0);
   double steptime(0);
-}3
+}
 
 using namespace sim;
 
@@ -492,48 +492,6 @@ namespace RNArray{
   
   }
 }
-
-#ifdef GEANT_SIM_ON
-namespace RN_Geant{
-  G4Material* DefinePTerphenyl(){
-    G4double z, a, density;
-    G4String name, symbol;
-    G4int ncomponents, natoms;
-    
-    //p-Terphenyl molecule constructed from constituents
-    a = 1.01*g/mole;
-    G4Element* elH  = new G4Element(name="Hydrogen",symbol="H" , z= 1., a);
-    
-    a = 12.00*g/mole;
-    G4Element* elC  = new G4Element(name="Carbon"  ,symbol="O" , z= 6., a);
-    
-    density = 1.23*g/cm3;
-    G4Material* C18H14 = new G4Material(name="p_terphenyl",density,ncomponents=2);
-    C18H14->AddElement(elH, natoms=14);
-    C18H14->AddElement(elC, natoms=18);  
-
-  // Print
-    G4cout << C18H14 << G4endl;
-    return C18H14;
-  }
-  G4VLogicalVolume* DefineRNArray(){
-    G4double innerRadius = 0.*cm;
-    G4double outerRadius = 100.*cm;
-    G4double startAngle= 0.*deg;
-    G4double spanningAngle = 360.*deg;
-    G4double hz=50
-    G4VSolid* sArray = new G4Tubs("RN_Array",
-				 innerRadius, 
-				 outerRadius,
-				 hz,
-				 startAngle, 
-				 spanningAngle);
-    
-
-    return 
-  }
-}
-#endif
 
 
 
