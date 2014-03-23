@@ -1,28 +1,28 @@
 /***********************************************************
-//Class: Mg24dn_Analyzer
+//Class: Analyzer_Template
 //
 //Author:Sean Kuvin
 //
 ***********************************************************/
 
-#ifndef _Mg24DNANALYZER_H
-#define _Mg24DNAnalyzer_H
+#ifndef _ANALYZERTEMPLATE_H
+#define _ANALYZERTEMPLATE_H
 #include <TH2.h>
 #include <cstdlib>
 #include <string>
 #include <new>
-#include "../include/RN_Analyzer.hpp"
+#include "RN_Analyzer.hpp"
 
 
-namespace _Mg24{
+//namespace template{
 
 
-class Mg24dn_Analyzer:public RN_Analyzer{
+class Analyzer_Template:public RN_Analyzer{
 private:
 
 public:  
-  Mg24dn_Analyzer();
-  virtual ~Mg24dn_Analyzer(){};
+  Analyzer_Template();
+  virtual ~Analyzer_Template(){};
 
   virtual bool Begin();
   virtual bool Process();
@@ -36,11 +36,13 @@ public:
 
 
 
-  ClassDef(Mg24dn_Analyzer,0);
+  ClassDef(Analyzer_Template,0);
 };
+//declare global parameters as extern
 
-void Load_Mg24_dn_Gates();
+
+void LoadTemplateGates();
 
 
-}
+
 #endif

@@ -14,7 +14,7 @@
 #define _Si_ANALYZER_CXX
 
 #include "Si_Analyzer.hpp"
-#include "../../include/RN_Root.hpp"
+#include "RN_Root.hpp"
 using unpacker::TDC1;
 
 namespace silicon{
@@ -472,19 +472,19 @@ namespace silicon{
 
 
   void LoadGates(const std::string& input){
-    sak::LoadCuts in(input.c_str());    
-    if(in.getCut("prots1") && !prots1)
-      prots1=new TCutG(*in.getCut("prots1"));
-    if(in.getCut("prots2") && !prots2)
-      prots2=new TCutG(*in.getCut("prots2"));
-    if(in.getCut("ptheta_cut") && !ptheta_cut)
-      ptheta_cut=new TCutG(*in.getCut("ptheta_cut"));
-    if(in.getCut("alphas") && !alphas)
-      alphas=new TCutG(*in.getCut("alphas"));   
-    if(in.getCut("deuteron") && !deuterons)
-      deuterons=new TCutG(*in.getCut("deuteron")); 
-    if(in.getCut("thetatheta_cut") && !thetatheta_cut)
-      thetatheta_cut=new TCutG(*in.getCut("thetatheta_cut"));
+    TFile in(input.c_str());    
+    if(in.Get("prots1") && !prots1)
+      prots1=new TCutG(*(TCutG*)in.Get("prots1"));
+    if(in.Get("prots2") && !prots2)
+      prots2=new TCutG(*(TCutG*)in.Get("prots2"));
+    if(in.Get("ptheta_cut") && !ptheta_cut)
+      ptheta_cut=new TCutG(*(TCutG*)in.Get("ptheta_cut"));
+    if(in.Get("alphas") && !alphas)
+      alphas=new TCutG(*(TCutG*)in.Get("alphas"));   
+    if(in.Get("deuteron") && !deuterons)
+      deuterons=new TCutG(*(TCutG*)in.Get("deuteron")); 
+    if(in.Get("thetatheta_cut") && !thetatheta_cut)
+      thetatheta_cut=new TCutG(*(TCutG*)in.Get("thetatheta_cut"));
     in.Close();
   }
   

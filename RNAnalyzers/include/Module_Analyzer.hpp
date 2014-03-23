@@ -13,9 +13,8 @@
 #include <cstdlib>
 #include <string>
 #include <new>
-#include "../include/RN_Analyzer.hpp"
-#include "plugins/sak/sak_Histograms.hpp"
-#include "plugins/sak/sak_Gates.hpp"
+#include "RN_Analyzer.hpp"
+
 
 
 

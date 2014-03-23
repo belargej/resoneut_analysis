@@ -17,7 +17,7 @@
 #define _Si_IC_ANALYZER_CXX
 
 #include "Si_IC_Analyzer.hpp"
-#include "../../include/RN_Root.hpp"
+#include "RN_Root.hpp"
 #include "Si_Analyzer.hpp"
 #include "IC_Analyzer.hpp"
 
@@ -113,11 +113,11 @@ namespace coinc{
 
 
   void Load_Si_IC_Gates(const std::string& input){
-    sak::LoadCuts in(input.c_str());    
-    if(in.getCut("si_ic_time1") && !si_ic_time1)
-      si_ic_time1=new TCutG(*in.getCut("si_ic_time1"));
-    if(in.getCut("si_ic_time2") && !si_ic_time2)
-      si_ic_time2=new TCutG(*in.getCut("si_ic_time2"));
+    TFile in(input.c_str());    
+    if(in.Get("si_ic_time1") && !si_ic_time1)
+      si_ic_time1=new TCutG(*(TCutG*)in.Get("si_ic_time1"));
+    if(in.Get("si_ic_time2") && !si_ic_time2)
+      si_ic_time2=new TCutG(*(TCutG*)in.Get("si_ic_time2"));
 
     in.Close();
 

@@ -26,8 +26,8 @@ to analyzers which follow this one.
 #define _TRIG_ANALYZER_CXX
 
 #include "Trigger_Analyzer.hpp"
-#include "../../include/RN_Root.hpp"
-#include "../../include/RN_Unpack2Root.hpp"
+#include "RN_Root.hpp"
+#include "RN_Unpack2Root.hpp"
 #include <numeric>
 namespace trigger{
  

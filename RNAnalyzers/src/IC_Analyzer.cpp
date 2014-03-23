@@ -15,7 +15,9 @@
 #define _IC_ANALYZER_CXX
 
 #include "IC_Analyzer.hpp"
-#include "../../include/RN_Root.hpp"
+#include "RN_Root.hpp"
+
+
 namespace ionchamber{
   TCutG* ede_hi1;
   TCutG* ede_hi2;
@@ -27,9 +29,9 @@ namespace ionchamber{
 
   int hi_check[3];
 
-  sak::Histogram2D *hIC_ede;  
-  sak::Histogram2D *hIC_fefde;  
-  sak::Hist1D * h_IC_t;
+  TH2D *hIC_ede;  
+  TH2D *hIC_fefde;  
+  TH1D *h_IC_t;
   
   TH2D * h_xvy;
   TH2D * hIC_de_v_xgride;
@@ -61,11 +63,11 @@ namespace ionchamber{
     h_xvy= new TH2D("h_xvy","h_xvy;x_chan;y_chan",65,0,64,65,0,64);
     
     rootfile->cd("IC/ede");
-    hIC_ede=new sak::Hist2D("hIC_EdE","E [arb]","dE [arb]",1024,0,4096,1024,0,4096);
-    hIC_fefde=new sak::Hist2D("hIC_fEdE","fE [arb]","fdE [arb]",1024,0,4096,1024,0,4096);
+    hIC_ede=new TH2D("hIC_EdE","IC_EdE;E [arb];dE [arb]",1024,0,4096,1024,0,4096);
+    hIC_fefde=new TH2D("hIC_fEdE","hIC_fEdE;fE [arb];fdE [arb]",1024,0,4096,1024,0,4096);
     hIC_de_v_xgride=new TH2D("hIC_dE_v_xgride","hIC_dE_v_xgride;E [arb];dE [arb]",1024,0,4096,1024,0,4096);
     rootfile->cd("IC/t");
-    h_IC_t = new sak::Hist1D("h_IC_t","t",1024,0,4095);
+    h_IC_t = new TH1D("h_IC_t","ICt;t",1024,0,4095);
 
 
     return 1;
@@ -139,13 +141,13 @@ namespace ionchamber{
 
 
   void LoadGates(const std::string& input){
-    sak::LoadCuts in(input.c_str());    
-    if(in.getCut("ede_hi1") && !ede_hi1)
-      ede_hi1=new TCutG(*in.getCut("ede_hi1"));
-    if(in.getCut("ede_hi2") && !ede_hi2)
-      ede_hi2=new TCutG(*in.getCut("ede_hi2"));
-    if(in.getCut("ede_hi3") && !ede_hi3)
-      ede_hi3=new TCutG(*in.getCut("ede_hi3"));   
+    TFile in(input.c_str());    
+    if(in.Get("ede_hi1") && !ede_hi1)
+      ede_hi1=new TCutG(*(TCutG*)in.Get("ede_hi1"));
+    if(in.Get("ede_hi2") && !ede_hi2)
+      ede_hi2=new TCutG(*(TCutG*)in.Get("ede_hi2"));
+    if(in.Get("ede_hi3") && !ede_hi3)
+      ede_hi3=new TCutG(*(TCutG*)in.Get("ede_hi3"));   
 
   
     in.Close();

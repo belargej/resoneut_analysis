@@ -1,28 +1,28 @@
 /***********************************************************
-//Class: F17dn_Analyzer
+//Class: Mg24dn_Analyzer
 //
 //Author:Sean Kuvin
 //
 ***********************************************************/
 
-#ifndef _F17DNANALYZER_H
-#define _F17DNAnalyzer_H
+#ifndef _Mg24DNANALYZER_H
+#define _Mg24DNAnalyzer_H
 #include <TH2.h>
 #include <cstdlib>
 #include <string>
 #include <new>
-#include "../include/RN_Analyzer.hpp"
+#include "RN_Analyzer.hpp"
 
 
-namespace _F17{
+namespace _Mg24{
 
 
-class F17dn_Analyzer:public RN_Analyzer{
+class Mg24dn_Analyzer:public RN_Analyzer{
 private:
 
 public:  
-  F17dn_Analyzer();
-  virtual ~F17dn_Analyzer(){};
+  Mg24dn_Analyzer();
+  virtual ~Mg24dn_Analyzer(){};
 
   virtual bool Begin();
   virtual bool Process();
@@ -36,10 +36,10 @@ public:
 
 
 
-  ClassDef(F17dn_Analyzer,0);
+  ClassDef(Mg24dn_Analyzer,0);
 };
 
-void Load_F17_dn_Gates();
+void Load_Mg24_dn_Gates();
 
 
 }

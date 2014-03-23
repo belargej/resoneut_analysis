@@ -18,8 +18,8 @@
 namespace coinc{
 
 
-  sak::Hist2D *h_nai_t_v_neut_t;			 
-  sak::Hist2D *h_nai_t_v_neut_t_neutgated;	 
+  TH2D *h_nai_t_v_neut_t;			 
+  TH2D *h_nai_t_v_neut_t_neutgated;	 
 
   NaI_NeutAnalyzer::NaI_NeutAnalyzer()
   {
@@ -46,8 +46,8 @@ namespace coinc{
    
     //create histrograms
     rootfile->cd("coinc/NaI_Neut");
-    h_nai_t_v_neut_t=new sak::Hist2D("h_nai_t_v_neut_t","nai_t","neut_t",1024,0,4095,1024,0,4095);			 
-    h_nai_t_v_neut_t_neutgated=new sak::Hist2D("h_nai_t_v_neut_t_neutgated","nai_t","neut_t",1024,0,4095,1024,0,4095);	   
+    h_nai_t_v_neut_t=new TH2D("h_nai_t_v_neut_t","nai_t_v_neut_;nai_t;neut_t",1024,0,4095,1024,0,4095);			 
+    h_nai_t_v_neut_t_neutgated=new TH2D("h_nai_t_v_neut_t_neutgated","nai_t_v_neut_t_neutgated;nai_t;neut_t",1024,0,4095,1024,0,4095);	   
   
     return 1;
   }

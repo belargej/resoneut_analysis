@@ -48,7 +48,7 @@ libRNCore.so: ${OBJECTS} RNCore_d.cpp
 RNCore_d.cpp: ${HEADERS} $(HDRDIR)/my_LinkDef.h
 	rootcint $@ -c `root-config --cflags` -p $^
 
-%.o: ${addprefix $(SRCDIR)/,%.cpp}
+%.o: ${addprefix $(SRCDIR)/,%.cpp} ${addprefix $(HDRDIR)/,%.hpp}
 	${CXX} ${CFLAGS} $< -fPIC
 
 #####################################################################

@@ -6,7 +6,7 @@
 
 
 **************************************************/
-#include "../../include/RN_Root.hpp"
+#include "RN_Root.hpp"
 #include "F17dn_Analyzer.hpp"
 
 

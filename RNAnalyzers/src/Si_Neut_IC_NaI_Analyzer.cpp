@@ -17,7 +17,7 @@
 #define _Si_NAI_NEUT_IC_ANALYZER_CXX
 
 #include "Si_Neut_IC_NaI_Analyzer.hpp"
-#include "../../include/RN_Root.hpp"
+#include "RN_Root.hpp"
 #include "Si_Analyzer.hpp"
 #include "Si_IC_Analyzer.hpp"
 #include "IC_Analyzer.hpp"
@@ -137,11 +137,11 @@ namespace coinc{
 
 
   void Load_Si_Neut_IC_NaI_Gates(const std::string & input){
-    sak::LoadCuts in(input.c_str());    
-    if(in.getCut("sia_n_time_cut") && !sia_n_time_cut)
-      sia_n_time_cut=new TCutG(*in.getCut("sia_n_time_cut"));
-    if(in.getCut("sib_n_time_cut") && !sib_n_time_cut)
-      sib_n_time_cut=new TCutG(*in.getCut("sib_n_time_cut"));
+    TFile in(input.c_str());    
+    if(in.Get("sia_n_time_cut") && !sia_n_time_cut)
+      sia_n_time_cut=new TCutG(*(TCutG*)in.Get("sia_n_time_cut"));
+    if(in.Get("sib_n_time_cut") && !sib_n_time_cut)
+      sib_n_time_cut=new TCutG(*(TCutG*)in.Get("sib_n_time_cut"));
     in.Close();
   }
 

@@ -332,112 +332,112 @@ namespace psd{
   }
 
   void LoadGates(const std::string& input){
-    sak::LoadCuts in(input.c_str());    
-    if(in.getCut("n0_neuts") && !n0_neuts)
-      n0_neuts=new TCutG(*in.getCut("n0_neuts"));
-    if(in.getCut("n1_neuts") && !n1_neuts)
-      n1_neuts=new TCutG(*in.getCut("n1_neuts"));
-    if(in.getCut("n2_neuts") && !n2_neuts)
-      n2_neuts=new TCutG(*in.getCut("n2_neuts"));   
-    if(in.getCut("n3_neuts") && !n3_neuts)
-      n3_neuts=new TCutG(*in.getCut("n3_neuts"));
-    if(in.getCut("n4_neuts") && !n4_neuts)
-      n4_neuts=new TCutG(*in.getCut("n4_neuts"));
-    if(in.getCut("n5_neuts") && !n5_neuts)
-      n5_neuts=new TCutG(*in.getCut("n5_neuts"));
-    if(in.getCut("n6_neuts") && !n6_neuts)
-      n6_neuts=new TCutG(*in.getCut("n6_neuts"));   
-    if(in.getCut("n7_neuts") && !n7_neuts)
-      n7_neuts=new TCutG(*in.getCut("n7_neuts"));
-    if(in.getCut("n8_neuts") && !n8_neuts)
-      n8_neuts=new TCutG(*in.getCut("n8_neuts"));
-    if(in.getCut("n9_neuts") && !n9_neuts)
-      n9_neuts=new TCutG(*in.getCut("n9_neuts"));
+    TFile in(input.c_str());    
+    if(in.Get("n0_neuts") && !n0_neuts)
+      n0_neuts=new TCutG(*(TCutG*)in.Get("n0_neuts"));
+    if(in.Get("n1_neuts") && !n1_neuts)
+      n1_neuts=new TCutG(*(TCutG*)in.Get("n1_neuts"));
+    if(in.Get("n2_neuts") && !n2_neuts)
+      n2_neuts=new TCutG(*(TCutG*)in.Get("n2_neuts"));   
+    if(in.Get("n3_neuts") && !n3_neuts)
+      n3_neuts=new TCutG(*(TCutG*)in.Get("n3_neuts"));
+    if(in.Get("n4_neuts") && !n4_neuts)
+      n4_neuts=new TCutG(*(TCutG*)in.Get("n4_neuts"));
+    if(in.Get("n5_neuts") && !n5_neuts)
+      n5_neuts=new TCutG(*(TCutG*)in.Get("n5_neuts"));
+    if(in.Get("n6_neuts") && !n6_neuts)
+      n6_neuts=new TCutG(*(TCutG*)in.Get("n6_neuts"));   
+    if(in.Get("n7_neuts") && !n7_neuts)
+      n7_neuts=new TCutG(*(TCutG*)in.Get("n7_neuts"));
+    if(in.Get("n8_neuts") && !n8_neuts)
+      n8_neuts=new TCutG(*(TCutG*)in.Get("n8_neuts"));
+    if(in.Get("n9_neuts") && !n9_neuts)
+      n9_neuts=new TCutG(*(TCutG*)in.Get("n9_neuts"));
     
-    if(in.getCut("n0_gammas") && !n0_gammas)
-      n0_gammas=new TCutG(*in.getCut("n0_gammas"));
-    if(in.getCut("n1_gammas") && !n1_gammas)
-      n1_gammas=new TCutG(*in.getCut("n1_gammas"));
-    if(in.getCut("n2_gammas") && !n2_gammas)
-      n2_gammas=new TCutG(*in.getCut("n2_gammas"));   
-    if(in.getCut("n3_gammas") && !n3_gammas)
-      n3_gammas=new TCutG(*in.getCut("n3_gammas"));
-    if(in.getCut("n4_gammas") && !n4_gammas)
-      n4_gammas=new TCutG(*in.getCut("n4_gammas"));
-    if(in.getCut("n5_gammas") && !n5_gammas)
-      n5_gammas=new TCutG(*in.getCut("n5_gammas"));
-    if(in.getCut("n6_gammas") && !n6_gammas)
-      n6_gammas=new TCutG(*in.getCut("n6_gammas"));   
-    if(in.getCut("n7_gammas") && !n7_gammas)
-      n7_gammas=new TCutG(*in.getCut("n7_gammas"));
-    if(in.getCut("n8_gammas") && !n8_gammas)
-      n8_gammas=new TCutG(*in.getCut("n8_gammas"));
-    if(in.getCut("n9_gammas") && !n9_gammas)
-      n9_gammas=new TCutG(*in.getCut("n9_gammas"));
+    if(in.Get("n0_gammas") && !n0_gammas)
+      n0_gammas=new TCutG(*(TCutG*)in.Get("n0_gammas"));
+    if(in.Get("n1_gammas") && !n1_gammas)
+      n1_gammas=new TCutG(*(TCutG*)in.Get("n1_gammas"));
+    if(in.Get("n2_gammas") && !n2_gammas)
+      n2_gammas=new TCutG(*(TCutG*)in.Get("n2_gammas"));   
+    if(in.Get("n3_gammas") && !n3_gammas)
+      n3_gammas=new TCutG(*(TCutG*)in.Get("n3_gammas"));
+    if(in.Get("n4_gammas") && !n4_gammas)
+      n4_gammas=new TCutG(*(TCutG*)in.Get("n4_gammas"));
+    if(in.Get("n5_gammas") && !n5_gammas)
+      n5_gammas=new TCutG(*(TCutG*)in.Get("n5_gammas"));
+    if(in.Get("n6_gammas") && !n6_gammas)
+      n6_gammas=new TCutG(*(TCutG*)in.Get("n6_gammas"));   
+    if(in.Get("n7_gammas") && !n7_gammas)
+      n7_gammas=new TCutG(*(TCutG*)in.Get("n7_gammas"));
+    if(in.Get("n8_gammas") && !n8_gammas)
+      n8_gammas=new TCutG(*(TCutG*)in.Get("n8_gammas"));
+    if(in.Get("n9_gammas") && !n9_gammas)
+      n9_gammas=new TCutG(*(TCutG*)in.Get("n9_gammas"));
     
-    if(in.getCut("n0_neuts_raw") && !n0_neuts_raw)
-      n0_neuts_raw=new TCutG(*in.getCut("n0_neuts_raw"));
-    if(in.getCut("n1_neuts_raw") && !n1_neuts_raw)
-      n1_neuts_raw=new TCutG(*in.getCut("n1_neuts_raw"));
-    if(in.getCut("n2_neuts_raw") && !n2_neuts_raw)
-      n2_neuts_raw=new TCutG(*in.getCut("n2_neuts_raw"));   
-    if(in.getCut("n3_neuts_raw") && !n3_neuts_raw)
-      n3_neuts_raw=new TCutG(*in.getCut("n3_neuts_raw"));
-    if(in.getCut("n4_neuts_raw") && !n4_neuts_raw)
-      n4_neuts_raw=new TCutG(*in.getCut("n4_neuts_raw"));
-    if(in.getCut("n5_neuts_raw") && !n5_neuts_raw)
-      n5_neuts_raw=new TCutG(*in.getCut("n5_neuts_raw"));
-    if(in.getCut("n6_neuts_raw") && !n6_neuts_raw)
-      n6_neuts_raw=new TCutG(*in.getCut("n6_neuts_raw"));   
-    if(in.getCut("n7_neuts_raw") && !n7_neuts_raw)
-      n7_neuts_raw=new TCutG(*in.getCut("n7_neuts_raw"));
-    if(in.getCut("n8_neuts_raw") && !n8_neuts_raw)
-      n8_neuts_raw=new TCutG(*in.getCut("n8_neuts_raw"));
-    if(in.getCut("n9_neuts_raw") && !n9_neuts_raw)
-      n9_neuts_raw=new TCutG(*in.getCut("n9_neuts_raw"));
+    if(in.Get("n0_neuts_raw") && !n0_neuts_raw)
+      n0_neuts_raw=new TCutG(*(TCutG*)in.Get("n0_neuts_raw"));
+    if(in.Get("n1_neuts_raw") && !n1_neuts_raw)
+      n1_neuts_raw=new TCutG(*(TCutG*)in.Get("n1_neuts_raw"));
+    if(in.Get("n2_neuts_raw") && !n2_neuts_raw)
+      n2_neuts_raw=new TCutG(*(TCutG*)in.Get("n2_neuts_raw"));   
+    if(in.Get("n3_neuts_raw") && !n3_neuts_raw)
+      n3_neuts_raw=new TCutG(*(TCutG*)in.Get("n3_neuts_raw"));
+    if(in.Get("n4_neuts_raw") && !n4_neuts_raw)
+      n4_neuts_raw=new TCutG(*(TCutG*)in.Get("n4_neuts_raw"));
+    if(in.Get("n5_neuts_raw") && !n5_neuts_raw)
+      n5_neuts_raw=new TCutG(*(TCutG*)in.Get("n5_neuts_raw"));
+    if(in.Get("n6_neuts_raw") && !n6_neuts_raw)
+      n6_neuts_raw=new TCutG(*(TCutG*)in.Get("n6_neuts_raw"));   
+    if(in.Get("n7_neuts_raw") && !n7_neuts_raw)
+      n7_neuts_raw=new TCutG(*(TCutG*)in.Get("n7_neuts_raw"));
+    if(in.Get("n8_neuts_raw") && !n8_neuts_raw)
+      n8_neuts_raw=new TCutG(*(TCutG*)in.Get("n8_neuts_raw"));
+    if(in.Get("n9_neuts_raw") && !n9_neuts_raw)
+      n9_neuts_raw=new TCutG(*(TCutG*)in.Get("n9_neuts_raw"));
 
     
-    if(in.getCut("n0_gammas_raw") && !n0_gammas_raw)
-      n0_gammas_raw=new TCutG(*in.getCut("n0_gammas_raw"));
-    if(in.getCut("n1_gammas_raw") && !n1_gammas_raw)
-      n1_gammas_raw=new TCutG(*in.getCut("n1_gammas_raw"));
-    if(in.getCut("n2_gammas_raw") && !n2_gammas_raw)
-      n2_gammas_raw=new TCutG(*in.getCut("n2_gammas_raw"));   
-    if(in.getCut("n3_gammas_raw") && !n3_gammas_raw)
-      n3_gammas_raw=new TCutG(*in.getCut("n3_gammas_raw"));
-    if(in.getCut("n4_gammas_raw") && !n4_gammas_raw)
-      n4_gammas_raw=new TCutG(*in.getCut("n4_gammas_raw"));
-    if(in.getCut("n5_gammas_raw") && !n5_gammas_raw)
-      n5_gammas_raw=new TCutG(*in.getCut("n5_gammas_raw"));
-    if(in.getCut("n6_gammas_raw") && !n6_gammas_raw)
-      n6_gammas_raw=new TCutG(*in.getCut("n6_gammas_raw"));   
-    if(in.getCut("n7_gammas_raw") && !n7_gammas_raw)
-      n7_gammas_raw=new TCutG(*in.getCut("n7_gammas_raw"));
-    if(in.getCut("n8_gammas_raw") && !n8_gammas_raw)
-      n8_gammas_raw=new TCutG(*in.getCut("n8_gammas_raw"));
-    if(in.getCut("n9_gammas_raw") && !n9_gammas_raw)
-      n9_gammas_raw=new TCutG(*in.getCut("n9_gammas_raw"));
+    if(in.Get("n0_gammas_raw") && !n0_gammas_raw)
+      n0_gammas_raw=new TCutG(*(TCutG*)in.Get("n0_gammas_raw"));
+    if(in.Get("n1_gammas_raw") && !n1_gammas_raw)
+      n1_gammas_raw=new TCutG(*(TCutG*)in.Get("n1_gammas_raw"));
+    if(in.Get("n2_gammas_raw") && !n2_gammas_raw)
+      n2_gammas_raw=new TCutG(*(TCutG*)in.Get("n2_gammas_raw"));   
+    if(in.Get("n3_gammas_raw") && !n3_gammas_raw)
+      n3_gammas_raw=new TCutG(*(TCutG*)in.Get("n3_gammas_raw"));
+    if(in.Get("n4_gammas_raw") && !n4_gammas_raw)
+      n4_gammas_raw=new TCutG(*(TCutG*)in.Get("n4_gammas_raw"));
+    if(in.Get("n5_gammas_raw") && !n5_gammas_raw)
+      n5_gammas_raw=new TCutG(*(TCutG*)in.Get("n5_gammas_raw"));
+    if(in.Get("n6_gammas_raw") && !n6_gammas_raw)
+      n6_gammas_raw=new TCutG(*(TCutG*)in.Get("n6_gammas_raw"));   
+    if(in.Get("n7_gammas_raw") && !n7_gammas_raw)
+      n7_gammas_raw=new TCutG(*(TCutG*)in.Get("n7_gammas_raw"));
+    if(in.Get("n8_gammas_raw") && !n8_gammas_raw)
+      n8_gammas_raw=new TCutG(*(TCutG*)in.Get("n8_gammas_raw"));
+    if(in.Get("n9_gammas_raw") && !n9_gammas_raw)
+      n9_gammas_raw=new TCutG(*(TCutG*)in.Get("n9_gammas_raw"));
     
-    if(in.getCut("n0_evt") && !n0_evt)
-      n0_evt=new TCutG(*in.getCut("n0_evt"));
-    if(in.getCut("n1_evt") && !n1_evt)
-      n1_evt=new TCutG(*in.getCut("n1_evt"));
-    if(in.getCut("n2_evt") && !n2_evt)
-      n2_evt=new TCutG(*in.getCut("n2_evt"));   
-    if(in.getCut("n3_evt") && !n3_evt)
-      n3_evt=new TCutG(*in.getCut("n3_evt"));
-    if(in.getCut("n4_evt") && !n4_evt)
-      n4_evt=new TCutG(*in.getCut("n4_evt"));
-    if(in.getCut("n5_evt") && !n5_evt)
-      n5_evt=new TCutG(*in.getCut("n5_evt"));
-    if(in.getCut("n6_evt") && !n6_evt)
-      n6_evt=new TCutG(*in.getCut("n6_evt"));   
-    if(in.getCut("n7_evt") && !n7_evt)
-      n7_evt=new TCutG(*in.getCut("n7_evt"));
-    if(in.getCut("n8_evt") && !n8_evt)
-      n8_evt=new TCutG(*in.getCut("n8_evt"));
-    if(in.getCut("n9_evt") && !n9_evt)
-      n9_evt=new TCutG(*in.getCut("n9_evt"));
+    if(in.Get("n0_evt") && !n0_evt)
+      n0_evt=new TCutG(*(TCutG*)in.Get("n0_evt"));
+    if(in.Get("n1_evt") && !n1_evt)
+      n1_evt=new TCutG(*(TCutG*)in.Get("n1_evt"));
+    if(in.Get("n2_evt") && !n2_evt)
+      n2_evt=new TCutG(*(TCutG*)in.Get("n2_evt"));   
+    if(in.Get("n3_evt") && !n3_evt)
+      n3_evt=new TCutG(*(TCutG*)in.Get("n3_evt"));
+    if(in.Get("n4_evt") && !n4_evt)
+      n4_evt=new TCutG(*(TCutG*)in.Get("n4_evt"));
+    if(in.Get("n5_evt") && !n5_evt)
+      n5_evt=new TCutG(*(TCutG*)in.Get("n5_evt"));
+    if(in.Get("n6_evt") && !n6_evt)
+      n6_evt=new TCutG(*(TCutG*)in.Get("n6_evt"));   
+    if(in.Get("n7_evt") && !n7_evt)
+      n7_evt=new TCutG(*(TCutG*)in.Get("n7_evt"));
+    if(in.Get("n8_evt") && !n8_evt)
+      n8_evt=new TCutG(*(TCutG*)in.Get("n8_evt"));
+    if(in.Get("n9_evt") && !n9_evt)
+      n9_evt=new TCutG(*(TCutG*)in.Get("n9_evt"));
     
     
     

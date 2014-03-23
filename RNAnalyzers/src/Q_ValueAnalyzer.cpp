@@ -11,8 +11,8 @@
 #define _QV_ANALYZER_CXX
 
 #include "Q_ValueAnalyzer.hpp"
-#include "../../include/RN_Root.hpp"
-#include "../../include/RN_Unpack2Root.hpp"
+#include "RN_Root.hpp"
+#include "RN_Unpack2Root.hpp"
 #include "Si_IC_Analyzer.hpp"
 #include "Si_Analyzer.hpp"
 #include "IC_Analyzer.hpp"
@@ -28,29 +28,29 @@
 
 namespace physical{
 
-  sak::Hist1D *Q_Value;
-  sak::Hist1D *Q_Value_proton;
-  sak::Hist1D *Q_Value_protontheta;
-  sak::Hist1D *Q_Value_protontheta_hi1;
-  sak::Hist1D *Q_Value_proton_hi1;
-  sak::Hist1D *Q_Value_proton_hi1_ictime;
-  sak::Hist1D *Q_Value_proton_hi2;
+  TH1D *Q_Value;
+  TH1D *Q_Value_proton;
+  TH1D *Q_Value_protontheta;
+  TH1D *Q_Value_protontheta_hi1;
+  TH1D *Q_Value_proton_hi1;
+  TH1D *Q_Value_proton_hi1_ictime;
+  TH1D *Q_Value_proton_hi2;
 
   //Q v Parameters
-  sak::Hist2D *Q_v_Phi;	
-  sak::Hist2D *Q_v_cosTheta;
-  sak::Hist2D *Q_v_EcosTheta;
-  sak::Hist2D *Q_v_pTheta;		       
-  sak::Hist2D *Q_v_pE;			       
-  sak::Hist2D *Q_v_pRelAngle;		       
+  TH2D *Q_v_Phi;	
+  TH2D *Q_v_cosTheta;
+  TH2D *Q_v_EcosTheta;
+  TH2D *Q_v_pTheta;		       
+  TH2D *Q_v_pE;			       
+  TH2D *Q_v_pRelAngle;		       
 	       				       	       
-  sak::Hist2D *Q_v_pTheta_proton_hi1;	       
-  sak::Hist2D *Q_v_pE_proton_hi1;	       
-  sak::Hist2D *Q_v_pRelAngle_proton_hi1;       
+  TH2D *Q_v_pTheta_proton_hi1;	       
+  TH2D *Q_v_pE_proton_hi1;	       
+  TH2D *Q_v_pRelAngle_proton_hi1;       
 	       				       	       
-  sak::Hist2D *Q_v_pTheta_proton_hi1_ictime;   
-  sak::Hist2D *Q_v_pE_proton_hi1_ictime;       
-  sak::Hist2D *Q_v_pRelAngle_proton_hi1_ictime;
+  TH2D *Q_v_pTheta_proton_hi1_ictime;   
+  TH2D *Q_v_pE_proton_hi1_ictime;       
+  TH2D *Q_v_pRelAngle_proton_hi1_ictime;
 
 
   Double32_t q_val_p;
@@ -94,28 +94,28 @@ namespace physical{
 
     //create histograms  
     rootfile->cd("physical/Q");
-    Q_Value=new sak::Hist1D("Q_val_p","Q_value",512,-1,10);
-    Q_Value_proton=new sak::Hist1D("Q_val_proton","Q_value",512,-1,10);
-    Q_Value_proton_hi1=new sak::Hist1D("Q_val_proton_hi1","Q_value",512,-1,10);
-    Q_Value_proton_hi1_ictime=new sak::Hist1D("Q_val_proton_hi1_ictime","Q_value",512,-1,10);
-    Q_Value_proton_hi2=new sak::Hist1D("Q_val_proton_hi2","Q_value",512,-1,10);
+    Q_Value=new TH1D("Q_val_p","Q_value_p;Q_value",512,-1,10);
+    Q_Value_proton=new TH1D("Q_val_proton","Q_value_proton;Q_value",512,-1,10);
+    Q_Value_proton_hi1=new TH1D("Q_val_proton_hi1","Q_val_proton_hi1;Q_value",512,-1,10);
+    Q_Value_proton_hi1_ictime=new TH1D("Q_val_proton_hi1_ictime","Q_val_proton_hi1_ictime;Q_value",512,-1,10);
+    Q_Value_proton_hi2=new TH1D("Q_val_proton_hi2","Q_val_proton_hi2;Q_value",512,-1,10);
 
 
     rootfile->cd("physical/QvParameters");
-    Q_v_Phi=new sak::Hist2D("Q_v_Phi","Q","Phi",512,-1,10,180,-180,180);
-    Q_v_cosTheta=new sak::Hist2D("Q_v_cosTheta","Q","cosTheta",512,-1,10,256,0.5,1);
-    Q_v_EcosTheta=new sak::Hist2D("Q_v_EcosTheta","Q","EcosTheta",512,-1,10,512,0,20);
-    Q_v_pTheta=new sak::Hist2D("Q_v_pTheta","Q","Theta",512,-1,10,180,0,179);
-    Q_v_pE=new sak::Hist2D("Q_v_pE","Q","E",512,-1,10,512,0,32);
-    Q_v_pRelAngle=new sak::Hist2D("Q_v_pRelAngle","Q","RelAngle",512,-1,10,180,0,179);;
+    Q_v_Phi=new TH2D("Q_v_Phi","Q_v_Phi;Q;Phi",512,-1,10,180,-180,180);
+    Q_v_cosTheta=new TH2D("Q_v_cosTheta","Q_v_cosTheta;Q;cosTheta",512,-1,10,256,0.5,1);
+    Q_v_EcosTheta=new TH2D("Q_v_EcosTheta","Q_v_EcosTheta;Q;EcosTheta",512,-1,10,512,0,20);
+    Q_v_pTheta=new TH2D("Q_v_pTheta","Q_v_pTheta;Q;Theta",512,-1,10,180,0,179);
+    Q_v_pE=new TH2D("Q_v_pE","Q_v_pE;Q;E",512,-1,10,512,0,32);
+    Q_v_pRelAngle=new TH2D("Q_v_pRelAngle","Q_v_pRelAngle;Q;RelAngle",512,-1,10,180,0,179);;
     
-    Q_v_pTheta_proton_hi1=new sak::Hist2D("Q_v_pTheta_proton_hi1","Q","Theta",512,-1,10,180,0,179);;
-    Q_v_pE_proton_hi1=new sak::Hist2D("Q_v_pE_proton_hi1","Q","E",512,-1,10,512,0,32);;
-    Q_v_pRelAngle_proton_hi1=new sak::Hist2D("Q_v_pRelAngle_proton_hi1","Q","RelAngle",512,-1,10,180,0,179);;
+    Q_v_pTheta_proton_hi1=new TH2D("Q_v_pTheta_proton_hi1","Q_v_pTheta_proton_hi1;Q;Theta",512,-1,10,180,0,179);;
+    Q_v_pE_proton_hi1=new TH2D("Q_v_pE_proton_hi1","Q_v_pE_proton_hi1;Q;E",512,-1,10,512,0,32);;
+    Q_v_pRelAngle_proton_hi1=new TH2D("Q_v_pRelAngle_proton_hi1","Q_v_pRelAngle_proton_hi1;Q;RelAngle",512,-1,10,180,0,179);
 
-    Q_v_pTheta_proton_hi1_ictime=new sak::Hist2D("Q_v_pTheta_proton_hi1_ictime","Q","Theta",512,0,32,180,0,179);;
-    Q_v_pE_proton_hi1_ictime=new sak::Hist2D("Q_v_pE_proton_hi1_ictime","Q","E",512,-1,10,512,0,32);
-    Q_v_pRelAngle_proton_hi1_ictime=new sak::Hist2D("Q_v_pRelAngle_proton_hi_ictime","Q","RelAngle",512,-1,10,180,0,179);;
+    Q_v_pTheta_proton_hi1_ictime=new TH2D("Q_v_pTheta_proton_hi1_ictime","Q_v_pTheta_proton_hi1_ictime;Q;Theta",512,0,32,180,0,179);
+    Q_v_pE_proton_hi1_ictime=new TH2D("Q_v_pE_proton_hi1_ictime","Q_v_pE_proton_hi1_ictime;Q;E",512,-1,10,512,0,32);
+    Q_v_pRelAngle_proton_hi1_ictime=new TH2D("Q_v_pRelAngle_proton_hi_ictime","Q_v_pRelAngle_proton_hi_ictime;Q;RelAngle",512,-1,10,180,0,179);;
     
 
 

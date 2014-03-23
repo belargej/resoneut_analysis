@@ -6,7 +6,7 @@
 
 
 **************************************************/
-#include "../../include/RN_Root.hpp"
+#include "RN_Root.hpp"
 #include "Mg24dn_Analyzer.hpp"
 #include "Q_ValueAnalyzer.hpp"
 

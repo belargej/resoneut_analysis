@@ -18,7 +18,7 @@
 #define _NTANALYZER_CXX
 
 #include "NewTree_Analyzer.hpp"
-#include "../../include/RN_Root.hpp"
+#include "RN_Root.hpp"
 #include "Si_Analyzer.hpp"
 using namespace unpacker;
 

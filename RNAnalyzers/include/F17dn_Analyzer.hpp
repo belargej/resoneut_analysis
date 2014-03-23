@@ -1,28 +1,28 @@
 /***********************************************************
-//Class: Analyzer_Template
+//Class: F17dn_Analyzer
 //
 //Author:Sean Kuvin
 //
 ***********************************************************/
 
-#ifndef _ANALYZERTEMPLATE_H
-#define _ANALYZERTEMPLATE_H
+#ifndef _F17DNANALYZER_H
+#define _F17DNAnalyzer_H
 #include <TH2.h>
 #include <cstdlib>
 #include <string>
 #include <new>
-#include "../include/RN_Analyzer.hpp"
+#include "RN_Analyzer.hpp"
 
 
-//namespace template{
+namespace _F17{
 
 
-class Analyzer_Template:public RN_Analyzer{
+class F17dn_Analyzer:public RN_Analyzer{
 private:
 
 public:  
-  Analyzer_Template();
-  virtual ~Analyzer_Template(){};
+  F17dn_Analyzer();
+  virtual ~F17dn_Analyzer(){};
 
   virtual bool Begin();
   virtual bool Process();
@@ -36,13 +36,11 @@ public:
 
 
 
-  ClassDef(Analyzer_Template,0);
+  ClassDef(F17dn_Analyzer,0);
 };
-//declare global parameters as extern
+
+void Load_F17_dn_Gates();
 
 
-void LoadTemplateGates();
-
-
-
+}
 #endif
