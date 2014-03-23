@@ -1,3 +1,8 @@
+///////////////////////////////////////////////////////////
+///These are the classes to be packaged into RNCore.so
+//////////////////////////////////////////////////////////
+
+
 #ifdef __CINT__
 #pragma link C++ defined_in "sak_ReadBuffer.hpp";
 #pragma link C++ defined_in "RN_Unpack2Root.hpp";
@@ -16,6 +21,8 @@
 #pragma link C++ defined_in "RN_Root.hpp";
 #pragma link C++ defined_in "RN_Sim.hpp";
 #pragma link C++ defined_in "RN_SimPhysics.hpp";
+
+
 
 
 
