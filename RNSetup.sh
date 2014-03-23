@@ -1,0 +1,4 @@
+export RN_ANALYSIS=${PWD}
+
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${RN_ANALYSIS}/lib
+export PATH=${PATH}:${RN_ANALYSIS}/bin
