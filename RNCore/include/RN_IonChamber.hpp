@@ -34,16 +34,15 @@
 
 
 
-class RN_IonChamber:public TObject{
+class RN_IonChamber:public RN_BaseClass{
  private:
-  std::string fName;//!
   float elin;//!
   float eshift;//!
   float tlin;//!
   float tshift;//!
  public:
   RN_IonChamber(){}
-  RN_IonChamber(std::string name):fName(name),
+  RN_IonChamber(std::string name):RN_BaseClass(name,name),
 				  elin(1),
 				  eshift(0),
 				  tlin(1),
@@ -62,7 +61,7 @@ class RN_IonChamber:public TObject{
   RN_BaseDetector ygrid;
 
   
-  std::string Name()const{return fName;}//!
+  std::string Name()const{return GetName();}//!
   void Reset();
   void SetCalibrations(float, float, float, float);
   void SetCalibrations(RN_VariableMap& detvar);

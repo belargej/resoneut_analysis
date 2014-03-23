@@ -45,6 +45,7 @@ Add user analyzers to the "analyzer" list(which is global in RN_Root)
 #include <TCollection.h>
 
 #include <map>
+#include "RN_BaseClass.hpp"
 #include "RN_Unpack2Root.hpp"
 #include "RN_NeutDetectorArray.hpp"
 #include "RN_SiliconDetectors.hpp"
@@ -55,7 +56,7 @@ Add user analyzers to the "analyzer" list(which is global in RN_Root)
 
 
 
-class RN_Analyzer:public TNamed {
+class RN_Analyzer:public RN_BaseClass {
 public:
 
  

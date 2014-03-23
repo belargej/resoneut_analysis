@@ -29,14 +29,15 @@
 #include <vector>
 #include <memory>
 
+#include "RN_BaseClass.hpp"
 
-
-class RN_VariableMap{
+class RN_VariableMap: public RN_BaseClass{
 protected:
   std::map<std::string,double>vmap;
   std::map<std::string,double>::iterator it;
 public:
   RN_VariableMap(){}
+  RN_VariableMap(const std::string &name):RN_BaseClass(name,name){}
   int GetParam(std::string,float&);
   int GetParam(std::string,double&);
   int GetParam(std::string,int&);
@@ -44,6 +45,8 @@ public:
   int AddParam(std::string,double);
   void ClearParams();
 
+  
+  ClassDef(RN_VariableMap,1);
 };
 
 

@@ -22,12 +22,10 @@
 #include <TVector3.h>
 #include <TTree.h>
 #include <TRandom3.h>
+#include "RN_BaseClass.hpp"
 
-#include "RN_MassTable.hpp"
-
-class RN_Particle:public TObject{
+class RN_Particle:public RN_BaseClass{
 private:
-  std::string fName;
 
 public:
   RN_Particle(){};
@@ -38,9 +36,7 @@ public:
   double mass;
   double ex_energy;
   TLorentzVector LV;
-  RN_MassTable mtable;//!
 
-  std::string Name()const {return fName;}
   Double_t KE();
   void Reset();
 

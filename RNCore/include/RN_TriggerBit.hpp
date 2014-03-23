@@ -27,16 +27,15 @@
 
 #include "RN_VariableMap.hpp"
 
-class RN_TriggerBit:public TObject{
+class RN_TriggerBit:public RN_BaseClass{
 private:  
-  std::string fName;
   Double32_t bitmin;
   Double32_t bitmax;
 public:
   Double32_t fBit;
 
   RN_TriggerBit(){}
-  RN_TriggerBit(std::string name):fName(name),
+  RN_TriggerBit(std::string name):RN_BaseClass(name,name),
 				  bitmin(0),
 				  bitmax(4095),
 				  fBit(-1)
@@ -46,13 +45,13 @@ public:
   }
 
   
-  std::string Name(){return fName;}
+  std::string Name() const{return GetName();}
   void Reset();
   int Check();
   void SetCalibrations(RN_VariableMap& detvar);
   
 
-  ClassDef(RN_TriggerBit,0);
+  ClassDef(RN_TriggerBit,1);
 
 };
 

@@ -188,7 +188,7 @@ namespace unpacker{
     tpointer = buffer; tpointer++;
     int lowtime = *tpointer++ ;
     int hightime = *tpointer << 16 ;//read byte as high byte
-    int timeoffset = (hightime + lowtime) - timer;
+    // int timeoffset = (hightime + lowtime) - timer;
     timer = (hightime + lowtime);
     
   return 1;

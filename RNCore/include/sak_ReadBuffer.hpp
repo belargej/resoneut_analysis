@@ -18,7 +18,7 @@
 
 namespace sak{
   
-  const char* ReadLine(std::ifstream& a,std::vector<std::string>& b,const int& ent=0);
+  const char* ReadLine(std::ifstream& a,std::vector<std::string>& b,const unsigned int& ent=0);
   double string_to_double( const std::string& s );  
   int string_to_int( const std::string& s );
   

@@ -28,9 +28,8 @@ Author: Sean Kuvin
 
 
 
-class RN_BaseDetector:public TObject{
+class RN_BaseDetector:public RN_BaseClass{
 private:
-  std::string fName;//!
   int fNumOfCh;//!
   int sorted_by_channel;//!
   double lowlimit;//!
@@ -48,7 +47,7 @@ public:
   }
   RN_BaseDetector(std::string name, int num);
 
-  int fMult;
+  unsigned int fMult;
   
   std::vector<Double32_t>fChlist;//[fMult]
   std::vector<Double32_t>fE;//[fMult]
@@ -64,7 +63,7 @@ public:
   void Init(const double& num);
   void Reset();
   Int_t NumOfCh()const{return fNumOfCh;}
-  std::string Name()const {return fName;} 
+  std::string Name()const {return GetName();} 
   int InsertHit(const double&, const double&, const double&);
   void SetSortByChannel(){sorted_by_channel=1;}
   virtual void SetCalibrations(RN_VariableMap& detvar);

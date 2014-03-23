@@ -150,7 +150,7 @@ namespace si_cal{
       s2back.push_back(RN_S2Calibrator(16,Form("%s.back",(*it).Name().c_str()),60,3000));
       
     }
-    int idx=0;
+    unsigned int idx=0;
     Long64_t totentries= MainAnalyzer.TotEntries();
     
     for (Long64_t i=0;i<totentries;i++){

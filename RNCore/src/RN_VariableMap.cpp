@@ -69,6 +69,7 @@ int RN_VariableMap::GetParam(std::string param,double& var){
 
 int RN_VariableMap::AddParam(std::string param,double var){
   vmap.insert(std::pair<std::string,double>(param,var));
+  return 1;
 }
 
 void RN_VariableMap::ClearParams(){

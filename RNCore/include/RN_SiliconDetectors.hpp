@@ -38,9 +38,8 @@
 
 
 
-class RN_S2Detector:public TObject{
+class RN_S2Detector:public RN_BaseClass{
 protected:
-  std::string fName;//!
   Double32_t elin;//!
   Double32_t eshift;//!
   Double32_t tlin;//!
@@ -77,15 +76,15 @@ public:
   void SetPosVect(TVector3 posv){posv_=posv;}
   void SetShiftVect(TVector3 shiftv){shiftv_=shiftv;}
   void SetRotVect(TVector3 rotv){rotv_=rotv;}
-  Double_t Front_E(int i=0)const;
-  Double_t Back_E(int i=0)const;
-  Double_t Front_T(int i=0)const;
-  Double_t Back_T(int i=0)const;
+  Double_t Front_E(unsigned int i=0)const;
+  Double_t Back_E(unsigned int i=0)const;
+  Double_t Front_T(unsigned int i=0)const;
+  Double_t Back_T(unsigned int i=0)const;
   Double_t InnerTheta()const;
   Double_t OuterTheta()const;
-  int Quadrant(int i=0)const;
-  int Side(int i=0)const;
-  Double_t Ring_Ch(int i=0)const;
+  int Quadrant(unsigned int i=0)const;
+  int Side(unsigned int i=0)const;
+  Double_t Ring_Ch(unsigned int i=0)const;
 
 
   virtual TVector3 chVect(const double&cf,const double& cb) const;
@@ -97,7 +96,7 @@ public:
   inline Int_t IsS1()const {return _s1switch;}
   
   void SetCalibrations(RN_VariableMap& detvar);
-  std::string Name()const{return fName;}//!
+  std::string Name()const{return GetName();}//!
   ClassDef(RN_S2Detector,1);
  
 };
@@ -212,7 +211,7 @@ public:
   RNTempList(const unsigned short no_channels);
   ~RNTempList();
   
-  int mult;
+  unsigned int mult;
   unsigned short no_channels_;
   float *chlist;
   float *elist;

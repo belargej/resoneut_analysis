@@ -29,16 +29,16 @@ Double32_t RN_NaIDetector::Position() const{
 
 
 void RN_NaIDetector::SetCalibrations(RN_VariableMap& detvar){
-  detvar.GetParam(Form("%s.elin[0]",Name().c_str()),elin[0]);
-  detvar.GetParam(Form("%s.eshift[0]",Name().c_str()),eshift[0]);
-  detvar.GetParam(Form("%s.tlin[0]",Name().c_str()),tlin[0]);
-  detvar.GetParam(Form("%s.tshift[0]",Name().c_str()),tshift[0]);
-  detvar.GetParam(Form("%s.elin[1]]",Name().c_str()),elin[1]);
-  detvar.GetParam(Form("%s.eshift[1]",Name().c_str()),eshift[1]);
-  detvar.GetParam(Form("%s.tlin[1]",Name().c_str()),tlin[1]);
-  detvar.GetParam(Form("%s.tshift[1]",Name().c_str()),tshift[1]);
-  detvar.GetParam(Form("%s.tzero[0]",Name().c_str()),tzero[0]);
-  detvar.GetParam(Form("%s.tzero[1]",Name().c_str()),tzero[1]);
+  detvar.GetParam(Form("%s.elin[0]",GetName()),elin[0]);
+  detvar.GetParam(Form("%s.eshift[0]",GetName()),eshift[0]);
+  detvar.GetParam(Form("%s.tlin[0]",GetName()),tlin[0]);
+  detvar.GetParam(Form("%s.tshift[0]",GetName()),tshift[0]);
+  detvar.GetParam(Form("%s.elin[1]]",GetName()),elin[1]);
+  detvar.GetParam(Form("%s.eshift[1]",GetName()),eshift[1]);
+  detvar.GetParam(Form("%s.tlin[1]",GetName()),tlin[1]);
+  detvar.GetParam(Form("%s.tshift[1]",GetName()),tshift[1]);
+  detvar.GetParam(Form("%s.tzero[0]",GetName()),tzero[0]);
+  detvar.GetParam(Form("%s.tzero[1]",GetName()),tzero[1]);
 
 
 }
@@ -72,10 +72,10 @@ void RN_NaIArray::SetCalibrations(Double32_t elin, Double32_t eshift, Double32_t
 
 
 void RN_NaIArray::SetCalibrations(RN_VariableMap& detvar){
-  detvar.GetParam(Form("%s.elin",Name().c_str()),elin);
-  detvar.GetParam(Form("%s.eshift",Name().c_str()),eshift);
-  detvar.GetParam(Form("%s.tlin",Name().c_str()),tlin);
-  detvar.GetParam(Form("%s.tshift",Name().c_str()),tshift);
+  detvar.GetParam(Form("%s.elin",GetName()),elin);
+  detvar.GetParam(Form("%s.eshift",GetName()),eshift);
+  detvar.GetParam(Form("%s.tlin",GetName()),tlin);
+  detvar.GetParam(Form("%s.tshift",GetName()),tshift);
   
 
 }

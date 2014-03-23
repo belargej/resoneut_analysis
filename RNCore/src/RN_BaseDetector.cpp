@@ -15,7 +15,7 @@ Author: Sean Kuvin
 
 #include "RN_BaseDetector.hpp"
 
-RN_BaseDetector::RN_BaseDetector(std::string name, int num):fName(name),
+RN_BaseDetector::RN_BaseDetector(std::string name, int num):RN_BaseClass(name,name),
 							    fNumOfCh(num),
 							    sorted_by_channel(0),
 							    lowlimit(0),
@@ -37,7 +37,7 @@ RN_BaseDetector::RN_BaseDetector(std::string name, int num):fName(name),
 				       
 				       
 {
-  for(unsigned int i=0;i<num;i++){
+  for(int i=0;i<num;i++){
     fCh_cal[i]=i;
   }
 
@@ -45,7 +45,7 @@ RN_BaseDetector::RN_BaseDetector(std::string name, int num):fName(name),
 }
 
 void RN_BaseDetector::Reset(){
-  for(int i=0;i<fMult;i++){
+  for(unsigned int i=0;i<fMult;i++){
     fE[i]=0;
     fT[i]=0;
     fChlist[i]=-1;
@@ -68,18 +68,18 @@ void RN_BaseDetector::SetELimits(const double& elow,const double& ehigh){
 }
 
 void RN_BaseDetector::SetCalibrations(RN_VariableMap& detvar){
-  for(unsigned int i=0;i<fNumOfCh;i++){
-    detvar.GetParam(Form("%s.ch[%d]",Name().c_str(),i),fCh_cal[i]);
-    detvar.GetParam(Form("%s.a0[%d]",Name().c_str(),i),a0[i]);  
-    detvar.GetParam(Form("%s.a1[%d]",Name().c_str(),i),a1[i]);
-    detvar.GetParam(Form("%s.t0[%d]",Name().c_str(),i),t0[i]);  
-    detvar.GetParam(Form("%s.t1[%d]",Name().c_str(),i),t1[i]);
-    detvar.GetParam(Form("%s.q_offset[%d]",Name().c_str(),i),q_offset[i]); 
-    detvar.GetParam(Form("%s.t_offset[%d]",Name().c_str(),i),t_offset[i]);  
+  for(int i=0;i<NumOfCh();i++){
+    detvar.GetParam(Form("%s.ch[%d]",GetName(),i),fCh_cal[i]);
+    detvar.GetParam(Form("%s.a0[%d]",GetName(),i),a0[i]);  
+    detvar.GetParam(Form("%s.a1[%d]",GetName(),i),a1[i]);
+    detvar.GetParam(Form("%s.t0[%d]",GetName(),i),t0[i]);  
+    detvar.GetParam(Form("%s.t1[%d]",GetName(),i),t1[i]);
+    detvar.GetParam(Form("%s.q_offset[%d]",GetName(),i),q_offset[i]); 
+    detvar.GetParam(Form("%s.t_offset[%d]",GetName(),i),t_offset[i]);  
   } 
-  detvar.GetParam(Form("%s.elowlimit",Name().c_str()),lowlimit);
-  detvar.GetParam(Form("%s.ehighlimit",Name().c_str()),highlimit);
-  detvar.GetParam(Form("%s.sorted_by_channel",Name().c_str()),sorted_by_channel);
+  detvar.GetParam(Form("%s.elowlimit",GetName()),lowlimit);
+  detvar.GetParam(Form("%s.ehighlimit",GetName()),highlimit);
+  detvar.GetParam(Form("%s.sorted_by_channel",GetName()),sorted_by_channel);
 
 }
 

@@ -23,6 +23,9 @@ RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetecto
 								  tshift(0),
 								  zero_off(0),
 								  apos(ap),
+								  HitPos(0,0,0),
+								  phe_lin(1),
+								  phe_shift(0),
 								  fRadius(34),
 								  fThickness(25.4),
 								  fThreshold(0.05),
@@ -30,8 +33,6 @@ RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetecto
 								  fQ_short(0),
 								  fPSD(0),
 								  fT_Q(0),
-								  phe_lin(1),
-								  phe_shift(0),
 								  fTrel(0)
   							  
   

@@ -213,21 +213,21 @@ void RN_Sim::initHists(){
   simfile->cd();
   
    tree=new TTree("sim","sim");
-     for(unsigned int i=0;i<particle.size();i++){
-    std::string pname=particle[i].Name() + ".";
-    int pidx=2;
-    //check if the tree already has a particle with this name(as is the case
-    //after the heavy ion fragment proton decays back to the beam nucleus).
-    while(tree->GetBranch(pname.c_str())){
-      pname=Form("%s%d.",particle[i].Name().c_str(),pidx);
-      pidx++;
+   for(unsigned int i=0;i<particle.size();i++){
+     std::string pname=Form("%s.",particle[i].GetName());
+     int pidx=2;
+     //check if the tree already has a particle with this name(as is the case
+     //after the heavy ion fragment proton decays back to the beam nucleus).
+     while(tree->GetBranch(pname.c_str())){
+       pname=Form("%s%d.",particle[i].GetName(),pidx);
+       pidx++;
     }
     tree->Branch(pname.c_str(),"RN_Particle",&particle[i]);
    
   }
 
   for(unsigned int i=0;i<neut.size();i++){
-    tree->Branch(Form("%s.",neut[i].Name().c_str()),"RN_NeutDetector",&neut[i]);
+    tree->Branch(Form("%s.",neut[i].GetName()),"RN_NeutDetector",&neut[i]);
   }
   tree->Branch("Qp_val_guess",&q_val_p_guess);
 
@@ -415,8 +415,8 @@ void RN_Sim::Reset(){
     
       hQ->Fit(Q_fit,"","",-4,4);
       hn_tof->Fit(TOF_fit,"","",1,128);
-      simlog<<"Reaction :"<<particle[0].Name()<<"("<<particle[1].Name()<<","<<particle[2].Name()<<")"<<particle[3].Name()<<"\n";
-      simlog<<"Decay :"<<particle[3].Name()<<"->"<<particle[4].Name() + "+" + particle[5].Name()<<"\n\n";
+      simlog<<"Reaction :"<<particle[0].GetName()<<"("<<particle[1].GetName()<<","<<particle[2].GetName()<<")"<<particle[3].GetName()<<"\n";
+      simlog<<"Decay :"<<particle[3].GetName()<<"->"<<particle[4].GetName() << "+" << particle[5].GetName()<<"\n\n";
       
       simlog<<"Beam Energy: "<<global::beam_e<<"\n";
       simlog<<"Beam E_loss(thickness): "<<global::beam_eloss<<"\n";
@@ -433,7 +433,7 @@ void RN_Sim::Reset(){
       simlog<<"TOF_Value Resolution: "<<TOF_fit->GetParameter(2) * 2.355<<"\n\n";
       for(unsigned int i=0;i<si_.size();i++){
 	simlog<<"***************************************************************\n";
-	simlog<<si_[i].Name()<<"\n";
+	simlog<<si_[i].GetName()<<"\n";
 	simlog<<"x,y,z: "<<si_[i].GetPosVect().X()<<" "
 	      <<si_[i].GetPosVect().Y()<<" "
 	      <<si_[i].GetPosVect().Z()<<"\n";
@@ -451,7 +451,7 @@ void RN_Sim::Reset(){
 
 
       simlog<<"***************************************************************\n";
-      simlog<<neut[i].Name()<<"\n";
+      simlog<<neut[i].GetName()<<"\n";
       simlog<<"Thickness: "<<neut[i].GetThickness()<<"\n";
       simlog<<"Threshold: "<<neut[i].GetThreshold()<<"\n";
       simlog<<"ArrayPos: "<<neut[i].GetArrayPos()<<"\n\n";

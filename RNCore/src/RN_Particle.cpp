@@ -7,7 +7,7 @@
 //Create Particle class (to be manipulated by other "Physics" classes//
 ///////////////////////////////////////////////////////////////////////
 
-RN_Particle::RN_Particle(std::string n):fName(n),  
+RN_Particle::RN_Particle(std::string n):RN_BaseClass(n,n),  
 					ex_energy(0){
 					
   MassTable.GetParam(n,mass);

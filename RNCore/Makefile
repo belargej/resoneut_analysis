@@ -7,7 +7,7 @@ SRCFILES=RN_Unpack2Root.cpp RN_BaseDetector.cpp RN_NeutDetectorArray.cpp \
 	RN_VariableMap.cpp RN_IonChamber.cpp RN_SiliconDetectors.cpp\
 	RN_Calibrator.cpp RN_Timing.cpp RN_Analyzer.cpp sak_ReadBuffer.cpp\
 	RN_MassTable.cpp RN_Particle.cpp RN_NaIArray.cpp RN_TriggerBit.cpp\
-        RN_Root.cpp RN_Sim.cpp RN_SimPhysics.cpp
+        RN_Root.cpp RN_Sim.cpp RN_SimPhysics.cpp RN_BaseClass.cpp
 
 ########Directories and Files###########################################################
 SRCDIR=src

@@ -42,7 +42,6 @@ class RN_NeutDetector:public RN_BaseDetector{
   double tshift;//!
   double zero_off;//!
   int apos;//!
-  TVector3 normv_;//!
   TVector3 HitPos;//!
   TVector3 fPos;//!
   double phe_lin;//!

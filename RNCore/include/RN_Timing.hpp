@@ -32,9 +32,8 @@
 #include "RN_VariableMap.hpp"
 
 
-class RN_RFTime:public TObject{
+class RN_RFTime:public RN_BaseClass{
 protected:
-  std::string fName;//!
   double tlin;//!
   double tshift;//!
   double fTo;//!
@@ -73,8 +72,6 @@ public:
  //data variables 
   double fT;
 
-  
-  std::string Name() const{return fName;}
   Double_t T()const;
   Double_t T_Wrapped()const;
 

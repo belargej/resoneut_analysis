@@ -6,7 +6,7 @@
 
 ClassImp(RN_RFTime);
 
-RN_RFTime::RN_RFTime(std::string name):fName(name),
+RN_RFTime::RN_RFTime(std::string name):RN_BaseClass(name,name),
 				       tlin(1),
 				       tshift(0),
 				       fTo(0)
@@ -35,9 +35,9 @@ Double_t RN_RFTime::T_Wrapped() const{
 }
 
 void RN_RFTime::SetCalibrations(RN_VariableMap&detvar){
-  detvar.GetParam(Form("%s.tlin",Name().c_str()),tlin);
-  detvar.GetParam(Form("%s.tshift",Name().c_str()),tshift);
-  detvar.GetParam(Form("%s.tzero",Name().c_str()),fTo);
+  detvar.GetParam(Form("%s.tlin",GetName()),tlin);
+  detvar.GetParam(Form("%s.tshift",GetName()),tshift);
+  detvar.GetParam(Form("%s.tzero",GetName()),fTo);
  
 
 }

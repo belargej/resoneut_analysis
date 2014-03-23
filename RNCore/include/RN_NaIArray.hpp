@@ -31,9 +31,8 @@
 
 static const Double_t light_atten = 0.047; //cm^-1
 
-class RN_NaIDetector:public TObject{
+class RN_NaIDetector:public RN_BaseClass{
 private:  
-  std::string fName;
   Double32_t elin[2];//!  //up-0 down-1
   Double32_t eshift[2];//!
   Double32_t tlin[2];//!
@@ -47,7 +46,7 @@ public:
   Double32_t fT[2];
 
   RN_NaIDetector(){}
-  RN_NaIDetector(std::string name):fName(name)
+  RN_NaIDetector(std::string name):RN_BaseClass(name,name)
   {
     for(int i=0;i<2;i++){
       tzero[i]=0;
@@ -79,7 +78,6 @@ public:
   inline Double32_t E_Gamma() const{return TMath::Sqrt(E1()*E2());}
   Double32_t Position() const;
 
-  std::string Name(){return fName;}
   void Reset();
   void SetCalibrations(RN_VariableMap& detvar);
 

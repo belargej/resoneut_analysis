@@ -35,7 +35,7 @@ void RN_S2Detector::SetCalibrations(double elin,double eshift,double tlin, doubl
 
 }
 
-RN_S2Detector::RN_S2Detector(std::string name,const int& fnum, const int& bnum):fName(name),
+RN_S2Detector::RN_S2Detector(std::string name,const int& fnum, const int& bnum):RN_BaseClass(name,name),
 										elin(1),
 										eshift(0),
 										tlin(1),
@@ -75,24 +75,24 @@ void RN_S2Detector::SetCalibrations(RN_VariableMap& detvar){
   front.SetCalibrations(detvar);
   back.SetCalibrations(detvar);
 
-  detvar.GetParam(Form("%s.elin",Name().c_str()),elin);
-  detvar.GetParam(Form("%s.eshift",Name().c_str()),eshift);
-  detvar.GetParam(Form("%s.tlin",Name().c_str()),tlin);
-  detvar.GetParam(Form("%s.tshift",Name().c_str()),tshift);
-  double tempx=0,tempy=0,tempz=0,temp=0;
-  detvar.GetParam(Form("%s.xpos",Name().c_str()),tempx);
-  detvar.GetParam(Form("%s.ypos",Name().c_str()),tempy);
-  detvar.GetParam(Form("%s.zpos",Name().c_str()),tempz);
+  detvar.GetParam(Form("%s.elin",GetName()),elin);
+  detvar.GetParam(Form("%s.eshift",GetName()),eshift);
+  detvar.GetParam(Form("%s.tlin",GetName()),tlin);
+  detvar.GetParam(Form("%s.tshift",GetName()),tshift);
+  double tempx=0,tempy=0,tempz=0;
+  detvar.GetParam(Form("%s.xpos",GetName()),tempx);
+  detvar.GetParam(Form("%s.ypos",GetName()),tempy);
+  detvar.GetParam(Form("%s.zpos",GetName()),tempz);
   SetPosVect(TVector3(tempx,tempy,tempz));
-  tempx=0,tempy=0,tempz=0,temp=0;
-  detvar.GetParam(Form("%s.shiftx",Name().c_str()),tempx);
-  detvar.GetParam(Form("%s.shifty",Name().c_str()),tempy);
-  detvar.GetParam(Form("%s.shiftz",Name().c_str()),tempz);
+  tempx=0,tempy=0,tempz=0;
+  detvar.GetParam(Form("%s.shiftx",GetName()),tempx);
+  detvar.GetParam(Form("%s.shifty",GetName()),tempy);
+  detvar.GetParam(Form("%s.shiftz",GetName()),tempz);
   SetShiftVect(TVector3(tempx,tempy,tempz));
-  tempx=0,tempy=0,tempz=0,temp=0;
-  detvar.GetParam(Form("%s.rotx",Name().c_str()),tempx);
-  detvar.GetParam(Form("%s.roty",Name().c_str()),tempy);
-  detvar.GetParam(Form("%s.rotz",Name().c_str()),tempz);
+  tempx=0,tempy=0,tempz=0;
+  detvar.GetParam(Form("%s.rotx",GetName()),tempx);
+  detvar.GetParam(Form("%s.roty",GetName()),tempy);
+  detvar.GetParam(Form("%s.rotz",GetName()),tempz);
   SetRotVect(TVector3(tempx,tempy,tempz));
   
   Calcnormv();
@@ -117,7 +117,7 @@ void RN_S2Detector::Calcnormv(){
 
 //apply global calibrations elin and eshift to calibrated basedetectors front and back
 
-Double_t RN_S2Detector::Front_E(int i) const{
+Double_t RN_S2Detector::Front_E(unsigned int i) const{
   if(i>front.fMult)
     return -1;
   if (!front.fE[i]>0)
@@ -125,7 +125,7 @@ Double_t RN_S2Detector::Front_E(int i) const{
   return ((front.E(i) * elin) + eshift);
 }
 
-Double_t RN_S2Detector::Front_T(int i) const{
+Double_t RN_S2Detector::Front_T(unsigned int i) const{
   if(i>front.fMult)
     return -1;
   if (!front.fT[i]>0)
@@ -134,7 +134,7 @@ Double_t RN_S2Detector::Front_T(int i) const{
   
 }
 
-Double_t RN_S2Detector::Back_E(int i) const{
+Double_t RN_S2Detector::Back_E(unsigned int i) const{
   if(i>back.fMult)
     return -1;
   if(!back.fE[i]>0)
@@ -142,7 +142,7 @@ Double_t RN_S2Detector::Back_E(int i) const{
   return (( back.E(i) * elin) + eshift);   
 }
 
-Double_t RN_S2Detector::Back_T(int i) const{
+Double_t RN_S2Detector::Back_T(unsigned int i) const{
   if (i>back.fMult)
     return -1;
   if (!back.fT[i]>0)
@@ -164,14 +164,14 @@ Double_t RN_S2Detector::OuterTheta()const{
   else return 0;
 }
 
-int RN_S2Detector::Quadrant(int i)const{
+int RN_S2Detector::Quadrant(unsigned int i)const{
   return floor(back.Ch(i)/4);
 }
-int RN_S2Detector::Side(int i)const{
+int RN_S2Detector::Side(unsigned int i)const{
   return floor(back.Ch(i)/2);
 }
 
-Double_t RN_S2Detector::Ring_Ch(int i)const{
+Double_t RN_S2Detector::Ring_Ch(unsigned int i)const{
   if(!_s1switch){ //If not an S1Detector just return the front.Ch() as usual
     return front.Ch(i);
   }
@@ -341,18 +341,18 @@ int RN_S2Cluster::SetMatchParameters(float match_enefromback,
 
 }
 void RN_S2Cluster::SetCalibrations(RN_VariableMap& detvar){
-  detvar.GetParam(Form("%s.match_enefromback",Name().c_str()),match_enefromback);
-  detvar.GetParam(Form("%s.match_epsilon",Name().c_str()),match_epsilon);
-  detvar.GetParam(Form("%s.match_delta",Name().c_str()),match_delta);
-  detvar.GetParam(Form("%s.match_maxene",Name().c_str()),match_maxene);
-  detvar.GetParam(Form("%s.addback_front",Name().c_str()),addback_front);
-  detvar.GetParam(Form("%s.addback_back",Name().c_str()),addback_back);
+  detvar.GetParam(Form("%s.match_enefromback",GetName()),match_enefromback);
+  detvar.GetParam(Form("%s.match_epsilon",GetName()),match_epsilon);
+  detvar.GetParam(Form("%s.match_delta",GetName()),match_delta);
+  detvar.GetParam(Form("%s.match_maxene",GetName()),match_maxene);
+  detvar.GetParam(Form("%s.addback_front",GetName()),addback_front);
+  detvar.GetParam(Form("%s.addback_back",GetName()),addback_back);
 }
 
 int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
   RNTempList FrontClusters(in.front.NumOfCh()), BackClusters(in.back.NumOfCh());
   if(!in.back.fMult) return 0;
-  int i,front_match;
+  unsigned int i,front_match;
   unsigned int frontstatus=0;
   unsigned int backstatus=0;
   float efronttotal=0.;
@@ -484,7 +484,7 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
 
 void RN_S2Cluster::Reset(){
   
-  for(int i=0;i<fMult;i++){
+  for(unsigned int i=0;i<fMult;i++){
     fPos[i].SetXYZ(0.,0.,0.);
     fChlist_b[i]=-1;
   }

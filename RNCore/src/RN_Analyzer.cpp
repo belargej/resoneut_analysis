@@ -54,7 +54,7 @@ namespace coinc{
 }
 
 
-RN_Analyzer::RN_Analyzer(const std::string&a,const std::string &b):TNamed(a.c_str(),b.c_str())
+RN_Analyzer::RN_Analyzer(const std::string&a,const std::string &b):RN_BaseClass(a.c_str(),b.c_str())
 {
 
 }
