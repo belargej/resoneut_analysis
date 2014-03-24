@@ -119,7 +119,7 @@ namespace psd{
 
 
   bool NeutAnalyzer::Begin(){
-    int idx=0;
+    unsigned int idx=0;
 
     if(!rootfile){
       std::cout<<"output file has not been created"<<std::endl;
@@ -147,7 +147,7 @@ namespace psd{
     h_ndetMult_ngated=new TH1D("h_ndetmult_ngated","nmult_ngated;mult",NEUTNUM+1,0,NEUTNUM);
     
 
-    for(int i=0;i<NEUTNUM;i++){  
+    for(unsigned int i=0;i<NEUTNUM;i++){  
       rootfile->cd("neut/TRel");
       hQvT_n[i]=new TH2D(Form("hQvT_n%d",i),Form("hQvT_n%d;T;Q",i),128,0,128,1024,0,4095);
       hQvT_ngated[i]=new TH2D(Form("hQvT_n%d_ngated",i),Form("hQvT_n%d_ngated;T;Q",i),128,0,128,1024,0,4095);
@@ -165,7 +165,7 @@ namespace psd{
     
   }
   void NeutAnalyzer::ResetGlobals(){
-    for(int i=0;i<NEUTNUM;i++){
+    for(unsigned int i=0;i<NEUTNUM;i++){
       neutcheck[i]=0;
       neut_sansgamma[i]=0;
       rawneut_sansrawgamma[i]=0;
@@ -302,7 +302,7 @@ namespace psd{
     
     h_ndetMult->Fill(Narray.fMult);  
     
-    for(int i=0;i<NEUTNUM;i++){
+    for(unsigned int i=0;i<NEUTNUM;i++){
       if(i>=neut.size())
 	break;
       hPSD_n_[i]->Fill(neut[i].fPSD,neut[i].fQ_long); 

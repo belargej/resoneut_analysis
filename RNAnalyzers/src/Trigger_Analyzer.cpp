@@ -147,7 +147,7 @@ namespace trigger{
     }
     
     //find the earliest si time, this requires an E hit
-    for(int i=0;i<si_[0].back.fMult;i++){
+    for(unsigned int i=0;i<si_[0].back.fMult;i++){
       if(si_[0].back.fE[i]>0){
 	s1_emult++;
       }
@@ -280,7 +280,7 @@ namespace trigger{
     s1_triggerloc=s1_trig;
     nai_up_triggerloc=nai_trig_up;
     nai_down_triggerloc=nai_trig_down;
-    
+    return 1;
   }
 
 

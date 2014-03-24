@@ -84,7 +84,7 @@ bool NewTree_Analyzer::TerminateIfLast(){
 }
 
 bool NewTree_Analyzer::Terminate(){
-
+  return 1;
 }
 
 #endif
