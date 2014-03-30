@@ -4,7 +4,7 @@ SRCFILES=PSD_Analyzer.cpp IC_Analyzer.cpp Si_Analyzer.cpp \
 	Trigger_Analyzer.cpp Si_IC_Analyzer.cpp Module_Analyzer.cpp \
 	NaI_Analyzer.cpp Si_Neut_IC_NaI_Analyzer.cpp Q_ValueAnalyzer.cpp\
 	NewTree_Analyzer.cpp NaI_NeutAnalyzer.cpp F17dn_Analyzer.cpp \
-	Mg24dn_Analyzer.cpp
+	Mg24dn_Analyzer.cpp Neut_TOF_Analyzer.cpp
 ########Directories and Files###########################################################
 SRCDIR=src
 HDRDIR=include
@@ -50,7 +50,7 @@ RNanalyzers_d.cpp: ${HEADERS} $(HDRDIR)/my_LinkDef.h
 #####################################################################
 
 clean: 
-	rm ../../lib/libRNanalyzers.so
+	rm ../../lib/libRNanalyzers.so RNanalyzers_d.*
 
 newdict:
 	rm RNanalyzers_d.*
