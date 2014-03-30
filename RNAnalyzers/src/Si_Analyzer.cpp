@@ -38,7 +38,8 @@ namespace silicon{
   int alphacheck(0);
   int thetathetacheck(0);
   int deut_check(0);
-  TH2D *hpede;  
+  TH2D *hpede;
+  TH2D *hpede_arb;    
   TH1D *h_si_back[2];
   TH1D *h_si_back_a[2];
   TH1D *h_si_front[2];
@@ -199,6 +200,7 @@ namespace silicon{
 
     rootfile->cd("Silicon/ede");
     hpede=new TH2D("hpEdE","siPID;E[MeV];dE[MeV]",1024,0,32,1024,0,32);
+    hpede_arb=new TH2D("hpEdE_arb","siPID;E[arb];dE[arb]",1024,0,4095,1024,0,4095);
 
     rootfile->cd("Silicon/Theta");
     hS1Theta_vS2Theta = new TH2D("hS1Theta_vS2Theta","hS1Theta_vS2Theta;S1Theta;S2Theta",180,0,44,180,0,44); ; 
@@ -264,10 +266,10 @@ namespace silicon{
   
 
   bool Si_Analyzer::Process(){
-    
-    if (target_z[0] > z_max || target_z[0] < z_min)
-      return 0;
 
+    /*if (target_z[0] > z_max || target_z[0] < z_min)
+      return 0;
+    */
     if(silicon::prots1)
       protcheck=silicon::prots1->IsInside(prot_E,prot_dE);
   
@@ -376,6 +378,11 @@ namespace silicon{
       }
     
     }
+    if(si_[0].front.fMult>0&&si_[1].front.fMult>0){
+      hpede_arb->Fill(si_[0].back.E()+si_[1].back.E(),si_[0].back.E());
+    }
+
+
     if(si_cluster_[1].fMult>0&&si_cluster_[0].fMult>0){
       hS1Theta_vS2Theta->Fill(si_cluster_[0].fPos[0].Theta()*180/3.14,si_cluster_[1].fPos[0].Theta()*180/3.14);
       hpede->Fill(prot_E,prot_dE);

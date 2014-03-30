@@ -108,7 +108,7 @@ namespace psd{
   //neut_time
   TH2D *hQvT_n[NEUTNUM];
   TH2D *hQvT_ngated[NEUTNUM];
-
+  
   TH2D *hPSDq_n_evtgated[NEUTNUM];
 
 
@@ -138,8 +138,7 @@ namespace psd{
     rootfile->cd("neut");
     gDirectory->mkdir("TRel");
     gDirectory->mkdir("mult");
- 
-
+  
 
     //create histograms
     rootfile->cd("neut/mult");

@@ -75,9 +75,9 @@ bool F17dn_Analyzer::Process(){
     return 1;
   else return 0;
   */
-  if(nai_array.fE[0]<500)
+  /* if(nai_array.fE[0]<500)
     return 0;
-
+  */
 
   return 1;
 }
