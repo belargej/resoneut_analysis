@@ -21,29 +21,38 @@ namespace silicon{
   TCutG* prots1;
   TCutG* prots2;
   TCutG* ptheta_cut;
+  TCutG* ptheta2_cut;
   TCutG* alphas;
   TCutG* deuterons;
   TCutG* thetatheta_cut;
   int _require_proton(0);
+  int _require_proton2(0);
   int _require_alpha(0);
   int _require_deuteron(0);
   int _require_thetatheta(0);
   int _require_ptheta(0);
+  int _require_ptheta2(0);
   double z_min(0/*mm*/); //relative to the E detector
   double z_max(1000/*mm*/);
+
+
 
   int protcheck(0);
   int prot2check(0);
   int pthetacheck(0);
+  int ptheta2check(0);
   int alphacheck(0);
   int thetathetacheck(0);
   int deut_check(0);
   TH2D *hpede;
-  TH2D *hpede_arb;    
+  TH2D *hpede_arb;  
+  TH2D *hpede_cluster;
+  TH2D *hpede_arb_cluster;    
   TH1D *h_si_back[2];
   TH1D *h_si_back_a[2];
   TH1D *h_si_front[2];
   TH1D *h_si_front_a[2];
+  TH2D *h_evtheta_arb[2];
   TH2D *h_evtheta[2];
   TH2D *h_evtheta_protgated[2];
   TH2D *h_evtheta_neutgated[2];
@@ -123,6 +132,7 @@ namespace silicon{
     prot2check = 0;
     alphacheck = 0;
     pthetacheck = 0;
+    ptheta2check = 0;
     thetathetacheck = 0;
     deut_check = 0;
   }
@@ -201,6 +211,9 @@ namespace silicon{
     rootfile->cd("Silicon/ede");
     hpede=new TH2D("hpEdE","siPID;E[MeV];dE[MeV]",1024,0,32,1024,0,32);
     hpede_arb=new TH2D("hpEdE_arb","siPID;E[arb];dE[arb]",1024,0,4095,1024,0,4095);
+    hpede_cluster=new TH2D("hpEdE_cluster","siPID;E[MeV];dE[MeV]",1024,0,32,1024,0,32);
+    hpede_arb_cluster=new TH2D("hpEdE_arb_cluster","siPID;E[arb];dE[arb]",1024,0,4095,1024,0,4095);
+
 
     rootfile->cd("Silicon/Theta");
     hS1Theta_vS2Theta = new TH2D("hS1Theta_vS2Theta","hS1Theta_vS2Theta;S1Theta;S2Theta",180,0,44,180,0,44); ; 
@@ -226,6 +239,7 @@ namespace silicon{
 
     for(int i=0;i<2;i++){
       rootfile->cd("Silicon/evtheta");
+      h_evtheta_arb[i]=new TH2D(Form("h_evtheta_arb[%d]",i+1),Form("h_evtheta[%d];Ch;E",i+1),17,0,16,1024,0,4095);
       h_evtheta[i]=new TH2D(Form("h_evtheta[%d]",i+1),Form("h_evtheta[%d];Theta;E",i+1),256,10,42,128,0,32);
       h_evtheta_protgated[i]=new TH2D(Form("h_evtheta_prot[%d]",i+1),Form("h_evtheta_prot[%d];Theta;E",i+1),256,10,42,128,0,32);
       h_si_x_y[i]=new TH2D(Form("h_si_x_y[%d]",i+1),Form("h_si_x_y[%d];X;Y",i+1),512,-100,100,512,-100,100);
@@ -270,11 +284,14 @@ namespace silicon{
     /*if (target_z[0] > z_max || target_z[0] < z_min)
       return 0;
     */
+
+    //prot_E and prot_dE require cluster reconstruction
     if(silicon::prots1)
       protcheck=silicon::prots1->IsInside(prot_E,prot_dE);
   
+    //prots2 gates on a front hit in si_a and si_b
     if(silicon::prots2)
-      prot2check=silicon::prots2->IsInside(prot_E,prot_dE);
+      prot2check=silicon::prots2->IsInside(si_[0].front.E()+si_[1].front.E(),si_[0].front.E());
     
     if(silicon::alphas)
       alphacheck=silicon::alphas->IsInside(prot_E,prot_dE);
@@ -287,8 +304,17 @@ namespace silicon{
     if(silicon::ptheta_cut)
       pthetacheck = silicon::ptheta_cut->IsInside(prot_theta,prot_E);
 
+    if(silicon::ptheta2_cut)
+      ptheta2check = silicon::ptheta2_cut->IsInside(si_[1].front.Ch(),si_[0].front.E()+si_[1].front.E());
+
+
     //if proton gate is not passed return 0 (abort analyzers)
     if(_require_proton && !protcheck){
+      return 0;
+    }
+
+    //if proton gate is not passed return 0 (abort analyzers)
+    if(_require_proton2 && !prot2check){
       return 0;
     }
 
@@ -307,6 +333,10 @@ namespace silicon{
     }
 
     if(_require_ptheta && !pthetacheck){
+      return 0;
+    }
+
+    if(_require_ptheta2 && !ptheta2check){
       return 0;
     }
 
@@ -379,13 +409,18 @@ namespace silicon{
     
     }
     if(si_[0].front.fMult>0&&si_[1].front.fMult>0){
-      hpede_arb->Fill(si_[0].back.E()+si_[1].back.E(),si_[0].back.E());
+      hpede_arb->Fill(si_[0].front.E()+si_[1].front.E(),si_[0].front.E());
+      hpede->Fill(si_[0].front.E()+si_[1].front.E(),si_[0].front.E());
+      
+      h_evtheta_arb[0]->Fill(si_[0].front.Ch(),si_[0].front.E()+si_[1].front.E());
+      h_evtheta_arb[1]->Fill(si_[1].front.Ch(),si_[0].front.E()+si_[1].front.E());
     }
 
 
     if(si_cluster_[1].fMult>0&&si_cluster_[0].fMult>0){
       hS1Theta_vS2Theta->Fill(si_cluster_[0].fPos[0].Theta()*180/3.14,si_cluster_[1].fPos[0].Theta()*180/3.14);
-      hpede->Fill(prot_E,prot_dE);
+      hpede_cluster->Fill(prot_E,prot_dE);
+      hpede_arb_cluster->Fill(prot_E,prot_dE);
       h_zest_v_phi[0]->Fill(target_z[0],si_cluster_[0].fPos[0].Phi()*180/3.14);
       h_zest_v_phi[1]->Fill(target_z[1],si_cluster_[1].fPos[0].Phi()*180/3.14);
       h_zest_v_theta[0]->Fill(target_z[0],si_cluster_[0].fPos[0].Theta()*180/3.14);
@@ -455,6 +490,11 @@ namespace silicon{
   void RequireProton(){
     _require_proton=1;
   }
+ 
+  void RequireProton2(){
+    _require_proton2=1;
+  }
+
 
   void RequireAlpha(){
     _require_alpha=1;
@@ -472,6 +512,10 @@ namespace silicon{
     _require_ptheta=1;
   }
 
+  void RequirePTheta2Cut(){
+    _require_ptheta2=1;
+  }
+
   void SetZMinMax(const double & min, const double & max){
     z_min = min;
     z_max = max;
@@ -486,6 +530,8 @@ namespace silicon{
       prots2=new TCutG(*(TCutG*)in.Get("prots2"));
     if(in.Get("ptheta_cut") && !ptheta_cut)
       ptheta_cut=new TCutG(*(TCutG*)in.Get("ptheta_cut"));
+    if(in.Get("ptheta2_cut") && !ptheta2_cut)
+      ptheta2_cut=new TCutG(*(TCutG*)in.Get("ptheta2_cut"));
     if(in.Get("alphas") && !alphas)
       alphas=new TCutG(*(TCutG*)in.Get("alphas"));   
     if(in.Get("deuteron") && !deuterons)

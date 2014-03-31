@@ -280,14 +280,10 @@ int RN_Analyzer::GetDetectorEntry(Long64_t entry, Int_t getall){
 
   //Silicon Hits
   for(int j=0;j<16;j++){
-    //si_a de front
-    if(ADC3[j+16]>0)si_[0].front.InsertHit(ADC3[j+16],0,j);
-    //si_b e front
-    if(ADC2[j+16]>0)si_[1].front.InsertHit(ADC2[j+16],0,j);
-    //si_a de back
-    if(ADC3[j]>0)si_[0].back.InsertHit(ADC3[j],TDC2[j+16],j);
-    //si_b e back
-    if(ADC2[j]>0)si_[1].back.InsertHit(ADC2[j],TDC2[j],j);
+    if(ADC2[j+16]>0)si_[0].front.InsertHit(ADC2[j+16],0,j);
+    if(ADC3[j+16]>0)si_[1].front.InsertHit(ADC3[j+16],0,j);
+    if(ADC2[j]>0)si_[0].back.InsertHit(ADC2[j],TDC2[j],j);
+    if(ADC3[j]>0)si_[1].back.InsertHit(ADC3[j],TDC2[j+16],j);
 
   }
 
@@ -404,14 +400,14 @@ bool RN_Analyzer::Process(){
   
   //DE-E Telescope calculations
   if(si_cluster_[1].fMult>0&&si_cluster_[0].fMult>0){
-    silicon::prot_dE=si_cluster_[0].fE[0];
-    silicon::prot_E=si_cluster_[1].fE[0]+silicon::prot_dE;
-    silicon::prot_theta=si_cluster_[1].fPos[0].Theta()*(180.0 / TMath::Pi());
+    silicon::prot_dE=si_cluster_[1].fE[0];
+    silicon::prot_E=si_cluster_[0].fE[0]+silicon::prot_dE;
+    silicon::prot_theta=si_cluster_[0].fPos[0].Theta()*(180.0 / TMath::Pi());
     silicon::rel_transverse = (si_cluster_[0].fPos[0].Perp()-si_cluster_[1].fPos[0].Perp());
     silicon::rel_z = (si_cluster_[0].fPos[0] - si_cluster_[1].fPos[0]).Z();
     silicon::rel_angle = (si_cluster_[0].fPos[0] - si_cluster_[1].fPos[0]).Theta() * (180.0 / TMath::Pi());
-    silicon::target_z[0] = (si_cluster_[1].fPos[0]-global::target_pos).Perp()/ tan ( silicon::rel_angle * 3.14 / 180); 
-    silicon::target_z[1] = (si_cluster_[0].fPos[0]-global::target_pos).Perp() / tan ( silicon::rel_angle * 3.14 / 180); 
+    silicon::target_z[0] = (si_cluster_[0].fPos[0]-global::target_pos).Perp()/ tan ( silicon::rel_angle * 3.14 / 180); 
+    silicon::target_z[1] = (si_cluster_[1].fPos[0]-global::target_pos).Perp() / tan ( silicon::rel_angle * 3.14 / 180); 
     
     if(Narray.fT_mult>0){
       coinc::sia_neut_trel = si_cluster_[0].fT[0] - Narray.fT_first;  

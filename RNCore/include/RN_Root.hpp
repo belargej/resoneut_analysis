@@ -126,7 +126,11 @@ public:
   TList * GetListOfRNParameters(){return fRNParameters;}
   TList * GetListOfRNVariables(){return fRNVariables;}
   //RN_ReactionInfo GetRN_ReactionInfo();
-  int AddAnalyzer(TObject *object); 
+  int AddAnalyzer(TObject *object);
+  int AddDetector(TObject *object);
+  int AddParameter(TObject *object);
+  int AddVariable(TObject *object);
+  int AddClass(TObject *object);
   virtual void Bind(){};
   virtual void Execute(){};
   void LoadVariableFile(const std::string& f);

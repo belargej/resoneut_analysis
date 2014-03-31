@@ -50,13 +50,16 @@ namespace silicon{
   extern TCutG* alphas;
   extern TCutG* deuterons;
   extern TCutG* ptheta_cut;
+  extern TCutG* ptheta2_cut;
   extern TCutG* thetatheta_cut;
 
   extern int _require_proton;
+  extern int _require_proton2;
   extern int _require_alpha;
   extern int _require_deuteron;
   extern int _require_thetatheta;
   extern int _require_ptheta;
+  extern int _require_ptheta2;
   extern int protcheck;
   extern int prot2check;
   extern int alphacheck;
@@ -64,9 +67,11 @@ namespace silicon{
 
 
   void RequireProton();
+  void RequireProton2();
   void RequireDeuteron();
   void RequireAlpha();
   void RequirePThetaCut();
+  void RequirePTheta2Cut();
   void RequireThetaTheta();
   void SetZMinMax(const double &,const double&);
   void LoadGates(const std::string &input);  

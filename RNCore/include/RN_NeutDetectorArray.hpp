@@ -103,6 +103,7 @@ class RN_NeutDetector:public RN_BaseDetector{
   int NeutIn(TLorentzVector nLV,double& t,double& e);
   int C_hit(TLorentzVector& inLV,double step);
   void Reset();
+  void Build();
   void SetCalibrations(double elin, 
 		       double eshift,
 		       double tlin,
@@ -110,6 +111,10 @@ class RN_NeutDetector:public RN_BaseDetector{
 		       double zero_off);
   void SetCalibrations(RN_VariableMap& detvar);
   double CalculateTRel(const double &tfirst);
+  Int_t IsANeutron();
+  Int_t IsAGamma();
+  Int_t HitID(){}
+
 
   
   ClassDef(RN_NeutDetector,1);

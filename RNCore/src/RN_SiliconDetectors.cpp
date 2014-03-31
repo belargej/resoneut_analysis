@@ -7,7 +7,7 @@ ClassImp(RN_S2Detector);
 
 using global::myRnd;
 
-#define S1FIXENABLE 1
+#define S1FIXENABLE 0
 
 
 #if 1
@@ -69,7 +69,13 @@ RN_S2Detector::RN_S2Detector(std::string name,const int& fnum, const int& bnum):
   delta_phi_ = 360. / static_cast<double>(back.NumOfCh());
   front.SetELimits(0,4095);
   back.SetELimits(0,4095);
+
+  //  Build();
 }
+
+//void RN_S2Detector::Build(){
+//  gRNROOT.AddDetector(this);
+//}
 
 void RN_S2Detector::SetCalibrations(RN_VariableMap& detvar){
   front.SetCalibrations(detvar);

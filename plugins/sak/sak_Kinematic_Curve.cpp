@@ -14,9 +14,9 @@ Adapted from Kinematic Curve class by Daniel Santiago-Gonzalez
 #include <TMath.h>
 #include <TGraph.h>
 #include "sak_Kinematic_Curve.hpp"
-#include "../../include/RN_Root.hpp"
-#include "../../include/RN_Sim.hpp"
-#include "../../include/RN_SimPhysics.hpp"
+#include "RN_Root.hpp"
+#include "RN_Sim.hpp"
+#include "RN_SimPhysics.hpp"
 namespace sak{
 
 TGraph GetCurve(int Points,const double & hi_ex_set)

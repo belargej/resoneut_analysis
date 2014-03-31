@@ -39,8 +39,16 @@ RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetecto
 {
   fPos.SetXYZ(0,0,-228.7);//set default zpos
   RNArray::PositionMap(apos,fPos);//set xpos and ypos
+  Build();
+}
+
+// 
+void RN_NeutDetector::Build(){
+  gRNROOT.AddDetector(this);
   
-} 
+}
+
+
 
 
 void RN_NeutDetector::SetCalibrations(double elin, double eshift, double tlin, double tshift,double zero_off){
@@ -75,6 +83,22 @@ void RN_NeutDetector::SetCalibrations(RN_VariableMap& detvar){
 
 
 }
+
+Int_t RN_NeutDetector::IsANeutron(){
+  if(((TCutG*)gROOT->GetListOfSpecials()->FindObject(Form("%s_neuts",GetName())))->IsInside(fQ_long,fQ_short))
+    return 1;
+  else return 0;
+
+}
+
+
+Int_t RN_NeutDetector::IsAGamma(){
+  if(((TCutG*)gROOT->GetListOfSpecials()->FindObject(Form("%s_gammas",GetName())))->IsInside(fQ_long,fQ_short))
+    return 1;
+  else return 0;
+
+}
+
 
 void RN_NeutDetector::Reset(){
   RN_BaseDetector::Reset();
@@ -348,7 +372,7 @@ int RN_NeutDetector::H_hit(TLorentzVector& inLV,double step/*mm*/){
   
   //Get the neutron KE in CM frame for probability calculation
   double nKE=neut_LVcopy.E()-neut_LVcopy.M();
-  if(nKE>=fThreshold/2 && nKE<.400){
+  if(nKE>=0.01 && nKE<.400){
     if(global::myRnd.Rndm()>(0.004508869*exp(2.91109-3.12513*nKE)*step))
       return 0;
   }
@@ -356,7 +380,7 @@ int RN_NeutDetector::H_hit(TLorentzVector& inLV,double step/*mm*/){
     if(global::myRnd.Rndm()>(0.004508869*exp(2.1646-.67*nKE)*step))
       return 0;
   }
-  else if(nKE<fThreshold/2 || nKE>1.4){
+  else if(nKE<0.01 || nKE>1.4){
     return 0;
   }
   

@@ -11,7 +11,7 @@ GLIBS=`root-config --glibs`
 LINK_DIR=${PWD}/../lib
 
 LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} 
-INC_DIR=-I${ROOTSYS}/include -I$(PWD)/../../include -I$(PWD)/../../
+INC_DIR=-I${ROOTSYS}/include -I$(PWD)/../../RNCore/include -I$(PWD)/../
 
 all: libSAK.so	
 
