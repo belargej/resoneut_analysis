@@ -126,7 +126,7 @@ void RN_RootInit(){
 
   //a,b,c,d in order of moving downstream from target.
   si_.push_back(RN_S2Detector("si_a",16,16));
-  si_.push_back(RN_S1Detector("si_b",16,16));
+  si_.push_back(RN_S2Detector("si_b",16,16));
 
   //clusters for identifying matching front and back segments
   si_cluster_.push_back(RN_S2Cluster("si_cluster_a",16));
@@ -150,13 +150,14 @@ void RN_RootInit(){
   neut.push_back(RN_NeutDetector("neut7",4,10));
   neut.push_back(RN_NeutDetector("neut8",4,12));
   neut.push_back(RN_NeutDetector("neut9",4,15));
+  /*
   neut.push_back(RN_NeutDetector("neut10",4,2));
   neut.push_back(RN_NeutDetector("neut11",4,3));
   neut.push_back(RN_NeutDetector("neut12",4,8));
   neut.push_back(RN_NeutDetector("neut13",4,9));
   neut.push_back(RN_NeutDetector("neut14",4,13));
   neut.push_back(RN_NeutDetector("neut15",4,16));
-
+  */
 
   //nai detectors -- name
   nai.push_back(RN_NaIDetector("nai_l1"));

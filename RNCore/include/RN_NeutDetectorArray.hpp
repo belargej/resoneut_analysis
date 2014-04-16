@@ -32,8 +32,6 @@
 #include "RN_BaseDetector.hpp"
 
 
-
-
 class RN_NeutDetector:public RN_BaseDetector{
  private:
   double elin;//!
@@ -46,7 +44,7 @@ class RN_NeutDetector:public RN_BaseDetector{
   TVector3 fPos;//!
   double phe_lin;//!
   double phe_shift;//!
-  
+
   //simulation parameters
   double fRadius;//!
   double fThickness;//!
@@ -113,7 +111,7 @@ class RN_NeutDetector:public RN_BaseDetector{
   double CalculateTRel(const double &tfirst);
   Int_t IsANeutron();
   Int_t IsAGamma();
-  Int_t HitID(){}
+  Int_t HitID();
 
 
   

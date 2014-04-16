@@ -82,6 +82,9 @@ namespace silicon{
   TH2D *hS1Theta_vS2Theta; 
   TH2D *hS1Theta_vS2Theta_prot; 
 
+  TH2D *hsi_EvT[2];
+
+
   TH2D* rfvs1_t;
   TH2D *rfvs2_t;
   TH2D *rfvs1_t_rel;
@@ -255,8 +258,9 @@ namespace silicon{
     rootfile->cd("Silicon/Timing");
     h_s1_t=new TH1D("h_s1_t","s1_t;time",1024,0,4096);
     h_s1_t_noticds=new TH1D("h_s1_t_noticds","s1_t_noticds;time",1024,0,4096);
-    
-
+    for(unsigned int i=0;i<2;i++){
+      hsi_EvT[i]=new TH2D(Form("h%s_evt",si_[i].GetName()),Form("h%s_evt;T;E",si_[i].GetName()),1024,0,4095,512,0,4095);    
+    }
     rootfile->cd("Silicon/Timing/rftime");
     
     rfvs1_t=new TH2D("rfvs1_t","rfvs1_t;rftime;s1_t",1024,256,2304,1024,0,4096);
@@ -345,6 +349,7 @@ namespace silicon{
   }
   bool Si_Analyzer::ProcessFill(){
 
+
     if(rel_angle && prot_E){
       h_e_v_relangle->Fill(rel_angle,prot_E);	
       h_target_z_est[0]->Fill(target_z[0]);
@@ -368,6 +373,9 @@ namespace silicon{
     
     for(int i=0;i<2;i++){
       int idx=(int)si_[i].front.fChlist[0];
+
+      hsi_EvT[i]->Fill(si_[i].back.T(),si_[i].back.E());
+	
 
       for(unsigned int j=0;j<si_[i].front.fMult;j++){
 	h_si_front[i]->Fill(si_[i].Front_E(j));

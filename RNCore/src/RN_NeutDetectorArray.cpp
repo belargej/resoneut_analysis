@@ -13,6 +13,8 @@ namespace sim{
   double steptime(0);
 }
 
+
+
 using namespace sim;
 
 RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetector(name,num),
@@ -85,15 +87,26 @@ void RN_NeutDetector::SetCalibrations(RN_VariableMap& detvar){
 }
 
 Int_t RN_NeutDetector::IsANeutron(){
-  if(((TCutG*)gROOT->GetListOfSpecials()->FindObject(Form("%s_neuts",GetName())))->IsInside(fQ_long,fQ_short))
+  TCutG * neut= (TCutG*)gROOT->GetListOfSpecials()->FindObject(Form("%s_neuts",GetName()));
+  if(neut&& neut->IsInside(fQ_long,fQ_short))
     return 1;
   else return 0;
-
 }
 
 
+
+Int_t RN_NeutDetector::HitID(){
+  if(IsANeutron())
+    return 2;
+  else if(IsAGamma())
+    return 1;
+  else
+    return 0;
+}
+
 Int_t RN_NeutDetector::IsAGamma(){
-  if(((TCutG*)gROOT->GetListOfSpecials()->FindObject(Form("%s_gammas",GetName())))->IsInside(fQ_long,fQ_short))
+  TCutG * gam = (TCutG*)gROOT->GetListOfSpecials()->FindObject(Form("%s_gammas",GetName()));
+  if(gam && gam->IsInside(fQ_long,fQ_short))
     return 1;
   else return 0;
 
