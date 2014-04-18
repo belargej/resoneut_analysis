@@ -82,8 +82,7 @@ void RN_Analyzer::Init(TString rootfilename)
   else
     std::cout<<"No Event Branch Present, check in sorting code"<<std::endl;
 
-  caen_stack.SetBranches(fChain);
-  mesy_stack.SetBranches(fChain);
+  unpacker::gModule_stack.SetBranches(fChain);
   
 }
 

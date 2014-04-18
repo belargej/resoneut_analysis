@@ -57,20 +57,11 @@ namespace unpacker{
   extern TFile* RootFile;
   extern TTree* DataTree;
   extern TTree* ScalerTree;
-  extern unsigned int BufferWords; //number of short length words, each 2 bytes
-  extern unsigned int BufferBytes; //number of bytes to be stored
-  extern unsigned int BufferType;
-  extern unsigned int NBuffers; 
-  extern int BufferPhysics;
-  extern ifstream evtfile;
-  extern unsigned short * buffer;
+ 
   extern int timer; 
-  extern int adc_counter;
-  extern int mes_counter;
  
   extern Int_t Event[3];
-  extern RN_Module_Stack caen_stack;
-  extern RN_Module_Stack mesy_stack;
+  extern RN_Module_Stack gModule_stack;
  
   extern TBranch        *b_Event;  //!
   

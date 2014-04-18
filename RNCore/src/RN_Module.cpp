@@ -1,7 +1,6 @@
 //////////////////////////////////////////////////////////////
 /// RN_Module for handling the modules needed for the unpacker.
-///
-///
+/// RN_Module_Stack consists of a TList of RN_Modules,
 /// Author: Sean Kuvin
 //////////////////////////////////////////////////////////////
 #ifndef _RN_MODULE_CXX_
@@ -39,6 +38,12 @@ UInt_t RN_Module::SortChVal(const UInt_t& ch,const UInt_t & val){
 }
 
 
+void RN_Module::Print(){
+  std::cout<<GetName()<<": "<<"GeoAddress: "<<GeoAddress()<<"\n";
+  return ;
+}
+
+
 UInt_t RN_Module::AddBranch(TTree* _tree){
   _tree->Branch(GetName(),fChValue,Form("%s[%d]/F",GetName(),NumOfCh()));
   return 0;
@@ -57,9 +62,7 @@ UInt_t RN_Module::SetBranch(TTree* _tree){
 }
 
 
-RN_Module_Stack::RN_Module_Stack(const TString& name):RN_BaseClass(name,name),						     
-						      fModIdx(-1),
-						      fCurrentModule(0)
+RN_Module_Stack::RN_Module_Stack(const TString& name):RN_BaseClass(name,name)						     
 {
   
 }
@@ -71,12 +74,38 @@ void RN_Module_Stack::Init(){
 
 UInt_t RN_Module_Stack::Reset(){
   //loop over all modules stored in TList of Modules and reset all of them
-  fModIdx = -1;
   TIter next(fRNModules);
   while( RN_Module*obj = (RN_Module*)next()){
     obj->Reset();
   }
   return 1;
+}
+
+Bool_t RN_Module_Stack::UnpackModules(unsigned short *& gpointer,int filepos){
+  TIter next(fRNModules);
+  while( RN_Module*obj = (RN_Module*)next()){
+    if(!obj->Unpack(gpointer))
+      std::cout<<"error at file pos: "<< filepos<<std::endl;      
+  }  
+  
+  return 1;
+}
+
+
+UInt_t RN_Module_Stack::GetNum(UInt_t modtype){
+  UInt_t count=0;
+  if(!fRNModules)
+    return 0;
+  if(modtype == 0)
+    return GetSize();
+  TIter next(fRNModules);
+  
+  //count how many modules in the stack are equal to a particular type
+  while( RN_Module*obj = (RN_Module*)next()){
+    if(obj->ModuleType() == modtype)
+      count++;
+  }
+  return count;
 }
 
 UInt_t RN_Module_Stack::AddModule(RN_Module *mod){
@@ -87,25 +116,20 @@ UInt_t RN_Module_Stack::AddModule(RN_Module *mod){
   return 1;
 }
 
-
-UInt_t RN_Module_Stack::NextModule(const UShort_t&geoaddress){
-  //go to next module and check to make sure the geoaddress matches.
-  fCurrentModule = (RN_Module*)fRNModules->At(++fModIdx);
-  if(geoaddress != fCurrentModule->GeoAddress()){
-    return 0;
-    //if false this means that something is wrong with the stack configuration
-    //it should match daqconfig.tcl
-   
-  }
-  return 1;
-}
-
 UInt_t RN_Module_Stack::AddBranches(TTree *_tree){
   TIter next(fRNModules);
   while( RN_Module*obj = (RN_Module*)next()){
     obj->AddBranch(_tree);
   }
   return 1;
+}
+
+void RN_Module_Stack::Print(){
+  TIter next(fRNModules);
+  while( RN_Module*obj = (RN_Module*)next()){
+    obj->Print();
+  }
+  return ;
 }
 
 UInt_t RN_Module_Stack::SetBranches(TTree *_tree){
@@ -128,22 +152,87 @@ UInt_t RN_Module_Stack::SortGeoChVal(const UShort_t& geoaddress,const UInt_t& ch
 }
 
 
-UInt_t RN_Module_Stack::SortChVal(const UInt_t& ch, const UInt_t& val){
-  if(ch < fCurrentModule->NumOfCh()){
-    fCurrentModule->SortChVal(ch,val);
-    return 1; 
-  }
-  return 0;
-  
-}
-
 
 CAEN_ADC::CAEN_ADC(const TString& name,const UInt_t& geoaddress):RN_Module(name,geoaddress){
-  fModuleType = 1;  //CAEN
-}
-MESY_QDC::MESY_QDC(const TString& name,const UInt_t& geoaddress):RN_Module(name,geoaddress){
-  fModuleType = 2;  //MESY
+  fModuleType =kCAENtype;  //CAEN
 }
 
+Bool_t CAEN_ADC::Unpack(unsigned short *& gpointer){
+  short dat(0);
+  short chan(0);
+  short ch_hits(0);
+  short geoaddress(0);
+  bool flag(1);
+  
+  //module is suppressed
+  if(*gpointer==0xffff){
+    gpointer=gpointer+2; //jump over ffff block
+    return 1; //returning 1 cause this is NOT bad
+  }
+  
+  ch_hits = ( *gpointer++ & 0xff00 ) >> 8; //read high byte as low byte
+  geoaddress = ( *gpointer++ & 0xf800) >> 11;
+  
+  if(geoaddress != fGeoAddress){
+    std::cout<<geoaddress<<" different from geoaddress in stack: "<< GeoAddress()<<std::endl;
+    gpointer+=ch_hits*2;
+    flag =  0; //THIS is bad, means stack is probably not set up right or there was an incorrectly formatted buffer(which can happen).  Check to find the cause...probably your module stack is not in the right order
+  }
+  else{
+    for (short jj=0;jj<ch_hits;jj++){
+      dat =  *gpointer++ & 0xfff;
+      chan = *gpointer++ & 0x1f;
+      SortChVal(chan,dat);
+      
+    }
+  }
+  fCounter= *gpointer++;
+  gpointer = gpointer + 3 ; //jump 3 words to skip rest of CAEN End of Block
+  return flag;
+
+}
+
+
+MESY_QDC::MESY_QDC(const TString& name,const UInt_t& geoaddress):RN_Module(name,geoaddress){
+  fModuleType = kMESYtype;  //MESY
+}
+
+Bool_t MESY_QDC::Unpack(unsigned short *& gpointer){
+  short dat, chan;
+  short shortwords;
+  short ModuleID;
+  unsigned short * zpointer; zpointer = gpointer;
+  int flag(1);
+
+  if(*zpointer==0xffff){ //module is suppressed
+    gpointer = gpointer + 2 ;
+    return 1; //this is not bad so just return 1;
+  }
+
+  shortwords = 2 * ( *zpointer++ & 0x0fff ); 
+  ModuleID = *zpointer++ & 0x00ff;
+  
+  if(ModuleID != fGeoAddress ){
+    std::cout<<ModuleID<<" different from geoaddress in stack: "<< GeoAddress()<<std::endl;
+    gpointer+=shortwords; //move to expected end of this part of buffer
+
+    flag = 0; //THIS is bad, means stack is probably not set up right or there was an incorrectly formatted buffer(which can happen).  Check to find the cause...probably your module stack is not in the right order
+  }
+  else{
+    while( zpointer < ( gpointer + shortwords)){
+      dat = *zpointer++ & 0xfff;
+      chan = *zpointer++ & 0x1f;
+      
+      SortChVal(chan,dat);
+    }
+  }
+  fCounter = *zpointer++;
+  zpointer = zpointer + 3; //jump over EOB + ffff
+  gpointer = zpointer; //move gpointer to end of this zpointer
+
+  return flag;
+}
+
+  
 
 #endif

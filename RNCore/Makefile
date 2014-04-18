@@ -40,8 +40,8 @@ all: libRNCore.so
 
 libRNCore.so: ${OBJECTS} RNCore_d.cpp 
 	g++ -shared -o ${addprefix ../lib/,$@} $^ ${LFLAGS} -fPIC
-	@echo "cleaning up: \n .o files"  
-	rm ${OBJECTS}
+#	@echo "cleaning up: \n .o files"  
+#	rm ${OBJECTS}
 	@echo "cleaning up: \n _d dictionary files"  	
 	rm RNCore_d.*
 

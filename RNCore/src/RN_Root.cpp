@@ -282,24 +282,26 @@ void RN_RootInit(){
     nai.clear();
     particle.clear();
     triggerbit.clear();
-    unpacker::caen_stack.ClearStack();
-    unpacker::mesy_stack.ClearStack();
+    unpacker::gModule_stack.ClearStack();
   }
 
+  //add the modules declared above to the stack...this should match
+  //daqconfig for the runs you are analyzing.
+
   //  unpacker::caen_stack.AddModule(&ADC1);
-  unpacker::caen_stack.AddModule(&ADC2);
-  unpacker::caen_stack.AddModule(&ADC3);
-  unpacker::caen_stack.AddModule(&ADC4);
-  unpacker::caen_stack.AddModule(&ADC5);
-  unpacker::caen_stack.AddModule(&ADC6);
-  unpacker::caen_stack.AddModule(&ADC7);
-  unpacker::caen_stack.AddModule(&TDC1);
-  unpacker::caen_stack.AddModule(&TDC2);
-  unpacker::caen_stack.AddModule(&TDC3);
-  unpacker::caen_stack.AddModule(&TDC4);
-  unpacker::mesy_stack.AddModule(&QDC1);
-  unpacker::mesy_stack.AddModule(&QDC2);
-  unpacker::mesy_stack.AddModule(&QDC3);
+  unpacker::gModule_stack.AddModule(&ADC2);
+  unpacker::gModule_stack.AddModule(&ADC3);
+  unpacker::gModule_stack.AddModule(&ADC4);
+  unpacker::gModule_stack.AddModule(&ADC5);
+  unpacker::gModule_stack.AddModule(&ADC6);
+  unpacker::gModule_stack.AddModule(&ADC7);
+  unpacker::gModule_stack.AddModule(&TDC1);
+  unpacker::gModule_stack.AddModule(&TDC2);
+  unpacker::gModule_stack.AddModule(&TDC3);
+  unpacker::gModule_stack.AddModule(&TDC4);
+  unpacker::gModule_stack.AddModule(&QDC1);
+  unpacker::gModule_stack.AddModule(&QDC2);
+  unpacker::gModule_stack.AddModule(&QDC3);
 
   //a,b,c,d in order of moving downstream from target.
   si_.push_back(RN_S2Detector("si_a",16,16));

@@ -40,7 +40,12 @@
 
 #define MODULE_MAX_CHANNELS 32
 
+//use these types for checking how many of a module type are in the stack
+//stack.GetNum(kCAENtype) or stack.GetNum(kMESYtype) for 
+const static unsigned int kCAENtype(1);
+const static unsigned int kMESYtype(2);
 
+//RN_Module is an abstract baseclass, example modules which inherit from RN_Module and override the proper methods are CAEN_ADC and MESY_QDC
 class RN_Module:public RN_BaseClass{
 protected:
 
@@ -49,6 +54,7 @@ protected:
   UInt_t fValid;//!
   UInt_t fModuleType;//!
   UShort_t fGeoAddress;//!
+  UInt_t fCounter;//!
 
 public:
   TBranch * b_module;
@@ -65,8 +71,11 @@ public:
   Float_t operator [] (UInt_t i) const {
     return operator()(i) ;  
   }
+
+  virtual Bool_t Unpack(unsigned short *& gpointer) = 0;
   UShort_t NumOfCh()const {return fNumOfCh;}
-  UShort_t GeoAddress() const{return fGeoAddress;} 
+  UShort_t GeoAddress() const{return fGeoAddress;}
+  UInt_t GetCounter()const {return fCounter;}
   UInt_t ModuleType()const {return fModuleType;}
   UInt_t ZeroSuppression()const {return fZeroSuppression;}
   UInt_t CheckValid()const {return fValid;}
@@ -74,18 +83,14 @@ public:
   UInt_t Reset();
   virtual UInt_t AddBranch(TTree* _tree);
   virtual UInt_t SetBranch(TTree* _tree);
-  virtual void Print(){}; 
+  virtual void Print(); 
 
   ClassDef(RN_Module,1);
 };
 
 class RN_Module_Stack:public RN_BaseClass{
 protected:
-  TList *fRNModules;//!
-  Int_t fModIdx; //! for tracking which module in stack
-  RN_Module *fCurrentModule;//!
-  
-
+  TList *fRNModules;//!  
 public: 
  
   RN_Module_Stack(const TString& name="");
@@ -97,16 +102,16 @@ public:
   }
   void Init();
   UInt_t GetSize()const{return fRNModules ? fRNModules->GetSize() : 0;};
+  UInt_t GetNum(UInt_t modtype = 0);
   virtual UInt_t AddBranches(TTree* _tree);
   virtual UInt_t SetBranches(TTree* _tree);
   UInt_t AddModule(RN_Module *mod);
   void ClearStack(){if(fRNModules)fRNModules->Clear();} 
-  UInt_t NextModule(const UShort_t& geoaddress);
-  UInt_t SortGeoChVal(const UShort_t& geo,const UInt_t& ch, const UInt_t& val);
-  UInt_t SortChVal(const UInt_t& ch, const UInt_t& val);
-  virtual void Print(){};
+  Bool_t UnpackModules(unsigned short *& pointer, int filepos);
+  UInt_t SortGeoChVal(const UShort_t&geoaddress,const UInt_t& ch, const UInt_t& val);
+  virtual void Print();
   UInt_t Reset();
-  RN_Module* CurrentModule(){return fCurrentModule;}
+
 
   ClassDef(RN_Module_Stack,1);
 };
@@ -118,6 +123,7 @@ public:
   CAEN_ADC(){};
   CAEN_ADC(const TString& name,const UInt_t& geoaddress);
 
+  virtual Bool_t Unpack(unsigned short*& gpointer);
   ClassDef(CAEN_ADC,1);
 };
 
@@ -136,6 +142,8 @@ private:
 public:
   MESY_QDC(){};
   MESY_QDC(const TString& name,const UInt_t& geoaddress);
+  virtual Bool_t Unpack(unsigned short*& gpointer);
+
 
   ClassDef(MESY_QDC,1);
 };

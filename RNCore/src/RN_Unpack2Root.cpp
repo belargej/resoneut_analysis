@@ -20,16 +20,12 @@ namespace unpacker{
   std::ofstream logfile;
   unsigned short * buffer;
   int timer(0); 
-  int adc_counter;
-  int mes_counter;
-
-
+ 
   //Tree Parameters to be Unpacked into ROOTFile
   Int_t Event[3];//stores RunNum/flag/scaler
   ScalerNames scaler_names;
   ScalerValues scaler_values;
-  RN_Module_Stack caen_stack;
-  RN_Module_Stack mesy_stack;
+  RN_Module_Stack gModule_stack;
   TBranch        *b_Event;  //!
 
 
@@ -84,6 +80,12 @@ namespace unpacker{
     
     return 1;
   }
+
+  //The following Unpack functions are not meant to be called on their own.
+  //there are no checks if 'buffer' is allocated. 
+  //These methods are only called during ExtractRingBuffer() 
+  //which allocates buffer.
+
 
   int UnpackBeginRun(){
     Event[0]=buffer[0];	  
@@ -164,84 +166,18 @@ namespace unpacker{
     //check caen stack size, check mesy stack size
     //these are sorted in the order they are added 
     //to the stack, caen first then mesytec next.
-    unsigned int caen_num=caen_stack.GetSize();
-    unsigned int mesy_num=mesy_stack.GetSize();
 
     BufferPhysics++;
     ResetTreeParameters();	  
+
     unsigned short * gpointer,* endpointer;
     endpointer = buffer + BufferWords;
     gpointer = buffer; //copy pointer to beginning of buffer(outside of header) 
     gpointer++;//extra word after item type
-    
-  //first read in CAEN data, keep track of how many CAEN modules 
-  //that are plugged in (not just the ones you are using.)
-    
-    for(unsigned int i=0; i<caen_num;i++){
-      short dat;
-      short chan;
-      short ch_hits;
-      short geoaddress;
-      if(*gpointer==0xffff){
-	gpointer=gpointer+2;
-	caen_stack.NextModule(0);
-      continue;}
-      ch_hits = ( *gpointer++ & 0xff00 ) >> 8; //read high byte as low byte
-      geoaddress = ( *gpointer++ & 0xf800) >> 11;
+
+    //pass the pointer on to the stack of modules, each module will unpack the data using its own unpack method
+    gModule_stack.UnpackModules(gpointer,(int)evtfile.tellg());
       
-      if(!caen_stack.NextModule(geoaddress)){
-	std::cout<<geoaddress<<" different from geoaddress in stack: "<< caen_stack.CurrentModule()->GeoAddress()<<" at file pos: "<< evtfile.tellg()<<std::endl;
-	gpointer+=ch_hits*2;
-      }
-      else{
-	for (short jj=0;jj<ch_hits;jj++){
-	  dat =  *gpointer++ & 0xfff;
-	  chan = *gpointer++ & 0x1f;
-	  caen_stack.SortGeoChVal(geoaddress,chan,dat);
-	  
-	}
-      }
-      adc_counter= *gpointer++;
-      gpointer = gpointer + 3 ; //jump 3 words to skip rest of CAEN End of Block
-      
-    }
-  
-    //next comes MESYTEC modules.
-    
-    for(unsigned int i=0; i<mesy_num; i++){
-      short dat, chan;
-      short shortwords;
-      short ModuleID;
-      unsigned short * zpointer; zpointer = gpointer;
-    
-      if(*zpointer==0xffff){
-	zpointer = zpointer + 2;
-	mesy_stack.NextModule(0);
-	continue;}
-      //this pointer gets number of 32 bit words so we must multiply by 2 for short words.
-      shortwords = 2 * ( *zpointer++ & 0x0fff ); 
-      ModuleID = *zpointer++ & 0x00ff;
-      
-      if(!mesy_stack.NextModule(ModuleID)){
-	std::cout<<ModuleID<<" different from geoaddress in stack: "<< mesy_stack.CurrentModule()->GeoAddress()<<" at file pos: "<< evtfile.tellg()<<std::endl;
-	gpointer+=shortwords;
-      }
-      else{
-	while( zpointer < ( gpointer + shortwords)){
-	  dat = *zpointer++ & 0xfff;
-	  chan = *zpointer++ & 0x1f;
-	
-	  mesy_stack.SortGeoChVal(ModuleID,chan,dat);
-	  
-	  
-	  
-	}
-      }
-      mes_counter = *zpointer++;
-      zpointer = zpointer + 3; //jump over EOB + ffff
-      gpointer = zpointer; //move gpointer to end of this zpointer
-    }
-  
     while(gpointer < endpointer){
       if(*gpointer==0xffff)
 	gpointer++;
@@ -281,15 +217,7 @@ bool InitStack(const std::string & configfile){
     std::vector<std::string>input;
     sak::ReadLine(cfg,input);
     if(input.size()>0){
-      if(input[0]=="caen_stack")
-	for(unsigned int i=1;i<input.size();i++){
-	  // caen_stack.push_back(sak::string_to_int(input[i]));
-	}
-      else if(input[0]=="mesy_stack")
-	for(unsigned int i=1;i<input.size();i++){
-	  // mesy_stack.push_back(sak::string_to_int(input[i]));
-	}
-      else if(input[0]=="scaler_list"){
+      if(input[0]=="scaler_list"){
 	for(unsigned int i=1;i<input.size();i++){
 	  scaler_names.push_back(input[i]);
 	  scaler_values.push_back(0);
@@ -306,8 +234,8 @@ bool InitStack(const std::string & configfile){
   
   void ResetTreeParameters(){
     Event[1]=0;
-    caen_stack.Reset();
-    mesy_stack.Reset();  
+    gModule_stack.Reset();
+
   }
 
   
@@ -331,11 +259,12 @@ bool InitStack(const std::string & configfile){
     //flag is used to notify the user of any issues seen during unpacking
     DataTree->Branch("Event",&Event,"RunNum/I:flag/I:ScalerIDX/I"); 
 
-    caen_stack.AddBranches(DataTree);
-    mesy_stack.AddBranches(DataTree);
+    gModule_stack.AddBranches(DataTree);
 
-    ScalerTree->Branch("Scaler",&scaler_values);
-    
+    for(unsigned int i=0; i<scaler_values.size();i++){
+      ScalerTree->Branch(scaler_names[i].c_str(),scaler_values[i]);
+    }
+
     //Loop over files in the data file list.
     for(unsigned int b=0;b<run_number.size();b++){
       //this section to properly format the evt number to buffer run number with zeroes.
@@ -385,11 +314,12 @@ bool InitStack(const std::string & configfile){
     //flag is used to notify the user of any issues seen during unpacking
     DataTree->Branch("Event",&Event,"RunNum/I:flag/I:ScalerIDX/I"); 
     
-    caen_stack.AddBranches(DataTree);
-    mesy_stack.AddBranches(DataTree);
-
-    ScalerTree->Branch("Scaler",&scaler_values);
+    gModule_stack.AddBranches(DataTree);
     
+
+    for(unsigned int i=0; i<scaler_values.size();i++){
+      ScalerTree->Branch(scaler_names[i].c_str(),scaler_values[i]);
+    }
     //Loop over files in the data file list.
     
     //this section to properly format the evt number to buffer run number with zeroes.
