@@ -184,13 +184,13 @@ namespace trigger{
 
     //find the raw_unsorted TDC time corresponding to the S1 detector
     for(unsigned int i=0;i<16;i++){
-      if(unpacker::TDC2[i]>0){
+      if(TDC2[i]>0){
 	s1raw_tmult++;
-	if(unpacker::TDC2[i] < s1raw_tfirst){
-	  s1raw_tfirst=unpacker::TDC2[i];
+	if(TDC2[i] < s1raw_tfirst){
+	  s1raw_tfirst=TDC2[i];
 	}
       }
-      if(unpacker::TDC2[i+16]>0){
+      if(TDC2[i+16]>0){
 	s2_tmult++;	
       }
       
@@ -216,11 +216,11 @@ namespace trigger{
       triggerinfo[5] = 1 - (TMath::Abs(s1raw_tfirst-s1_triggerloc) / s1_triggerloc);
    
     //check the icds bits
-    if(unpacker::TDC1[4]>0)
+    if(TDC1[4]>0)
       triggerinfo[4]=1;
 
     //check the s1 bits
-    if(unpacker::TDC1[3]>0)
+    if(TDC1[3]>0)
       triggerinfo[1]=1;
 
 
@@ -259,7 +259,7 @@ namespace trigger{
 
     /*
     std::cout<<"*******************\n";
-    std::cout<<"tfirsts:  "<<n_tfirst<<" "<<s1_tfirst<<" "<<nai_up_tfirst<<" "<<nai_down_tfirst<<" "<<unpacker::TDC1[4]<<" "<<s1raw_tfirst<<"\n";
+    std::cout<<"tfirsts:  "<<n_tfirst<<" "<<s1_tfirst<<" "<<nai_up_tfirst<<" "<<nai_down_tfirst<<" "<<TDC1[4]<<" "<<s1raw_tfirst<<"\n";
     std::cout<<"triggers: "<<triggerinfo[0]<<" "<<triggerinfo[1]<<" "<<triggerinfo[2]<<" "<<triggerinfo[3]<<" "<<triggerinfo[4]<<" "<<triggerinfo[5]<<"\n";
     std::cout<<"tmults:    "<<Narray.fT_mult<<" "<<s1_tmult<<" "<<nai_up_tmult<<" "<<nai_down_tmult<<" "<<"  "<<" "<<s1raw_tmult<<"\n";
     std::cout<<"emults:    "<<n_emult<<" "<<s1_emult<<" "<<nai_up_emult<<" "<<nai_down_emult<<" "<<"  "<<" "<<"  "<<std::endl;

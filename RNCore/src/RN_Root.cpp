@@ -4,10 +4,27 @@
 
 using namespace std;
 
-//Global////////////////////////////
-////////Histograms//////////////////
-//////////////////Cuts//////////////
-//////////////////////etc///////////
+
+////////////////////////////////////////////////////
+/////USER CHANGES ARE MADE HERE:////////////////////
+////////////////////////////////////////////////////
+
+CAEN_ADC ADC1("ADC1",2);
+CAEN_ADC ADC2("ADC2",3);
+CAEN_ADC ADC3("ADC3",4);
+CAEN_ADC ADC4("ADC4",5);
+CAEN_ADC ADC5("ADC5",6);
+CAEN_ADC ADC6("ADC6",7);
+CAEN_ADC ADC7("ADC7",8);
+CAEN_TDC TDC1("TDC1",10);
+CAEN_TDC TDC2("TDC2",11);
+CAEN_TDC TDC3("TDC3",12);
+CAEN_TDC TDC4("TDC4",13);
+MESY_QDC QDC1("QDC1",14);
+MESY_QDC QDC2("QDC2",16);
+MESY_QDC QDC3("QDC3",18);
+
+////////////////////////////////////////////////////////////////
 
 RN_ParticleCollection particle;
 RN_TriggerBitCollection triggerbit;
@@ -29,7 +46,150 @@ TTree * newtree;
 TList * analyzers;
 
 RN_Analyzer MainAnalyzer;
+
 RNROOT gRNROOT;
+
+
+int GetDetectorEntry(){
+
+
+  //Reset all detectors
+  for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
+    (*it).Reset();
+  }
+
+  Narray.Reset();
+
+  for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
+    (*it).Reset();
+  }
+  
+  for(RN_S2ClusterCollectionRef it=si_cluster_.begin();it!=si_cluster_.end();it++){
+    (*it).Reset();
+  }
+  for(RN_RFCollectionRef it=rftime.begin();it!=rftime.end();it++){
+    (*it).Reset();
+  }
+
+  ic.Reset();
+
+  for(RN_NaICollectionRef it=nai.begin();it!=nai.end();it++){
+    (*it).Reset();
+  }
+  
+  nai_array.Reset();
+
+
+  //ChanneltoDetector
+  
+  //Neutron Detector Long and Short gate Hits
+  int idx=1; //neut detectors start from channel 1 in QDC
+  for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
+    if(QDC1[idx]>0){
+      (*it).InsertPSDHit(QDC1[idx],QDC1[idx+16]);
+    }
+    if(TDC1[idx+16]>0){  
+      (*it).fT_Q=TDC1[idx+16];
+    }  
+    idx++;
+  }
+  //Neutron Detector position channel hits
+  //insert here
+
+  //Silicon Hits
+  for(int j=0;j<16;j++){
+    //si_a de front
+    if(ADC3[j+16]>0)si_[0].front.InsertHit(ADC3[j+16],0,j);
+    //si_b e front
+    if(ADC2[j+16]>0)si_[1].front.InsertHit(ADC2[j+16],0,j);
+    //si_a de back
+    if(ADC3[j]>0)si_[0].back.InsertHit(ADC3[j],TDC2[j+16],j);
+    //si_b e back
+    if(ADC2[j]>0)si_[1].back.InsertHit(ADC2[j],TDC2[j],j);
+
+  }
+
+  //NaI E and T hits
+  int k=0;
+  for(int j=0;j<8;j++){
+    if(ADC4[k+16]>0)nai[j].fE[0]=ADC4[k+16];
+    if(ADC4[k+17]>0)nai[j].fE[1]=ADC4[k+17];
+    if(TDC3[k+16]>0)nai[j+8].fT[0]=TDC3[k+16];
+    if(TDC3[k+17]>0)nai[j+8].fT[1]=TDC3[k+17];
+    
+    //if(TDC3[k]>0)nai[j].fT[0]=TDC3[k];  //first 16 channels don't look good
+    //if(TDC3[k+1]>0)nai[j].fT[1]=TDC3[k+1];//moving to TDC4 back 16
+
+   
+    if(TDC4[k+16]>0)nai[j].fT[0]=TDC4[k+16];
+    if(TDC4[k+17]>0)nai[j].fT[1]=TDC4[k+17];
+
+    if(j<4){
+      if(TDC4[k]>0)nai[j+16].fT[0]=TDC4[k];
+      if(TDC4[k+1]>0)nai[j+16].fT[1]=TDC4[k+1];
+    }
+    
+    k+=2;
+  }
+
+  k=0;
+  for(int j=0;j<12;j++){
+    if(ADC7[k]>0)nai[j+8].fE[0]=ADC7[k];
+    if(ADC7[k+1]>0)nai[j+8].fE[1]=ADC7[k+1];
+    k+=2;
+  }
+
+
+
+  //IonChamber Position grid hits
+  for(int k=0;k<32;k++){
+    if(ADC5[k]>0){
+      ic.xgrid.InsertHit(ADC5[k],0,k);
+    }
+    if(ADC6[k]>0){
+      ic.ygrid.InsertHit(ADC6[k],0,k);
+    }
+  }
+
+  //IonChamber E+dE hits
+  if(ADC4[14]>0)ic.fE=ADC4[14];
+  if(ADC4[15]>0)ic.fdE=ADC4[15];
+  //if(ADC4[13]>0)ic.fE=ADC4[13];
+  //if(ADC4[14]>0)ic.fdE=ADC4[14];  
+  if(TDC1[1]>0) ic.fT = TDC1[1];
+
+  //rftime
+  if(TDC1[0]>0)rftime[0].InsertHit(TDC1[0]);
+  
+  //mcptime
+  if(TDC1[2]>0)rftime[1].InsertHit(TDC1[2]);
+
+
+  if(TDC1[3]>0)triggerbit[0].fBit=TDC1[3];
+  if(TDC1[4]>0)triggerbit[1].fBit=TDC1[4];
+  
+
+  //recontruct clusters for all silicon detectors in S2Collection
+  unsigned int cref=0;
+  for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
+    if(cref<si_cluster_.size())
+      si_cluster_[cref].ReconstructClusters(*it);
+    cref++;
+    
+  }
+
+  //reconstruct neutron detector hits for all neutron detectors 
+  //in NeutCollection
+  Narray.ReconstructHits(neut);
+  RNArray::ReconstructTREL(neut,Narray.fT_mult,Narray.fT_first,Narray.fDetfirst);
+  
+  nai_array.ReconstructHits(nai);
+  
+  return 1;
+}
+
+
+
 
 namespace global{
   double beam_e(0);
@@ -122,7 +282,24 @@ void RN_RootInit(){
     nai.clear();
     particle.clear();
     triggerbit.clear();
+    unpacker::caen_stack.ClearStack();
+    unpacker::mesy_stack.ClearStack();
   }
+
+  //  unpacker::caen_stack.AddModule(&ADC1);
+  unpacker::caen_stack.AddModule(&ADC2);
+  unpacker::caen_stack.AddModule(&ADC3);
+  unpacker::caen_stack.AddModule(&ADC4);
+  unpacker::caen_stack.AddModule(&ADC5);
+  unpacker::caen_stack.AddModule(&ADC6);
+  unpacker::caen_stack.AddModule(&ADC7);
+  unpacker::caen_stack.AddModule(&TDC1);
+  unpacker::caen_stack.AddModule(&TDC2);
+  unpacker::caen_stack.AddModule(&TDC3);
+  unpacker::caen_stack.AddModule(&TDC4);
+  unpacker::mesy_stack.AddModule(&QDC1);
+  unpacker::mesy_stack.AddModule(&QDC2);
+  unpacker::mesy_stack.AddModule(&QDC3);
 
   //a,b,c,d in order of moving downstream from target.
   si_.push_back(RN_S2Detector("si_a",16,16));

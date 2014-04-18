@@ -36,8 +36,6 @@ namespace ionchamber{
   TH2D * h_xvy;
   TH2D * hIC_de_v_xgride;
 
-  using unpacker::TDC1;
-
   IC_Analyzer::IC_Analyzer()
   {
     

@@ -46,6 +46,8 @@ using RN_modules. also got rid of the need for a "config file".  Changes to the 
 
 #include "DataFormat.h"
 #include "sak_ReadBuffer.hpp"
+#include "RN_Module.hpp"
+
 
 typedef std::vector<std::string> ScalerNames;
 typedef std::vector<Double32_t> ScalerValues;
@@ -67,45 +69,15 @@ namespace unpacker{
   extern int mes_counter;
  
   extern Int_t Event[3];
-  extern float ADC1[32];
-  extern float ADC2[32];
-  extern float ADC3[32];
-  extern float ADC4[32];
-  extern float ADC5[32];
-  extern float ADC6[32];
-  extern float ADC7[32];
-  extern float TDC1[32];
-  extern float TDC2[32];
-  extern float TDC3[32];
-  extern float TDC4[32];
-  extern float QDC1[32];
-  extern float QDC2[32];
-  extern float QDC3[32];
-
-  extern TBranch        *b_Event;  //!
-  extern TBranch        *b_ADC1;   //!
-  extern TBranch        *b_ADC2;   //!
-  extern TBranch        *b_ADC3;   //!
-  extern TBranch        *b_ADC4;   //!
-  extern TBranch        *b_ADC5;   //!
-  extern TBranch        *b_ADC6;   //!
-  extern TBranch        *b_ADC7;   //!
-  extern TBranch        *b_TDC1;   //!
-  extern TBranch        *b_TDC2;   //!
-  extern TBranch        *b_TDC3;   //!
-  extern TBranch        *b_TDC4;   //!
-  extern TBranch        *b_QDC1;   //!
-  extern TBranch        *b_QDC2;   //!
-  extern TBranch        *b_QDC3;   //!
+  extern RN_Module_Stack caen_stack;
+  extern RN_Module_Stack mesy_stack;
  
+  extern TBranch        *b_Event;  //!
+  
   extern ScalerNames scaler_names;
   extern ScalerValues scaler_values;
-  extern std::vector<short> caen_stack;
-  extern std::vector<short> mesy_stack;
- 
-  int GetMesyNum();
-  int GetCaenNum();
-  int SortGeoChan(short geoaddress,short chan,short val);
+
+
   int Convert2Root(std::vector<std::string>&run_number,std::string data_dir,std::string output_file);
  int Convert2Root(const std::string&,std::string output_file);
   bool InitStack(const std::string& configfile);

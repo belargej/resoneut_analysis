@@ -37,15 +37,30 @@
 #include "RN_MassTable.hpp"
 #include "RN_TriggerBit.hpp"
 #include "RN_Analyzer.hpp"
+#include "RN_Module.hpp"
 
 const static unsigned int NEUTNUM(16);
 
 extern TFile *rootfile;
 extern TTree *newtree;
 
-
-
 //These are added here so that they will be added to rootcint
+extern CAEN_ADC ADC1;
+extern CAEN_ADC ADC2;
+extern CAEN_ADC ADC3;
+extern CAEN_ADC ADC4;
+extern CAEN_ADC ADC5;
+extern CAEN_ADC ADC6;
+extern CAEN_ADC ADC7;
+extern CAEN_TDC TDC1;
+extern CAEN_TDC TDC2;
+extern CAEN_TDC TDC3;
+extern CAEN_TDC TDC4;
+extern MESY_QDC QDC1;
+extern MESY_QDC QDC2;
+extern MESY_QDC QDC3;
+
+
 extern RN_ParticleCollection particle;
 extern RN_NeutDetectorArray Narray;	     
 extern RN_TriggerBitCollection triggerbit;	     
@@ -87,7 +102,7 @@ namespace global{
 		   std::string,std::string,std::string);
 }
 
-		 
+int GetDetectorEntry();		 
 void RN_RootReset();
 void RN_RootInit();
 void SetCalibrations();

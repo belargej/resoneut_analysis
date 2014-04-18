@@ -34,10 +34,14 @@
 #include <TCutG.h>
 
 #include "RN_Unpack2Root.hpp"
+#include "RN_Root.hpp"
+
 TRint *myRint;
+
 
 int main(int argc, char*argv[])
 {
+  RN_RootInit();
   if(argc==4){
     unpacker::InitStack(argv[3]);
     std::string runinput = argv[1];

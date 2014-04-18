@@ -5,8 +5,7 @@
 #define __RNUNPACKER_CXX
 
 #include "RN_Unpack2Root.hpp"
-
-
+#include "RN_Module.hpp"
 
 namespace unpacker{
   TFile* RootFile;
@@ -25,48 +24,14 @@ namespace unpacker{
   int mes_counter;
 
 
+  //Tree Parameters to be Unpacked into ROOTFile
   Int_t Event[3];//stores RunNum/flag/scaler
   ScalerNames scaler_names;
   ScalerValues scaler_values;
-
-
-  float ADC1[32];
-  float ADC2[32];
-  float ADC3[32];
-  float ADC4[32];
-  float ADC5[32];
-  float ADC6[32];
-  float ADC7[32];
-  float TDC1[32];
-  float TDC2[32];
-  float TDC3[32];
-  float TDC4[32];
-  float QDC1[32];
-  float QDC2[32];
-  float QDC3[32];
-
+  RN_Module_Stack caen_stack;
+  RN_Module_Stack mesy_stack;
   TBranch        *b_Event;  //!
-  TBranch        *b_ADC1;   //!
-  TBranch        *b_ADC2;   //!
-  TBranch        *b_ADC3;   //!
-  TBranch        *b_ADC4;   //!
-  TBranch        *b_ADC5;   //!
-  TBranch        *b_ADC6;   //!
-  TBranch        *b_ADC7;   //!
-  TBranch        *b_TDC1;   //!
-  TBranch        *b_TDC2;   //!
-  TBranch        *b_TDC3;   //!
-  TBranch        *b_TDC4;   //!
-  TBranch        *b_QDC1;   //!
-  TBranch        *b_QDC2;   //!
-  TBranch        *b_QDC3;   //!
- 
 
-  std::vector<short> caen_stack;
-  std::vector<short> mesy_stack;
-
-  int GetMesyNum(){return mesy_stack.size();}
-  int GetCaenNum(){return caen_stack.size();}
 
   int ExtractRingBuffer(){
     BufferWords = 4; BufferBytes = BufferWords * sizeof(short);     
@@ -196,8 +161,11 @@ namespace unpacker{
   }
   
   int UnpackPhysicsEvent(){
-    unsigned int caen_num=caen_stack.size();
-    unsigned int mesy_num=mesy_stack.size();
+    //check caen stack size, check mesy stack size
+    //these are sorted in the order they are added 
+    //to the stack, caen first then mesytec next.
+    unsigned int caen_num=caen_stack.GetSize();
+    unsigned int mesy_num=mesy_stack.GetSize();
 
     BufferPhysics++;
     ResetTreeParameters();	  
@@ -216,19 +184,20 @@ namespace unpacker{
       short geoaddress;
       if(*gpointer==0xffff){
 	gpointer=gpointer+2;
+	caen_stack.NextModule(0);
       continue;}
       ch_hits = ( *gpointer++ & 0xff00 ) >> 8; //read high byte as low byte
       geoaddress = ( *gpointer++ & 0xf800) >> 11;
       
-      if(geoaddress!=caen_stack[i]){
-	std::cout<<geoaddress<<" different from geoaddress in stack: "<< caen_stack[i]<<" at file pos: "<< evtfile.tellg()<<std::endl;
+      if(!caen_stack.NextModule(geoaddress)){
+	std::cout<<geoaddress<<" different from geoaddress in stack: "<< caen_stack.CurrentModule()->GeoAddress()<<" at file pos: "<< evtfile.tellg()<<std::endl;
 	gpointer+=ch_hits*2;
       }
       else{
 	for (short jj=0;jj<ch_hits;jj++){
 	  dat =  *gpointer++ & 0xfff;
 	  chan = *gpointer++ & 0x1f;
-	  SortGeoChan(geoaddress,chan,dat);
+	  caen_stack.SortGeoChVal(geoaddress,chan,dat);
 	  
 	}
       }
@@ -247,14 +216,14 @@ namespace unpacker{
     
       if(*zpointer==0xffff){
 	zpointer = zpointer + 2;
-	
+	mesy_stack.NextModule(0);
 	continue;}
       //this pointer gets number of 32 bit words so we must multiply by 2 for short words.
       shortwords = 2 * ( *zpointer++ & 0x0fff ); 
       ModuleID = *zpointer++ & 0x00ff;
       
-      if(ModuleID!=mesy_stack[i]){
-	std::cout<<ModuleID<<" different from geoaddress in stack: "<< mesy_stack[i]<<" at file pos: "<< evtfile.tellg()<<std::endl;
+      if(!mesy_stack.NextModule(ModuleID)){
+	std::cout<<ModuleID<<" different from geoaddress in stack: "<< mesy_stack.CurrentModule()->GeoAddress()<<" at file pos: "<< evtfile.tellg()<<std::endl;
 	gpointer+=shortwords;
       }
       else{
@@ -262,12 +231,12 @@ namespace unpacker{
 	  dat = *zpointer++ & 0xfff;
 	  chan = *zpointer++ & 0x1f;
 	
-	  SortGeoChan(ModuleID,chan,dat);
+	  mesy_stack.SortGeoChVal(ModuleID,chan,dat);
 	  
 	  
 	  
 	}
-    }
+      }
       mes_counter = *zpointer++;
       zpointer = zpointer + 3; //jump over EOB + ffff
       gpointer = zpointer; //move gpointer to end of this zpointer
@@ -284,7 +253,7 @@ namespace unpacker{
     
     if(gpointer!=endpointer){
       Event[1]=2;
-    gpointer=endpointer;
+      gpointer=endpointer;
     }
     
     if(DataTree)
@@ -314,11 +283,11 @@ bool InitStack(const std::string & configfile){
     if(input.size()>0){
       if(input[0]=="caen_stack")
 	for(unsigned int i=1;i<input.size();i++){
-	  caen_stack.push_back(sak::string_to_int(input[i]));
+	  // caen_stack.push_back(sak::string_to_int(input[i]));
 	}
       else if(input[0]=="mesy_stack")
 	for(unsigned int i=1;i<input.size();i++){
-	  mesy_stack.push_back(sak::string_to_int(input[i]));
+	  // mesy_stack.push_back(sak::string_to_int(input[i]));
 	}
       else if(input[0]=="scaler_list"){
 	for(unsigned int i=1;i<input.size();i++){
@@ -333,53 +302,17 @@ bool InitStack(const std::string & configfile){
 
   return 1;
 }
-
-
+  
+  
   void ResetTreeParameters(){
     Event[1]=0;
-    for(int i=0;i<32;i++){
-      ADC1[i]=0;
-      ADC2[i]=0;
-      ADC3[i]=0;
-      ADC4[i]=0;
-      ADC5[i]=0;
-      ADC6[i]=0;
-      ADC7[i]=0;
-      TDC1[i]=0;
-      TDC2[i]=0;
-      TDC3[i]=0;
-      TDC4[i]=0;
-      QDC1[i]=0;
-      QDC2[i]=0;
-      QDC3[i]=0;
-    }
+    caen_stack.Reset();
+    mesy_stack.Reset();  
   }
 
-
-  int SortGeoChan(short geoaddress,short chan, short val){
-    
-    if(geoaddress==2&&chan<32)ADC1[chan]=(float)val+gRandom->Rndm();
-    else if(geoaddress==3&&chan<32)ADC2[chan]=(float)val+gRandom->Rndm();
-    else if(geoaddress==4&&chan<32)ADC3[chan]=(float)val+gRandom->Rndm();
-    else if(geoaddress==5&&chan<32)ADC4[chan]=(float)val+gRandom->Rndm();
-    else if(geoaddress==6&&chan<32)ADC5[chan]=(float)val+gRandom->Rndm();
-    else if(geoaddress==7&&chan<32)ADC6[chan]=(float)val+gRandom->Rndm();
-    else if(geoaddress==8&&chan<32)ADC7[chan]=(float)val+gRandom->Rndm();
-    else if(geoaddress==10&&chan<32)TDC1[chan]=(float)val+gRandom->Rndm();
-    else if(geoaddress==11&&chan<32)TDC2[chan]=(float)val+gRandom->Rndm();
-    else if(geoaddress==12&&chan<32)TDC3[chan]=(float)val+gRandom->Rndm();
-    else if(geoaddress==13&&chan<32)TDC4[chan]=(float)val+gRandom->Rndm();
-    else if(geoaddress==14&&chan<32)QDC1[chan]=(float)val+gRandom->Rndm();
-    else if(geoaddress==16&&chan<32)QDC2[chan]=(float)val+gRandom->Rndm();
-    else if(geoaddress==16&&chan<32)QDC3[chan]=(float)val+gRandom->Rndm();
-    else return 0;
-    
-    return 1;
-    
-    
-  }
-
-///////////////////////////////////////////////////////////////////////////////////
+  
+  
+  ///////////////////////////////////////////////////////////////////////////////////
 // File converter, from .evt to .root. Arguments:
 // - files_list: used to specify the 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -397,20 +330,10 @@ bool InitStack(const std::string & configfile){
     
     //flag is used to notify the user of any issues seen during unpacking
     DataTree->Branch("Event",&Event,"RunNum/I:flag/I:ScalerIDX/I"); 
-    DataTree->Branch("ADC1",&ADC1,"ADC1[32]/F");
-    DataTree->Branch("ADC2",&ADC2,"ADC2[32]/F");
-    DataTree->Branch("ADC3",&ADC3,"ADC3[32]/F");
-    DataTree->Branch("ADC4",&ADC4,"ADC4[32]/F");
-    DataTree->Branch("ADC5",&ADC5,"ADC5[32]/F");
-    DataTree->Branch("ADC6",&ADC6,"ADC6[32]/F");
-    DataTree->Branch("ADC7",&ADC7,"ADC7[32]/F");
-    DataTree->Branch("TDC1",&TDC1,"TDC1[32]/F");
-    DataTree->Branch("TDC2",&TDC2,"TDC2[32]/F");
-    DataTree->Branch("TDC3",&TDC3,"TDC3[32]/F");
-    DataTree->Branch("TDC4",&TDC4,"TDC4[32]/F");
-    DataTree->Branch("QDC1",&QDC1,"QDC1[32]/F");
-    DataTree->Branch("QDC2",&QDC2,"QDC2[32]/F");
-    DataTree->Branch("QDC3",&QDC2,"QDC3[32]/F");
+
+    caen_stack.AddBranches(DataTree);
+    mesy_stack.AddBranches(DataTree);
+
     ScalerTree->Branch("Scaler",&scaler_values);
     
     //Loop over files in the data file list.
@@ -461,20 +384,10 @@ bool InitStack(const std::string & configfile){
     
     //flag is used to notify the user of any issues seen during unpacking
     DataTree->Branch("Event",&Event,"RunNum/I:flag/I:ScalerIDX/I"); 
-    DataTree->Branch("ADC1",&ADC1,"ADC1[32]/F");
-    DataTree->Branch("ADC2",&ADC2,"ADC2[32]/F");
-    DataTree->Branch("ADC3",&ADC3,"ADC3[32]/F");
-    DataTree->Branch("ADC4",&ADC4,"ADC4[32]/F");
-    DataTree->Branch("ADC5",&ADC5,"ADC5[32]/F");
-    DataTree->Branch("ADC6",&ADC6,"ADC6[32]/F");
-    DataTree->Branch("ADC7",&ADC7,"ADC7[32]/F");
-    DataTree->Branch("TDC1",&TDC1,"TDC1[32]/F");
-    DataTree->Branch("TDC2",&TDC2,"TDC2[32]/F");
-    DataTree->Branch("TDC3",&TDC3,"TDC3[32]/F");
-    DataTree->Branch("TDC4",&TDC4,"TDC4[32]/F");
-    DataTree->Branch("QDC1",&QDC1,"QDC1[32]/F");
-    DataTree->Branch("QDC2",&QDC2,"QDC2[32]/F");
-    DataTree->Branch("QDC3",&QDC2,"QDC3[32]/F");
+    
+    caen_stack.AddBranches(DataTree);
+    mesy_stack.AddBranches(DataTree);
+
     ScalerTree->Branch("Scaler",&scaler_values);
     
     //Loop over files in the data file list.

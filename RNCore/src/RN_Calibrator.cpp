@@ -103,7 +103,8 @@ namespace si_cal{
     std::cout<<"Total Entries: "<<totentries<<std::endl;
     
     for (Long64_t i=0;i<totentries;i++){
-      MainAnalyzer.GetDetectorEntry(i);
+      MainAnalyzer.GetEntry(i);
+      GetDetectorEntry();
       if(si_[DetID].front.fMult < 1 || si_[DetID].back.fMult < 1)
 	continue;
       if(si_[DetID].front.fChlist[0]==matchfront){
@@ -154,7 +155,8 @@ namespace si_cal{
     Long64_t totentries= MainAnalyzer.TotEntries();
     
     for (Long64_t i=0;i<totentries;i++){
-      MainAnalyzer.GetDetectorEntry(i);
+      MainAnalyzer.GetEntry(i);
+      GetDetectorEntry();    
       idx=0;
       for(RN_S2CalCollectionRef it=s2front.begin();it!=s2front.end();it++){
 	
@@ -188,8 +190,8 @@ namespace si_cal{
     std::cout<<"repeating now for back 2 front channel : "<<matchfront<<std::endl;
     
     for (Long64_t i=0;i<totentries;i++){
-      MainAnalyzer.GetDetectorEntry(i);
-      
+      MainAnalyzer.GetEntry(i);
+      GetDetectorEntry();
       idx=0;
       for(RN_S2CalCollectionRef it=s2back.begin();it!=s2back.end();it++){
 	

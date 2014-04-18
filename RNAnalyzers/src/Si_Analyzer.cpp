@@ -15,7 +15,6 @@
 
 #include "Si_Analyzer.hpp"
 #include "RN_Root.hpp"
-using unpacker::TDC1;
 
 namespace silicon{
   TCutG* prots1;
@@ -368,7 +367,7 @@ namespace silicon{
     h_chS1_chS2_segments->Fill(si_[0].back.Ch(),si_[1].back.Ch()); 
  
     h_s1_t->Fill(si_[0].Back_T(0));
-    if(!unpacker::TDC1[4]>0)
+    if(!TDC1[4]>0)
       h_s1_t_noticds->Fill(si_[0].Back_T(0));
     
     for(int i=0;i<2;i++){
