@@ -51,6 +51,24 @@ UInt_t RN_Parameter::SetBranch(TTree* _tree){
   return 1;
 }
 
+Bool_t RN_Parameter::operator == (const RN_Parameter& param) const {
+  return (param.fValue == fValue) ? 1 : 0;
+}
+
+
+Bool_t RN_Parameter::operator != (const RN_Parameter& param) const {
+  return (param.fValue != fValue) ? 1 : 0;
+}
+
+Bool_t RN_Parameter::operator == (const Double32_t& val) const {
+  return (val == fValue) ? 1 : 0;
+}
+
+
+Bool_t RN_Parameter::operator != (const Double32_t& val) const {
+  return (val != fValue) ? 1 : 0;
+}
+
 
 Double32_t RN_Parameter::operator = (const Double32_t& val) {
   fValue = val;
@@ -178,7 +196,7 @@ Double32_t operator / (const RN_Parameter& a, const RN_Parameter& b){
     return a.fValue / b.fValue;
   else return 0;
 }
-Double32_t operator / (const Double32_t& a, const RN_Parameter& b){
+Double32_t operator / (const Double32_t& a, const RN_Parameter& b) {
   if(b.fValue>0)
     return a / b.fValue;
   else return 0;

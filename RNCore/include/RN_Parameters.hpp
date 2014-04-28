@@ -54,6 +54,10 @@ public:
   RN_Parameter(const TString& name,const int &bins = 4096,const Double32_t& min = 0, const Double32_t& max = 4095);
   ~RN_Parameter(){};
 
+  Bool_t operator == (const Double32_t& val) const ;
+  Bool_t operator == (const RN_Parameter& param) const ;
+  Bool_t operator != (const RN_Parameter& param) const ;
+  Bool_t operator != (const Double32_t& val) const ;
   Double32_t operator = (const Double32_t& val);
   Double32_t operator = (const RN_Parameter& param);
   Double32_t operator  += (const Double32_t &val);
