@@ -67,6 +67,7 @@ public:
   int InsertHit(const double&, const double&, const double&);
   void SetSortByChannel(){sorted_by_channel=1;}
   virtual void SetCalibrations(RN_VariableMap& detvar);
+  virtual void Print();
 
   ClassDef(RN_BaseDetector,1);
 };

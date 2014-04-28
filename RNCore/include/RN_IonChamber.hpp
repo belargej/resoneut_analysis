@@ -40,6 +40,11 @@ class RN_IonChamber:public RN_BaseClass{
   float eshift;//!
   float tlin;//!
   float tshift;//!
+  TVector3 fHitPos;//!
+  Double32_t _zpos;//!
+  Double32_t _ypos;//!
+  Double32_t _xpos;//!
+  Double32_t wire_dist;//!
  public:
   RN_IonChamber(){}
   RN_IonChamber(std::string name):RN_BaseClass(name,name),
@@ -47,6 +52,11 @@ class RN_IonChamber:public RN_BaseClass{
 				  eshift(0),
 				  tlin(1),
 				  tshift(0),
+				  fHitPos(TVector3(0,0,0)),
+				  _zpos(250),
+				  _ypos(0),
+				  _xpos(0),
+				  wire_dist(5),//mm
 				  fE(0),
 				  fdE(0),
 				  xgrid(name+".xgrid",32),
@@ -69,9 +79,12 @@ class RN_IonChamber:public RN_BaseClass{
   Double32_t SumE_Y();
   Double32_t Pos_X();
   Double32_t Pos_Y();
-
+  void ReconstructHitPos();
+  TVector3 GetHitPos() const {return fHitPos;}
 
   inline Double32_t T() const{return fT>0 ? ((fT * tlin) + tshift): 0;}
+  Double32_t Theta() const {return fHitPos.Theta() * 180 / TMath::Pi();}
+  Double32_t Phi() const {return fHitPos.Phi() * 180 / TMath::Pi() ;}
 
   ClassDef(RN_IonChamber,1);
   

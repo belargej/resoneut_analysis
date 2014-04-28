@@ -32,7 +32,9 @@ namespace ionchamber{
   TH2D *hIC_ede;  
   TH2D *hIC_fefde;  
   TH1D *h_IC_t;
-  
+  TH1D *hIC_Theta;
+  TH1D *hIC_Phi;
+  TH2D *hIC_EvTheta;
   TH2D * h_xvy;
   TH2D * hIC_de_v_xgride;
 
@@ -58,8 +60,10 @@ namespace ionchamber{
 
     //create histograms
     rootfile->cd("IC/xy");
-    h_xvy= new TH2D("h_xvy","h_xvy;x_chan;y_chan",65,0,64,65,0,64);
-    
+    h_xvy= new TH2D("h_xvy","h_xvy;x_chan;y_chan",128,-128,128,128,-128,128);
+    hIC_Theta = new TH1D("h_ICTheta","h_ICTheta;Theta",180,0,179);
+    hIC_EvTheta = new TH2D("h_IC_EvTheta","h_IC_EvTheta;Theta;E",180,0,179,512,0,8191);
+    hIC_Phi = new TH1D("h_ICPhi","h_ICPhi;Phi",180,0,179);
     rootfile->cd("IC/ede");
     hIC_ede=new TH2D("hIC_EdE","IC_EdE;E [arb];dE [arb]",1024,0,4096,1024,0,4096);
     hIC_fefde=new TH2D("hIC_fEdE","hIC_fEdE;fE [arb];fdE [arb]",1024,0,4096,1024,0,4096);
@@ -79,7 +83,8 @@ namespace ionchamber{
   }
 
   bool IC_Analyzer::Process(){
-
+    ic.ReconstructHitPos();
+    
     hi_check[0]= (ede_hi1 && ede_hi1->IsInside(IC_TotalE,IC_ELoss));
     hi_check[1]= (ede_hi2 && ede_hi2->IsInside(IC_TotalE,IC_ELoss));
     hi_check[2]= (ede_hi3 && ede_hi3->IsInside(IC_TotalE,IC_ELoss));
@@ -98,9 +103,11 @@ namespace ionchamber{
     
     hIC_ede->Fill(IC_TotalE,IC_ELoss);
     hIC_fefde->Fill(ic.fE,ic.fdE);
-    h_xvy->Fill(ic.xgrid.Ch(),ic.ygrid.Ch());
+    h_xvy->Fill(ic.GetHitPos().X(),ic.GetHitPos().Y());
     hIC_de_v_xgride->Fill(IC_ELoss,ic.xgrid.fE[0]);
-
+    hIC_Theta->Fill(ic.Theta());
+    hIC_EvTheta->Fill(ic.Theta(),IC_TotalE);
+    hIC_Phi->Fill(ic.Phi());
     h_IC_t->Fill(ic.T());
     
 

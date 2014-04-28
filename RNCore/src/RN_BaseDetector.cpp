@@ -83,6 +83,16 @@ void RN_BaseDetector::SetCalibrations(RN_VariableMap& detvar){
 
 }
 
+void RN_BaseDetector::Print(){
+  TObject::Print();
+  std::cout<<"number of channels: "<<NumOfCh()<<"\n";
+  std::cout<<"sorted by channel: "<<sorted_by_channel<<"\n";
+  std::cout<<"elowlimit: "<<lowlimit<<"\n";
+  std::cout<<"ehighlimit: "<<highlimit<<"\n";
+
+  return;
+}
+
 int RN_BaseDetector::InsertHit(const double& e,const double& t,const double& ch){
 
   if(e <= lowlimit || e > highlimit) 

@@ -51,6 +51,7 @@ namespace silicon{
   TH1D *h_si_back_a[2];
   TH1D *h_si_front[2];
   TH1D *h_si_front_a[2];
+  TH1D *h_theta[2];
   TH2D *h_evtheta_arb[2];
   TH2D *h_evtheta[2];
   TH2D *h_evtheta_protgated[2];
@@ -218,6 +219,8 @@ namespace silicon{
 
 
     rootfile->cd("Silicon/Theta");
+    h_theta[0] = new TH1D("si_a_theta","si_a_theta;theta",180,0,45);
+    h_theta[1] = new TH1D("si_b_theta","si_b_theta;theta",180,0,45);
     hS1Theta_vS2Theta = new TH2D("hS1Theta_vS2Theta","hS1Theta_vS2Theta;S1Theta;S2Theta",180,0,44,180,0,44); ; 
     hS1Theta_vS2Theta_prot = new TH2D("hS1Theta_vS2Theta_prot","hS1Theta_vS2Theta_prot;S1Theta;S2Theta",180,0,44,180,0,44); 
     h_e_v_relangle = new TH2D("h_e_v_relangle","e_v_relangle;relangle[deg];E[MeV]",256,0,50,128,0,32);
@@ -348,6 +351,8 @@ namespace silicon{
   }
   bool Si_Analyzer::ProcessFill(){
 
+    h_theta[0]->Fill(si_cluster_[0].Theta()*180/3.14);
+    h_theta[1]->Fill(si_cluster_[1].Theta()*180/3.14);
 
     if(rel_angle && prot_E){
       h_e_v_relangle->Fill(rel_angle,prot_E);	

@@ -32,8 +32,8 @@ all: libRNanalyzers.so
 
 libRNanalyzers.so: ${OBJECTS} RNanalyzers_d.cpp 
 	 g++ -shared -o ${addprefix ../lib/,$@} $^ `root-config --ldflags --libs --cflags` ${DEBUG} $(INC_DIR) -fPIC
-	@echo "cleaning up: \n .o files"  
-	rm ${OBJECTS}
+#	@echo "cleaning up: \n .o files"  
+#	rm ${OBJECTS}
 	@echo "cleaning up: \n _d dictionary files"  	
 	rm RNanalyzers_d.*
 
@@ -50,7 +50,7 @@ RNanalyzers_d.cpp: ${HEADERS} $(HDRDIR)/my_LinkDef.h
 #####################################################################
 
 clean: 
-	rm ../../lib/libRNanalyzers.so RNanalyzers_d.*
+	rm ../../lib/libRNanalyzers.so RNanalyzers_d.* ${OBJECTS}
 
 newdict:
 	rm RNanalyzers_d.*
