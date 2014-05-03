@@ -35,6 +35,7 @@
 #include "RN_Calibrator.hpp"
 #include "RN_Root.hpp"
 
+using namespace RNROOT;
 
 void RN_S2Calibrator::AddHit(const double& ematch, const double& ech,const int& ch){
   Corr[ch].SetPoint(point[ch],ech,ematch);
@@ -85,26 +86,35 @@ namespace si_cal{
   
 
 
-  void ProduceCorrelationHistograms(const unsigned int& matchfront, const unsigned int& matchback, const unsigned int & DetID,const double & xbins,const double& xmin,const double&xmax,const double&ybins,const double & ymin, const double & ymax){
-    if (!rootfile){
-      std::cout<<"rootfile path not set, use SetRootOutputFile<>\n";
+  void ProduceCorrelationHistograms(const unsigned int& matchfront, 
+				    const unsigned int& matchback, 
+				    const unsigned int & DetID,
+				    RN_EventProcessor& EventProcessor,
+				    const double& xbins,
+				    const double& xmin,
+				    const double& xmax,
+				    const double& ybins,
+				    const double& ymin, 
+				    const double& ymax){
+    if (!gRootFile){
+      std::cout<<"gRootFile path not set, use SetRootOutputFile<>\n";
       return;
     }
-    rootfile->mkdir(Form("S%d/FrontMatch",DetID+1));   
-    rootfile->mkdir(Form("S%d/BackMatch",DetID+1));   
+    gRootFile->mkdir(Form("S%d/FrontMatch",DetID+1));   
+    gRootFile->mkdir(Form("S%d/BackMatch",DetID+1));   
     
     for(unsigned int i=0;i<16;i++){
-      rootfile->cd(Form("S%d/FrontMatch",DetID+1));   
+      gRootFile->cd(Form("S%d/FrontMatch",DetID+1));   
       si_fch_v_bch[i]=new TH2D(Form("s[%d]_fch[%d]_v_bch[%d]",DetID+1,matchfront,i),Form("s[%d]_fch[%d]_v_bch[%d];",DetID+1,matchfront,i),xbins,xmin,xmax,ybins,ymin,ymax);
-      rootfile->cd(Form("S%d/BackMatch",DetID+1));        
+      gRootFile->cd(Form("S%d/BackMatch",DetID+1));        
       si_bch_v_fch[i]=new TH2D(Form("s[%d]_bch[%d]_v_fch[%d]",DetID+1,matchback,i),Form("s[%d]_bch[%d]_v_fch[%d];",DetID+1,matchback,i),xbins,xmin,xmax,ybins,ymin,ymax);
     }
-    Long64_t totentries= MainAnalyzer.TotEntries();
+    Long64_t totentries= EventProcessor.TotEntries();
     std::cout<<"Total Entries: "<<totentries<<std::endl;
     
     for (Long64_t i=0;i<totentries;i++){
-      MainAnalyzer.GetEntry(i);
-      GetDetectorEntry();
+      EventProcessor.GetEntry(i);
+      EventProcessor.GetDetectorEntry();
       if(si_[DetID].front.fMult < 1 || si_[DetID].back.fMult < 1)
 	continue;
       if(si_[DetID].front.fChlist[0]==matchfront){
@@ -118,12 +128,12 @@ namespace si_cal{
 
     int response(2);
     while(response!=1 || response !=0){
-      std::cout<<"1: Write out rootfile and close, 0: Keep rootfile open and write manually\n";	
+      std::cout<<"1: Write out gRootFile and close, 0: Keep gRootFile open and write manually\n";	
       std::cin>>response;
       if(response==1){
-	rootfile->Write();
-	rootfile->Close();
-	delete rootfile;
+	gRootFile->Write();
+	gRootFile->Close();
+	delete gRootFile;
 	break;
       }
       else if(response==0)
@@ -142,7 +152,7 @@ namespace si_cal{
   // the highest energy ring hits with the highest
   // energy segment hits and matching the charge.
   
-  void AutoCalibrate(const unsigned int& matchfront,const unsigned int& matchback){
+  void AutoCalibrate(const unsigned int& matchfront,const unsigned int& matchback,RN_EventProcessor& EventProcessor){
     std::cout<<"calibrating back to front match channel : "<<matchfront<<std::endl;
     RN_S2CalCollection s2front;
     RN_S2CalCollection s2back;
@@ -152,11 +162,11 @@ namespace si_cal{
       
     }
     unsigned int idx=0;
-    Long64_t totentries= MainAnalyzer.TotEntries();
+    Long64_t totentries= EventProcessor.TotEntries();
     
     for (Long64_t i=0;i<totentries;i++){
-      MainAnalyzer.GetEntry(i);
-      GetDetectorEntry();    
+      EventProcessor.GetEntry(i);
+      EventProcessor.GetDetectorEntry();    
       idx=0;
       for(RN_S2CalCollectionRef it=s2front.begin();it!=s2front.end();it++){
 	
@@ -175,8 +185,8 @@ namespace si_cal{
       (*it).PerformFit();
       (*it).PrintCoefficients(Form("%s_front2back.in",si_[idx].Name().c_str()));
       
-      DetVar.LoadParams(Form("%s_front2back.in",si_[idx].Name().c_str()));
-      si_[idx].SetCalibrations(DetVar);      
+      gVariableMap.LoadParams(Form("%s_front2back.in",si_[idx].Name().c_str()));
+      si_[idx].SetCalibrations(gVariableMap);      
       
       idx++;
       
@@ -190,8 +200,8 @@ namespace si_cal{
     std::cout<<"repeating now for back 2 front channel : "<<matchfront<<std::endl;
     
     for (Long64_t i=0;i<totentries;i++){
-      MainAnalyzer.GetEntry(i);
-      GetDetectorEntry();
+      EventProcessor.GetEntry(i);
+      EventProcessor.GetDetectorEntry();
       idx=0;
       for(RN_S2CalCollectionRef it=s2back.begin();it!=s2back.end();it++){
 	
@@ -211,8 +221,8 @@ namespace si_cal{
       (*it).PrintCoefficients(Form("%s_back2front.in",si_[idx].Name().c_str()));
       //now load file and apply it to that detector
       
-      DetVar.LoadParams(Form("%s_back2front.in",si_[idx].Name().c_str()));
-      si_[idx].SetCalibrations(DetVar);
+      gVariableMap.LoadParams(Form("%s_back2front.in",si_[idx].Name().c_str()));
+      si_[idx].SetCalibrations(gVariableMap);
       idx++;
       
     }

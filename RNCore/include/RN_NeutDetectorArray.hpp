@@ -53,8 +53,7 @@ class RN_NeutDetector:public RN_BaseDetector{
   int fCounter_carbon;
 
  public:
-  RN_NeutDetector(){}
-  RN_NeutDetector(std::string name,int num,int ap);
+  RN_NeutDetector(std::string name="",int num=4,int ap=0);
 
   ~RN_NeutDetector(){}
 

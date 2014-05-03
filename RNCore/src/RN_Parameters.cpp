@@ -21,11 +21,11 @@ RN_Parameter::RN_Parameter(const TString& name, const int &bins,const Double32_t
   
 }
 
-UInt_t RN_Parameter::Reset(){
+void RN_Parameter::Reset(){
   //Reset all values stored in module channels
   fValue = 0;
   
-  return 0;
+  return ;
 }
 
 void RN_Parameter::Print(){
@@ -128,55 +128,36 @@ Double32_t RN_Parameter::operator  *= (const RN_Parameter &param){
  **********************************************************************/
 
 
-RN_Parameter_Stack::RN_Parameter_Stack(const TString& name):RN_BaseClass(name,name)						     
+RN_Parameter_Stack::RN_Parameter_Stack(const TString& name):RN_BaseClass_Stack(name)						     
 {
   
 }
 
-void RN_Parameter_Stack::Init(){
-  fRNParameters=new TList();
-}
-
-
-UInt_t RN_Parameter_Stack::Reset(){
-  //loop over all modules stored in TList of Modules and reset all of them
-  TIter next(fRNParameters);
-  while( RN_Parameter*obj = (RN_Parameter*)next()){
-    obj->Reset();
-  }
-  return 1;
-}
-
-
-UInt_t RN_Parameter_Stack::AddParameter(RN_Parameter *param){
-  if(!fRNParameters){
-    Init();
-  }
-  fRNParameters->Add(param);
-  return 1;
-}
-
 UInt_t RN_Parameter_Stack::AddBranches(TTree *_tree){
-  TIter next(fRNParameters);
+  TIter next(fRNStack);
   while( RN_Parameter*obj = (RN_Parameter*)next()){
     obj->AddBranch(_tree);
   }
   return 1;
 }
 
-void RN_Parameter_Stack::Print(){
-  TIter next(fRNParameters);
-  while( RN_Parameter*obj = (RN_Parameter*)next()){
-    obj->Print();
-  }
-  return ;
-}
 
 UInt_t RN_Parameter_Stack::SetBranches(TTree *_tree){
-  TIter next(fRNParameters);
+  TIter next(fRNStack);
   while( RN_Parameter*obj = (RN_Parameter*)next()){
     obj->SetBranch(_tree);
   }
+  return 1;
+}
+
+UInt_t RN_Parameter_Stack::Add(RN_BaseClass *base){
+  if(!base->InheritsFrom("RN_Parameter")){
+    return 0;
+  }
+  if(!fRNStack){
+    Init();
+  }
+  fRNStack->Add(base);
   return 1;
 }
 
@@ -206,6 +187,8 @@ Double32_t operator / (const RN_Parameter& a, const Double32_t& b){
     return a.fValue / b;
   else return 0;
 }
+
+
 
 Double32_t operator + (const RN_Parameter& a, const RN_Parameter& b){
   return a.fValue + b.fValue;

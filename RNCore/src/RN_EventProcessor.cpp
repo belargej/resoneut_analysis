@@ -1,35 +1,100 @@
 ////////////////////////////////////////////////////////////////////////
 ///Originally Created by: Sean Kuvin- 2013                             
 ////////////////////////////////////////////////////////////////////////
-#ifndef __RNUNPACKER_CXX
-#define __RNUNPACKER_CXX
+#ifndef __RNEVENTPROCESSOR_CXX
+#define __RNEVENTPROCESSOR_CXX
 
-#include "RN_Unpack2Root.hpp"
+#include "RN_EventProcessor.hpp"
 #include "RN_Module.hpp"
+#include "sak_ReadBuffer.hpp"
+#include "DataFormat.h"
+#include "RN_Root.hpp"
 
-namespace unpacker{
-  TFile* RootFile;
-  TTree* DataTree;
-  TTree* ScalerTree;
-  unsigned int BufferWords(0); //number of short length words, each 2 bytes
-  unsigned int BufferBytes(0); //number of bytes to be stored
-  unsigned int BufferType(0);
-  unsigned int NBuffers(0); 
-  int BufferPhysics(0);
-  std::ifstream evtfile;
-  std::ofstream logfile;
-  unsigned short * buffer;
-  int timer(0); 
- 
-  //Tree Parameters to be Unpacked into ROOTFile
-  Int_t Event[3];//stores RunNum/flag/scaler
-  ScalerNames scaler_names;
-  ScalerValues scaler_values;
-  RN_Module_Stack gModule_stack;
-  TBranch        *b_Event;  //!
+//default EventProcessor, ready to perform the Convert2Root Methods
+//AFTER a module stack has been configured.
+RN_EventProcessor gEventProcessor;
 
 
-  int RN_EventProcessor::ExtractRingBuffer(){
+
+
+void RN_EventProcessor::InitRootFile(TString rootfilename)
+{
+   // The Init() function is called when the selector needs to initialize
+   // a new tree or chain. Typically here the branch addresses and branch
+   // pointers of the tree will be set.
+   // It is normally not necessary to make changes to the generated
+   // code, but the routine can be extended by the user if needed.
+   // Init() will be called many times when running on PROOF
+   // (once per file to be processed)
+
+  if(!RNROOT::RN_RootSet)
+    RNROOT::Initialize();
+  
+  
+  fChain=new TChain("DataTree");
+  fChain->Add(rootfilename);
+
+  if(fChain->GetBranch("Event"))
+    fChain->SetBranchAddress("Event",&Event, &b_Event);
+  else
+    std::cout<<"No Event Branch Present, check in sorting code"<<std::endl;
+  
+  RNROOT::gParameter_stack.SetBranches(fChain);
+  RNROOT::gModule_stack.SetBranches(fChain);
+  
+}
+
+
+
+bool RN_EventProcessor::Begin(){
+  return 1;
+}
+
+
+
+
+void RN_EventProcessor::Loop(Long64_t start, Long64_t evnum){
+  if(!fChain){
+    std::cout<<"fChain not initialized, no root files added to Analyzer\n";
+    return;  	
+  }
+  
+  std::cout<<"Total Entries in Chain: "<<TotEntries()<<std::endl;
+  Long64_t totentries= TotEntries();    
+  if (start!=0&&evnum!=0)
+    if(start+evnum<totentries)
+      totentries=start+evnum;
+
+  
+  Begin();
+  RNROOT::gAnalyzer_stack.Begin();
+  
+  for (Long64_t i=start;i<totentries;i++){
+    Reset();
+    RNROOT::gAnalyzer_stack.Reset();
+    RNROOT::gParameter_stack.Reset();
+    //extract from the tree all of the module parameters
+    if(!GetEntry(i)){
+      continue;
+    }
+    if(i%30000==0)std::cout<<i<<std::endl;
+
+    GetDetectorEntry();
+    Process();
+    if(RNROOT::gAnalyzer_stack.Process()){
+      //only if Process returns true do we move to all of the ProcessFill
+      ProcessFill();
+      RNROOT::gAnalyzer_stack.ProcessFill();
+    }
+  }
+
+
+  RNROOT::gAnalyzer_stack.Terminate();
+  Terminate();
+
+}
+
+int RN_EventProcessor::ExtractRingBuffer(){
     BufferWords = 4; BufferBytes = BufferWords * sizeof(short);     
     buffer = new unsigned short[BufferWords];
     evtfile.read((char*)buffer,BufferBytes);
@@ -90,31 +155,31 @@ namespace unpacker{
   int RN_EventProcessor::UnpackBeginRun(){
     Event[0]=buffer[0];	  
     std::cout<<"Converting Run: "<<buffer[0]<<std::endl;
-    logfile<<"Converting Run: "<<buffer[0]<<std::endl;
+    if(logfile)logfile<<"Converting Run: "<<buffer[0]<<std::endl;
     unsigned short *tpointer;tpointer=buffer+4;
     int lowtime = *tpointer++ ;
     int hightime = *tpointer++ << 16 ;//read byte as high byte
     timer = (hightime + lowtime);
     std::cout<<"timer start :"<<timer<<std::endl;
-    logfile<<"timer start :"<<timer<<std::endl;
+    if(logfile)logfile<<"timer start :"<<timer<<std::endl;
     char title[TITLE_MAXSIZE+1];
     strcpy(title,(char*)tpointer);
     std::cout<<title<<std::endl;
-    logfile<<title<<std::endl;
+    if(logfile)logfile<<title<<std::endl;
     return 1;
     
   }
   
   
   int RN_EventProcessor::UnpackEndRun(){
-    logfile<<"End of Run :"<<buffer[0]<<std::endl;
+    if(logfile)logfile<<"End of Run :"<<buffer[0]<<std::endl;
     std::cout<<"End of Run :"<<buffer[0]<<std::endl;
     Event[0]=0;  
     unsigned short *tpointer;tpointer=buffer+4;
     int lowtime = *tpointer++ ;
     int hightime = *tpointer++ << 16 ;//read byte as high byte
     timer = (hightime + lowtime);
-    logfile<<"timer stop :"<<timer<<std::endl;
+    if(logfile)logfile<<"timer stop :"<<timer<<std::endl;
     std::cout<<"timer stop :"<<timer<<std::endl;
     ResetTreeParameters();
     return 1;
@@ -233,6 +298,7 @@ namespace unpacker{
   
   
   void RN_EventProcessor::ResetTreeParameters(){
+    
     gParameter_stack.Reset();
     gModule_stack.Reset();
     
@@ -245,7 +311,7 @@ namespace unpacker{
 // - files_list: used to specify the 
 ///////////////////////////////////////////////////////////////////////////////////
 
-  int Convert2Root(std::vector<std::string>&run_number,std::string data_dir,std::string output_file){
+int RN_EventProcessor::Convert2Root(std::vector<std::string>&run_number,std::string data_dir,std::string output_file){
 
     // ROOT output file
     RootFile = new TFile(output_file.c_str(),"RECREATE");  
@@ -300,61 +366,91 @@ namespace unpacker{
   }
 
 
-  int Convert2Root(const std::string& name,std::string output_file){
-
-    // ROOT output file
-    RootFile = new TFile(output_file.c_str(),"RECREATE");  
-    std::string logger = Form("%s.log",output_file.c_str());
-    logfile.open(logger.c_str(),std::ios::out);
-
+int RN_EventProcessor::Convert2Root(const std::string& name,std::string output_file){
+  
+  // ROOT output file
+  RootFile = new TFile(output_file.c_str(),"RECREATE");  
+  std::string logger = Form("%s.log",output_file.c_str());
+  logfile.open(logger.c_str(),std::ios::out);
+  
     // Data Tree
-    DataTree = new TTree("DataTree","DataTree");
-    ScalerTree = new TTree("ScalerTree","ScalerTree");
+  DataTree = new TTree("DataTree","DataTree");
+  ScalerTree = new TTree("ScalerTree","ScalerTree");
+  
+  //flag is used to notify the user of any issues seen during unpacking
+  DataTree->Branch("Event",&Event,"RunNum/I:flag/I:ScalerIDX/I"); 
     
-    //flag is used to notify the user of any issues seen during unpacking
-    DataTree->Branch("Event",&Event,"RunNum/I:flag/I:ScalerIDX/I"); 
-    
-    gModule_stack.AddBranches(DataTree);
-    
-
-    for(unsigned int i=0; i<scaler_values.size();i++){
-      ScalerTree->Branch(scaler_names[i].c_str(),scaler_values[i]);
-    }
-    //Loop over files in the data file list.
-    
-    //this section to properly format the evt number to buffer run number with zeroes.
-    
-    
-    //Open evt file
-    evtfile.open(name.c_str(),std::ios::binary);      
-    if (!evtfile.is_open()){
-      std::cout << "  Could not open " << name << std::endl;
-      exit(EXIT_FAILURE);
-    }
-    else 
-      std::cout << "  Converting " << name << " ..." << std::endl;
-    
-    while(ExtractRingBuffer()){}
-    evtfile.close();
-    
-    std::cout << std::setprecision(3);
-    std::cout << "Total buffers = " << NBuffers << std::endl;
-    std::cout << "Physics buffers = " << BufferPhysics  << " (" 
-	      << 100.0*BufferPhysics/NBuffers << "\% of total buffers)" << std::endl;
-    std::cout << "Output file: " << output_file <<  std::endl;
-    
-    if(buffer!=0)buffer = NULL;
-    logfile.close();
-    DataTree->Write();
-    ScalerTree->Write();
-    RootFile->Close(); 
-    // The function Close() first writes to the ROOT file and then closes it.  
-    
-    return 0;
+  gModule_stack.AddBranches(DataTree);
+  
+  
+  for(unsigned int i=0; i<scaler_values.size();i++){
+    ScalerTree->Branch(scaler_names[i].c_str(),scaler_values[i]);
   }
-}
+  //Loop over files in the data file list.
+  
+  //this section to properly format the evt number to buffer run number with zeroes.
+  
+  
+  //Open evt file
+  evtfile.open(name.c_str(),std::ios::binary);      
+  if (!evtfile.is_open()){
+    std::cout << "  Could not open " << name << std::endl;
+    exit(EXIT_FAILURE);
+  }
+  else 
+    std::cout << "  Converting " << name << " ..." << std::endl;
+  
+  while(ExtractRingBuffer()){}
+  evtfile.close();
+  
+  std::cout << std::setprecision(3);
+  std::cout << "Total buffers = " << NBuffers << std::endl;
+  std::cout << "Physics buffers = " << BufferPhysics  << " (" 
+	    << 100.0*BufferPhysics/NBuffers << "\% of total buffers)" << std::endl;
+  std::cout << "Output file: " << output_file <<  std::endl;
+  
+  if(buffer!=0)buffer = NULL;
+  logfile.close();
+  DataTree->Write();
+  ScalerTree->Write();
+  RootFile->Close(); 
+  // The function Close() first writes to the ROOT file and then closes it.  
     
+  return 0;
+}
 
+    
+int RN_EventProcessor::AttachFromEVT(const TString& evtfilename){
+  //Open evt file
+  evtfile.open(evtfilename,std::ios::binary);      
+  if (!evtfile.is_open()){
+    std::cout << "  Could not open " << evtfilename << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  Begin();
+  RNROOT::gAnalyzer_stack.Begin();
+
+  Reset();
+  RNROOT::gAnalyzer_stack.Reset();  
+  
+  while(ExtractRingBuffer()){
+    GetDetectorEntry();
+    Process();
+    if(RNROOT::gAnalyzer_stack.Process()){
+      //only if Process returns true do we move to all of the ProcessFill
+      ProcessFill();
+      RNROOT::gAnalyzer_stack.ProcessFill();
+    }
+    Reset();
+    RNROOT::gParameter_stack.Reset();
+    RNROOT::gAnalyzer_stack.Reset();
+  }
+  
+
+  RNROOT::gAnalyzer_stack.Terminate();
+  Terminate();
+}
 
 
 

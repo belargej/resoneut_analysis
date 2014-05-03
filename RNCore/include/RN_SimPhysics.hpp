@@ -21,7 +21,7 @@
 namespace sim{
 
   class RN_AngularDistribution:public RN_BaseClass{
-    
+        
     
   public:
     RN_AngularDistribution();

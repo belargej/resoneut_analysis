@@ -17,6 +17,7 @@ namespace sim{
 
 using namespace sim;
 
+
 RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetector(name,num),
 								 
 								  elin(1),
@@ -46,7 +47,7 @@ RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetecto
 
 // 
 void RN_NeutDetector::Build(){
-  gRNROOT.AddDetector(this);
+  //  gRNROOT.AddDetector(this);
   
 }
 

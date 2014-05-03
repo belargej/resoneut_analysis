@@ -16,7 +16,7 @@ void RN_IonChamber::Reset(){
 
 }
 
-Double32_t RN_IonChamber::SumE_X(){
+Double32_t RN_IonChamber::SumE_X() const{
   Double32_t e = 0;
   for(unsigned int i=0;i<xgrid.fMult;i++){
     e += xgrid.E(i);
@@ -24,8 +24,7 @@ Double32_t RN_IonChamber::SumE_X(){
   return e; 
 }
 
-
-Double32_t RN_IonChamber::SumE_Y(){
+Double32_t RN_IonChamber::SumE_Y() const{
   Double32_t e = 0;
   for(unsigned int i=0;i<ygrid.fMult;i++){
     e += ygrid.E(i);

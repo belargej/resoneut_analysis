@@ -26,21 +26,23 @@
 
 class RN_Particle:public RN_BaseClass{
 private:
-
-public:
-  RN_Particle(){};
-  RN_Particle(std::string,double){}
-  RN_Particle(std::string);
-  ~RN_Particle(){};
-
   double mass;
   double ex_energy;
+public:
+  RN_Particle(const std::string& pname = "",const double& ex = 0);
+  ~RN_Particle(){};
+
+  
   TLorentzVector LV;
 
-  Double_t KE();
+  Double32_t M()const {return LV.M();}
+  Double32_t Ex()const {return ex_energy;}
+  Double32_t SetExEnergy(const double & exe){return (ex_energy = exe);};
+  Double32_t KE()const {return LV.E()-LV.M();}
+  void Init(const std::string & pname );
   void Reset();
 
-  ClassDef(RN_Particle,1);
+  ClassDef(RN_Particle,2);
 };
 
 typedef std::vector<RN_Particle> RN_ParticleCollection;

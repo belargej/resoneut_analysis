@@ -80,7 +80,7 @@ public:
   UInt_t ZeroSuppression()const {return fZeroSuppression;}
   UInt_t CheckValid()const {return fValid;}
   UInt_t SortChVal(const UInt_t& ch, const UInt_t& val);
-  UInt_t Reset();
+  virtual void Reset();
   virtual UInt_t AddBranch(TTree* _tree);
   virtual UInt_t SetBranch(TTree* _tree);
   virtual void Print(); 
@@ -88,33 +88,27 @@ public:
   ClassDef(RN_Module,1);
 };
 
-class RN_Module_Stack:public RN_BaseClass{
+class RN_Module_Stack:public RN_BaseClass_Stack{
 protected:
-  TList *fRNModules;//!  
+
 public: 
  
   RN_Module_Stack(const TString& name="");
-  ~RN_Module_Stack(){
-    if(fRNModules){
-      delete fRNModules;
-      fRNModules=NULL;
-    }
-  }
-  void Init();
-  UInt_t GetSize()const{return fRNModules ? fRNModules->GetSize() : 0;};
+  ~RN_Module_Stack(){}
+  
+  
   UInt_t GetNum(UInt_t modtype = 0);
   virtual UInt_t AddBranches(TTree* _tree);
-  virtual UInt_t SetBranches(TTree* _tree);
-  UInt_t AddModule(RN_Module *mod);
-  void ClearStack(){if(fRNModules)fRNModules->Clear();} 
+  virtual UInt_t SetBranches(TTree* _tree); 
+  virtual UInt_t Add(RN_BaseClass * base);
   Bool_t UnpackModules(unsigned short *& pointer, int filepos);
   UInt_t SortGeoChVal(const UShort_t&geoaddress,const UInt_t& ch, const UInt_t& val);
-  virtual void Print();
-  UInt_t Reset();
-
-
+ 
   ClassDef(RN_Module_Stack,1);
 };
+
+extern RN_Module_Stack gModule_stack;
+
 
 class CAEN_ADC:public RN_Module{
 private:

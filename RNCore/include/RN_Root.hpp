@@ -26,7 +26,7 @@
 #include <TCutG.h>
 
 #include <map>
-#include "RN_Unpack2Root.hpp"
+#include "RN_EventProcessor.hpp"
 #include "RN_Particle.hpp"
 #include "RN_NeutDetectorArray.hpp"
 #include "RN_SiliconDetectors.hpp"
@@ -38,13 +38,17 @@
 #include "RN_TriggerBit.hpp"
 #include "RN_Analyzer.hpp"
 #include "RN_Module.hpp"
+#include "RN_Parameters.hpp"
+#include "RN_ReactionInfo.hpp"
+
 
 const static unsigned int NEUTNUM(16);
+const static unsigned int SI_NUM(2);
+const static unsigned int NAI_NUM(20);
+const static unsigned int TRIGBIT_NUM(5);
 
-extern TFile *rootfile;
-extern TTree *newtree;
+//objects here are declared extern so that they will be added to rootcint and be available to any code which imports RN_Root.hpp
 
-//These are added here so that they will be added to rootcint
 extern CAEN_ADC ADC1;
 extern CAEN_ADC ADC2;
 extern CAEN_ADC ADC3;
@@ -60,105 +64,79 @@ extern MESY_QDC QDC1;
 extern MESY_QDC QDC2;
 extern MESY_QDC QDC3;
 
-
-extern RN_ParticleCollection particle;
-extern RN_NeutDetectorArray Narray;	     
-extern RN_TriggerBitCollection triggerbit;	     
-extern RN_NeutCollection neut;	     
-extern RN_S2Collection si_;		     
-extern RN_S2ClusterCollection si_cluster_;
-extern RN_RFCollection rftime;	     
-extern RN_IonChamber ic;		     
-extern RN_NaICollection nai;		     
-extern RN_NaIArray nai_array;
-
-extern RN_VariableMap DetVar;
-extern RN_MassTable MassTable;
-extern int RN_RootSet;
-
-extern TFile * rootfile;
-extern TTree * newtree;
-extern TList * analyzers;
-
-extern RN_Analyzer MainAnalyzer;
-
 namespace global{
-  extern double beam_e;
-  extern double beam_eloss;
-  extern double beam_est;
-  extern double m_beam;
-  extern double m_target;
-  extern double m_frag;
-  extern double m_recoil;
-  extern double m_heavy_decay;
-  extern double m_decay_product;
-  extern double hi_ex_set;
-  extern double d_ex_set;
-  extern double E_fragment;
   extern TRandom3 myRnd;
-  extern TVector3 target_pos;
-
-  void SetReaction(std::string,std::string,std::string,
-		   std::string,std::string,std::string);
 }
 
-int GetDetectorEntry();		 
-void RN_RootReset();
-void RN_RootInit();
-void SetCalibrations();
-void LoadVariableFile(const std::string& f);
-void SetRootOutputFile(std::string filename);
-void SetRootOutputFileAndTree(std::string filename,std::string treename);
-int AddAnalyzer(TObject *object);
+namespace RNROOT{
+  //for handling the output of an RNROOT session we use these
+  //objects:
+  extern TFile *gRootFile;  //set with SetRootOutputFile()
+  extern TTree *gNewTree;   //set both with SetRootOutputFileAndTree()
+  extern int RN_RootSet;
+  /******************************************************/
+
+  //RN_ROOT objects:
+
+  extern RN_VariableMap gVariableMap;
+  extern RN_MassTable gMassTable;
+  extern RN_Analyzer gMainAnalyzer;
+  extern RN_PrimaryReaction gPrimaryReaction;
+
+  /*****************************************************/
+  
+  //containers for RN_ROOT objects:
+
+  //these RN_BaseClass objects are managed by their own RN_BaseClass_Stacks which are TList (doubly-linked lists to TObject inherited object addresses)
+  extern RN_Analyzer_Stack gAnalyzer_stack; //handles RN_Analyzers
+  extern RN_Module_Stack gModule_stack; //handles RN_Modules
+  extern RN_Parameter_Stack gParameter_stack; //handle RN_Parameters
+  extern RN_ReactionInfo gReactionInfo;//handle not only the primary reaction of interest but all other potential reactions that the user wants to consider
+
+  //right now I'm using std::vectors to handle the following RN_Baseclass objects (which inherit from TObject).  In the future I may move to using root TLists for these objects too (like I do for the 'stacks' above).  
+  extern RN_NeutDetectorArray Narray;	     
+  extern RN_TriggerBitCollection triggerbit;	     
+  extern RN_NeutCollection neut;	     
+  extern RN_S2Collection si_;		     
+  extern RN_S2ClusterCollection si_cluster_;
+  extern RN_RFTime rftime;
+  //extern RN_MCPDetector MCP;
+  extern RN_IonChamber ic;		     
+  extern RN_NaICollection nai;		     
+  extern RN_NaIArray nai_array;
+  /*******************************************************/
+
+  int Initialize();
+  void LoadVariableFile(const std::string & f);
+  void SetRootOutputFile(const std::string& filename);
+  void SetRootOutputFileAndTree(const std::string & filename, const std::string& treename);
+  void SetCalibrations(RN_VariableMap &VarMap = gVariableMap);
+  
 
 
-////////////////////////////////////////////////////////////////////////////
-//// 3/23: Under Construction RNROOT framework class
-///////////////////////////////////////////////////////////////////////////
 
-class RNROOT{
 
-private:
-  TList *fRNAnalyzers;
-  TList *fRNDetectors;
-  TList *fRNClasses;
-  TList *fRNVariables;
-  TList *fRNParameters;
-  RN_VariableMap DetVar;
-  //RN_MassTable MassTable;
-  RN_Analyzer MainAnalyzer;
-  int RN_RootSet;
 
-public:
-  TFile *rootfile;
-  TTree *newtree;
 
-  RNROOT(){};
-  virtual ~RNROOT();
-  TList * GetListOfRNClasses(){return fRNClasses;}
-  TList * GetListOfRNAnalyzers(){return fRNAnalyzers;}
-  TList * GetListOfRNDetectors(){return fRNDetectors;}
-  TList * GetListOfRNParameters(){return fRNParameters;}
-  TList * GetListOfRNVariables(){return fRNVariables;}
-  //RN_ReactionInfo GetRN_ReactionInfo();
-  int AddAnalyzer(TObject *object);
-  int AddDetector(TObject *object);
-  int AddParameter(TObject *object);
-  int AddVariable(TObject *object);
-  int AddClass(TObject *object);
-  virtual void Bind(){};
-  virtual void Execute(){};
-  void LoadVariableFile(const std::string& f);
-  void Reset();
-  void Init();
-  virtual void SetCalibrations();
-  void SetRootOutputFile(std::string filename);
-  void SetRootOutputFileAndTree(std::string filename,std::string treename);
-  void SetReaction(std::string,std::string,std::string,
-		   std::string,std::string,std::string);
 
-};
 
-extern RNROOT gRNROOT;
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+}
+
+
 
 #endif

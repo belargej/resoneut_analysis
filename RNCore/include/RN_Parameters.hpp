@@ -71,7 +71,7 @@ public:
 
 
   Bool_t CheckValid()const {return fValid;}  
-  UInt_t Reset();
+  virtual void Reset();
   virtual UInt_t AddBranch(TTree* _tree);
   virtual UInt_t SetBranch(TTree* _tree);
   virtual void Print(); 
@@ -95,32 +95,22 @@ public:
 
 
 
-class RN_Parameter_Stack:public RN_BaseClass{
+class RN_Parameter_Stack:public RN_BaseClass_Stack{
 protected:
-  TList *fRNParameters;//!  
+
 public: 
  
   RN_Parameter_Stack(const TString& name="");
-  ~RN_Parameter_Stack(){
-    if(fRNParameters){
-      ClearStack();
-      delete fRNParameters;
-      fRNParameters=NULL;
-    }
-  }
-  void Init();
-  UInt_t GetSize()const{return fRNParameters ? fRNParameters->GetSize() : 0;}
-  UInt_t GetNum() const{return GetSize();}
+  ~RN_Parameter_Stack(){}
+
   virtual UInt_t AddBranches(TTree* _tree);
   virtual UInt_t SetBranches(TTree* _tree);
-  UInt_t AddParameter(RN_Parameter *param);
-  void ClearStack(){if(fRNParameters)fRNParameters->Clear();} 
-  virtual void Print();
-  UInt_t Reset();
-  
+  virtual UInt_t Add(RN_BaseClass * base);
 
   ClassDef(RN_Parameter_Stack,1);
 };
 
+
+extern RN_Parameter_Stack gParameter_stack;
 
 #endif

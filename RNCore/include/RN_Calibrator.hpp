@@ -35,6 +35,7 @@
 #include <TCutG.h>
 #include <TF1.h>
 
+#include "RN_Root.hpp"
 
 
 class RN_S2Calibrator{
@@ -64,18 +65,22 @@ public:
 
 namespace si_cal{
 
-  void ProduceCorrelationHistograms(const unsigned int& matchfront,
+  void ProduceCorrelationHistograms(
+				    const unsigned int& matchfront,
 				    const unsigned int& matchback, 
 				    const unsigned int& DetID,
+				    RN_EventProcessor& EventProcessor = RNROOT::gMainAnalyzer,
 				    const double& xbins=2048,
 				    const double& xmin=0,
 				    const double& xmax=4095,
 				    const double& ybins=2048,
 				    const double& ymin=0,
 				    const double& ymax=4095);
-
-  void AutoCalibrate(const unsigned int&, const unsigned int&);
-
+  
+  void AutoCalibrate(const unsigned int& matchfront, 
+		     const unsigned int& matchback,
+		     RN_EventProcessor& EventProcessor = RNROOT::gMainAnalyzer);
+  
   Double_t GetPulserOffset(TH1D * h1,
 			   const int&Peaks,
 			   Float_t * inputs, 

@@ -75,8 +75,12 @@ class RN_IonChamber:public RN_BaseClass{
   void Reset();
   void SetCalibrations(float, float, float, float);
   void SetCalibrations(RN_VariableMap& detvar);
-  Double32_t SumE_X();
-  Double32_t SumE_Y();
+  Double32_t E() const {return fE>0 ? (fE * elin + eshift) : 0;}
+  Double32_t DE() const {return fdE>0 ? (fdE * elin + eshift) : 0;}
+  Double32_t TotalE() const{return E()+DE();}//sum-all sections
+  Double32_t SumE_Pos()const {return SumE_X()+SumE_Y();}//sum-both pos grid sections
+  Double32_t SumE_X() const;//sum all wires xgrid section
+  Double32_t SumE_Y() const;//sum all wires ygrid section
   Double32_t Pos_X();
   Double32_t Pos_Y();
   void ReconstructHitPos();

@@ -174,7 +174,7 @@ RN_ParticleGun::RN_ParticleGun(std::string name,
 					  keMax(maxKE)
 					 
 {
-  MassTable.GetParam(name,mass);
+  RNROOT::gMassTable.GetParam(name,mass);
 
 }
 
