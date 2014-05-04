@@ -1,45 +1,60 @@
-#ifndef RN_REACTIONINFO_H
-#define RN_REACTIONINFO_H
+#ifndef RN_REACTIONINFO_CXX
+#define RN_REACTIONINFO_CXX
 
 #include "RN_ReactionInfo.hpp"
+#include "RN_Root.hpp"
+using namespace global;
 
-RN_PrimaryReaction::RN_PrimaryReaction(TString beam, TString target, TString recoil, TString fragment){
+
+RN_PrimaryReaction::RN_PrimaryReaction(const std::string & beam, const std::string & target, const std::string & recoil, const std::string & fragment){
   
   pBeam.Init(beam);
   pTarget.Init(target);
   pRecoil.Init(recoil);
   pFragment.Init(fragment);
-  
+  fIsSet = 1;
 }
 
-RN_PrimaryReaction::SetReaction(TString beam, 
-				TString target, 
-				TString recoil, 
-				TString fragment){
+void RN_PrimaryReaction::SetReaction(const std::string & beam, 
+				const std::string & target, 
+				const std::string & recoil, 
+				const std::string & fragment){
 		       
   pBeam.Init(beam);
   pTarget.Init(target);
   pRecoil.Init(recoil);
   pFragment.Init(fragment);
-
+  fIsSet =1;
 }
 
 //Set Primary Reaction and automatically add one decay channel
-RN_PrimaryReaction::SetReaction(TString beam, 
-				TString target, 
-				TString recoil, 
-				TString fragment,
-				TString product,
-				TString heavy){
+void RN_PrimaryReaction::SetReaction(const std::string & beam, 
+				const std::string & target, 
+				const std::string & recoil, 
+				const std::string & fragment,
+				const std::string & product,
+				const std::string & heavy){
   pBeam.Init(beam);
   pTarget.Init(target);
   pRecoil.Init(recoil);
   pFragment.Init(fragment);
   AddDecayChannel(product,heavy);
+  fIsSet = 1;
+}
+void RN_PrimaryReaction::Clear(){
+  pBeam.Clear();
+  pTarget.Clear();
+  pRecoil.Clear();
+  pFragment.Clear();
+  
+  //need to add delete the decay channels
+  if(fDecayChannels)fDecayChannels->Clear();
 
+  fIsSet = 0;
 }
 
-RN_PrimaryReaction::AddDecayChannel(TString decay, TString heavy){
+
+RN_DecayChannel* RN_PrimaryReaction::AddDecayChannel(const std::string & decay, const std::string & heavy){
   //create new decay channel
   RN_DecayChannel * decaychan = new RN_DecayChannel(this,decay,heavy);
   if(!fDecayChannels)
@@ -47,59 +62,65 @@ RN_PrimaryReaction::AddDecayChannel(TString decay, TString heavy){
   
   fDecayChannels->Add(decaychan);
   
-  
+  return decaychan;
 }
 
 void RN_PrimaryReaction::SetAngularDistribution(const std::string & filename){
-  fDWBA = RN_AngularDistribution(filename);
+  fDWBA = sim::RN_AngularDistribution(filename);
 }
 
 Double32_t RN_PrimaryReaction::M_Decay_Product(int i){
-  if(i < GetListOfDecayChannels().GetSize())
-    return GetListOfDecayChannels()->At(i)->M_Decay_Product();
+  if(GetListOfDecayChannels() && i < GetListOfDecayChannels()->GetSize())
+    return ((RN_DecayChannel*)GetListOfDecayChannels()->At(i))->M_Decay_Product();
+  else 
+    return 0;
 }
 
 
 Double32_t RN_PrimaryReaction::M_Heavy_Decay(int i){
-  if(i < GetListOfDecayChannels().GetSize())
-    return GetListOfDecayChannels()->At(i)->M_Heavy_Decay();
+  if(GetListOfDecayChannels() && i < GetListOfDecayChannels()->GetSize())
+    return ((RN_DecayChannel *)GetListOfDecayChannels()->At(i))->M_Heavy_Decay();
+  else 
+    return 0;
 }
 
 TLorentzVector& RN_PrimaryReaction::DecayProductLV(int i){
-  if(i < GetListOfDecayChannels().GetSize())
-    return GetListOfDecayChannels()->At(i)->DecayProductLV();
+  
+  return ((RN_DecayChannel *)GetListOfDecayChannels()->At(i))->DecayProductLV();
 }
 
 TLorentzVector& RN_PrimaryReaction::HeavyDecayLV(int i){
-  if(i < GetListOfDecayChannels().GetSize())
-    return GetListOfDecayChannels()->At(i)->HeavyDecayLV();
+  
+  return ((RN_DecayChannel *)GetListOfDecayChannels()->At(i))->HeavyDecayLV();
+  
 }
 
 RN_Particle& RN_PrimaryReaction::DecayProduct(int i){
-  if(i < GetListOfDecayChannels().GetSize())
-    return GetListOfDecayChannels()->At(i)->DecayProduct();
+
+  return ((RN_DecayChannel *)GetListOfDecayChannels()->At(i))->DecayProduct();
 }
 
 RN_Particle& RN_PrimaryReaction::HeavyDecay(int i){
-  if(i < GetListOfDecayChannels().GetSize())
-    return GetListOfDecayChannels()->At(i)->HeavyDecay();
+  
+  return ((RN_DecayChannel *)GetListOfDecayChannels()->At(i))->HeavyDecay();
+ 
 }
 
 
-bool RN_PrimaryReaction::GenerateSimEvent(){
+Double32_t RN_PrimaryReaction::GenerateSimEvent(){
   //get a beam energy that is dependent on how deep in the target the reaction took place
+  double theta(0);
+  TVector3 nv;
+  double phi(0);
+  sim::RN_SimEvent evt1;
   do{
     double beam_energy = BeamEnergy()-myRnd.Rndm()*BeamELoss();
-    sim::RN_SimEvent evt1(beam_energy,M_Beam(),M_Target(),M_Recoil(),M_Fragment());
-    TVector3 nv;
-    double theta;
-    double phi;
-    
+    evt1.Init(beam_energy,M_Beam(),M_Target(),M_Recoil(),M_Fragment());
     //find an angle in theta and phi that falls under the probability curve given by the angular distribution
     do{
       theta=M_PI*myRnd.Rndm();
-      n_cm=theta;
-    phi = 2.*M_PI*myRnd.Rndm();
+      phi = 2.*M_PI*myRnd.Rndm();
+      nv.SetMagThetaPhi(1.,theta,phi);
     }while (myRnd.Rndm()>fDWBA.GetAD(180.- (theta / M_PI * 180.)));
   }while(!evt1.radiate_in_CM(nv,Ex_Fragment()));
   
@@ -108,20 +129,20 @@ bool RN_PrimaryReaction::GenerateSimEvent(){
   pRecoil.LV = evt1.getLVrad();
   pFragment.LV = evt1.getLVhi();
   
-  return 1;
+  return theta;
 }
 
 bool RN_PrimaryReaction::GenerateDecayEvents(){
-  for(unsigned int i=0;i<GetListOfDecayChannels().GetSize();i++){
-    GetListOfDecayChannels()->At(i)->GenerateDecayEvent();
+  for(int i=0;i<GetListOfDecayChannels()->GetSize();i++){
+    ((RN_DecayChannel*)GetListOfDecayChannels()->At(i))->GenerateDecayEvent();
   }
   return 1;
 }
 
 
 void RN_PrimaryReaction::Reset(){
-  for(unsigned int i = 0; i<GetListOfDecayChannels();i++){
-    GetListOfDecayChannels()->At(i)->Reset();
+  for(int i = 0; i<GetListOfDecayChannels()->GetSize();i++){
+    ((RN_DecayChannel*)GetListOfDecayChannels()->At(i))->Reset();
   }
   
   pBeam.Reset();
@@ -140,39 +161,44 @@ Double32_t RN_PrimaryReaction::DecayQValueExact(){
   double d_ke=DecayProduct().KE();
   double d_theta=DecayProduct().LV.Theta();
   double hi_ke=Fragment().KE();
-  (d_ke* (1 + (M_Decay_Product() / M_Heavy_Decay())) 
-   - (hi_ke * ( 1 - (M_Fragment() / M_Heavy_Decay())))
-   - ((2 / M_Heavy_Decay()) * TMath::Sqrt(d_ke * M_Decay_Product() * hi_ke * M_Fragment()) * cos(d_theta)));
+  return (d_ke* (1 + (M_Decay_Product() / M_Heavy_Decay())) 
+	  - (hi_ke * ( 1 - (M_Fragment() / M_Heavy_Decay())))
+	  - ((2 / M_Heavy_Decay()) * TMath::Sqrt(d_ke * M_Decay_Product() * hi_ke * M_Fragment()) * cos(d_theta)));
 }
 
 Double32_t RN_PrimaryReaction::DecayQValueEstimate(){
   double d_ke=DecayProduct().KE();
   double d_theta=DecayProduct().LV.Theta();
-  double hi_ke=Fragment().KE();
-  (d_ke* (1 + (M_Decay_Product() / M_Heavy_Decay())) 
-   - (E_fragment_est * ( 1 - (M_Fragment() / M_Heavy_Decay())))
-   - ((2 / M_Heavy_Decay()) * TMath::Sqrt(d_ke * M_Decay_Product() * E_fragment_est * M_Fragment()) * cos(d_theta)));
+  return (d_ke* (1 + (M_Decay_Product() / M_Heavy_Decay())) 
+	  - (E_fragment_est * ( 1 - (M_Fragment() / M_Heavy_Decay())))
+	  - ((2 / M_Heavy_Decay()) * TMath::Sqrt(d_ke * M_Decay_Product() * E_fragment_est * M_Fragment()) * cos(d_theta)));
 }
 
+Double32_t RN_PrimaryReaction::DecayQValueEstimate(const double& decay_ke,const double& decay_theta /*inradians*/){
+  return(decay_ke* (1 + (M_Decay_Product() / M_Heavy_Decay())) 
+	 - (E_fragment_est * ( 1 - (M_Fragment() / M_Heavy_Decay())))
+	 - ((2 / M_Heavy_Decay()) * TMath::Sqrt(decay_ke * M_Decay_Product() * E_fragment_est * M_Fragment()) * cos(decay_theta)));
+}
+
+
 //Calculate the Q_value given the time of flight of the recoil. 
-Double32_t RN_PrimaryReaction::RecoilQValue(const double& deltaz/*mm*/, const double& tof /*ns*/,const double& NKE, const double& hiKE){
+Double32_t RN_PrimaryReaction::RecoilQValue(const double& deltaz/*mm*/, const double& tof /*ns*/,double& NKE,double& hiKE){
   double M_N=M_Recoil();
   double M1=M_Beam();
   double M2=M_Fragment();
   NKE=.5*M_N*(deltaz*deltaz/(tof*tof*90000.0));
   hiKE=(M1/M2)*BeamEnergy_Est()+((M_N/M2)*NKE)+((2/M2)*sqrt((BeamEnergy_Est()*NKE*M_N*M1)));
   
-  return NKE+hiKE-beam_est;
-  
+  return (NKE+hiKE-BeamEnergy_Est()); 
 }
 
 
 
-RN_DecayChannel::RN_DecayChannel(RN_PrimaryReaction* parent, TString decay, TString heavy){
+RN_DecayChannel::RN_DecayChannel(RN_PrimaryReaction* parent, const std::string & decay, const std::string & heavy){
   Init(parent,decay,heavy); 
 }
 
-void RN_DecayChannel::Init(RN_PrimaryReaction* parent, TString decay, TString heavy){
+void RN_DecayChannel::Init(RN_PrimaryReaction* parent, const std::string & decay, const std::string & heavy){
   fParentReaction = parent;
   pProduct.Init(decay);
   pHIDecay.Init(heavy);
@@ -181,19 +207,19 @@ void RN_DecayChannel::Init(RN_PrimaryReaction* parent, TString decay, TString he
 
 bool RN_DecayChannel::GenerateDecayEvent(){
   //set reaction kinematics
-  sim::RN_SimEvent evt2(fMotherReaction->M_Fragment(),pProduct.M(),pHIDecay.M());
+  sim::RN_SimEvent evt2(fParentReaction->M_Fragment(),pProduct.M(),pHIDecay.M());
 
-  theta = acos(-1. + 2.*myRnd.Rndm());
-  phi = 2.*M_PI*myRnd.Rndm();
+  double theta = acos(-1. + 2.*myRnd.Rndm());
+  double phi = 2.*M_PI*myRnd.Rndm();
   TVector3 pv; pv.SetMagThetaPhi(1.,theta,phi);
 
   //check if the primary reaction fragment is capable of decaying to this state and calculate the decay particle kinematics
-  if(!evt2.radiate_in_CM(fMotherReaction->FragmentLV(),pv,fExEnergy)){
+  if(!evt2.radiate_in_CM(fParentReaction->FragmentLV(),pv,fExEnergy)){
     return 0;
   }
 
-  pProduct = evt2.getLVrad();
-  pHIDecay = evt2.getLVhi();
+  pProduct.LV = evt2.getLVrad();
+  pHIDecay.LV = evt2.getLVhi();
   return 1;
 }
 

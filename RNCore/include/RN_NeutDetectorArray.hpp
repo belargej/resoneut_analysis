@@ -123,7 +123,7 @@ typedef std::vector<RN_NeutDetector>::iterator RN_NeutCollectionRef;
 
 
 
-class RN_NeutDetectorArray:public TObject{
+class RN_NeutDetectorArray:public RN_BaseClass{
 private:
 public:
   Double32_t fT_first;
@@ -136,13 +136,12 @@ public:
   std::vector<Double32_t>fT;//[fMult]
   std::vector<int>fDetlist;//[fMult]
 
-
-
-  RN_NeutDetectorArray();
+  RN_NeutDetectorArray(const TString & name = "");
   int ReconstructHits(RN_NeutCollection& in);
   int InsertHit(const double& q_long,const double& q_short,const double& q_T,const TVector3& fPos,const int& index);
+  inline Double32_t T(int i=0) const {return i<fMult ? fT[i] :0;}
   
-  int Reset();
+  virtual void Reset();
   ClassDef(RN_NeutDetectorArray,1);
 };
 
@@ -152,5 +151,6 @@ namespace RNArray{
   int PositionMap(int slot,TVector3 & pos);
 
 }
+
 
 #endif

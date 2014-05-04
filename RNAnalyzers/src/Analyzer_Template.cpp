@@ -46,10 +46,10 @@ void Analyzer_Template::ResetGlobals(){
 bool Analyzer_Template::Begin(){
 
   /*
-    if you want to add your histograms to the global rootfile uncomment the following block.  It checks if the rootfile has been created and exits if it has not.
+    if you want to add your histograms to the global RNROOT::gRootFile uncomment the following block.  It checks if the RNROOT::gRootFile has been created and exits if it has not.
    */
   /*
-  if(!rootfile){
+  if(!RNROOT::gRootFile){
     std::cout<<"output file has not been created"<<std::endl;
     Clear();
     exit(EXIT_FAILURE);
@@ -116,7 +116,7 @@ bool Analyzer_Template::Terminate(){
 
 bool Analyzer_Template::TerminateIfLast(){
   /*
-    any cleanup(such as writing to the rootfile) that 
+    any cleanup(such as writing to the RNROOT::gRootFile) that 
     should be reserved to the last analyzer in the list
    
     serious memory management decisions should be performed in the Terminate() function instead of this one.  This function will NOT be called if it is not the last analyzer in the list

@@ -43,13 +43,20 @@ namespace sim{
     RN_SimEvent(double beam_energy,double beam_mass,
 		double target_mass,double rad_mass,
 		double hi_mass);
-  virtual ~RN_SimEvent();
+    virtual ~RN_SimEvent();
+
     std::vector<TLorentzVector> LVarray;  
     std::vector<Double32_t> Marray;
     double beam_energy;
     double thebeam_mass;
     double thetarget_mass;
     TVector3 boostv;
+
+    void Init(double parent_mass,double rad_mass,double hi_mass);
+    void Init(double beam_energy,double beam_mass,
+		double target_mass,double rad_mass,
+		double hi_mass);
+
     int radiate_in_CM(const TVector3& rad_V,
 		      const double& hi_ex);
     int radiate_in_CM(const TLorentzVector& in_LV,

@@ -107,8 +107,6 @@ public:
   ClassDef(RN_Module_Stack,1);
 };
 
-extern RN_Module_Stack gModule_stack;
-
 
 class CAEN_ADC:public RN_Module{
 private:

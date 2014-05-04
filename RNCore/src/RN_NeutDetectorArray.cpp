@@ -197,18 +197,19 @@ Double_t RN_NeutDetector::keVee() const {
 }
 
 
-RN_NeutDetectorArray::RN_NeutDetectorArray():fT_first(0),
-					     fDetfirst(-1),
-					     fT_mult(0),
-					     fMult(0),
-					     fPos(16,TVector3(0,0,0)),
-					     fQ_long(16,0),
-					     fPSD(16,0),
-					     fT(16,0),
-					     fDetlist(16,-1){
+RN_NeutDetectorArray::RN_NeutDetectorArray(const TString & name):RN_BaseClass(name),
+								 fT_first(0),
+								 fDetfirst(-1),
+								 fT_mult(0),
+								 fMult(0),
+								 fPos(16,TVector3(0,0,0)),
+								 fQ_long(16,0),
+								 fPSD(16,0),
+								 fT(16,0),
+								 fDetlist(16,-1){
   
 }
-					     
+
 
 
 int RN_NeutDetectorArray::ReconstructHits(RN_NeutCollection& in){
@@ -230,7 +231,7 @@ int RN_NeutDetectorArray::ReconstructHits(RN_NeutCollection& in){
 }
 
 
-int RN_NeutDetectorArray::Reset(){
+void RN_NeutDetectorArray::Reset(){
   for(int i=0;i<fMult;i++){
     fQ_long[i]=0;
     fPSD[i]=0;
@@ -242,7 +243,7 @@ int RN_NeutDetectorArray::Reset(){
   fT_first=0;
   fDetfirst = -1;
 
-  return 1;
+  return;
 }
 
 

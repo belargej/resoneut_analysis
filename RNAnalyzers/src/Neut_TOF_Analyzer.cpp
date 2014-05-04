@@ -13,6 +13,9 @@
 
 #include "Neut_TOF_Analyzer.hpp"
 #include "PSD_Analyzer.hpp"
+#include "RN_Root.hpp"
+
+using namespace RNROOT;
 
 namespace neut_tof{
 
@@ -34,16 +37,16 @@ namespace neut_tof{
 
 
   bool Neut_TOF_Analyzer::Begin(){
-    if(!rootfile){
+    if(!RNROOT::gRootFile){
       std::cout<<"output file has not been created"<<std::endl;
       exit(EXIT_FAILURE);
     }
     
     //create directory structure
 
-    if(!rootfile->cd("neut")){
-      rootfile->mkdir("neut");
-      rootfile->cd("neut");
+    if(!RNROOT::gRootFile->cd("neut")){
+      RNROOT::gRootFile->mkdir("neut");
+      RNROOT::gRootFile->cd("neut");
     }
     gDirectory->mkdir("TOF");
     gDirectory->cd("TOF");
@@ -75,18 +78,18 @@ namespace neut_tof{
 
   bool Neut_TOF_Analyzer::ProcessFill(){
     if(psd::rawneut_orcheck)
-      hrftime_nPSD->Fill(rftime[0].T_Wrapped());
+      hrftime_nPSD->Fill(rftime.T_Wrapped());
     for(unsigned int i=0;i<neut.size();i++){
       
       if(neut[i].T()>0){
 	hT_n[i]->Fill(neut[i].T());
-	hrftime_n[i]->Fill(rftime[0].T_Wrapped());
+	hrftime_n[i]->Fill(rftime.T_Wrapped());
       }
       if(psd::rawneutcheck[i]){
 	hT_PSDn[i]->Fill(neut[i].T());
-	hTRelRF_PSDn[i]->Fill(neut[i].T()-rftime[0].T_Wrapped());
-	hrftime_PSDn[i]->Fill(rftime[0].T_Wrapped());
-	hQvrftime_n[i]->Fill(rftime[0].T_Wrapped(),neut[i].fQ_long);
+	hTRelRF_PSDn[i]->Fill(neut[i].T()-rftime.T_Wrapped());
+	hrftime_PSDn[i]->Fill(rftime.T_Wrapped());
+	hQvrftime_n[i]->Fill(rftime.T_Wrapped(),neut[i].fQ_long);
 	hQvT_n[i]->Fill(neut[i].T(),neut[i].fQ_long);
       }
 
@@ -102,8 +105,8 @@ namespace neut_tof{
   }
   
   bool Neut_TOF_Analyzer::TerminateIfLast(){
-    rootfile->Write();
-    rootfile->Close();
+    RNROOT::gRootFile->Write();
+    RNROOT::gRootFile->Close();
     return 1;
   }
 

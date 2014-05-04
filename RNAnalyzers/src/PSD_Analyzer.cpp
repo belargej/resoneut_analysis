@@ -12,7 +12,8 @@
 #define _PSD_ANALYZER_CXX
 
 #include "PSD_Analyzer.hpp"
-
+#include "RN_Root.hpp"
+using namespace RNROOT;
 
 
 namespace psd{
@@ -119,45 +120,44 @@ namespace psd{
 
 
   bool NeutAnalyzer::Begin(){
-    unsigned int idx=0;
 
-    if(!rootfile){
+    if(!RNROOT::gRootFile){
       std::cout<<"output file has not been created"<<std::endl;
       ClearGates();
       exit(EXIT_FAILURE);
     }
     
     //create directory structure
-    rootfile->mkdir("neut");
-    rootfile->cd("neut");
+    RNROOT::gRootFile->mkdir("neut");
+    RNROOT::gRootFile->cd("neut");
     gDirectory->mkdir("PSD");
     gDirectory->cd("PSD");
     gDirectory->mkdir("raw");
     gDirectory->mkdir("cal");
     
-    rootfile->cd("neut");
+    RNROOT::gRootFile->cd("neut");
     gDirectory->mkdir("TRel");
     gDirectory->mkdir("mult");
   
 
     //create histograms
-    rootfile->cd("neut/mult");
+    RNROOT::gRootFile->cd("neut/mult");
     h_ndetMult=new TH1D("h_ndetmult","nmult;mult",NEUTNUM+1,0,NEUTNUM);
     h_ndetMult_ngated=new TH1D("h_ndetmult_ngated","nmult_ngated;mult",NEUTNUM+1,0,NEUTNUM);
     
 
     for(unsigned int i=0;i<NEUTNUM;i++){  
-      rootfile->cd("neut/TRel");
+      RNROOT::gRootFile->cd("neut/TRel");
       hQvT_n[i]=new TH2D(Form("hQvT_n%d",i),Form("hQvT_n%d;T;Q",i),128,0,128,1024,0,4095);
       hQvT_ngated[i]=new TH2D(Form("hQvT_n%d_ngated",i),Form("hQvT_n%d_ngated;T;Q",i),128,0,128,1024,0,4095);
-      rootfile->cd("neut/PSD/raw");
+      RNROOT::gRootFile->cd("neut/PSD/raw");
       hPSDq_n[i]=new TH2D(Form("hPSDq_n%d",i),Form("hPSDq_n%d",i),1024,0,4096,1024,0,4096);
       hPSDq_n_evtgated[i]=new TH2D(Form("hPSDq_n%d_evtgated",i),Form("hPSDq_n%d_evtgated",i),1024,0,4096,1024,0,4096);
   
-      rootfile->cd("neut/PSD/cal");
+      RNROOT::gRootFile->cd("neut/PSD/cal");
       hPSD_n_[i]=new TH2D(Form("hPSD_neut%d",i),Form("hPSD_neut%d",i),256,-2.,2.,1024,50,4096);
     } 
-    rootfile->cd();
+    RNROOT::gRootFile->cd();
 
     
     return 1;
@@ -325,8 +325,8 @@ namespace psd{
   }
   
   bool NeutAnalyzer::TerminateIfLast(){
-    rootfile->Write();
-    rootfile->Close();
+    RNROOT::gRootFile->Write();
+    RNROOT::gRootFile->Close();
     return 1;
   }
 

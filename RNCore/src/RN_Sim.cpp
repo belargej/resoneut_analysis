@@ -280,7 +280,7 @@ namespace sim{
   
   
   int RN_Sim::GenerateEvents(Long64_t evnum,std::string options=""){
-    gPrimaryReaction.GenerateSimEvent();
+    n_cm = gPrimaryReaction.GenerateSimEvent();
     gPrimaryReaction.GenerateDecayEvents();
     
     for(unsigned int i=0;i<neut.size();i++){
@@ -337,7 +337,7 @@ namespace sim{
       hQ->Fit(Q_fit,"","",-4,4);
       hn_tof->Fit(TOF_fit,"","",1,128);
       simlog<<"Reaction :"<<gPrimaryReaction.Beam().GetName()<<"("<<gPrimaryReaction.Target().GetName()<<","<<gPrimaryReaction.Recoil().GetName()<<")"<<gPrimaryReaction.Fragment().GetName()<<"\n";
-      simlog<<"Decay :"<<gPrimaryReaction.Fragment().GetName()<<"->"<<gPrimaryReaction.DecayProduct().GetName() << "+" << gPrimaryReaction.HeavyProduct().GetName()<<"\n\n";
+      simlog<<"Decay :"<<gPrimaryReaction.Fragment().GetName()<<"->"<<gPrimaryReaction.DecayProduct().GetName() << "+" << gPrimaryReaction.HeavyDecay().GetName()<<"\n\n";
       
       simlog<<"Beam Energy: "<<gPrimaryReaction.BeamEnergy()<<"\n";
       simlog<<"Beam E_loss(thickness): "<<gPrimaryReaction.BeamELoss()<<"\n";

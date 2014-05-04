@@ -11,8 +11,8 @@ using RN_modules. also got rid of the need for a "config file".  Changes to the 
 
 ********************************************/
 
-#ifndef __CONVERT
-#define __CONVERT
+#ifndef __RNEVENTPROCESSOR_H
+#define __RNEVENTPROCESSOR_H
 
 
 //C and C++ libraries.
@@ -80,12 +80,11 @@ protected:
   int UnpackPhysicsEvent();
   int UnpackPhysicsEventCounter();
   int UnpackUndefined();
-  virtual bool InitStack(const std::string& configfile);
   virtual void ResetTreeParameters();
   virtual bool Begin();
-  virtual bool Process();
-  virtual bool ProcessFill();
-  virtual bool Terminate();
+  virtual bool Process(){return 1;};
+  virtual bool ProcessFill(){return 1;};
+  virtual bool Terminate(){return 1;};
   
 public:
   TBranch * b_Event;
@@ -97,8 +96,9 @@ public:
   int Convert2Root(const std::string& name,std::string output_file);
   int AttachFromEVT(const TString& evtfilename);
 
- void AddTree(TString a){fChain->Add(a);}
+  void AddTree(TString a){fChain->Add(a);}
   virtual void InitRootFile(TString file);
+  virtual bool InitStack(const std::string& configfile);
   Long64_t TotEntries() const{return fChain->GetEntries();} 
   virtual Int_t GetEntry(Long64_t entry, Int_t getall = 0) { return fChain ? fChain->GetEntry(entry, getall) : 0; }
   virtual int GetDetectorEntry(){return 1;};

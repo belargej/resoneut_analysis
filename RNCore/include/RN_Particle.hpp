@@ -29,7 +29,8 @@ private:
   double mass;
   double ex_energy;
 public:
-  RN_Particle(const std::string& pname = "",const double& ex = 0);
+  RN_Particle():RN_BaseClass("",""){};
+  RN_Particle(const std::string& pname,const double& ex = 0);
   ~RN_Particle(){};
 
   

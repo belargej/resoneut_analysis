@@ -241,7 +241,7 @@ int RN_EventProcessor::ExtractRingBuffer(){
     gpointer++;//extra word after item type
 
     //pass the pointer on to the stack of modules, each module will unpack the data using its own unpack method
-    gModule_stack.UnpackModules(gpointer,(int)evtfile.tellg());
+    RNROOT::gModule_stack.UnpackModules(gpointer,(int)evtfile.tellg());
       
     while(gpointer < endpointer){
       if(*gpointer==0xffff)
@@ -299,8 +299,8 @@ int RN_EventProcessor::ExtractRingBuffer(){
   
   void RN_EventProcessor::ResetTreeParameters(){
     
-    gParameter_stack.Reset();
-    gModule_stack.Reset();
+    RNROOT::gParameter_stack.Reset();
+    RNROOT::gModule_stack.Reset();
     
   }
 
@@ -325,7 +325,7 @@ int RN_EventProcessor::Convert2Root(std::vector<std::string>&run_number,std::str
     //flag is used to notify the user of any issues seen during unpacking
     DataTree->Branch("Event",&Event,"RunNum/I:flag/I:ScalerIDX/I"); 
 
-    gModule_stack.AddBranches(DataTree);
+    RNROOT::gModule_stack.AddBranches(DataTree);
 
     for(unsigned int i=0; i<scaler_values.size();i++){
       ScalerTree->Branch(scaler_names[i].c_str(),scaler_values[i]);
@@ -380,7 +380,7 @@ int RN_EventProcessor::Convert2Root(const std::string& name,std::string output_f
   //flag is used to notify the user of any issues seen during unpacking
   DataTree->Branch("Event",&Event,"RunNum/I:flag/I:ScalerIDX/I"); 
     
-  gModule_stack.AddBranches(DataTree);
+  RNROOT::gModule_stack.AddBranches(DataTree);
   
   
   for(unsigned int i=0; i<scaler_values.size();i++){

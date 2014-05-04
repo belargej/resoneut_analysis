@@ -20,8 +20,6 @@
 #include "NewTree_Analyzer.hpp"
 #include "RN_Root.hpp"
 #include "Si_Analyzer.hpp"
-using namespace unpacker;
-
 
 NewTree_Analyzer::NewTree_Analyzer()
 {
@@ -30,24 +28,18 @@ NewTree_Analyzer::NewTree_Analyzer()
 
 bool NewTree_Analyzer::Begin(){
 
-  if(!rootfile){
+  if(!RNROOT::gRootFile){
     std::cout<<"output file has not been created"<<std::endl;
     exit(EXIT_FAILURE);
   }
-  if(!newtree){
+  if(!RNROOT::gNewTree){
     std::cout<<"new tree has not been created"<<std::endl;   
     exit(EXIT_FAILURE);
   }
-  
  
-  newtree->Branch("Event",&Event,"RunNum/I:flag/I:ScalerIDX/I"); 
-  newtree->Branch("prot_E",&silicon::prot_E);
-  newtree->Branch("prot_dE",&silicon::prot_dE);
-  newtree->Branch("prot_Theta",&silicon::prot_theta);
-  newtree->Branch("prot_RelAngle",&silicon::rel_angle);
-  newtree->Branch("IC_TotalE",&ionchamber::IC_TotalE);
-  newtree->Branch("IC_ELoss",&ionchamber::IC_ELoss);
-  unpacker::gModule_stack.AddBranches(newtree);
+
+  RNROOT::gParameter_stack.AddBranches(RNROOT::gNewTree);
+  RNROOT::gModule_stack.AddBranches(RNROOT::gNewTree);
 
   return 1;
 }
@@ -57,7 +49,7 @@ bool NewTree_Analyzer::Process(){
 }
 
 bool NewTree_Analyzer::ProcessFill(){
-  newtree->Fill();
+  RNROOT::gNewTree->Fill();
   return 1;
 }
 
@@ -65,8 +57,8 @@ void NewTree_Analyzer::ResetGlobals(){
 }
 
 bool NewTree_Analyzer::TerminateIfLast(){
-  rootfile->Write();
-  rootfile->Close();
+  RNROOT::gRootFile->Write();
+  RNROOT::gRootFile->Close();
   return 1;
 }
 

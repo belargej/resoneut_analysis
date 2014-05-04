@@ -1,5 +1,5 @@
-#ifndef _RNROOT_CORE
-#define _RNROOT_CORE
+#ifndef _RNROOT_CORE_H
+#define _RNROOT_CORE_H
 //C and C++ libraries.
 #include <cstdlib>
 #include <iostream>
@@ -111,30 +111,7 @@ namespace RNROOT{
   void SetRootOutputFile(const std::string& filename);
   void SetRootOutputFileAndTree(const std::string & filename, const std::string& treename);
   void SetCalibrations(RN_VariableMap &VarMap = gVariableMap);
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
  
- 
-
-
 }
 
 

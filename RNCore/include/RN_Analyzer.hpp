@@ -71,7 +71,7 @@ class RN_Analyzer_Stack:public RN_BaseClass_Stack{
 protected:
 
 public: 
-  RN_Analyzer_Stack(const TString& name="");
+  RN_Analyzer_Stack(const TString& name=""):RN_BaseClass_Stack(name){};
   ~RN_Analyzer_Stack(){}
   
   virtual UInt_t Add(RN_BaseClass * base);

@@ -111,6 +111,6 @@ public:
 };
 
 
-extern RN_Parameter_Stack gParameter_stack;
+
 
 #endif

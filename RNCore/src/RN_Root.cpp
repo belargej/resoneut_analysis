@@ -19,16 +19,24 @@ namespace RNROOT{
   RN_NaICollection nai;	
   RN_NaIArray nai_array("nai_array",20);	     
   
+
+  TFile * gRootFile;
+  TTree * gNewTree;
   RN_VariableMap gVariableMap;
   RN_MassTable gMassTable;
   RN_Analyzer gMainAnalyzer;
   RN_Analyzer_Stack gAnalyzer_stack;
   RN_Module_Stack gModule_stack;
   RN_Parameter_Stack gParameter_stack;
+  RN_PrimaryReaction gPrimaryReaction;
   RN_ReactionInfo gReactionInfo;
   int RN_RootSet(0);
 }
 
+
+namespace global{
+  TRandom3 myRnd;
+}
 
 ////////////////////////////////////////////////////
 /////USER CHANGES ARE MADE HERE:////////////////////
@@ -123,7 +131,7 @@ namespace RNROOT{
     gVariableMap.LoadParams(f);
   }
  
-  void SetRootOutputFile(std::string filename){
+  void SetRootOutputFile(const std::string& filename){
     
   if(gRootFile){
     std::cout<<"root output file already open, please write out and close first"<<std::endl;

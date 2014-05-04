@@ -46,27 +46,30 @@ protected:
   Double32_t E_fragment_est;
   sim::RN_AngularDistribution fDWBA;
   TList *fDecayChannels;
+  bool fIsSet;
 public:
 
-  RN_PrimaryReaction();
-  RN_PrimaryReaction(TString beam, 
-		     TString target, 
-		     TString recoil, 
-		     TString fragment);
+  RN_PrimaryReaction():fIsSet(0)
+  {
+  };
+  RN_PrimaryReaction(const std::string & beam, 
+		     const std::string & target, 
+		     const std::string & recoil, 
+		     const std::string & fragment);
 
-  void SetReaction(TString beam,
-		   TString target,
-		   TString recoil,
-		   TString fragment);
+  void SetReaction(const std::string & beam,
+		   const std::string & target,
+		   const std::string & recoil,
+		   const std::string & fragment);
 
-  void SetReaction(TString beam,
-		   TString target,
-		   TString recoil,
-		   TString fragment,
-		   TString product,
-		   TString heavy);  
-  void SetAngularDistribution(const std::string filename);
-  bool GenerateSimEvent();
+  void SetReaction(const std::string & beam,
+		   const std::string & target,
+		   const std::string & recoil,
+		   const std::string & fragment,
+		   const std::string & product,
+		   const std::string & heavy);  
+  void SetAngularDistribution(const std::string& filename);
+  Double32_t GenerateSimEvent();
   bool GenerateDecayEvents();
 
   inline Double32_t BeamEnergy() const {return fBeamEnergy;}
@@ -84,7 +87,7 @@ public:
   inline RN_Particle& Recoil(){return pRecoil;}
   inline RN_Particle& Fragment(){return pFragment;}
   RN_Particle& DecayProduct(int i=0);
-  RN_Particle& HeavyProduct(int i=0);
+  RN_Particle& HeavyDecay(int i=0);
   inline TLorentzVector& BeamLV(){return pBeam.LV;}
   inline TLorentzVector& TargetLV(){return pTarget.LV;}
   inline TLorentzVector& RecoilLV(){return pRecoil.LV;}
@@ -94,21 +97,27 @@ public:
   inline Double32_t E_Fragment() const {return E_fragment_est;}
   Double32_t DecayQValueExact();
   Double32_t DecayQValueEstimate();
-  Double32_t RecoilQValue(const double& dz, const double& tof, const double&nKE, const double&hiKE);
+  Double32_t DecayQValueEstimate(const double& decay_energy, const double& decay_theta);
+  Double32_t RecoilQValue(const double& dz, const double& tof, double&nKE, double&hiKE);
 
   void SetEFragmentGuess(const Double32_t& efrag ){E_fragment_est = efrag;}
   void SetCalibrations(RN_VariableMap&detvar);
   void Reset();
+  void Clear();
+  bool IsSet()const{return fIsSet;}
 
   TList * GetListOfDecayChannels(){return fDecayChannels;}
-  RN_DecayChannel *AddDecayChannel(TString decay);
-  RN_DecayChannel *AddDecayChannel(TString decay,TString heavy);
+  RN_DecayChannel *AddDecayChannel(const std::string & decay){return 0;}
+  RN_DecayChannel *AddDecayChannel(const std::string & decay,const std::string & heavy);
 				  
+
+
+  ClassDef(RN_PrimaryReaction,1);
 };
 
 class RN_DecayChannel:public RN_BaseClass{
 private:
-  RN_PrimaryReaction* fMotherReaction;
+  RN_PrimaryReaction* fParentReaction;
   RN_Particle pProduct;
   RN_Particle pHIDecay;
   
@@ -120,25 +129,24 @@ protected:
   
 public:
   RN_DecayChannel(){};
-  RN_DecayChannel(RN_PrimaryReaction* parent, TString decay, TString heavy);
+  RN_DecayChannel(RN_PrimaryReaction* parent, const std::string & decay, const std::string & heavy);
   Double32_t M_Decay_Product()const{return pProduct.M();}
   Double32_t M_Heavy_Decay()const{return pHIDecay.M();}
-  void Init(RN_PrimaryReaction* parent,TString decay,TString heavy);
+  void Init(RN_PrimaryReaction* parent,const std::string & decay,const std::string & heavy);
   bool GenerateDecayEvent();
 
   TLorentzVector& DecayProductLV(){return pProduct.LV;}
   TLorentzVector& HeavyDecayLV(){return pHIDecay.LV;}
   RN_Particle& DecayProduct(){return pProduct;}
   RN_Particle& HeavyDecay(){return pHIDecay;}
+  void Reset();
 
+  ClassDef(RN_DecayChannel,1);
 };
 
 //RN_ReactionInfo:
 //stack(TList) of primary reactions which in turn have TLists of decay channels. By Looping over all Primary Reactions and Looping over all decay channels we can quickly produce Kinematic Curves and simulation data for a large set of possible reactions.
 class RN_ReactionInfo:public RN_BaseClass_Stack{
-  
-  
-
 };
 
 #endif
