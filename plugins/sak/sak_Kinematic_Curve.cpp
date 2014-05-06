@@ -17,22 +17,24 @@ Adapted from Kinematic Curve class by Daniel Santiago-Gonzalez
 #include "RN_Root.hpp"
 #include "RN_Sim.hpp"
 #include "RN_SimPhysics.hpp"
+
+using namespace RNROOT;
+
 namespace sak{
 
 TGraph GetCurve(int Points,const double & hi_ex_set)
 {
   TGraph curve;
-  if(!global::m_beam || !global::m_target || !global::m_recoil || !global::m_frag || !global::m_decay_product || !global::m_heavy_decay){
+  if(!gPrimaryReaction.IsSet()){
     std::cout<<"Reaction Masses have not been set"<<std::endl;
     exit(EXIT_FAILURE);
   }
-  if(!global::beam_e){
+  if(!gPrimaryReaction.BeamEnergy()){
     std::cout<<"Beam Energy has not been set"<<std::endl;
     exit(EXIT_FAILURE);
   }
- 
-  sim::RN_SimEvent evt1(global::beam_e,global::m_beam,global::m_target,global::m_recoil,global::m_frag);
 
+  sim::RN_SimEvent evt1(gPrimaryReaction.BeamEnergy(),gPrimaryReaction.M_Beam(),gPrimaryReaction.M_Target(),gPrimaryReaction.M_Recoil(),gPrimaryReaction.M_Fragment()); 
   // Fill the points of the kinematic curve
   int p=0;
   while(p<Points){
@@ -55,17 +57,17 @@ TGraph GetCurve(int Points,const double & hi_ex_set)
 TGraph GetSecondaryDecayCurve(int Points,const double & hi_ex_set,const double& decay_ex_set)
 {
   TGraph curve;
-  if(!global::m_beam || !global::m_target || !global::m_recoil || !global::m_frag || !global::m_decay_product || !global::m_heavy_decay){
+  if(!gPrimaryReaction.IsSet()){
     std::cout<<"Reaction Masses have not been set"<<std::endl;
     exit(EXIT_FAILURE);
   }
-  if(!global::beam_e){
+  if(!gPrimaryReaction.BeamEnergy()){
     std::cout<<"Beam Energy has not been set"<<std::endl;
     exit(EXIT_FAILURE);
   }
  
-  sim::RN_SimEvent evt1(global::beam_e,global::m_beam,global::m_target,global::m_recoil,global::m_frag);
-  sim::RN_SimEvent evt2(global::m_frag,global::m_decay_product,global::m_heavy_decay);
+  sim::RN_SimEvent evt1(gPrimaryReaction.BeamEnergy(),gPrimaryReaction.M_Beam(),gPrimaryReaction.M_Target(),gPrimaryReaction.M_Recoil(),gPrimaryReaction.M_Fragment());
+  sim::RN_SimEvent evt2(gPrimaryReaction.M_Fragment(),gPrimaryReaction.M_Decay_Product(),gPrimaryReaction.M_Heavy_Decay());
   // Fill the points of the kinematic curve
   int p=0;
   while(p<Points){
