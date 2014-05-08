@@ -1,5 +1,5 @@
 {
-  gSystem->Load("libRNeut.so");
+  gSystem->Load("libRNCore.so");
   gSystem->Load("libSAK.so");
   gSystem->Load("libRNanalyzers.so");
 

@@ -1,0 +1,12 @@
+Shared libraries which contain the RN_Analysis code are stored here.  In order to add these libraries to an active root session you must do(e.g):
+
+gSystem->Load("/Path/to/this/folder/libRNCore.so");
+
+or you can add this directory to your LD_LIBRARY_PATH env and then do
+
+gSystem->Load("libRNCore.so");
+
+in an active root session.
+
+If you source RNSetup.sh (where RNSetup.sh is in the bin folder) it will set LD_LIBRARY_PATH to this RN_Analysis code directory.
+
