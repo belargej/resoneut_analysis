@@ -213,7 +213,7 @@ bool RN_Analyzer::Process(){
   if(si_cluster_[1].fMult>0&&si_cluster_[0].fMult>0){
     silicon::prot_dE=si_cluster_[0].fE[0];
     silicon::prot_E=si_cluster_[1].fE[0]+silicon::prot_dE;
-    silicon::prot_theta=si_cluster_[1].fPos[0].Theta()*(180.0 / TMath::Pi());
+    silicon::prot_theta=si_cluster_[0].fPos[0].Theta()*(180.0 / TMath::Pi());
     silicon::rel_transverse = (si_cluster_[0].fPos[0].Perp()-si_cluster_[1].fPos[0].Perp());
     silicon::rel_z = (si_cluster_[0].fPos[0] - si_cluster_[1].fPos[0]).Z();
     silicon::rel_angle = (si_cluster_[0].fPos[0] - si_cluster_[1].fPos[0]).Theta() * (180.0 / TMath::Pi());

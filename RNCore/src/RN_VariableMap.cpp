@@ -18,7 +18,7 @@ void RN_VariableMap::LoadParams(std::string filename){
     sak::ReadLine(cal,input,2);
     if (input.size()!=2){
       std::cout<<"Variable map file has line with diff than 2 entries"<<std::endl;
-      return;
+      continue;
     }
     key=input[0];
     value=sak::string_to_double(input[1]);

@@ -46,7 +46,7 @@ RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetecto
 
 // 
 void RN_NeutDetector::Build(){
-  gRNROOT.AddDetector(this);
+  //gRNROOT.AddDetector(this);
   
 }
 
@@ -332,7 +332,7 @@ int RN_NeutDetector::NeutIn(TLorentzVector nLV,double& t,double& e){
 
   while (radial_pos <= fRadius && z_pos >= 0 && z_pos <= fThickness){
     double nKE=inLV.E()-inLV.M();
-    if (nKE<0.010)
+    if (nKE<fThreshold)
       break;
     //step is fThickness/100 (mm)
 
@@ -415,8 +415,11 @@ int RN_NeutDetector::H_hit(TLorentzVector& inLV,double step/*mm*/){
   neut_LVcopy.SetPhi(neut_LVcopy.Phi()+inLV.Phi());
   
   //Get Energy Loss
-  fEsum += inLV.E() - neut_LVcopy.E();
-  
+  double nEdep = inLV.E()-neut_LVcopy.E();
+  if(nEdep>fThreshold)
+    fEsum += nEdep;
+  else
+    fE_lost += nEdep;
   //return the new E/angle to the original neut Lorentz Vector
   inLV = neut_LVcopy;
 

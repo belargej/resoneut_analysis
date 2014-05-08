@@ -50,13 +50,13 @@ RNanalyzers_d.cpp: ${HEADERS} $(HDRDIR)/my_LinkDef.h
 #####################################################################
 
 clean: 
-	rm ../../lib/libRNanalyzers.so RNanalyzers_d.*
+	rm ../lib/libRNanalyzers.so RNanalyzers_d.*
 
 newdict:
 	rm RNanalyzers_d.*
 
 install:	
-	ln -s ${PWD}/../../lib/libRNanalyzers.so ${HOME}/lib
+	ln -s ${PWD}/../lib/libRNanalyzers.so ${HOME}/lib
 
 uninstall:	
 	rm ${HOME}/lib/libRNanalyzers.so

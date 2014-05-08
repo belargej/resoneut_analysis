@@ -56,8 +56,8 @@ public:
   
   //calibration functions
   inline Double32_t Ch(unsigned int i=0)const {return (i<fMult) ? fCh_cal[(int)fChlist[i]] : -1 ;}
-  inline Double32_t E(unsigned int i=0)const {return (i<fMult) ? (((fE[i] + q_offset[(int)fChlist[i]] ) * a1[(int)fChlist[i]]) + a0[(int)fChlist[i]]) : 0;}
-  inline Double32_t T(unsigned int i=0)const {return (i<fMult) ? (((fT[i] + t_offset[(int)fChlist[i]] ) * t1[(int)fChlist[i]]) + t0[(int)fChlist[i]]) : 0;}
+  inline Double32_t E(unsigned int i=0)const {return (i<fMult) ? ((fabs(fE[i] + q_offset[(int)fChlist[i]] ) * a1[(int)fChlist[i]]) + a0[(int)fChlist[i]]) : 0;}
+  inline Double32_t T(unsigned int i=0)const {return (i<fMult) ? ((fabs(fT[i] + t_offset[(int)fChlist[i]] ) * t1[(int)fChlist[i]]) + t0[(int)fChlist[i]]) : 0;}
   
   void SetELimits(const double&,const double&);
   void Init(const double& num);

@@ -124,33 +124,33 @@ void RN_S2Detector::Calcnormv(){
 //apply global calibrations elin and eshift to calibrated basedetectors front and back
 
 Double_t RN_S2Detector::Front_E(unsigned int i) const{
-  if(i>front.fMult)
-    return -1;
-  if (!front.fE[i]>0)
+  if(i>=front.fMult)
+    return 0;
+  if (!(front.fE[i]>0))
     return 0;
   return ((front.E(i) * elin) + eshift);
 }
 
 Double_t RN_S2Detector::Front_T(unsigned int i) const{
-  if(i>front.fMult)
-    return -1;
-  if (!front.fT[i]>0)
+  if(i>=front.fMult)
+    return 0;
+  if (!(front.fT[i]>0))
     return 0;
   return (( front.T(i) * tlin ) + tshift);
   
 }
 
 Double_t RN_S2Detector::Back_E(unsigned int i) const{
-  if(i>back.fMult)
-    return -1;
-  if(!back.fE[i]>0)
+  if(i>=back.fMult)
+    return 0;
+  if(!(back.fE[i]>0))
     return 0;
   return (( back.E(i) * elin) + eshift);   
 }
 
 Double_t RN_S2Detector::Back_T(unsigned int i) const{
-  if (i>back.fMult)
-    return -1;
+  if (i>=back.fMult)
+    return 0;
   if (!back.fT[i]>0)
     return 0;
   return ((back.T(i) * tlin)  + tshift);

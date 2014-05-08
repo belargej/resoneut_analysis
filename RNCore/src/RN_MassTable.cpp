@@ -19,6 +19,9 @@ RN_MassTable::RN_MassTable(){
   AddParam("d",1876.12);//+e	      
   AddParam("deuterium",1876.12);//+e
 
+  AddParam("9B",8395.8626);//+e
+  AddParam("10B",9326.9607);//+e
+
   //AddParam("12C",11174.862342);
   AddParam("12C",11177.928342); //+e
 

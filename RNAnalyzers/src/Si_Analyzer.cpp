@@ -44,9 +44,11 @@ namespace silicon{
   int thetathetacheck(0);
   int deut_check(0);
   TH2D *hpede;
-  TH2D *hpede_arb;  
+  TH2D *hpede_arb_front;  
+  TH2D *hpede_arb_back;  
   TH2D *hpede_cluster;
-  TH2D *hpede_arb_cluster;    
+  TH2D *hpede_arb_cluster;
+  TH2D *hfrontE_v_backE[2];
   TH1D *h_si_back[2];
   TH1D *h_si_back_a[2];
   TH1D *h_si_front[2];
@@ -193,6 +195,9 @@ namespace silicon{
     h_chS1_chS2_segments = new TH2D("h_chS1_chS2_segments","h_chS1_chS2_segments;s1segments;s2segments",17,0,16,17,0,16);
 
     rootfile->cd("Silicon/f2b_ratio");
+    hfrontE_v_backE[0]=new TH2D("si_a_frontEvBackE","si_a_frontEvBackE",1024,0,4095,1024,0,4095);
+    hfrontE_v_backE[1]=new TH2D("si_b_frontEvBackE","si_b_frontEvBackE",1024,0,4095,1024,0,4095);
+
     for(int i=0;i<16;i++){
       rootfile->cd("Silicon/f2b_ratio/S1");
       front[0][i]=new TH2D(Form("s1_fc%d_corr",i),Form("s1_fc%d_corr;channel;ratio",i),17,0,16,512,0,2);
@@ -203,7 +208,7 @@ namespace silicon{
     rootfile->cd("Silicon/f2b_ratio/charge_sharing");
     for(unsigned int i=0;i<2;i++){
       h_ch_f0vf1[i]=new TH2D(Form("h_ch_f0vf1_s%d",i+1),Form("h_ch_f0vf1_s%d;ch_f0;ch_f1",i+1),17,0,16,17,0,16);
-      h_e_f0vf1[i]=new TH2D(Form("h_e_f0vf1_s%d",i+1),Form("h_e_f0vf1_s%d;e_f0;e_f1",i+1),128,0,16,128,0,16);
+      h_e_f0vf1[i]=new TH2D(Form("h_e_f0vf1_s%d",i+1),Form("h_e_f0vf1_s%d;e_f0;e_f1",i+1),128,-2,61,128,-2,61);
       h_ch_f0vQuadrant[i]=new TH2D(Form("h_ch_f0vQuadrant_s%d",i+1),Form("h_ch_f0vQuadrant_s%d;ch_f0;Quadrant",i+1),17,0,16,5,0,4);
       h_e_f0vQuadrant[i]=new TH2D(Form("h_e_f0vQuadrant_s%d",i+1),Form("h_e_f0vQuadrant_s%d;e_f0;Quadrant",i+1),128,0,16,5,0,4);
     }
@@ -212,7 +217,9 @@ namespace silicon{
 
     rootfile->cd("Silicon/ede");
     hpede=new TH2D("hpEdE","siPID;E[MeV];dE[MeV]",1024,0,32,1024,0,32);
-    hpede_arb=new TH2D("hpEdE_arb","siPID;E[arb];dE[arb]",1024,0,4095,1024,0,4095);
+    hpede_arb_front=new TH2D("hpEdE_arb_front","siPID_front;E[arb];dE[arb]",1024,0,4095,1024,0,4095);
+    hpede_arb_back=new TH2D("hpEdE_arb_back","siPID_back;E[arb];dE[arb]",1024,0,4095,1024,0,4095);
+    
     hpede_cluster=new TH2D("hpEdE_cluster","siPID;E[MeV];dE[MeV]",1024,0,32,1024,0,32);
     hpede_arb_cluster=new TH2D("hpEdE_arb_cluster","siPID;E[arb];dE[arb]",1024,0,4095,1024,0,4095);
 
@@ -242,8 +249,8 @@ namespace silicon{
     for(int i=0;i<2;i++){
       rootfile->cd("Silicon/evtheta");
       h_evtheta_arb[i]=new TH2D(Form("h_evtheta_arb[%d]",i+1),Form("h_evtheta[%d];Ch;E",i+1),17,0,16,1024,0,4095);
-      h_evtheta[i]=new TH2D(Form("h_evtheta[%d]",i+1),Form("h_evtheta[%d];Theta;E",i+1),256,10,42,128,0,32);
-      h_evtheta_protgated[i]=new TH2D(Form("h_evtheta_prot[%d]",i+1),Form("h_evtheta_prot[%d];Theta;E",i+1),256,10,42,128,0,32);
+      h_evtheta[i]=new TH2D(Form("h_evtheta[%d]",i+1),Form("h_evtheta[%d];Theta;E",i+1),128,0,31,128,0,32);
+      h_evtheta_protgated[i]=new TH2D(Form("h_evtheta_prot[%d]",i+1),Form("h_evtheta_prot[%d];Theta;E",i+1),128,0,31,128,0,32);
       h_si_x_y[i]=new TH2D(Form("h_si_x_y[%d]",i+1),Form("h_si_x_y[%d];X;Y",i+1),512,-100,100,512,-100,100);
       h_si_x_y_prot[i]=new TH2D(Form("h_si_x_y_prot[%d]",i+1),Form("h_si_x_y_prot[%d];X;Y",i+1),512,-100,100,512,-100,100);
       
@@ -375,6 +382,7 @@ namespace silicon{
 
       hsi_EvT[i]->Fill(si_[i].back.T(),si_[i].back.E());
 	
+      hfrontE_v_backE[i]->Fill(si_[i].back.E(),si_[i].front.E());
 
       for(unsigned int j=0;j<si_[i].front.fMult;j++){
 	h_si_front[i]->Fill(si_[i].Front_E(j));
@@ -414,14 +422,21 @@ namespace silicon{
 	h_si_cluster_mult[i]->Fill(si_cluster_[i].fMult);
       }
     
+
+
     }
     if(si_[0].front.fMult>0&&si_[1].front.fMult>0){
-      hpede_arb->Fill(si_[0].front.E()+si_[1].front.E(),si_[0].front.E());
+      hpede_arb_front->Fill(si_[0].front.E()+si_[1].front.E(),si_[0].front.E());
       hpede->Fill(si_[0].front.E()+si_[1].front.E(),si_[0].front.E());
       
       h_evtheta_arb[0]->Fill(si_[0].front.Ch(),si_[0].front.E()+si_[1].front.E());
       h_evtheta_arb[1]->Fill(si_[1].front.Ch(),si_[0].front.E()+si_[1].front.E());
     }
+
+    if(si_[0].back.fMult>0&&si_[1].back.fMult>0){
+      hpede_arb_back->Fill(si_[0].back.E()+si_[1].back.E(),si_[0].back.E());
+    }
+
 
 
     if(si_cluster_[1].fMult>0&&si_cluster_[0].fMult>0){
@@ -442,15 +457,15 @@ namespace silicon{
   
     if(si_[0].Back_T(0)>0){
       rfvs1_t->Fill(rftime[0].fT,si_[0].Back_T(0));
-      rfvs2_t->Fill(rftime[0].fT,si_[1].Back_T(0));
+     
       rfvs1_t_rel->Fill(rftime[0].fT,rftime[0].fT-si_[0].Back_T(0));
-      rfvs2_t_rel->Fill(rftime[0].fT,rftime[0].fT-si_[1].Back_T(0));
+  
 
       if(protcheck){
 	rfvs1_t_prot->Fill(rftime[0].fT,si_[0].Back_T(0));
-	rfvs2_t_prot->Fill(rftime[0].fT,si_[1].Back_T(0));
+	
 	rfvs1_t_rel_prot->Fill(rftime[0].fT,rftime[0].fT-si_[0].Back_T(0));
-	rfvs2_t_rel_prot->Fill(rftime[0].fT,rftime[0].fT-si_[1].Back_T(0));
+
 
 
 	hS1Theta_vS2Theta_prot->Fill(si_cluster_[0].fPos[0].Theta()*180/3.14,si_cluster_[1].fPos[0].Theta()*180/3.14);
@@ -469,8 +484,16 @@ namespace silicon{
       
       }
 
+    }  
+      if(si_[1].Back_T(0)>0){
+	rfvs2_t->Fill(rftime[0].fT,si_[1].Back_T(0));
+	rfvs2_t_rel->Fill(rftime[0].fT,rftime[0].fT-si_[1].Back_T(0));
+	if(protcheck){
+	  rfvs2_t_prot->Fill(rftime[0].fT,si_[1].Back_T(0));
+	  rfvs2_t_rel_prot->Fill(rftime[0].fT,rftime[0].fT-si_[1].Back_T(0));
+	}
+      }
     
-    }
   
     return 1;
 

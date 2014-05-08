@@ -19,6 +19,8 @@ namespace gamma_nai{
   TH1D *hNaIArray_E;	      
   TH1D *hNaIArray_Position;
   TH1D *hNaIArray_Detector;
+  TH2D *hNaIArray_TvRftime;
+
 
   TH1D *hNaI_T[20];	      
   TH1D *hNaI_T1[20];	      
@@ -53,7 +55,8 @@ namespace gamma_nai{
     hNaIArray_T = new TH1D("hNaIArray_T","hNaIArray_T;T",4096,0,4095);	          
     hNaIArray_E = new TH1D("hNaIArray_E","hNaIArray_E;E",4096,0,4095);	      
     hNaIArray_Position = new TH1D("hNaIArray_Position","hNaIArray_Position;T",4096,-1024,1024);	             
- 
+    hNaIArray_TvRftime=new TH2D("hNaIArray_TvRftime","hNaIArray_TvRftime",128,0,127,512,0,4095);
+
     for (unsigned int i=0;i<20;i++){
       rootfile->cd("NaIArray");
       gDirectory->mkdir(Form("NaI[%d]",i));
@@ -79,6 +82,7 @@ namespace gamma_nai{
       hNaIArray_T->Fill(nai_array.fT[0]);
       hNaIArray_E->Fill(nai_array.fE[0]);
       hNaIArray_Position->Fill(nai_array.fPosition[0]); 
+      hNaIArray_TvRftime->Fill(rftime[0].T_Wrapped(),nai_array.fT[0]);
     }
     for (unsigned int i=0;i<20;i++){
       if(nai[i].SumE()>0){
