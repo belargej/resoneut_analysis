@@ -81,7 +81,7 @@ namespace RNROOT{
   extern RN_VariableMap gVariableMap;
   extern RN_MassTable gMassTable;
   extern RN_Analyzer gMainAnalyzer;
-  extern RN_PrimaryReaction gPrimaryReaction;
+  extern RN_ReactionInfo gReactionInfo;
 
   /*****************************************************/
   
@@ -91,9 +91,10 @@ namespace RNROOT{
   extern RN_Analyzer_Stack gAnalyzer_stack; //handles RN_Analyzers
   extern RN_Module_Stack gModule_stack; //handles RN_Modules
   extern RN_Parameter_Stack gParameter_stack; //handle RN_Parameters
-  extern RN_ReactionInfo gReactionInfo;//handle not only the primary reaction of interest but all other potential reactions that the user wants to consider
+  // extern RN_ReactionInfo_Stack gReactionInfo_stack;//handle not only the primary reaction of interest but all other potential reactions that the user wants to consider
 
   //right now I'm using std::vectors to handle the following RN_Baseclass objects (which inherit from TObject).  In the future I may move to using root TLists for these objects too (like I do for the 'stacks' above).  
+  
   extern RN_NeutDetectorArray Narray;	     
   extern RN_TriggerBitCollection triggerbit;	     
   extern RN_NeutCollection neut;	     

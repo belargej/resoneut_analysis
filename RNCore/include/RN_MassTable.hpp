@@ -23,7 +23,7 @@ class RN_MassTable:public RN_VariableMap{
 private:
   
 public:
-  RN_MassTable();
+  RN_MassTable(const std::string & name = "");
   virtual ~RN_MassTable(){};
 
   ClassDef(RN_MassTable,1);

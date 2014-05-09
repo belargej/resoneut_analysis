@@ -25,10 +25,12 @@ namespace sim{
     
   public:
     RN_AngularDistribution();
-    RN_AngularDistribution(std::string);
+    RN_AngularDistribution(const std::string& _file);
     virtual ~RN_AngularDistribution();
     double ad[180];
+    void Init(const std::string & _file);
     double GetAD(double angle);
+    void Clear();
     
     ClassDef(RN_AngularDistribution,1);
   };

@@ -4,7 +4,7 @@
 #include "RN_MassTable.hpp"
 
 
-RN_MassTable::RN_MassTable(){
+RN_MassTable::RN_MassTable(const std::string &name):RN_VariableMap(name){
 
   //  AddParam("proton",938.2720137); 
   //AddParam("p",938.2720137);      

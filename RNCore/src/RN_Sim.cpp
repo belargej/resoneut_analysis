@@ -85,24 +85,23 @@ namespace sim{
       }
       else if(input[0]=="fDWBA")
 	{
-	  gPrimaryReaction.SetAngularDistribution(input[1]);
+	  gReactionInfo.SetAngularDistribution(input[1]);
 	
 	}
       else if(input[0]=="fReaction")
 	{
 	  std::string plist[6];
 	  if (input.size()==7){
-	    gPrimaryReaction.Clear();
 	    for(unsigned int i=0;i<6;i++){
 	      plist[i] = input[i+1];
 	    }
-	    gPrimaryReaction.SetReaction(plist[0],
-					 plist[1],
-					 plist[2],
-					 plist[3],
-					 plist[4],
-					 plist[5]);
-	      }
+	    gReactionInfo.SetReaction(plist[0],
+				      plist[1],
+				      plist[2],
+				      plist[3],
+				      plist[4],
+				      plist[5]);
+	  }
 	  else {
 	    std::cout<<"incorrect number of entries to fReaction: "<< input.size()-1<<"but needed 6"<<std::endl;
 	    exit(EXIT_FAILURE);
@@ -145,22 +144,24 @@ namespace sim{
     else
       continue;
   } while(!cfg.eof());
+    cfg.close();
   
   Loop(totevents,option);
 
     
 
-}
+  }
 
 
 
   void RN_Sim::FillHistograms(){
-    
-    hE_v_theta->Fill(gPrimaryReaction.RecoilLV().Theta()*180/3.14,gPrimaryReaction.RecoilLV().E()-gPrimaryReaction.RecoilLV().M());
+    TLorentzVector recoilLV = gReactionInfo.RecoilLV();
+    int cref(0);    
+    hE_v_theta->Fill(recoilLV.Theta()*180/3.14,recoilLV.E()-recoilLV.M());
     hn_CM->Fill(n_cm*180/3.14);
-    hn_CMvLab->Fill(n_cm*180/3.14,gPrimaryReaction.RecoilLV().Theta()*180/3.14);
+    hn_CMvLab->Fill(n_cm*180/3.14,gReactionInfo.RecoilLV().Theta()*180/3.14);
     
-    int cref=0;
+    cref = 0 ;
     for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
       if((*it).GetHitPos().X()!=0)
 	hpos_in->Fill((*it).GetHitPos().X(),(*it).GetHitPos().Y());
@@ -170,7 +171,7 @@ namespace sim{
 	hE_n->Fill(cref,(*it).fEsum);
 	hpos->Fill((*it).GetHitPos().X(),(*it).GetHitPos().Y());
 	double nKE=0,hiKE=0;
-	double q_value=gPrimaryReaction.RecoilQValue((*it).GetPosVect().Z(),(*it).fT_Sim,nKE,hiKE);
+	double q_value=gReactionInfo.RecoilQValue((*it).GetPosVect().Z(),(*it).fT_Sim,nKE,hiKE);
 	hQ->Fill(q_value);
 	hQ_n[cref]->Fill(q_value);
 	h_nKE->Fill(nKE);
@@ -181,9 +182,9 @@ namespace sim{
       cref++;
   }
 
-    q_val_p = gPrimaryReaction.DecayQValueExact();
+    q_val_p = gReactionInfo.DecayQValueExact();
     
-    q_val_p_guess = gPrimaryReaction.DecayQValueEstimate();
+    q_val_p_guess = gReactionInfo.DecayQValueEstimate();
 
     
     hQ_proton->Fill(q_val_p);
@@ -240,14 +241,14 @@ namespace sim{
     SetCalibrations();
     Long64_t evcount=0;
     while(evcount<evnum){
-      if(GenerateEvents(evcount,options))
+      if(GenerateEvents(evcount,options)){
 	evcount++;
+      }
       else
 	continue;
+      if(def==1)FillHistograms();
+      if(evcount%30000==0)std::cout<<evcount<<std::endl;
     }
-    if(def==1)FillHistograms();
-    if(evcount%30000==0)std::cout<<evcount<<std::endl;
-    
     WriteOut();
   }
   
@@ -280,16 +281,22 @@ namespace sim{
   
   
   int RN_Sim::GenerateEvents(Long64_t evnum,std::string options=""){
-    n_cm = gPrimaryReaction.GenerateSimEvent();
-    gPrimaryReaction.GenerateDecayEvents();
-    
     for(unsigned int i=0;i<neut.size();i++){
-      if(neut[i].inDet(gPrimaryReaction.RecoilLV().Vect())){
+      neut[i].Reset();
+    }
+    for(unsigned int i=0;i<si_.size();i++){
+      si_[i].Reset();
+    }
+
+    n_cm = gReactionInfo.GenerateSimEvent();
+   
+    for(unsigned int i=0;i<neut.size();i++){
+      if(neut[i].inDet(gReactionInfo.RecoilLV().Vect())){
 	NeutronIn[i]++;
-	if(neut[i].NeutIn(gPrimaryReaction.RecoilLV(),n_tof,E_deposited)){
+	if(neut[i].NeutIn(gReactionInfo.RecoilLV(),n_tof,E_deposited)){
 	  NeutronDetected[i]++;
 	  for(unsigned int s=0;s<si_.size();s++){
-	    if(si_[s].inDet(gPrimaryReaction.DecayProductLV().Vect())){
+	    if(si_[s].inDet(gReactionInfo.DecayProductLV().Vect())){
 	      ProtonIn_NeutDet[s]++;
 	    }
 	  }
@@ -298,9 +305,9 @@ namespace sim{
     }
     
     for(unsigned int s=0;s<si_.size();s++){
-      if(si_[s].inDet(gPrimaryReaction.DecayProductLV().Vect())){
+      if(si_[s].inDet(gReactionInfo.DecayProductLV().Vect())){
 	ProtonIn[s]++;
-	double e=gPrimaryReaction.DecayProduct().KE();
+	double e=gReactionInfo.DecayProductLV().E()-gReactionInfo.DecayProductLV().M();
 	double t=0;
 	si_[s].front.InsertHit(e,t,0);
       }
@@ -334,14 +341,14 @@ namespace sim{
   
   void RN_Sim::WriteOut(){
     
-      hQ->Fit(Q_fit,"","",-4,4);
-      hn_tof->Fit(TOF_fit,"","",1,128);
-      simlog<<"Reaction :"<<gPrimaryReaction.Beam().GetName()<<"("<<gPrimaryReaction.Target().GetName()<<","<<gPrimaryReaction.Recoil().GetName()<<")"<<gPrimaryReaction.Fragment().GetName()<<"\n";
-      simlog<<"Decay :"<<gPrimaryReaction.Fragment().GetName()<<"->"<<gPrimaryReaction.DecayProduct().GetName() << "+" << gPrimaryReaction.HeavyDecay().GetName()<<"\n\n";
+    hQ->Fit(Q_fit,"","",-4,4);
+    hn_tof->Fit(TOF_fit,"","",1,128);
+    simlog<<"Reaction :"<<gReactionInfo.BeamName()<<"("<<gReactionInfo.TargetName()<<","<<gReactionInfo.RecoilName()<<")"<<gReactionInfo.FragmentName()<<"\n";
+    simlog<<"Decay :x"<<gReactionInfo.FragmentName()<<"->"<<gReactionInfo.DecayProductName() << "+" << gReactionInfo.HeavyDecayName()<<"\n\n";
       
-      simlog<<"Beam Energy: "<<gPrimaryReaction.BeamEnergy()<<"\n";
-      simlog<<"Beam E_loss(thickness): "<<gPrimaryReaction.BeamELoss()<<"\n";
-      simlog<<"Excitation Energy: "<<gPrimaryReaction.Ex_Fragment()<<"\n";
+      simlog<<"Beam Energy: "<<gReactionInfo.BeamEnergy()<<"\n";
+      simlog<<"Beam E_loss(thickness): "<<gReactionInfo.BeamELoss()<<"\n";
+      simlog<<"Excitation Energy: "<<gReactionInfo.Hi_Ex_Set()<<"\n";
       simlog<<"Number of Neutron Detectors: "<<neut.size()<<"\n";
       simlog<<"Total Entries: "<<totevents<<"\n\n";
 

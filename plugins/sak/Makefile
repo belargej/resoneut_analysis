@@ -1,6 +1,6 @@
 CXX=g++
 
-SOURCES=sak_Gates.cpp sak_Histograms.cpp sak_Canvas.cpp sak_Kinematic_Curve.cpp
+SOURCES=sak_Gates.cpp sak_Histograms.cpp sak_Canvas.cpp #sak_Kinematic_Curve.cpp
 OBJECTS=${SOURCES:.cpp=.o}
 HEADERS=${SOURCES:.cpp=.hpp}
 LIBS=${addprefix -l,${SOURCES:.cpp=}}

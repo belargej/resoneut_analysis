@@ -29,124 +29,108 @@
 #include "RN_Particle.hpp"
 #include "RN_SimPhysics.hpp"
 
-class RN_DecayChannel;
-class RN_PrimaryReaction;
-class RN_ReactionInfo;
 
-
-class RN_PrimaryReaction:public RN_BaseClass{
+class RN_ReactionInfo:public RN_BaseClass{
 private:
 protected:
-  RN_Particle pBeam;
-  RN_Particle pTarget;
-  RN_Particle pRecoil;
-  RN_Particle pFragment;
+  Double32_t mArray[6];
+  TString fNames[6];
   Double32_t fBeamEnergy;
   Double32_t fBeamELoss;
-  Double32_t E_fragment_est;
+  Double32_t fhi_ex_set;
+  Double32_t fd_ex_set;
+  Double32_t fE_fragment_est;//for q_value calculations
   sim::RN_AngularDistribution fDWBA;
-  TList *fDecayChannels;
   bool fIsSet;
+  
+  bool GenerateDecayEvent(); //protected as it requires a succesful GenerateSimEvent()
+  
 public:
+  TLorentzVector fLVarray[6];
 
-  RN_PrimaryReaction():fIsSet(0)
-  {
-  };
-  RN_PrimaryReaction(const std::string & beam, 
-		     const std::string & target, 
-		     const std::string & recoil, 
-		     const std::string & fragment);
+  RN_ReactionInfo(const std::string & name = "");
+  ~RN_ReactionInfo(){}
 
-  void SetReaction(const std::string & beam,
-		   const std::string & target,
-		   const std::string & recoil,
-		   const std::string & fragment);
-
-  void SetReaction(const std::string & beam,
-		   const std::string & target,
-		   const std::string & recoil,
+  //SetReaction, SetAngular Distribution and the beam parameters
+  //must be set before using GenerateSimEvent();
+  bool SetReaction(const std::string & beam, 
+		   const std::string & target, 
+		   const std::string & recoil, 
 		   const std::string & fragment,
-		   const std::string & product,
-		   const std::string & heavy);  
+		   const std::string & decay,
+		   const std::string & heavydecay);
   void SetAngularDistribution(const std::string& filename);
-  Double32_t GenerateSimEvent();
-  bool GenerateDecayEvents();
+  //the beam parameters can be set by these methods
+  void SetCalibrations(RN_VariableMap&detvar);  
+  void SetBeamEnergy(Double32_t energy){fBeamEnergy = energy;}
+  void SetBeamELoss(Double32_t eloss){fBeamELoss = eloss;}
+  void SetEFragmentEst(Double32_t efragest){fBeamEnergy = fE_fragment_est;}
+  void SetHiEx(Double32_t hi_ex_set){fhi_ex_set = hi_ex_set;}
+  void SetDecay_Ex(Double32_t d_ex_set){fd_ex_set = d_ex_set;}
 
+  
+  Double32_t GenerateSimEvent(); //returns the CM angle of the recoil
+
+
+  //Get Beam Parameters
   inline Double32_t BeamEnergy() const {return fBeamEnergy;}
   inline Double32_t BeamEnergy_Est() const {return (fBeamEnergy - (0.5 * fBeamELoss));}
   inline Double32_t BeamELoss() const {return fBeamELoss;}
-  inline Double32_t M_Beam()const{return pBeam.M();} 
-  inline Double32_t M_Target()const{return pTarget.M();}
-  inline Double32_t M_Recoil()const{return pRecoil.M();}
-  inline Double32_t M_Fragment()const{return pFragment.M();}
-  inline Double32_t Ex_Fragment()const{return pFragment.Ex();}
-  Double32_t M_Decay_Product(int i=0);
-  Double32_t M_Heavy_Decay(int i=0);
-  inline RN_Particle& Beam(){return pBeam;}
-  inline RN_Particle& Target(){return pTarget;}
-  inline RN_Particle& Recoil(){return pRecoil;}
-  inline RN_Particle& Fragment(){return pFragment;}
-  RN_Particle& DecayProduct(int i=0);
-  RN_Particle& HeavyDecay(int i=0);
-  inline TLorentzVector& BeamLV(){return pBeam.LV;}
-  inline TLorentzVector& TargetLV(){return pTarget.LV;}
-  inline TLorentzVector& RecoilLV(){return pRecoil.LV;}
-  inline TLorentzVector& FragmentLV(){return pFragment.LV;}
-  TLorentzVector& DecayProductLV(int i=0);
-  TLorentzVector& HeavyDecayLV(int i=0);
-  inline Double32_t E_Fragment() const {return E_fragment_est;}
+  inline Double32_t E_Fragment() const {return fE_fragment_est;}
+  inline Double32_t Hi_Ex_Set() const {return fhi_ex_set;}
+  inline Double32_t D_Ex_Set() const {return fd_ex_set;}
+
+
+  //Get Masses
+  inline const Double32_t& M_Beam()const{return mArray[0];} 
+  inline const Double32_t& M_Target()const{return mArray[1];}
+  inline const Double32_t& M_Recoil()const{return mArray[2];}
+  inline const Double32_t& M_Fragment()const{return mArray[3];}
+  inline const Double32_t& M_Decay_Product() const{return mArray[4];}
+  inline const Double32_t& M_Heavy_Decay()const {return mArray[5];}  
+
+
+  //Get Particle names
+  inline const TString& BeamName() const {return fNames[0];}
+  inline const TString& TargetName() const {return fNames[1];}
+  inline const TString& RecoilName() const {return fNames[2];}
+  inline const TString& FragmentName() const {return fNames[3];}
+  inline const TString& DecayProductName() const {return fNames[4];}
+  inline const TString& HeavyDecayName() const {return fNames[5];}
+ 
+
+  //Get LorentzVectors(after GenerateSimEvents())
+  inline const TLorentzVector& BeamLV() const {return fLVarray[0];}
+  inline const TLorentzVector& TargetLV() const {return fLVarray[1];}
+  inline const TLorentzVector& RecoilLV() const {return fLVarray[2];}
+  inline const TLorentzVector& FragmentLV() const {return fLVarray[3];}
+  inline const TLorentzVector& DecayProductLV() const { return fLVarray[4];}
+  inline const TLorentzVector& HeavyDecayLV() const { return fLVarray[5];}
+
+  //get kinematic curves for plotting/matching over data
+  TGraph GetCurve(int Points, const double& hi_ex_set);
+  TGraph GetCurve(int Points);
+  TGraph GetSecondaryDecayCurve(int Points,const double & hi_ex_set,const double& decay_ex_set);
+  TGraph GetSecondaryDecayCurve(int Points);
+
+  //Use masses to estimate qval
   Double32_t DecayQValueExact();
   Double32_t DecayQValueEstimate();
   Double32_t DecayQValueEstimate(const double& decay_energy, const double& decay_theta);
   Double32_t RecoilQValue(const double& dz, const double& tof, double&nKE, double&hiKE);
 
-  void SetEFragmentGuess(const Double32_t& efrag ){E_fragment_est = efrag;}
-  void SetCalibrations(RN_VariableMap&detvar);
-  void Reset();
-  void Clear();
-  bool IsSet()const{return fIsSet;}
+  void Reset(); //reset LorentzVectors but leave masses
+  void Clear(); //reset both masses and LVs and isSet=0
+  bool IsSet(); //check if masses and a beam energy is set and set to 1
 
-  TList * GetListOfDecayChannels(){return fDecayChannels;}
-  RN_DecayChannel *AddDecayChannel(const std::string & decay){return 0;}
-  RN_DecayChannel *AddDecayChannel(const std::string & decay,const std::string & heavy);
-				  
-
-
-  ClassDef(RN_PrimaryReaction,1);
+  ClassDef(RN_ReactionInfo,1);
 };
-
-class RN_DecayChannel:public RN_BaseClass{
+/*
+class RN_ReactionInfo_Stack:public RN_BaseClass_Stack{
 private:
-  RN_PrimaryReaction* fParentReaction;
-  RN_Particle pProduct;
-  RN_Particle pHIDecay;
-  
-  static int decayID;
- 
-protected:
-  TList * fParticleList;
-  Double32_t fExEnergy;
-  
 public:
-  RN_DecayChannel(){};
-  RN_DecayChannel(RN_PrimaryReaction* parent, const std::string & decay, const std::string & heavy);
-  Double32_t M_Decay_Product()const{return pProduct.M();}
-  Double32_t M_Heavy_Decay()const{return pHIDecay.M();}
-  void Init(RN_PrimaryReaction* parent,const std::string & decay,const std::string & heavy);
-  bool GenerateDecayEvent();
-
-  TLorentzVector& DecayProductLV(){return pProduct.LV;}
-  TLorentzVector& HeavyDecayLV(){return pHIDecay.LV;}
-  RN_Particle& DecayProduct(){return pProduct;}
-  RN_Particle& HeavyDecay(){return pHIDecay;}
-  void Reset();
-
-  ClassDef(RN_DecayChannel,1);
+  ClassDef(RN_ReactionInfo,1);
 };
-
-//RN_ReactionInfo:
-//stack(TList) of primary reactions which in turn have TLists of decay channels. By Looping over all Primary Reactions and Looping over all decay channels we can quickly produce Kinematic Curves and simulation data for a large set of possible reactions.
-class RN_ReactionInfo:public RN_BaseClass_Stack{
-};
+*/
 
 #endif

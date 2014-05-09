@@ -13,23 +13,24 @@ namespace RNROOT{
   RN_NeutCollection neut;	     
   RN_S2Collection si_;		     
   RN_S2ClusterCollection si_cluster_;
+  RN_NaICollection nai;	 
   RN_RFTime rftime("rftime");
   //  RN_MCPDetector MCP("MCP");
   RN_IonChamber ic("ic");		     
-  RN_NaICollection nai;	
-  RN_NaIArray nai_array("nai_array",20);	     
-  
+  RN_NaIArray nai_array("nai_array",20);  
 
   TFile * gRootFile;
   TTree * gNewTree;
-  RN_VariableMap gVariableMap;
-  RN_MassTable gMassTable;
-  RN_Analyzer gMainAnalyzer;
-  RN_Analyzer_Stack gAnalyzer_stack;
-  RN_Module_Stack gModule_stack;
-  RN_Parameter_Stack gParameter_stack;
-  RN_PrimaryReaction gPrimaryReaction;
-  RN_ReactionInfo gReactionInfo;
+
+  RN_VariableMap gVariableMap("Variable_Map");
+  RN_MassTable gMassTable("Mass_Table");
+  RN_Analyzer gMainAnalyzer("Main_Analyzer");
+  RN_Analyzer_Stack gAnalyzer_stack("Analyzer_Stack");
+  RN_Module_Stack gModule_stack("Module_Stack");
+  RN_Parameter_Stack gParameter_stack("Parameter_Stack");
+  RN_ReactionInfo gReactionInfo("ReactionInfo");
+  // RN_ReactionInfo_Stack gReaction_Stack("ReactionInfo_Stack");
+  
   int RN_RootSet(0);
 }
 
@@ -75,13 +76,14 @@ namespace RNROOT{
       si_cluster_.clear();
       nai.clear();
       triggerbit.clear();
-      gModule_stack.ClearStack();
-      gAnalyzer_stack.ClearStack();
-      gParameter_stack.ClearStack();
-      gReactionInfo.ClearStack();
-      gVariableMap.ClearParams();
-      gPrimaryReaction.Clear();  
     }
+    gModule_stack.ClearStack();
+    gAnalyzer_stack.ClearStack();
+    gParameter_stack.ClearStack();
+    //gReactionInfo_stack.ClearStack();
+    gVariableMap.ClearParams();
+    gReactionInfo.Clear();
+
 
 
     //add the modules declared above to the stack...this should match
@@ -116,7 +118,7 @@ namespace RNROOT{
     }
     //neutron detectors - name - pos grid channel num - slot num
     for(unsigned int i=0;i<NEUTNUM;i++){
-      neut.push_back(RN_NeutDetector(Form("neut%d",i)));
+      neut.push_back(RN_NeutDetector(Form("neut%d",i),4,i+1));
     }    
     for(unsigned int i=0; i<NAI_NUM;i++){
       nai.push_back(RN_NaIDetector(Form("nai_%d",i)));
@@ -154,7 +156,7 @@ namespace RNROOT{
   //Apply any calibrations loaded into the variable map gVariableMap 
   
   void SetCalibrations(RN_VariableMap &VarMap){
-    gPrimaryReaction.SetCalibrations(VarMap);// beam energy etc
+    gReactionInfo.SetCalibrations(VarMap);// beam energy etc
     
     for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
       (*it).SetCalibrations(VarMap);

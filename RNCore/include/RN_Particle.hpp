@@ -36,7 +36,7 @@ public:
   
   TLorentzVector LV;
 
-  Double32_t M()const {return LV.M();}
+  Double32_t M()const {return mass;}
   Double32_t Ex()const {return ex_energy;}
   Double32_t SetExEnergy(const double & exe){return (ex_energy = exe);};
   Double32_t KE()const {return LV.E()-LV.M();}

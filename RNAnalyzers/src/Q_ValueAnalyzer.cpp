@@ -74,11 +74,11 @@ namespace physical{
     }
 
     //check for parameters necessary for q_value reconstruction
-    if(!gPrimaryReaction.IsSet()){
+    if(!gReactionInfo.IsSet()){
       std::cout<<"Reaction Masses have not been set"<<std::endl;
       exit(EXIT_FAILURE);
     }
-    if(!gPrimaryReaction.E_Fragment())
+    if(!gReactionInfo.E_Fragment())
       std::cout<<"Heavy Ion energy ansatz for Q value reconstruction needed"<<std::endl;
 
 
@@ -138,7 +138,7 @@ namespace physical{
   
     if(silicon::prot_E>0&& silicon::prot_theta!=0){
     
-      q_val_p = gPrimaryReaction.DecayQValueEstimate(silicon::prot_E,(TMath::Pi()*USEANGLE / 180));
+      q_val_p = gReactionInfo.DecayQValueEstimate(silicon::prot_E,(TMath::Pi()*USEANGLE / 180));
     
     }
 

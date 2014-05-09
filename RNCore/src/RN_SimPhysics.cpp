@@ -12,23 +12,28 @@ namespace sim{
   ///////////////////////////////////////////////////////////////////////
   
   RN_AngularDistribution::RN_AngularDistribution(){
+    Clear();
   }
   RN_AngularDistribution::~RN_AngularDistribution(){
   }
   
-  RN_AngularDistribution::RN_AngularDistribution(std::string _file){
-
+  RN_AngularDistribution::RN_AngularDistribution(const std::string& _file){
+    Clear();
+    Init(_file);    
+  }
+  void RN_AngularDistribution::Init(const std::string & _file){
+    
     std::ifstream in(_file.c_str()); 
     char line[80];
     int i;
     double test,value;
-
+    
     for (i=0;i<180;i++){
       in.getline(line,80);
       sscanf(line,"%lf%lf",&test,&value);
       if ((int)test == i){
 	this->ad[i]=value;
-    }
+      }
       //    else{
       //  cout << "could not read line "<<line<<" in angle " << i;
       // }
@@ -40,7 +45,13 @@ namespace sim{
     }  
     
     
-}
+  }
+  void RN_AngularDistribution::Clear(){
+    for(int i=0;i<180;i++){
+      this->ad[i] = 0;
+    }
+  }
+
   
   double RN_AngularDistribution::GetAD(double angle)
   {
