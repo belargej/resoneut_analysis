@@ -7,6 +7,7 @@
 #define M_C 11177.862342
 
 ClassImp(RN_NeutDetector);
+
 namespace sim{
   double z_pos(0);
   double stepcounter(0);
@@ -19,7 +20,6 @@ using namespace sim;
 
 
 RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetector(name,num),
-								 
 								  elin(1),
 								  eshift(0),
 								  tlin(1),
@@ -36,9 +36,11 @@ RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetecto
 								  fQ_short(0),
 								  fPSD(0),
 								  fT_Q(0),
-								  fTrel(0)
-  							  
-  
+								  fTrel(0),
+								  fDt(0),
+								  fT_Sim(0),
+								  fEsum(0),
+								  fE_lost(0)
 {
   fPos.SetXYZ(0,0,-228.7);//set default zpos
   RNArray::PositionMap(apos,fPos);//set xpos and ypos
