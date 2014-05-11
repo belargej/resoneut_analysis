@@ -37,31 +37,8 @@ RN_Analyzer::~RN_Analyzer(){
 
 
 int RN_Analyzer::GetDetectorEntry(){
-    //Reset all detectors
-    for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
-      (*it).Reset();
-    }
-    
-    Narray.Reset(); 
-    
-    for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
-      (*it).Reset();
-    }
-    
-    for(RN_S2ClusterCollectionRef it=si_cluster_.begin();it!=si_cluster_.end();it++){
-      (*it).Reset();
-    }
-    
-    rftime.Reset();
-    ic.Reset();
-    
-    for(RN_NaICollectionRef it=nai.begin();it!=nai.end();it++){
-      (*it).Reset();
-    }
-    
-    nai_array.Reset();
-    
-
+  RNROOT::ResetRNROOTDetectors();
+  
   //ChanneltoDetector
   
   //Neutron Detector Long and Short gate Hits
@@ -166,6 +143,7 @@ int RN_Analyzer::GetDetectorEntry(){
     RNArray::ReconstructTREL(neut,Narray.fT_mult,Narray.fT_first,Narray.fDetfirst);
     
     nai_array.ReconstructHits(nai);
+    si_array.ReconstructHits(si_cluster_);
     
     return 1;
 }

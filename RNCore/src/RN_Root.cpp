@@ -13,6 +13,7 @@ namespace RNROOT{
   RN_NeutCollection neut;	     
   RN_S2Collection si_;		     
   RN_S2ClusterCollection si_cluster_;
+  RN_SiArray si_array("SiArray",SI_NUM);
   RN_NaICollection nai;	 
   RN_RFTime rftime("rftime");
   //  RN_MCPDetector MCP("MCP");
@@ -152,8 +153,44 @@ namespace RNROOT{
     gNewTree=new TTree(treename.c_str(),treename.c_str());
   }
   
+  void ResetRNROOTGlobals(){
+    gReactionInfo.Reset();
+    gModule_stack.Reset();
+    ResetRNROOTDetectors();
+
+  }
+
   
-  //Apply any calibrations loaded into the variable map gVariableMap 
+  void ResetRNROOTDetectors(){
+    //Reset all detectors
+    for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
+      (*it).Reset();
+    }
+    
+    Narray.Reset(); 
+    
+    for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
+      (*it).Reset();
+    }
+    
+    for(RN_S2ClusterCollectionRef it=si_cluster_.begin();it!=si_cluster_.end();it++){
+      (*it).Reset();
+    }
+
+    si_array.Reset();
+    rftime.Reset();
+    ic.Reset();
+    
+    for(RN_NaICollectionRef it=nai.begin();it!=nai.end();it++){
+      (*it).Reset();
+    }
+    
+    nai_array.Reset();
+    
+
+
+  }
+
   
   void SetCalibrations(RN_VariableMap &VarMap){
     gReactionInfo.SetCalibrations(VarMap);// beam energy etc

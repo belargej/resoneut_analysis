@@ -109,7 +109,7 @@ bool F17dn_Analyzer::ProcessFill(){
     //  hneut_nai_trel->Fill(coinc::neut_nai_trel);
   }
   if(si_cluster_[1].fMult>0 && si_cluster_[0].fMult>0 && Narray.fT_mult>0)
-    hproton_ede_ntime->Fill(silicon::prot_E,silicon::prot_dE);
+    hproton_ede_ntime->Fill(si_array.E_AB(),si_array.E_A());
   
   return 1;
 }

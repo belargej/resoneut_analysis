@@ -20,9 +20,9 @@
 using namespace RNROOT;
 
 #if 1
-#define USEANGLE silicon::prot_theta
+#define USEANGLE si_array.Theta_A()
 #else
-#define USEANGLE silicon::rel_angle
+#define USEANGLE si_array.Theta_B()
 #endif
 
 #define Q_MIN 1.2
@@ -136,9 +136,9 @@ namespace physical{
   bool Q_ValueAnalyzer::Process(){
     //gPrimaryReaction.E_fragment is ansatz from MC simulation
   
-    if(silicon::prot_E>0&& silicon::prot_theta!=0){
+    if(si_array.E_AB()>0&& USEANGLE!=0){
     
-      q_val_p = gReactionInfo.DecayQValueEstimate(silicon::prot_E,(TMath::Pi()*USEANGLE / 180));
+      q_val_p = gReactionInfo.DecayQValueEstimate(si_array.E_AB(),(TMath::Pi()*USEANGLE / 180));
     
     }
 
@@ -153,27 +153,27 @@ namespace physical{
     //Q_Value parameter histograms
     Q_Value->Fill(q_val_p);
     Q_v_Phi->Fill(q_val_p,si_cluster_[0].fPos[0].Phi()*180/TMath::Pi());
-    Q_v_cosTheta->Fill(q_val_p,cos(TMath::Pi()*silicon::rel_angle/180));
-    Q_v_EcosTheta->Fill(q_val_p,TMath::Sqrt(silicon::prot_E)*cos(TMath::Pi()*silicon::rel_angle/180));
+    Q_v_cosTheta->Fill(q_val_p,cos(si_array.Theta_A()));
+    Q_v_EcosTheta->Fill(q_val_p,TMath::Sqrt(si_array.E_AB())*cos(si_array.Theta_A()));
 
     if(silicon::protcheck){
       Q_Value_proton->Fill(q_val_p);
-      Q_v_pTheta->Fill(q_val_p,silicon::prot_theta);   		       
-      Q_v_pE->Fill(q_val_p,silicon::prot_E);   			       
-      Q_v_pRelAngle->Fill(q_val_p,silicon::rel_angle);   		       
+      Q_v_pTheta->Fill(q_val_p,si_array.Theta_A());   		       
+      Q_v_pE->Fill(q_val_p,si_array.E_AB());   			       
+      Q_v_pRelAngle->Fill(q_val_p,si_array.Theta_A());   		       
       
       if(ionchamber::hi_check[0]){
 	Q_Value_proton_hi1->Fill(q_val_p);
-	Q_v_pTheta_proton_hi1->Fill(q_val_p,silicon::prot_theta);   	       
-	Q_v_pE_proton_hi1->Fill(q_val_p,silicon::prot_E);   	       
-	Q_v_pRelAngle_proton_hi1->Fill(q_val_p,silicon::rel_angle);   
+	Q_v_pTheta_proton_hi1->Fill(q_val_p,si_array.Theta_A());   	       
+	Q_v_pE_proton_hi1->Fill(q_val_p,si_array.E_AB());   	       
+	Q_v_pRelAngle_proton_hi1->Fill(q_val_p,si_array.Theta_A());   
 	
 	if(coinc::si_ic_tcheck){
 	  Q_Value_proton_hi1_ictime->Fill(q_val_p);
-	  Q_v_pTheta_proton_hi1_ictime->Fill(q_val_p,silicon::prot_theta);   
-	  Q_v_pE_proton_hi1_ictime->Fill(q_val_p,silicon::prot_E);          
-	  Q_v_pRelAngle_proton_hi1_ictime->Fill(q_val_p,silicon::rel_angle);   
-    
+	  Q_v_pTheta_proton_hi1_ictime->Fill(q_val_p,si_array.Theta_A());   
+	  Q_v_pE_proton_hi1_ictime->Fill(q_val_p,si_array.E_AB());          
+	  Q_v_pRelAngle_proton_hi1_ictime->Fill(q_val_p,si_array.Theta_A());   
+	  
     
 	}
 	

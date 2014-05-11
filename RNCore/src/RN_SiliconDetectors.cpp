@@ -7,6 +7,7 @@ ClassImp(RN_S2Detector);
 
 using global::myRnd;
 
+//S1FIXENABLE was needed for some data sets where the S1 Detector was incorrectly plugged in
 #define S1FIXENABLE 0
 
 
@@ -25,41 +26,28 @@ using global::myRnd;
 void RN_S2Detector::Reset(){
   front.Reset();
   back.Reset();
-
 }
+
 void RN_S2Detector::SetCalibrations(double elin,double eshift,double tlin, double tshift){
   this->elin=elin;
   this->eshift=eshift;
   this->tlin=tlin;
   this->tshift=tshift;
-
 }
 
+
 RN_S2Detector::RN_S2Detector(std::string name,const int& fnum, const int& bnum):RN_BaseClass(name,name),
-										elin(1),
-										eshift(0),
-										tlin(1),
-										tshift(0),
-										
-										fronta1(fnum,double(1)),
-										backa0(bnum,double(0)),
-										backa1(bnum,double(1)),
-										frontt0(fnum,double(0)),
-										frontt1(fnum,double(1)),
-										backt0(fnum,double(0)),
-										backt1(bnum,double(1)),	
-										fQ_front(fnum,double(0)),
-										fQ_back(bnum,double(0)),
-										normv_(0,0,0),
-										shiftv_(0,0,0),
-										posv_(0,0,0),
-										rotv_(0,0,0),
-										_s1switch(0),
-										front(name+".front",fnum),
-										back(name+".back",bnum)
-										
-  
-  
+  elin(1),
+  eshift(0),
+  tlin(1),
+  tshift(0),
+  normv_(0,0,0),
+  shiftv_(0,0,0),
+  posv_(0,0,0),
+  rotv_(0,0,0),
+  _s1switch(0),
+  front(name+".front",fnum),
+  back(name+".back",bnum)
 {
   
   
@@ -78,9 +66,11 @@ RN_S2Detector::RN_S2Detector(std::string name,const int& fnum, const int& bnum):
 //}
 
 void RN_S2Detector::SetCalibrations(RN_VariableMap& detvar){
+  //pass the calibrations to the RN_BaseDetectors
   front.SetCalibrations(detvar);
   back.SetCalibrations(detvar);
 
+  //get the calibrations specific to this class
   detvar.GetParam(Form("%s.elin",GetName()),elin);
   detvar.GetParam(Form("%s.eshift",GetName()),eshift);
   detvar.GetParam(Form("%s.tlin",GetName()),tlin);
@@ -124,34 +114,34 @@ void RN_S2Detector::Calcnormv(){
 //apply global calibrations elin and eshift to calibrated basedetectors front and back
 
 Double_t RN_S2Detector::Front_E(unsigned int i) const{
-  if(i>front.fMult)
-    return -1;
-  if (!front.fE[i]>0)
+  if(i>=front.fMult)
+    return 0;
+  if (!(front.fE[i]>0))
     return 0;
   return ((front.E(i) * elin) + eshift);
 }
 
 Double_t RN_S2Detector::Front_T(unsigned int i) const{
-  if(i>front.fMult)
-    return -1;
-  if (!front.fT[i]>0)
+  if(i>=front.fMult)
+    return 0;
+  if (!(front.fT[i]>0))
     return 0;
   return (( front.T(i) * tlin ) + tshift);
   
 }
 
 Double_t RN_S2Detector::Back_E(unsigned int i) const{
-  if(i>back.fMult)
-    return -1;
-  if(!back.fE[i]>0)
+  if(i>=back.fMult)
+    return 0;
+  if(!(back.fE[i]>0))
     return 0;
   return (( back.E(i) * elin) + eshift);   
 }
 
 Double_t RN_S2Detector::Back_T(unsigned int i) const{
-  if (i>back.fMult)
+  if (i>=back.fMult)
     return -1;
-  if (!back.fT[i]>0)
+  if (!(back.fT[i]>0))
     return 0;
   return ((back.T(i) * tlin)  + tshift);
 }
@@ -170,6 +160,10 @@ Double_t RN_S2Detector::OuterTheta()const{
   else return 0;
 }
 
+//these functions were added when I was trying to add an S1-fix for when
+//S1 detector was incorrectly plugged in. This fix was eventually added
+//just to the ReconstructCluster method
+/*
 int RN_S2Detector::Quadrant(unsigned int i)const{
   return floor(back.Ch(i)/4);
 }
@@ -198,7 +192,7 @@ Double_t RN_S2Detector::Ring_Ch(unsigned int i)const{
     
 
 }
-
+*/
 
 
 bool RN_S2Detector::inDet(const TVector3& v){
@@ -317,8 +311,13 @@ TVector3 RN_S2Detector::chVect(const double& cf,const double& cb) const{
 
 
 RN_S2Cluster::RN_S2Cluster(std::string name,Int_t NumOfCh):RN_BaseDetector(name,NumOfCh),
-							   fChlist_b(NumOfCh,-1.),
-							   fPos(NumOfCh){
+		 efrontmatch(0),
+		 ebackmatch(0),
+		 frontmatchstat(0),
+		 backmatchstat(0),
+		 fChlist_b(NumOfCh,-1.),
+		 fPos(NumOfCh)
+{
   
   Reset();
   match_enefromback=1.0;
@@ -497,7 +496,38 @@ void RN_S2Cluster::Reset(){
    
   RN_BaseDetector::Reset();
  
+}
 
+RN_SiArray::RN_SiArray(const std::string& name, int num):RN_BaseClass(name),
+							 fNumOfSi(num),
+							 fE_(num,0),
+							 fPos_(num,TVector3(0,0,0)),
+							 fT_(num,0)
+{
+  
+  
+}
+
+void RN_SiArray::Reset(){
+  for(int i=0;i<fNumOfSi;i++){
+    fE_[i] = 0;
+    fT_[i] = 0;
+    fPos_[i].SetXYZ(0,0,0);
+  }
+  
+}
+
+void RN_SiArray::ReconstructHits(RN_S2ClusterCollection& si_c_)
+{
+  for(unsigned int i=0;i<si_c_.size();i++){
+    if(i>0){
+      fE_[i]=fE_[i-1];
+    }
+    fE_[i] += si_c_[i].fE[0]; 
+    fPos_[i] = si_c_[i].fPos[0]; 
+    fT_[i] = si_c_[i].fT[0]; 
+  }
+  
 }
 
 

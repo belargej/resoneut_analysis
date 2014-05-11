@@ -100,6 +100,7 @@ namespace RNROOT{
   extern RN_NeutCollection neut;	     
   extern RN_S2Collection si_;		     
   extern RN_S2ClusterCollection si_cluster_;
+  extern RN_SiArray si_array;
   extern RN_RFTime rftime;
   //extern RN_MCPDetector MCP;
   extern RN_IonChamber ic;		     
@@ -112,7 +113,8 @@ namespace RNROOT{
   void SetRootOutputFile(const std::string& filename);
   void SetRootOutputFileAndTree(const std::string & filename, const std::string& treename);
   void SetCalibrations(RN_VariableMap &VarMap = gVariableMap);
- 
+  void ResetRNROOTDetectors();
+  void ResetRNROOTGlobals();
 }
 
 

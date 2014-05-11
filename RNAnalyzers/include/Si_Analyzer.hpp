@@ -45,14 +45,6 @@ namespace silicon{
     ClassDef(Si_Analyzer,0);
   };
 
-  extern Double32_t prot_E;
-  extern Double32_t prot_dE;
-  extern Double32_t prot_theta;  
-  extern Double32_t rel_angle;
-  extern Double32_t rel_z;
-  extern Double32_t rel_transverse;
-  extern Double32_t target_z[2];
-
   extern TCutG* prots1;
   extern TCutG* prots2;
   extern TCutG* alphas;
