@@ -1,9 +1,20 @@
-//////////////////////////////////////////////////////////////
-/// RN_Module for handling the modules needed for the unpacker.
-///
-///
-/// Author: Sean Kuvin
-//////////////////////////////////////////////////////////////
+/****************************************************************
+Class: RN_Module, RN_Module_Stack
+RN_Module for handling the modules needed for the unpacker.
+
+The modules can be added to the RN_Module_stack so that the unpacker
+knows in which order the modules should be unpacked. This is done by checking
+the expected geoaddress of every RN_Module in the stack with the 
+geoaddress as it comes out of the buffer.  Therefore the order in which they are
+added to the stack should match the order they are added in the daqconfig.tcl.
+Implementations of RN_Module should override Unpack() and be added to the RN_Module_stack RNROOT::gModule_stack
+
+CAEN_ADC and MESY_QDC are implementations each with their own
+override of Unpack(). By Calling UnpackModules from the Module_stack, 
+the pointer to PhysicsEventBuffer gets passed to each Module
+
+ Author: Sean Kuvin -2013
+******************************************************************/
 
 
 #ifndef __RN_MODULE_H_

@@ -1,9 +1,16 @@
+/***************************************************************
+Class: RN_S2Detector, RN_S2Cluster, RN_SiArray, RN_S1Detector
+Author: Sean A Kuvin
+****************************************************************/
 #ifndef __RN_SILICON_CXX
 #define __RN_SILICON_CXX
 #include "RN_SiliconDetectors.hpp"
 #include "RN_Root.hpp"
 
 ClassImp(RN_S2Detector);
+ClassImp(RN_S2Cluster);
+ClassImp(RN_SiArray);
+ClassImp(RN_S1Detector);
 
 using global::myRnd;
 

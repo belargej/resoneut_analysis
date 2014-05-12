@@ -1,3 +1,8 @@
+/***********************************************************************
+Class: RN_BaseClass, RN_BaseClass Stack
+Author: Sean A. Kuvin -2013
+ ***********************************************************************/
+
 #ifndef __RNBaseClass_CXX
 #define __RNBaseClass_CXX
 
@@ -5,7 +10,7 @@
 
 
 ClassImp(RN_BaseClass);
- 
+ClassImp(RN_BaseClass_Stack);
 
 RN_BaseClass::RN_BaseClass(const TString&name, const TString&title,const unsigned int& id):TNamed(name,title)	 
 {

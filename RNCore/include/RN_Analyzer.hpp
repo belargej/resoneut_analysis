@@ -1,6 +1,10 @@
 /*************************************************************************
-Class: RN_Analyzer
-Author: Sean Kuvin
+Class: RN_Analyzer, RN_Analyzer_Stack
+Author: Sean A. Kuvin -2013
+
+As of 5/2 this class is now an implementation of RN_EventProcessor.
+This change was made to combine the functinality of the RN_Unpack2Root
+with RN_Analyzer so that one may, if they wish, sort .evt files directly to histograms.  The following paragraph is still relevant to the method which also explains the RN_EventProcessor.
 
 Analyzer class follows the form of a simple MakeClass designed to
 read the tree structure of data extracted by the Unpack2Root Method.
@@ -9,9 +13,10 @@ and Terminate() methods to create, fill and write histograms or new
 trees. The second by instantiating an object of RN_Analyzer and calling the
 GetDetectorEntry() function   
 from a Loop function in a different application. 
-Add user analyzers to the "analyzer" list(which is global in RN_Root) 
+Add user analyzers to the "gAnalyzer_stack" list(which is global in RN_Root) 
 
-*******************************************************************/
+****************************************************************************/
+
 
 
 #ifndef RESONEUT_ANALYZER_H

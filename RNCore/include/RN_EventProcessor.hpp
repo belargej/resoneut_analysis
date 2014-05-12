@@ -1,15 +1,11 @@
-////////////////////////////////////////////////////////////////////////
-///Originally Created by: Sean Kuvin- 2013
-///The RNEvt2Root class converts an EVT file to a ROOT File with the data 
-///structure of a RNEvent. Adapted from NSCL evt2root to unpack from the new
-///RING MASTER buffer structure.                             
-////////////////////////////////////////////////////////////////////////
+/*************************************************************************
+Class: RN_EventProcessor
+Author: Sean A. Kuvin -2013
 
-/***************************************
-update 08/20: Got rid of the tree structure for the unpack2root 
-using RN_modules. also got rid of the need for a "config file".  Changes to the sorting method should just be coded into the init(),SortGeoChan() methods
 
-********************************************/
+****************************************************************************/
+
+
 
 #ifndef __RNEVENTPROCESSOR_H
 #define __RNEVENTPROCESSOR_H

@@ -1,13 +1,14 @@
-//////////////////////////////////////////////////////////////
-/// RN_Module for handling the modules needed for the unpacker.
-/// RN_Module_Stack consists of a TList of RN_Modules,
-/// Author: Sean Kuvin
-//////////////////////////////////////////////////////////////
+/***************************************************************
+Class: RN_Module, RN_Module_Stack
+Author: Sean A Kuvin
+****************************************************************/
 #ifndef _RN_MODULE_CXX_
 #define _RN_MODULE_CXX_
-
 #include "RN_Module.hpp"
 
+
+ClassImp(RN_Module);
+ClassImp(RN_Module_Stack);
 
 
 RN_Module::RN_Module(const TString& name,const UInt_t& geoaddress):RN_BaseClass(name,name),

@@ -1,21 +1,15 @@
-/////////////////////////////////////////////////////////////
-///Sean Kuvin 2013
-///Implementation of RN_VariableMap which stores Mass values.
-////////////////////////////////////////////////////////////
+/**********************************************************************
+Sean Kuvin 2013
 
+Implementation of RN_VariableMap which stores Mass values.
+Provides a simple look up table for the reaction info and simulator so that
+the details for reaction can be provided using the particle names.
+***********************************************************************/
 #ifndef _Mass_MAP
 #define _Mass_MAP
 //C and C++ libraries.
-#include <iostream>
-#include <iomanip>
-#include <math.h>
-#include <fstream>
 #include <string>
-#include <sstream>
-#include <map>
-#include <vector>
-#include <memory>
-#include <TObject.h>
+
 #include "RN_VariableMap.hpp"
 
 

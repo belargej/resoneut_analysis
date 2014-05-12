@@ -1,5 +1,27 @@
-#ifndef __RNNAI__
-#define __RNNAI__
+/***********************************************************************
+Class: RN_NaIDetector, RN_NaIArray
+
+RN_NaIDetector stores the raw data for the NaI detectors.  
+The data indices 0 and 1 refer to the upstream and downstream 
+sides of the detectors, respectively.  Therefore fE[0] stores the upstream
+Energy and elin[0] and eshift[0] give the Energy E1().
+
+RN_NaICollection is an std::vector of NaIDetectors.  This collection is passed to the RN_NaIArray for the ReconstructHits method.
+
+fE and fT are public so they are set directly:
+RN_NaICollection nai_;
+RN_NaIArray nai_array;
+nai_.push_back(RN_NaIDetector("nai_left1");
+nai_[0].fE[0]=100;
+nai_[0].fE[1]=200;
+nai_array.ReconstructHits(nai_);
+
+
+Author: Sean A Kuvin -2013
+************************************************************************/
+
+#ifndef __RNNAI__H
+#define __RNNAI__H
 //C and C++ libraries.
 #include <iostream>
 #include <iomanip>
@@ -34,7 +56,7 @@ static const Double_t light_atten = 0.047; //cm^-1
 class RN_NaIDetector:public RN_BaseClass{
 private:  
   Double32_t elin[2];//!  //up-0 down-1
-  Double32_t eshift[2];//!
+  Double32_t eshift[2];//! 
   Double32_t tlin[2];//!
   Double32_t tshift[2];//!
   Double32_t tzero[2];//! 
@@ -42,7 +64,7 @@ private:
 
 public:
 
-  Double32_t fE[2];
+  Double32_t fE[2]; // 0 -upstream energy, 1 = downstream energy
   Double32_t fT[2];
 
   RN_NaIDetector(){}

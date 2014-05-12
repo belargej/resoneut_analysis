@@ -46,8 +46,7 @@ class RN_IonChamber:public RN_BaseClass{
   Double32_t _xpos;//!
   Double32_t wire_dist;//!
  public:
-  RN_IonChamber(){}
-  RN_IonChamber(std::string name):RN_BaseClass(name,name),
+  RN_IonChamber(std::string name="ic"):RN_BaseClass(name,name),
 				  elin(1),
 				  eshift(0),
 				  tlin(1),

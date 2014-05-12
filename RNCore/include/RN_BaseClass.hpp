@@ -1,29 +1,30 @@
-//////////////////////////////////////////////////////////////
-///Base Class for handling all RN_Analysis classes
-/// primarily, to identify the name and type of object:
-/// ie) "neut0" with type that identifies it as a neutron detector.
-/// Author: Sean Kuvin
-//////////////////////////////////////////////////////////////
+/************************************************************************
+RN_BaseClass
+All classes created specific for this package will inherit from RN_BaseClass.
+This means that all the classes will inherit from TNamed and TObject.
+This allows us to use the ROOT I/O methods and also use the ROOT containers
+which handle TObject addresses.
+
+For example:
+The RN_BaseClass_Stack consists of a TList which is a doubly linked list of TObjects.  Since RN_BaseClass inherits from TObject we can then add BaseClass object(i.e. any class in the ResoNeut package) to this TList. This stack then contains methods which mirror those of the class it contains (BaseClasses) that way, when you execute the particular method, it will execute all of the analagous methods in the stack.
+
+Author: Sean A. Kuvin 2013
+
+***************************************************************************/
 
 #ifndef __RNBASECLASS_H
 #define __RNBASECLASS_H
+
 //C and C++ libraries.
 #include <iostream>
-#include <iomanip>
-#include <math.h>
-#include <fstream>
-#include <string>
-#include <sstream>
-#include <map>
 #include <vector>
-#include <memory>
 
 //ROOT libraties
 #include <TString.h>
 #include <TObject.h>
 #include <TNamed.h>
-#include <TTree.h>
 #include <TList.h>
+#include <TTree.h>
 
 class RN_BaseClass:public TNamed{
 protected:

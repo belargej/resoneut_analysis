@@ -1,11 +1,27 @@
-////////////////////////////////////////////////////////////////////////
-//
-//  Calibration classes here.  S2_Calibrator performs the basic function
-//  of matching the charge from front channels to back channels and vica
-//  versa.
-//
-//  Author: Sean Kuvin- 2013                             
-////////////////////////////////////////////////////////////////////////
+/***************************************************************************
+Class: RN_S2Calibrator
+
+RN_S2Calibrator performs the basic function
+of matching the charge from front channels to back channels and vica
+versa.  
+
+Encapsulated in si_cal is an implematation called AutoCalibrate:
+This function calibrates the silicon detectors which are added to the
+S2Collection in RN_Root.hpp.
+
+The AutoCalibrate function requires the input of an RN_EventProcessor derived class.  This implementation of an RN_EventProcessor should have overridden 
+the GetDetectorEntry() method to sort data into the appropriate detectors.
+We can use RNROOT::gMainAnalyzer (which is an RN_Analyzer, an implementation of RN_EventProcessor)
+
+To Perform the AutoCalibrate method then we run:
+
+si_cal::AutoCalibrate(3,3,RNROOT::gMainAnalyzer);
+to use ring ch3 and phi ch3 as the matching channels for the gain matching.
+Multiple output files are produced with the calibration results. Two per detector for the "front_2_back" and "back_2_front" matches.  
+
+
+  Author: Sean Kuvin- 2013                             
+**************************************************************************/
 
 #ifndef _RESCALIBRATOR
 #define _RESCALIBRATOR

@@ -1,5 +1,3 @@
-#ifndef __RNSILICON__
-#define __RNSILICON__
 /*************************************************************************
 The methods for sorting the silicon detector hits are
 contained here. 
@@ -39,8 +37,13 @@ si_array.ReconstructHits(si_cluster_);
 --Setting the calibration parameters follow the method detailed
 in RN_BaseDetector, add the <string,double> pair to the 
 RN_VariableMap as it is looked for by the strings in this->SetCalibrations().
+
+Author: Sean A. Kuvin 2013
  
 **************************************************************************/
+#ifndef __RNSILICON__H
+#define __RNSILICON__H
+
 //C and C++ libraries.
 #include <iostream>
 #include <math.h>
