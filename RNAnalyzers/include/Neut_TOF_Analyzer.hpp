@@ -38,7 +38,7 @@ namespace neut_tof{
     virtual bool Terminate();
     virtual bool TerminateIfLast();
     virtual void Clear(){};
-    virtual void ResetGlobals();
+    virtual void Reset();
 
 
   ClassDef(Neut_TOF_Analyzer,0);

@@ -34,7 +34,7 @@ Module_Analyzer::Module_Analyzer()
 }
 
 
-void Module_Analyzer::ResetGlobals(){
+void Module_Analyzer::Reset(){
 }
 
 bool Module_Analyzer::Begin(){

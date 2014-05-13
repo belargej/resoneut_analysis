@@ -26,23 +26,22 @@ namespace silicon{
   TCutG* alphas;
   TCutG* deuterons;
   TCutG* thetatheta_cut;
-  int _require_proton(0);
-  int _require_proton2(0);
-  int _require_alpha(0);
-  int _require_deuteron(0);
-  int _require_thetatheta(0);
-  int _require_ptheta(0);
-  int _require_ptheta2(0);
-  double z_min(0/*mm*/); //relative to the E detector
-  double z_max(1000/*mm*/);
 
+  static int gRequireProton(0);
+  static int gRequireProton2(0);
+  static int gRequireAlpha(0);
+  static int gRequireDeuteron(0);
+  static int gRequireThetaTheta(0);
+  static int gRequirePTheta(0);
+  static int gRequirePTheta2(0);
+ 
   int protcheck(0);
   int prot2check(0);
   int pthetacheck(0);
   int ptheta2check(0);
   int alphacheck(0);
   int thetathetacheck(0);
-  int deut_check(0);
+  int deutcheck(0);
 
   TH2D *hpede;
   TH2D *hpede_arb_front;  
@@ -89,13 +88,13 @@ namespace silicon{
   TH1D* h_t[SI_NUM];
 
 
-
-  Si_Analyzer::Si_Analyzer():ind_(0)
+  
+  Si_Analyzer::Si_Analyzer()
   {
     
   }
-
-  void Si_Analyzer::ResetGlobals(){
+  
+  void Si_Analyzer::Reset(){
   
     //silicon telescope gate results
     protcheck = 0;
@@ -104,7 +103,7 @@ namespace silicon{
     pthetacheck = 0;
     ptheta2check = 0;
     thetathetacheck = 0;
-    deut_check = 0;
+    deutcheck = 0;
   }
 
   
@@ -196,10 +195,6 @@ namespace silicon{
 
   bool Si_Analyzer::Process(){
 
-    /*if (target_z[0] > z_max || target_z[0] < z_min)
-      return 0;
-    */
-
     //prot_E and prot_dE require cluster reconstruction
     if(silicon::prots1)
       protcheck=silicon::prots1->IsInside(si_array.E_AB(),si_array.E_A());
@@ -210,48 +205,49 @@ namespace silicon{
     
     if(silicon::alphas)
       alphacheck=silicon::alphas->IsInside(si_array.E_AB(),si_array.E_A());
-   if(silicon::deuterons)
-     deut_check=silicon::deuterons->IsInside(si_array.E_AB(),si_array.E_A());
+    
+    if(silicon::deuterons)
+      deutcheck=silicon::deuterons->IsInside(si_array.E_AB(),si_array.E_A());
     
     if(silicon::thetatheta_cut)
       thetathetacheck= silicon::thetatheta_cut->IsInside(si_array.Theta_A()*180/3.14,si_array.Theta_B()*180/3.14);
     
     if(silicon::ptheta_cut)
       pthetacheck = silicon::ptheta_cut->IsInside(si_array.Theta_A(),si_array.E_AB());
-
+    
     if(silicon::ptheta2_cut)
       ptheta2check = silicon::ptheta2_cut->IsInside(si_[1].front.Ch(),si_[0].front.E()+si_[1].front.E());
-
+    
 
     //if proton gate is not passed return 0 (abort analyzers)
-    if(_require_proton && !protcheck){
+    if(gRequireProton && !protcheck){
       return 0;
     }
 
     //if proton gate is not passed return 0 (abort analyzers)
-    if(_require_proton2 && !prot2check){
+    if(gRequireProton2 && !prot2check){
       return 0;
     }
 
     //if alpha gate is not passed return 0 (abort analyzers)
-    if(_require_alpha && !alphacheck){
+    if(gRequireAlpha && !alphacheck){
       return 0;
     }
 
-    if(_require_deuteron && !deut_check){
+    if(gRequireDeuteron && !deutcheck){
       return 0;
     }
 
   
-    if(_require_thetatheta && !thetathetacheck){
+    if(gRequireThetaTheta && !thetathetacheck){
       return 0;
     }
 
-    if(_require_ptheta && !pthetacheck){
+    if(gRequirePTheta && !pthetacheck){
       return 0;
     }
 
-    if(_require_ptheta2 && !ptheta2check){
+    if(gRequirePTheta2 && !ptheta2check){
       return 0;
     }
 
@@ -339,41 +335,35 @@ namespace silicon{
   
   
   
-  void RequireProton(){
-    _require_proton=1;
+  void RequireProton(int i){
+    gRequireProton = i;
   }
  
-  void RequireProton2(){
-    _require_proton2=1;
+  void RequireProton2(int i){
+    gRequireProton2 = i;
   }
 
-
-  void RequireAlpha(){
-    _require_alpha=1;
-  }
-  void RequireDeuteron(){
-    _require_deuteron=1;
+  void RequireAlpha(int i){
+    gRequireAlpha = i;
   }
 
-
-  void RequireThetaTheta(){
-    _require_thetatheta=1;
+  void RequireDeuteron(int i){
+    gRequireDeuteron = i;
   }
 
-  void RequirePThetaCut(){
-    _require_ptheta=1;
+  void RequireThetaTheta(int i){
+    gRequireThetaTheta = i;
   }
 
-  void RequirePTheta2Cut(){
-    _require_ptheta2=1;
+  void RequirePThetaCut(int i){
+    gRequirePTheta = i;
   }
 
-  void SetZMinMax(const double & min, const double & max){
-    z_min = min;
-    z_max = max;
+  void RequirePTheta2Cut(int i){
+    gRequirePTheta2 = i;
   }
 
-
+  
   void LoadGates(const std::string& input){
     TFile in(input.c_str());    
     if(in.Get("prots1") && !prots1)

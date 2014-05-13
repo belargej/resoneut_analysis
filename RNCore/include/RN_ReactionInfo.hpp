@@ -64,7 +64,7 @@ public:
   void SetCalibrations(RN_VariableMap&detvar);  
   void SetBeamEnergy(Double32_t energy){fBeamEnergy = energy;}
   void SetBeamELoss(Double32_t eloss){fBeamELoss = eloss;}
-  void SetEFragmentEst(Double32_t efragest){fBeamEnergy = fE_fragment_est;}
+  void SetEFragmentEst(Double32_t efragest){fE_fragment_est = efragest;}
   void SetHiEx(Double32_t hi_ex_set){fhi_ex_set = hi_ex_set;}
   void SetDecay_Ex(Double32_t d_ex_set){fd_ex_set = d_ex_set;}
 

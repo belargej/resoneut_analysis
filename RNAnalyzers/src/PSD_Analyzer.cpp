@@ -163,7 +163,7 @@ namespace psd{
     return 1;
     
   }
-  void NeutAnalyzer::ResetGlobals(){
+  void NeutAnalyzer::Reset(){
     for(unsigned int i=0;i<NEUTNUM;i++){
       neutcheck[i]=0;
       neut_sansgamma[i]=0;

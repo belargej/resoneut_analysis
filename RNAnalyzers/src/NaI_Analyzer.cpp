@@ -36,7 +36,7 @@ namespace gamma_nai{
     
   }
   
-  void NaI_Analyzer::ResetGlobals(){
+  void NaI_Analyzer::Reset(){
     nai_t=0;
   }
   

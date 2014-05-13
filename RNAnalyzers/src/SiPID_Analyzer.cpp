@@ -79,7 +79,7 @@ namespace silicon{
     
   }
 
-  void S2_Analyzer::ResetGlobals(){
+  void S2_Analyzer::Reset()(){
     
     //silicon telescope gate results
     protcheck = 0;

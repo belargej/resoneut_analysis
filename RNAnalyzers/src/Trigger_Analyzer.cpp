@@ -113,7 +113,7 @@ namespace trigger{
     return 1;
   }
   
-  void Trigger_Analyzer::ResetGlobals(){
+  void Trigger_Analyzer::Reset(){
     //reset all trigger infos
     for(unsigned int i=0; i<triggerinfo.size();i++){
       triggerinfo[i]=0;

@@ -24,7 +24,7 @@ namespace _Mg24{
   }
   
 
-  void Mg24dn_Analyzer::ResetGlobals(){
+  void Mg24dn_Analyzer::Reset(){
 
   }
   

@@ -32,7 +32,7 @@ namespace physical{
     virtual void Clear(){};
     virtual bool Terminate();
     virtual bool TerminateIfLast();
-    virtual void ResetGlobals();
+    virtual void Reset();
     
 
     ClassDef(Q_ValueAnalyzer,0);

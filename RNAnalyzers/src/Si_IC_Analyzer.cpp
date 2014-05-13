@@ -44,7 +44,7 @@ namespace coinc{
   {
     
   }
-  void Si_IC_Analyzer::ResetGlobals(){
+  void Si_IC_Analyzer::Reset(){
     si_ic_tcheck=0;
   }
 

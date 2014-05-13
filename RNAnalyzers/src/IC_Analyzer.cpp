@@ -76,7 +76,7 @@ namespace ionchamber{
     return 1;
   }
 
-  void IC_Analyzer::ResetGlobals(){
+  void IC_Analyzer::Reset(){
     for(int i=0;i<3;i++){
       hi_check[i]=0;
     }

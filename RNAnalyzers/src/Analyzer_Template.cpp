@@ -35,7 +35,7 @@ Analyzer_Template::Analyzer_Template()
 }
 
 
-void Analyzer_Template::ResetGlobals(){
+void Analyzer_Template::Reset()(){
   /*any global parameters unique to this analysis
     which you want reset at the beginning of each 
     event entry should be reset here

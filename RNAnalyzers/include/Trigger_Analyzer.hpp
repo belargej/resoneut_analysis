@@ -44,7 +44,7 @@ public:
   virtual bool Process();
   virtual void Clear(){};
   virtual bool Terminate();
-  virtual void ResetGlobals();
+  virtual void Reset();
 
 
   ClassDef(Trigger_Analyzer,0);

@@ -46,7 +46,7 @@ namespace coinc{
   {
     
   }
-  void Si_Neut_IC_NaI_Analyzer::ResetGlobals(){
+  void Si_Neut_IC_NaI_Analyzer::Reset(){
     sia_n_time_check = 0;
     sib_n_time_check = 0;
 

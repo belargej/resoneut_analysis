@@ -53,7 +53,7 @@ bool NewTree_Analyzer::ProcessFill(){
   return 1;
 }
 
-void NewTree_Analyzer::ResetGlobals(){
+void NewTree_Analyzer::Reset(){
 }
 
 bool NewTree_Analyzer::TerminateIfLast(){

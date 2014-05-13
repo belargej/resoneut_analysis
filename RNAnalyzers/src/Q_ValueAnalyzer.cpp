@@ -128,7 +128,7 @@ namespace physical{
  
   }
 
-  void Q_ValueAnalyzer::ResetGlobals(){
+  void Q_ValueAnalyzer::Reset(){
     q_val_p=0;
     q_val_n=0;
   }

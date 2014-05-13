@@ -29,7 +29,7 @@ namespace coinc{
   
   }
 
-  void NaI_NeutAnalyzer::ResetGlobals(){
+  void NaI_NeutAnalyzer::Reset(){
 
   }
 

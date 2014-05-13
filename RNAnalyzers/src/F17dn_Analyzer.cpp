@@ -31,7 +31,7 @@ F17dn_Analyzer::F17dn_Analyzer()
 }
 
 
-void F17dn_Analyzer::ResetGlobals(){
+void F17dn_Analyzer::Reset(){
 
 }
 

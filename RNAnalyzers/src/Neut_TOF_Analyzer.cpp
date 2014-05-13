@@ -66,7 +66,7 @@ namespace neut_tof{
     return 1;
     
   }
-  void Neut_TOF_Analyzer::ResetGlobals(){
+  void Neut_TOF_Analyzer::Reset(){
 
   }
   

@@ -24,9 +24,7 @@ namespace silicon{
 
 
   class Si_Analyzer:public RN_Analyzer{
-  private:
-    int ind_;
-    
+  private:    
   public:
     
     Si_Analyzer();
@@ -39,7 +37,7 @@ namespace silicon{
     virtual bool Terminate();
     virtual bool TerminateIfLast();
     virtual void Clear();
-    virtual void ResetGlobals();
+    virtual void Reset();
     
     
     ClassDef(Si_Analyzer,0);
@@ -53,27 +51,23 @@ namespace silicon{
   extern TCutG* ptheta2_cut;
   extern TCutG* thetatheta_cut;
 
-  extern int _require_proton;
-  extern int _require_proton2;
-  extern int _require_alpha;
-  extern int _require_deuteron;
-  extern int _require_thetatheta;
-  extern int _require_ptheta;
-  extern int _require_ptheta2;
   extern int protcheck;
   extern int prot2check;
   extern int alphacheck;
-  extern int deut_check;
+  extern int deutcheck;
+  extern int pthetacheck;
+  extern int ptheta2check;
+  extern int alphacheck;
+  extern int thetathetacheck;
+  extern int deutcheck;
 
-
-  void RequireProton();
-  void RequireProton2();
-  void RequireDeuteron();
-  void RequireAlpha();
-  void RequirePThetaCut();
-  void RequirePTheta2Cut();
-  void RequireThetaTheta();
-  void SetZMinMax(const double &,const double&);
+  void RequireProton(int i=1);
+  void RequireProton2(int i=1);
+  void RequireDeuteron(int i=1);
+  void RequireAlpha(int i=1);
+  void RequirePThetaCut(int i=1);
+  void RequirePTheta2Cut(int i=1);
+  void RequireThetaTheta(int i=1);
   void LoadGates(const std::string &input);  
   void ClearGates();  
 

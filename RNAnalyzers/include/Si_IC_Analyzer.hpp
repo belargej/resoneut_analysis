@@ -40,7 +40,7 @@ namespace coinc{
     virtual bool Terminate();
     virtual bool TerminateIfLast();
     virtual void Clear();
-    virtual void ResetGlobals();
+    virtual void Reset();
     
     
     ClassDef(Si_IC_Analyzer,0);

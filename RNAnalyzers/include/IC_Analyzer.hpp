@@ -34,7 +34,7 @@ namespace ionchamber{
     virtual bool Begin();
     virtual bool Process();
     virtual bool ProcessFill();
-    virtual void ResetGlobals();
+    virtual void Reset();
     virtual bool Terminate();
     virtual bool TerminateIfLast();
     virtual void Clear();
