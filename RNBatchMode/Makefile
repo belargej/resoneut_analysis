@@ -9,20 +9,21 @@ else
 DEBUG=-O2
 endif
 
-CFLAGS=`root-config --cflags` -c ${DEBUG} -I../RNCore/include
+INCLUDE_DIRS=-I${ROOTSYS}/include -I${ROOTSYS}/include/root -I../RNCore/include
+CFLAGS=`root-config --cflags` -c ${DEBUG} ${INCLUDE_DIRS}
 GLIBS=`root-config --glibs`
 LINK_DIR=${PWD}/../lib
-LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} -I${ROOTSYS}/include
+LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} ${INCLUDE_DIRS}
 
 all: ${EXE}	
 
 RNBatchMode: RN_BatchMode.o
-	${CXX} -o ../bin/RNBatchMode $< ${LFLAGS} -lRNCore
+	${CXX} -o ../bin/RNBatchMode $< ${LFLAGS} -lRNCore -fPIC
 	@echo "Cleaning up \n .o files"
 	rm RN_BatchMode.o
 
 RN_BatchMode.o: src/RN_BatchMode.cpp
-	${CXX} ${CFLAGS} $< 
+	${CXX} ${CFLAGS} $< -fPIC
 
 #####################################################################
 ###Other Functions###################################################

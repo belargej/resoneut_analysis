@@ -34,7 +34,7 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.h)
 # Add the executable, and link it to the Geant4 libraries
 #
 add_executable(RN_SingleDet RN_SingleDet.cc ${sources} ${headers})
-target_link_libraries(RN_SingleDet ${Geant4_LIBRARIES})
+target_link_libraries(RN_SingleDet ${Geant4_LIBRARIES} )
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we

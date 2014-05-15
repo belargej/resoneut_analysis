@@ -1,13 +1,14 @@
-//////////////////////////////////////////////////////////////
-/// RN_Module for handling the modules needed for the unpacker.
-/// RN_Module_Stack consists of a TList of RN_Modules,
-/// Author: Sean Kuvin
-//////////////////////////////////////////////////////////////
+/***************************************************************
+Class: RN_Module, RN_Module_Stack
+Author: Sean A Kuvin
+****************************************************************/
 #ifndef _RN_MODULE_CXX_
 #define _RN_MODULE_CXX_
-
 #include "RN_Module.hpp"
 
+
+ClassImp(RN_Module);
+ClassImp(RN_Module_Stack);
 
 
 RN_Module::RN_Module(const TString& name,const UInt_t& geoaddress):RN_BaseClass(name,name),
@@ -22,14 +23,14 @@ RN_Module::RN_Module(const TString& name,const UInt_t& geoaddress):RN_BaseClass(
   
 }
 
-UInt_t RN_Module::Reset(){
+void RN_Module::Reset(){
   //Reset all values stored in module channels
   fValid = 0;
   for(unsigned int i=0;i<NumOfCh();i++){
     fChValue[i] = 0;
   }
   
-  return 0;
+  return;
 }
 
 UInt_t RN_Module::SortChVal(const UInt_t& ch,const UInt_t & val){
@@ -45,7 +46,7 @@ void RN_Module::Print(){
 
 
 UInt_t RN_Module::AddBranch(TTree* _tree){
-  _tree->Branch(GetName(),fChValue,Form("%s[%d]/F",GetName(),NumOfCh()));
+  b_module = _tree->Branch(GetName(),fChValue,Form("%s[%d]/F",GetName(),NumOfCh()));
   return 0;
 }
 
@@ -62,27 +63,15 @@ UInt_t RN_Module::SetBranch(TTree* _tree){
 }
 
 
-RN_Module_Stack::RN_Module_Stack(const TString& name):RN_BaseClass(name,name)						     
+RN_Module_Stack::RN_Module_Stack(const TString& name):RN_BaseClass_Stack(name)						     
 {
   
 }
 
-void RN_Module_Stack::Init(){
-  fRNModules=new TList();
-}
 
-
-UInt_t RN_Module_Stack::Reset(){
-  //loop over all modules stored in TList of Modules and reset all of them
-  TIter next(fRNModules);
-  while( RN_Module*obj = (RN_Module*)next()){
-    obj->Reset();
-  }
-  return 1;
-}
 
 Bool_t RN_Module_Stack::UnpackModules(unsigned short *& gpointer,int filepos){
-  TIter next(fRNModules);
+  TIter next(fRNStack);
   while( RN_Module*obj = (RN_Module*)next()){
     if(!obj->Unpack(gpointer))
       std::cout<<"error at file pos: "<< filepos<<std::endl;      
@@ -94,11 +83,11 @@ Bool_t RN_Module_Stack::UnpackModules(unsigned short *& gpointer,int filepos){
 
 UInt_t RN_Module_Stack::GetNum(UInt_t modtype){
   UInt_t count=0;
-  if(!fRNModules)
+  if(!fRNStack)
     return 0;
   if(modtype == 0)
     return GetSize();
-  TIter next(fRNModules);
+  TIter next(fRNStack);
   
   //count how many modules in the stack are equal to a particular type
   while( RN_Module*obj = (RN_Module*)next()){
@@ -108,32 +97,17 @@ UInt_t RN_Module_Stack::GetNum(UInt_t modtype){
   return count;
 }
 
-UInt_t RN_Module_Stack::AddModule(RN_Module *mod){
-  if(!fRNModules){
-    Init();
-  }
-  fRNModules->Add(mod);
-  return 1;
-}
 
 UInt_t RN_Module_Stack::AddBranches(TTree *_tree){
-  TIter next(fRNModules);
+  TIter next(fRNStack);
   while( RN_Module*obj = (RN_Module*)next()){
     obj->AddBranch(_tree);
   }
   return 1;
 }
 
-void RN_Module_Stack::Print(){
-  TIter next(fRNModules);
-  while( RN_Module*obj = (RN_Module*)next()){
-    obj->Print();
-  }
-  return ;
-}
-
 UInt_t RN_Module_Stack::SetBranches(TTree *_tree){
-  TIter next(fRNModules);
+  TIter next(fRNStack);
   while( RN_Module*obj = (RN_Module*)next()){
     obj->SetBranch(_tree);
   }
@@ -141,7 +115,7 @@ UInt_t RN_Module_Stack::SetBranches(TTree *_tree){
 }
 
 UInt_t RN_Module_Stack::SortGeoChVal(const UShort_t& geoaddress,const UInt_t& ch, const UInt_t& val){
-  TIter next(fRNModules);
+  TIter next(fRNStack);
   while( RN_Module*obj = (RN_Module*)next()){
     if(obj->GeoAddress() == geoaddress){
       obj->SortChVal(ch,val);
@@ -149,6 +123,17 @@ UInt_t RN_Module_Stack::SortGeoChVal(const UShort_t& geoaddress,const UInt_t& ch
     } 
   }
   return 0;
+}
+
+UInt_t RN_Module_Stack::Add(RN_BaseClass *base){
+  if(!base->InheritsFrom("RN_Module")){
+    return 0;
+  }
+  if(!fRNStack){
+    Init();
+  }
+  fRNStack->Add(base);
+  return 1;
 }
 
 

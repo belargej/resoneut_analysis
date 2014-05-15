@@ -9,8 +9,9 @@
 
 #include "NaI_Analyzer.hpp"
 #include "PSD_Analyzer.hpp"
+#include "RN_Root.hpp"
 
-
+using namespace RNROOT;
 
 namespace gamma_nai{
   
@@ -37,20 +38,20 @@ namespace gamma_nai{
     
   }
   
-  void NaI_Analyzer::ResetGlobals(){
+  void NaI_Analyzer::Reset(){
     nai_t=0;
   }
   
   bool NaI_Analyzer::Begin(){
  
-    if(!rootfile){
+    if(!RNROOT::gRootFile){
       std::cout<<"output file has not been created"<<std::endl;
       Clear();
       exit(EXIT_FAILURE);
     }
 
-    rootfile->mkdir("NaIArray");
-    rootfile->cd("NaIArray");
+    RNROOT::gRootFile->mkdir("NaIArray");
+    RNROOT::gRootFile->cd("NaIArray");
     hNaIArray_Detector = new TH1D("hNaIArray_Detector","hNaIArray_Detector;T",21,0,20);
     hNaIArray_T = new TH1D("hNaIArray_T","hNaIArray_T;T",4096,0,4095);	          
     hNaIArray_E = new TH1D("hNaIArray_E","hNaIArray_E;E",4096,0,4095);	      
@@ -58,7 +59,7 @@ namespace gamma_nai{
     hNaIArray_TvRftime=new TH2D("hNaIArray_TvRftime","hNaIArray_TvRftime",128,0,127,512,0,4095);
 
     for (unsigned int i=0;i<20;i++){
-      rootfile->cd("NaIArray");
+      RNROOT::gRootFile->cd("NaIArray");
       gDirectory->mkdir(Form("NaI[%d]",i));
       gDirectory->cd(Form("NaI[%d]",i));
       hNaI_T[i] = new TH1D(Form("hNaI[%d]_T",i),Form("hNaI[%d]_T;T",i),4096,0,4095);	     
@@ -104,8 +105,8 @@ namespace gamma_nai{
     return 1;
   }
   bool NaI_Analyzer::TerminateIfLast(){
-    rootfile->Write();
-    rootfile->Close();
+    RNROOT::gRootFile->Write();
+    RNROOT::gRootFile->Close();
     return 1;
   }
 

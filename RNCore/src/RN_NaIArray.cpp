@@ -1,3 +1,8 @@
+/***************************************************************
+Class: RN_NaIDetector, RN_NaIArray
+Author: Sean A Kuvin
+****************************************************************/
+
 #ifndef __RNNAI__CXX
 #define __RNNAI__CXX
 #include "RN_NaIArray.hpp"

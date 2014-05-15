@@ -11,13 +11,8 @@
 // should be used.
 /***********************************************************/
 
-//I need to modify this code to use templates so that the 
-//std::map, maps entries of any type, instead of doubles
-
-
-
-#ifndef VARIABLE_MAP
-#define VARIABLE_MAP
+#ifndef RN_VARIABLE_MAP
+#define RN_VARIABLE_MAP
 //C and C++ libraries.
 #include <iostream>
 #include <iomanip>

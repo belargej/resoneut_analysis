@@ -14,6 +14,9 @@
 
 #include "NaI_NeutAnalyzer.hpp"
 #include "PSD_Analyzer.hpp"
+#include "RN_Root.hpp"
+
+using namespace RNROOT;
 
 namespace coinc{
 
@@ -26,26 +29,26 @@ namespace coinc{
   
   }
 
-  void NaI_NeutAnalyzer::ResetGlobals(){
+  void NaI_NeutAnalyzer::Reset(){
 
   }
 
   bool NaI_NeutAnalyzer::Begin(){
   
-    if(!rootfile){
+    if(!RNROOT::gRootFile){
       std::cout<<"output file has not been created"<<std::endl;
       Clear();
       exit(EXIT_FAILURE);
     }
 
     //make directory structure
-    if(!rootfile->GetDirectory("coinc"))
-      rootfile->mkdir("coinc");
-    rootfile->cd("coinc");
+    if(!RNROOT::gRootFile->GetDirectory("coinc"))
+      RNROOT::gRootFile->mkdir("coinc");
+    RNROOT::gRootFile->cd("coinc");
     gDirectory->mkdir("NaI_Neut");
    
     //create histrograms
-    rootfile->cd("coinc/NaI_Neut");
+    RNROOT::gRootFile->cd("coinc/NaI_Neut");
     h_nai_t_v_neut_t=new TH2D("h_nai_t_v_neut_t","nai_t_v_neut_;nai_t;neut_t",1024,0,4095,1024,0,4095);			 
     h_nai_t_v_neut_t_neutgated=new TH2D("h_nai_t_v_neut_t_neutgated","nai_t_v_neut_t_neutgated;nai_t;neut_t",1024,0,4095,1024,0,4095);	   
   
@@ -70,8 +73,8 @@ namespace coinc{
     return 1;
   }
   bool NaI_NeutAnalyzer::TerminateIfLast(){
-    rootfile->Write();
-    rootfile->Close();
+    RNROOT::gRootFile->Write();
+    RNROOT::gRootFile->Close();
     return 1;
   }
 

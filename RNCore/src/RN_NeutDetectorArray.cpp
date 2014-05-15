@@ -7,6 +7,7 @@
 #define M_C 11177.862342
 
 ClassImp(RN_NeutDetector);
+
 namespace sim{
   double z_pos(0);
   double stepcounter(0);
@@ -17,8 +18,8 @@ namespace sim{
 
 using namespace sim;
 
+
 RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetector(name,num),
-								 
 								  elin(1),
 								  eshift(0),
 								  tlin(1),
@@ -35,9 +36,11 @@ RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetecto
 								  fQ_short(0),
 								  fPSD(0),
 								  fT_Q(0),
-								  fTrel(0)
-  							  
-  
+								  fTrel(0),
+								  fDt(0),
+								  fT_Sim(0),
+								  fEsum(0),
+								  fE_lost(0)
 {
   fPos.SetXYZ(0,0,-228.7);//set default zpos
   RNArray::PositionMap(apos,fPos);//set xpos and ypos
@@ -46,7 +49,8 @@ RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetecto
 
 // 
 void RN_NeutDetector::Build(){
-  //gRNROOT.AddDetector(this);
+  //  gRNROOT.AddDetector(this);
+  
   
 }
 
@@ -196,18 +200,19 @@ Double_t RN_NeutDetector::keVee() const {
 }
 
 
-RN_NeutDetectorArray::RN_NeutDetectorArray():fT_first(0),
-					     fDetfirst(-1),
-					     fT_mult(0),
-					     fMult(0),
-					     fPos(16,TVector3(0,0,0)),
-					     fQ_long(16,0),
-					     fPSD(16,0),
-					     fT(16,0),
-					     fDetlist(16,-1){
+RN_NeutDetectorArray::RN_NeutDetectorArray(const TString & name):RN_BaseClass(name),
+								 fT_first(0),
+								 fDetfirst(-1),
+								 fT_mult(0),
+								 fMult(0),
+								 fPos(16,TVector3(0,0,0)),
+								 fQ_long(16,0),
+								 fPSD(16,0),
+								 fT(16,0),
+								 fDetlist(16,-1){
   
 }
-					     
+
 
 
 int RN_NeutDetectorArray::ReconstructHits(RN_NeutCollection& in){
@@ -229,7 +234,7 @@ int RN_NeutDetectorArray::ReconstructHits(RN_NeutCollection& in){
 }
 
 
-int RN_NeutDetectorArray::Reset(){
+void RN_NeutDetectorArray::Reset(){
   for(int i=0;i<fMult;i++){
     fQ_long[i]=0;
     fPSD[i]=0;
@@ -241,7 +246,7 @@ int RN_NeutDetectorArray::Reset(){
   fT_first=0;
   fDetfirst = -1;
 
-  return 1;
+  return;
 }
 
 

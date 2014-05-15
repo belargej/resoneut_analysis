@@ -48,6 +48,50 @@ using RN_modules. also got rid of the need for a "config file".  Changes to the 
 #include "sak_ReadBuffer.hpp"
 #include "RN_Module.hpp"
 
+class RN_EventProcessor():public RN_BaseClass{
+ protected:
+ TFile* RootFile;
+ TTree* DataTree;
+ TTree* ScalerTree;
+ TChain* fChain;
+
+ //reading from evt file
+ unsigned int BufferWords; //number of short length words, each 2 bytes
+ unsigned int BufferBytes; //number of bytes to be stored
+ unsigned int BufferType;
+ unsigned int NBuffers; 
+ int BufferPhysics;
+ std::ifstream evtfile;
+ std::ofstream logfile;
+ unsigned short * buffer;
+ int timer; 
+ ScalerNames scaler_names;
+ ScalerValues scaler_values;
+
+ int ExtractRingBuffer();
+ int UnpackBeginRun();
+ int UnpackEndRun();
+ int UnpackScalers();
+ int UnpackPhysicsEvent();
+ int UnpackPhysicsEventCounter();
+ int UnpackUndefined();
+ bool InitStack(const std::string& configfile);
+ void ResetTreeParameters() = 0;
+ virtual bool Begin() = 0;
+ virtual bool Process() = 0;
+ virtual bool ProcessFill() = 0;
+ virtual bool Terminate() = 0;
+ virtual void Loop(Long64_t start = 0, Long64_t evnum = 0);
+ virtual void AddTree(TString a){fChain->Add(a);}
+ virtual void Init(TString file);
+ Long64_t TotEntries() const{return fChain->GetEntries();} 
+ 
+
+ public:
+
+
+
+};
 
 typedef std::vector<std::string> ScalerNames;
 typedef std::vector<Double32_t> ScalerValues;

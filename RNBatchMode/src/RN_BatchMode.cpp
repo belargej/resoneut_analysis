@@ -33,7 +33,7 @@
 #include <TBrowser.h>
 #include <TCutG.h>
 
-#include "RN_Unpack2Root.hpp"
+#include "RN_EventProcessor.hpp"
 #include "RN_Root.hpp"
 
 TRint *myRint;
@@ -41,13 +41,13 @@ TRint *myRint;
 
 int main(int argc, char*argv[])
 {
-  RN_RootInit();
+  RNROOT::Initialize();
   if(argc==4){
-    unpacker::InitStack(argv[3]);
+    gEventProcessor.InitStack(argv[3]);
     std::string runinput = argv[1];
     
     if(runinput.find(".evt")!=std::string::npos){
-      unpacker::Convert2Root(runinput,argv[2]);
+      gEventProcessor.Convert2Root(runinput,argv[2]);
     }
     else{
       std::vector<std::string>run_numbers;
@@ -58,12 +58,13 @@ int main(int argc, char*argv[])
 	std::cin>>enter;
 	if(enter.size()>1)run_numbers.push_back(enter);
       }
-      unpacker::Convert2Root(run_numbers,argv[1],argv[2]);//1:data dir,2:output file    
+      gEventProcessor.Convert2Root(run_numbers,argv[1],argv[2]);//1:data dir,2:output file    
     }
     
   }
   else{
-    std::cout<<"invalid number of arguments: \n"<<"RNBatchMode dir output config"<<std::endl;
+    std::cout<<"To use Convert2Root: \n"<<"RNBatchMode dir output config"<<std::endl;
+    std::cout<<"Instead, we are running a standard root session with RNROOT libraries loaded"<<std::endl;
     myRint=new TRint("myRint",&argc,argv);
     myRint->Run();
     return 0;

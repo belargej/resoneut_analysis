@@ -21,14 +21,18 @@ analyzer list.  If RequireS1() is set before sorting the data
 then events which do not have a valid S1 time will be prevented from proceeding
 to analyzers which follow this one.
 *******************************************************************/
-
+		       
 #ifndef _TRIG_ANALYZER_CXX
 #define _TRIG_ANALYZER_CXX
 
+#include <numeric>		       
 #include "Trigger_Analyzer.hpp"
 #include "RN_Root.hpp"
-#include "RN_Unpack2Root.hpp"
-#include <numeric>
+
+		       
+		       
+using namespace RNROOT;
+
 namespace trigger{
  
   //call SetTriggerLocs in your code to set these values
@@ -109,7 +113,7 @@ namespace trigger{
     return 1;
   }
   
-  void Trigger_Analyzer::ResetGlobals(){
+  void Trigger_Analyzer::Reset(){
     //reset all trigger infos
     for(unsigned int i=0; i<triggerinfo.size();i++){
       triggerinfo[i]=0;

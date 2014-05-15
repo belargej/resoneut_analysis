@@ -37,7 +37,6 @@ protected:
   double tlin;//!
   double tshift;//!
   double fTo;//!
-  TRandom3 myRnd;//!
 
 public:
   RN_RFTime(int i = 0):tlin(1),

@@ -1,19 +1,9 @@
-/************************************************************************
-Class: RN_Base Detector
-Author: Sean Kuvin                             
-
-
- RN_BaseDetector class: Inserting a hit (energy, time, channel) 
- is sorted by energy(default) and mult is counted. 
- Adapted from SpecTcl DetectorParameters.cpp (Diffenderfer, Wiedenhoever)
-
-***********************************************************************/
-
-
 #ifndef __BaseDetector__CXX
 #define __BaseDetector__CXX
 
 #include "RN_BaseDetector.hpp"
+
+ClassImp(RN_BaseDetector);
 
 RN_BaseDetector::RN_BaseDetector(std::string name, int num):RN_BaseClass(name,name),
 							    fNumOfCh(num),
@@ -81,6 +71,16 @@ void RN_BaseDetector::SetCalibrations(RN_VariableMap& detvar){
   detvar.GetParam(Form("%s.ehighlimit",GetName()),highlimit);
   detvar.GetParam(Form("%s.sorted_by_channel",GetName()),sorted_by_channel);
 
+}
+
+void RN_BaseDetector::Print(){
+  TObject::Print();
+  std::cout<<"number of channels: "<<NumOfCh()<<"\n";
+  std::cout<<"sorted by channel: "<<sorted_by_channel<<"\n";
+  std::cout<<"elowlimit: "<<lowlimit<<"\n";
+  std::cout<<"ehighlimit: "<<highlimit<<"\n";
+
+  return;
 }
 
 int RN_BaseDetector::InsertHit(const double& e,const double& t,const double& ch){

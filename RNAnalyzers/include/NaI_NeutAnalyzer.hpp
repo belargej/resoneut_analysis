@@ -43,7 +43,7 @@ namespace coinc{
     virtual bool TerminateIfLast();
 
     virtual void Clear(){};
-    virtual void ResetGlobals();
+    virtual void Reset();
 
   
     ClassDef(NaI_NeutAnalyzer,0);

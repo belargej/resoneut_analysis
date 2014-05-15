@@ -40,7 +40,7 @@ namespace psd{
     virtual bool Terminate();
     virtual bool TerminateIfLast();
     virtual void Clear(){};
-    virtual void ResetGlobals();
+    virtual void Reset();
 
 
   ClassDef(NeutAnalyzer,0);

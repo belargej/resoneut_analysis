@@ -37,7 +37,7 @@ namespace gamma_nai{
     virtual bool TerminateIfLast();
 
     virtual void Clear(){};
-    virtual void ResetGlobals();
+    virtual void Reset();
 
   
     ClassDef(NaI_Analyzer,0);

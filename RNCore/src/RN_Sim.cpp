@@ -4,11 +4,11 @@
 #include "RN_Sim.hpp"
 #include "RN_Root.hpp"
 using namespace global;
+using namespace RNROOT;
 
 namespace sim{
-
-  TFile *simfile;
-  TTree *tree;
+  TFile * simfile;
+  RN_Particle particle;
   ofstream simlog;
   std::vector<Int_t> NeutronIn;
   std::vector<Int_t> NeutronDetected;
@@ -81,26 +81,26 @@ namespace sim{
 	continue;
       if(input[0]=="fParam")
       {      
-	DetVar.AddParam(input[1],sak::string_to_double(input[2]));
+	gVariableMap.AddParam(input[1],sak::string_to_double(input[2]));
       }
       else if(input[0]=="fDWBA")
 	{
-	  SetAngularDistribution(input[1]);
+	  gReactionInfo.SetAngularDistribution(input[1]);
 	
 	}
       else if(input[0]=="fReaction")
 	{
+	  std::string plist[6];
 	  if (input.size()==7){
-	    particle.clear();
-	    for(unsigned int i=1;i<7;i++){
-	      particle.push_back(RN_Particle(input[i]));
+	    for(unsigned int i=0;i<6;i++){
+	      plist[i] = input[i+1];
 	    }
-	    global::m_beam = particle[0].mass;
-	    global::m_target = particle[1].mass;
-	    global::m_recoil = particle[2].mass;
-	    global::m_frag = particle[3].mass;
-	    global::m_decay_product = particle[4].mass;
-	    global::m_heavy_decay = particle[5].mass;
+	    gReactionInfo.SetReaction(plist[0],
+				      plist[1],
+				      plist[2],
+				      plist[3],
+				      plist[4],
+				      plist[5]);
 	  }
 	  else {
 	    std::cout<<"incorrect number of entries to fReaction: "<< input.size()-1<<"but needed 6"<<std::endl;
@@ -115,8 +115,8 @@ namespace sim{
 					 sak::string_to_double(input[4]),//thetamin
 					 sak::string_to_double(input[5])//thetamax
 				       );
-	  particle.clear();
-	  particle.push_back(RN_Particle(input[1]));	
+	  
+	  sim::particle.Init(input[1]);	
 	}
 	else {
 	  std::cout<<"incorrect number of inputs for fParticle gun: "<<input.size()<<". Need particle name emin emax thetamin thetamax"<<std::endl; 
@@ -144,95 +144,62 @@ namespace sim{
     else
       continue;
   } while(!cfg.eof());
+    cfg.close();
   
   Loop(totevents,option);
 
     
 
-}
+  }
 
 
 
   void RN_Sim::FillHistograms(){
-    if(particle.size()>1){
-      hE_v_theta->Fill(particle[2].LV.Theta()*180/3.14,particle[2].LV.E()-particle[2].LV.M());
-      hn_CM->Fill(n_cm*180/3.14);
-      hn_CMvLab->Fill(n_cm*180/3.14,particle[2].LV.Theta()*180/3.14);
-    }
-  int cref=0;
-  for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
-    if((*it).GetHitPos().X()!=0)
-    hpos_in->Fill((*it).GetHitPos().X(),(*it).GetHitPos().Y());
-    if((*it).fT_Sim>0){
-      hn_tof->Fill(((*it).fT_Sim));
-      htof_n[cref]->Fill((*it).fT_Sim);
-      hE_n->Fill(cref,(*it).fEsum);
-      hpos->Fill((*it).GetHitPos().X(),(*it).GetHitPos().Y());
-      double nKE=0,hiKE=0;
-      double q_value=QValue((*it).GetPosVect().Z(),(*it).fT_Sim,nKE,hiKE);
-      hQ->Fill(q_value);
-      hQ_n[cref]->Fill(q_value);
-      h_nKE->Fill(nKE);
-      h_hiKE->Fill(hiKE);
-      if(particle.size()!=1)
-	hT_v_theta->Fill(particle[2].LV.Theta()*180/3.14,(*it).fT_Sim);
-
-    }
-    cref++;
-  }
-  double p_ke=particle[4].KE();
-  double p_theta=particle[4].LV.Theta();
-  double hi_ke=particle[3].KE();
-
-  
-  q_val_p = (p_ke* (1 + (global::m_decay_product / global::m_heavy_decay)) 
-	       - (hi_ke * ( 1 - (global::m_frag / global::m_heavy_decay)))
-	       - ((2 / global::m_heavy_decay) * TMath::Sqrt(p_ke * global::m_decay_product * hi_ke * global::m_frag) * cos(p_theta)));
+    TLorentzVector recoilLV = gReactionInfo.RecoilLV();
+    int cref(0);    
+    hE_v_theta->Fill(recoilLV.Theta()*180/3.14,recoilLV.E()-recoilLV.M());
+    hn_CM->Fill(n_cm*180/3.14);
+    hn_CMvLab->Fill(n_cm*180/3.14,gReactionInfo.RecoilLV().Theta()*180/3.14);
     
-  q_val_p_guess = (p_ke* (1 + (global::m_decay_product / global::m_heavy_decay)) 
-		   - (global::E_fragment * ( 1 - (global::m_frag / global::m_heavy_decay)))
-		   - ((2 / global::m_heavy_decay) * TMath::Sqrt(p_ke * global::m_decay_product * global::E_fragment * global::m_frag) * cos(p_theta)));
-  
-
-
-  hQ_proton->Fill(q_val_p);
-  hQ_proton_guess->Fill(q_val_p_guess);
-  
-
-
-
-  tree->Fill();
+    cref = 0 ;
+    for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
+      if((*it).GetHitPos().X()!=0)
+	hpos_in->Fill((*it).GetHitPos().X(),(*it).GetHitPos().Y());
+      if((*it).fT_Sim>0){
+	hn_tof->Fill(((*it).fT_Sim));
+	htof_n[cref]->Fill((*it).fT_Sim);
+	hE_n->Fill(cref,(*it).fEsum);
+	hpos->Fill((*it).GetHitPos().X(),(*it).GetHitPos().Y());
+	double nKE=0,hiKE=0;
+	double q_value=gReactionInfo.RecoilQValue((*it).GetPosVect().Z(),(*it).fT_Sim,nKE,hiKE);
+	hQ->Fill(q_value);
+	hQ_n[cref]->Fill(q_value);
+	h_nKE->Fill(nKE);
+	h_hiKE->Fill(hiKE);
+	hT_v_theta->Fill(particle.LV.Theta()*180/3.14,(*it).fT_Sim);
+	
+      }
+      cref++;
   }
 
-void RN_Sim::initHists(){
-  if(!simfile){
-    std::cout<<"no simfile set"<<std::endl;
-    exit(EXIT_FAILURE);
+    q_val_p = gReactionInfo.DecayQValueExact();
+    
+    q_val_p_guess = gReactionInfo.DecayQValueEstimate();
+
+    
+    hQ_proton->Fill(q_val_p);
+    hQ_proton_guess->Fill(q_val_p_guess);
+    
   }
+  
+  void RN_Sim::initHists(){
+    if(!simfile){
+      std::cout<<"no simfile set"<<std::endl;
+      exit(EXIT_FAILURE);
+    }
   def=1;
   simfile->cd();
-  
-   tree=new TTree("sim","sim");
-   for(unsigned int i=0;i<particle.size();i++){
-     std::string pname=Form("%s.",particle[i].GetName());
-     int pidx=2;
-     //check if the tree already has a particle with this name(as is the case
-     //after the heavy ion fragment proton decays back to the beam nucleus).
-     while(tree->GetBranch(pname.c_str())){
-       pname=Form("%s%d.",particle[i].GetName(),pidx);
-       pidx++;
-    }
-    tree->Branch(pname.c_str(),"RN_Particle",&particle[i]);
-   
-  }
-
-  for(unsigned int i=0;i<neut.size();i++){
-    tree->Branch(Form("%s.",neut[i].GetName()),"RN_NeutDetector",&neut[i]);
-  }
-  tree->Branch("Qp_val_guess",&q_val_p_guess);
-
-
-  
+ 
   simfile->mkdir("histograms");
 
   simfile->cd("histograms");
@@ -274,20 +241,14 @@ void RN_Sim::initHists(){
     SetCalibrations();
     Long64_t evcount=0;
     while(evcount<evnum){
-      if(particle.size()==1){
-	if(GenerateSingleParticleEvent(evcount))
-	  evcount++;
-	else continue;
-    }
-      else if(particle.size()>1){
-	if(GenerateEvents(evcount,options))
-	  evcount++;
-	else
-	  continue;
-    }
+      if(GenerateEvents(evcount,options)){
+	evcount++;
+      }
+      else
+	continue;
       if(def==1)FillHistograms();
       if(evcount%30000==0)std::cout<<evcount<<std::endl;
-    }  
+    }
     WriteOut();
   }
   
@@ -298,17 +259,17 @@ void RN_Sim::initHists(){
   
   int RN_Sim::GenerateSingleParticleEvent(Long64_t evnum){
     Reset();
-    particlegun->Shoot(particle[0].LV); //shoot a particle defined by particle gun into the LV of particle[0]
+    particlegun->Shoot(particle.LV); //shoot a particle defined by particle gun into the LV of particle[0]
     for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
-      if((*it).inDet(particle[0].LV.Vect())){
-	(*it).NeutIn(particle[0].LV,n_tof,E_deposited);  
+      if((*it).inDet(particle.LV.Vect())){
+	(*it).NeutIn(particle.LV,n_tof,E_deposited);  
 	return 1;
       }
     }
     
     for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
-      if((*it).inDet(particle[0].LV.Vect())){
-	double e=particle[0].LV.E()-particle[0].LV.M();
+      if((*it).inDet(particle.LV.Vect())){
+	double e=particle.LV.E()-particle.LV.M();
 	double t=0;
 	(*it).front.InsertHit(e,t,0);
 	return 1;
@@ -318,109 +279,76 @@ void RN_Sim::initHists(){
     return 0;
   }
   
+  
+  int RN_Sim::GenerateEvents(Long64_t evnum,std::string options=""){
+    for(unsigned int i=0;i<neut.size();i++){
+      neut[i].Reset();
+    }
+    for(unsigned int i=0;i<si_.size();i++){
+      si_[i].Reset();
+    }
 
-int RN_Sim::GenerateEvents(Long64_t evnum,std::string options=""){
-  Reset();
-
-  double beam_energy = beam_e - myRnd.Rndm() * beam_eloss;
-  
-  RN_SimEvent evt1(beam_energy,particle[0].mass,particle[1].mass,particle[2].mass,particle[3].mass);
-  RN_SimEvent evt2(particle[3].mass,particle[4].mass,particle[5].mass);
-  
-  double theta=M_PI*myRnd.Rndm();
-  n_cm=theta;
-  double phi = 2.*M_PI*myRnd.Rndm();
-  if (myRnd.Rndm()>nDWBA.GetAD(180.- (theta / M_PI * 180.)))
-    return 0;
-  TVector3 nv; nv.SetMagThetaPhi(1.,theta,phi);//neutron 
-  
-  if(!evt1.radiate_in_CM(nv,hi_ex_set))
-    return 0;
-  
-  
-  theta = acos(-1. + 2.*myRnd.Rndm());
-  phi = 2.*M_PI*myRnd.Rndm();
-  TVector3 pv; pv.SetMagThetaPhi(1.,theta,phi);
-  //q1set=-5.518,q2set=3.293,q3set=cancelsoutq1q2
-  if(!evt2.radiate_in_CM(evt1.getLVhi(),pv,d_ex_set)){
-    if(options=="proton")
-      return 0;
-  }
-  particle[1].LV.SetPxPyPzE(0.0,0.0,0.0,particle[1].mass);
-  particle[0].LV = evt1.getLVin() - particle[1].LV;
-  particle[2].LV = evt1.getLVrad();
-  particle[3].LV = evt1.getLVhi();
-  particle[4].LV = evt2.getLVrad();
-  particle[5].LV = evt2.getLVhi();
+    n_cm = gReactionInfo.GenerateSimEvent();
    
-  for(unsigned int i=0;i<neut.size();i++){
-    if(neut[i].inDet(particle[2].LV.Vect())){
-      NeutronIn[i]++;
-      if(neut[i].NeutIn(particle[2].LV,n_tof,E_deposited)){
-	NeutronDetected[i]++;
-	for(unsigned int s=0;s<si_.size();s++){
-	  if(si_[s].inDet(particle[4].LV.Vect())){
-	    ProtonIn_NeutDet[s]++;
+    for(unsigned int i=0;i<neut.size();i++){
+      if(neut[i].inDet(gReactionInfo.RecoilLV().Vect())){
+	NeutronIn[i]++;
+	if(neut[i].NeutIn(gReactionInfo.RecoilLV(),n_tof,E_deposited)){
+	  NeutronDetected[i]++;
+	  for(unsigned int s=0;s<si_.size();s++){
+	    if(si_[s].inDet(gReactionInfo.DecayProductLV().Vect())){
+	      ProtonIn_NeutDet[s]++;
+	    }
 	  }
 	}
       }
     }
-  }
-
-  for(unsigned int s=0;s<si_.size();s++){
-    if(si_[s].inDet(particle[4].LV.Vect())){
-      ProtonIn[s]++;
-      double e=particle[4].LV.E()-particle[4].LV.M();
-      double t=0;
-      si_[s].front.InsertHit(e,t,0);
+    
+    for(unsigned int s=0;s<si_.size();s++){
+      if(si_[s].inDet(gReactionInfo.DecayProductLV().Vect())){
+	ProtonIn[s]++;
+	double e=gReactionInfo.DecayProductLV().E()-gReactionInfo.DecayProductLV().M();
+	double t=0;
+	si_[s].front.InsertHit(e,t,0);
+      }
     }
-  }
+    
+    
+    return 1;
+  }   
   
+
   
-  return 1;
-}   
+  void RN_Sim::Reset(){
+    E_deposited=0;
+    n_tof=0;
+    q_val_p=0;
+    q_val_p_guess = 0;
+    
+    particle.Reset();
 
-double RN_Sim::QValue(const double deltaz/*mm*/, const double tof /*ns*/,double& NKE, double& hiKE){
-  double M_N=particle[2].mass;
-  double M1=particle[0].mass;
-  double M2=particle[3].mass;
-  NKE=.5*M_N*(deltaz*deltaz/(tof*tof*90000.0));
-  hiKE=(M1/M2)*beam_est+((M_N/M2)*NKE)+((2/M2)*sqrt((beam_est*NKE*M_N*M1)));
-  
-  return NKE+hiKE-beam_est;
-
-}
-
-void RN_Sim::Reset(){
-  E_deposited=0;
-  n_tof=0;
-  q_val_p=0;
-  q_val_p_guess = 0;
-   
-  for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){ 
-    (*it).Reset();  
+    for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){ 
+      (*it).Reset();  
+    }
+    
+    for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
+      (*it).Reset(); 
+    }
+ 
+    
   }
-
-  for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
-    (*it).Reset(); 
-  }
-  for(RN_ParticleCollectionRef it=particle.begin();it!=particle.end();it++){
-    (*it).Reset();
-  }
-  
-}
 
   
   void RN_Sim::WriteOut(){
     
-      hQ->Fit(Q_fit,"","",-4,4);
-      hn_tof->Fit(TOF_fit,"","",1,128);
-      simlog<<"Reaction :"<<particle[0].GetName()<<"("<<particle[1].GetName()<<","<<particle[2].GetName()<<")"<<particle[3].GetName()<<"\n";
-      simlog<<"Decay :"<<particle[3].GetName()<<"->"<<particle[4].GetName() << "+" << particle[5].GetName()<<"\n\n";
+    hQ->Fit(Q_fit,"","",-4,4);
+    hn_tof->Fit(TOF_fit,"","",1,128);
+    simlog<<"Reaction :"<<gReactionInfo.BeamName()<<"("<<gReactionInfo.TargetName()<<","<<gReactionInfo.RecoilName()<<")"<<gReactionInfo.FragmentName()<<"\n";
+    simlog<<"Decay :x"<<gReactionInfo.FragmentName()<<"->"<<gReactionInfo.DecayProductName() << "+" << gReactionInfo.HeavyDecayName()<<"\n\n";
       
-      simlog<<"Beam Energy: "<<global::beam_e<<"\n";
-      simlog<<"Beam E_loss(thickness): "<<global::beam_eloss<<"\n";
-      simlog<<"Excitation Energy: "<<global::hi_ex_set<<"\n";
+      simlog<<"Beam Energy: "<<gReactionInfo.BeamEnergy()<<"\n";
+      simlog<<"Beam E_loss(thickness): "<<gReactionInfo.BeamELoss()<<"\n";
+      simlog<<"Excitation Energy: "<<gReactionInfo.Hi_Ex_Set()<<"\n";
       simlog<<"Number of Neutron Detectors: "<<neut.size()<<"\n";
       simlog<<"Total Entries: "<<totevents<<"\n\n";
 

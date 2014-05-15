@@ -21,14 +21,16 @@
 namespace sim{
 
   class RN_AngularDistribution:public RN_BaseClass{
-    
+        
     
   public:
     RN_AngularDistribution();
-    RN_AngularDistribution(std::string);
+    RN_AngularDistribution(const std::string& _file);
     virtual ~RN_AngularDistribution();
     double ad[180];
+    void Init(const std::string & _file);
     double GetAD(double angle);
+    void Clear();
     
     ClassDef(RN_AngularDistribution,1);
   };
@@ -43,13 +45,20 @@ namespace sim{
     RN_SimEvent(double beam_energy,double beam_mass,
 		double target_mass,double rad_mass,
 		double hi_mass);
-  virtual ~RN_SimEvent();
+    virtual ~RN_SimEvent();
+
     std::vector<TLorentzVector> LVarray;  
     std::vector<Double32_t> Marray;
     double beam_energy;
     double thebeam_mass;
     double thetarget_mass;
     TVector3 boostv;
+
+    void Init(double parent_mass,double rad_mass,double hi_mass);
+    void Init(double beam_energy,double beam_mass,
+		double target_mass,double rad_mass,
+		double hi_mass);
+
     int radiate_in_CM(const TVector3& rad_V,
 		      const double& hi_ex);
     int radiate_in_CM(const TLorentzVector& in_LV,

@@ -1,9 +1,20 @@
-//////////////////////////////////////////////////////////////
-/// RN_Module for handling the modules needed for the unpacker.
-///
-///
-/// Author: Sean Kuvin
-//////////////////////////////////////////////////////////////
+/****************************************************************
+Class: RN_Module, RN_Module_Stack
+RN_Module for handling the modules needed for the unpacker.
+
+The modules can be added to the RN_Module_stack so that the unpacker
+knows in which order the modules should be unpacked. This is done by checking
+the expected geoaddress of every RN_Module in the stack with the 
+geoaddress as it comes out of the buffer.  Therefore the order in which they are
+added to the stack should match the order they are added in the daqconfig.tcl.
+Implementations of RN_Module should override Unpack() and be added to the RN_Module_stack RNROOT::gModule_stack
+
+CAEN_ADC and MESY_QDC are implementations each with their own
+override of Unpack(). By Calling UnpackModules from the Module_stack, 
+the pointer to PhysicsEventBuffer gets passed to each Module
+
+ Author: Sean Kuvin -2013
+******************************************************************/
 
 
 #ifndef __RN_MODULE_H_
@@ -80,7 +91,7 @@ public:
   UInt_t ZeroSuppression()const {return fZeroSuppression;}
   UInt_t CheckValid()const {return fValid;}
   UInt_t SortChVal(const UInt_t& ch, const UInt_t& val);
-  UInt_t Reset();
+  virtual void Reset();
   virtual UInt_t AddBranch(TTree* _tree);
   virtual UInt_t SetBranch(TTree* _tree);
   virtual void Print(); 
@@ -88,33 +99,25 @@ public:
   ClassDef(RN_Module,1);
 };
 
-class RN_Module_Stack:public RN_BaseClass{
+class RN_Module_Stack:public RN_BaseClass_Stack{
 protected:
-  TList *fRNModules;//!  
+
 public: 
  
   RN_Module_Stack(const TString& name="");
-  ~RN_Module_Stack(){
-    if(fRNModules){
-      delete fRNModules;
-      fRNModules=NULL;
-    }
-  }
-  void Init();
-  UInt_t GetSize()const{return fRNModules ? fRNModules->GetSize() : 0;};
+  ~RN_Module_Stack(){}
+  
+  
   UInt_t GetNum(UInt_t modtype = 0);
   virtual UInt_t AddBranches(TTree* _tree);
-  virtual UInt_t SetBranches(TTree* _tree);
-  UInt_t AddModule(RN_Module *mod);
-  void ClearStack(){if(fRNModules)fRNModules->Clear();} 
+  virtual UInt_t SetBranches(TTree* _tree); 
+  virtual UInt_t Add(RN_BaseClass * base);
   Bool_t UnpackModules(unsigned short *& pointer, int filepos);
   UInt_t SortGeoChVal(const UShort_t&geoaddress,const UInt_t& ch, const UInt_t& val);
-  virtual void Print();
-  UInt_t Reset();
-
-
+ 
   ClassDef(RN_Module_Stack,1);
 };
+
 
 class CAEN_ADC:public RN_Module{
 private:

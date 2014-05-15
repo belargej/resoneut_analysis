@@ -25,6 +25,8 @@
 #include "Trigger_Analyzer.hpp"
 #include "NaI_NeutAnalyzer.hpp"
 
+using namespace RNROOT;
+
 namespace coinc{
 
   TCutG* sia_n_time_cut;
@@ -44,7 +46,7 @@ namespace coinc{
   {
     
   }
-  void Si_Neut_IC_NaI_Analyzer::ResetGlobals(){
+  void Si_Neut_IC_NaI_Analyzer::Reset(){
     sia_n_time_check = 0;
     sib_n_time_check = 0;
 
@@ -52,28 +54,28 @@ namespace coinc{
 
   bool Si_Neut_IC_NaI_Analyzer::Begin(){   
     
-    if(!rootfile){
+    if(!RNROOT::gRootFile){
       std::cout<<"output file has not been created"<<std::endl;
       Clear();
       exit(EXIT_FAILURE);
     }
 
     //create directory structure
-    if(!rootfile->GetDirectory("coinc"))
-      rootfile->mkdir("coinc");
-    rootfile->cd("coinc");
+    if(!RNROOT::gRootFile->GetDirectory("coinc"))
+      RNROOT::gRootFile->mkdir("coinc");
+    RNROOT::gRootFile->cd("coinc");
     gDirectory->mkdir("Si_Neut");
     gDirectory->mkdir("Si_NaI");
     gDirectory->cd("Si_Neut");
     gDirectory->mkdir("timing");
-    rootfile->cd("coinc/Si_NaI");
+    RNROOT::gRootFile->cd("coinc/Si_NaI");
     gDirectory->mkdir("timing");
 
     //create histograms
     
-    rootfile->cd("coinc/Si_NaI/timing");
+    RNROOT::gRootFile->cd("coinc/Si_NaI/timing");
     h_nai_t_v_si_t = new  TH2D("h_nai_t_v_si_t","h_nai_t_v_si_t;nai_t;si_t",1024,0,4095,1024,0,4095);
-    rootfile->cd("coinc/Si_Neut/timing");
+    RNROOT::gRootFile->cd("coinc/Si_Neut/timing");
     h_n_t_v_si_t = new  TH2D("h_n_t_v_si_t","h_n_t_v_si_t;n_t;si_t",1024,0,4095,1024,0,4095);
     h_n_minus_sit=new TH1D("h_minus_sit","h_n_minus_sit;nt-sit",4096,-2048,2047);
     
@@ -117,8 +119,8 @@ namespace coinc{
   }
   
   bool Si_Neut_IC_NaI_Analyzer::TerminateIfLast(){
-    rootfile->Write();
-    rootfile->Close();
+    RNROOT::gRootFile->Write();
+    RNROOT::gRootFile->Close();
     return 1;    
   }
   

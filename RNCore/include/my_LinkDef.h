@@ -6,7 +6,8 @@
 #ifdef __CINT__
 #pragma link C++ defined_in "RN_BaseClass.hpp";
 #pragma link C++ defined_in "sak_ReadBuffer.hpp";
-#pragma link C++ defined_in "RN_Unpack2Root.hpp";
+//#pragma link C++ defined_in "RN_Unpack2Root.hpp";
+#pragma link C++ defined_in "RN_EventProcessor.hpp";
 #pragma link C++ defined_in "RN_BaseDetector.hpp";
 #pragma link C++ defined_in "RN_NeutDetectorArray.hpp";
 #pragma link C++ defined_in "RN_NaIArray.hpp";
@@ -23,8 +24,8 @@
 #pragma link C++ defined_in "RN_Root.hpp";
 #pragma link C++ defined_in "RN_Sim.hpp";
 #pragma link C++ defined_in "RN_SimPhysics.hpp";
-
-
+#pragma link C++ defined_in "RN_Parameters.hpp";
+#pragma link C++ defined_in "RN_ReactionInfo.hpp";
 
 
 

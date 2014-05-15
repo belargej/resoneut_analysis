@@ -3,12 +3,12 @@ CXX=g++
 ########.cpp files in the src file to be compiled#############################################
 ########these files need .hpp files in the include folder#####################
 
-SRCFILES=RN_Unpack2Root.cpp RN_BaseDetector.cpp RN_NeutDetectorArray.cpp \
+SRCFILES=RN_BaseDetector.cpp RN_NeutDetectorArray.cpp \
 	RN_VariableMap.cpp RN_IonChamber.cpp RN_SiliconDetectors.cpp\
 	RN_Calibrator.cpp RN_Timing.cpp RN_Analyzer.cpp sak_ReadBuffer.cpp\
 	RN_MassTable.cpp RN_Particle.cpp RN_NaIArray.cpp RN_TriggerBit.cpp\
-        RN_Root.cpp RN_Sim.cpp RN_SimPhysics.cpp RN_BaseClass.cpp RN_Module.cpp
-
+        RN_Root.cpp RN_Sim.cpp RN_SimPhysics.cpp RN_BaseClass.cpp RN_Module.cpp\
+	RN_Parameters.cpp RN_EventProcessor.cpp RN_ReactionInfo.cpp
 ########Directories and Files###########################################################
 SRCDIR=src
 HDRDIR=include
@@ -29,10 +29,11 @@ else
 DEBUG=-O2
 endif
 
-CFLAGS=`root-config --cflags` -c ${DEBUG} -I$(HDRDIR)
+INCLUDE_DIRS=-I$(HDRDIR) -I${ROOTSYS}/include -I${ROOTSYS}/include/root
+CFLAGS=`root-config --cflags` -c ${DEBUG} $(INCLUDE_DIRS)
 GLIBS=`root-config --glibs`
 LINK_DIR=${PWD}/../lib
-LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} -I${ROOTSYS}/include -I$(HDRDIR)
+LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} ${INCLUDE_DIRS}
 
 
 ##########################################################################

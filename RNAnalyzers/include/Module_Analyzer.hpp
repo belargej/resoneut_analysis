@@ -31,7 +31,7 @@ public:
   virtual void Clear(){};
   virtual bool Terminate();
   virtual bool TerminateIfLast(){return 1;};
-  virtual void ResetGlobals();
+  virtual void Reset();
 
 
   ClassDef(Module_Analyzer,0);

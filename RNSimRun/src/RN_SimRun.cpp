@@ -39,7 +39,7 @@
 int main(int argc, char*argv[])
 {
   if(argc==2){
-    RN_RootInit();//initialize default detector setup
+    RNROOT::Initialize();//initialize default detector setup
     sim::RN_Sim a;
     a.StartRun(argv[1]);
     return 1;

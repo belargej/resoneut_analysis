@@ -7,8 +7,10 @@
 
 **************************************************/
 #include "RN_Root.hpp"
+#include "Si_Analyzer.hpp"
 #include "F17dn_Analyzer.hpp"
 
+using namespace RNROOT;
 
 namespace _F17{
   TH2D *hneut_trel_v_ic_trel;
@@ -29,22 +31,22 @@ F17dn_Analyzer::F17dn_Analyzer()
 }
 
 
-void F17dn_Analyzer::ResetGlobals(){
+void F17dn_Analyzer::Reset(){
 
 }
 
 bool F17dn_Analyzer::Begin(){
   
   //make directory structure
-  rootfile->mkdir("F17_dn_Analysis");
-  rootfile->cd("F17_dn_Analysis");
+  RNROOT::gRootFile->mkdir("F17_dn_Analysis");
+  RNROOT::gRootFile->cd("F17_dn_Analysis");
   gDirectory->mkdir("ede");
   gDirectory->mkdir("QvT");
 
 
 
   //create histrograms
-  rootfile->cd("F17_dn_Analysis");
+  RNROOT::gRootFile->cd("F17_dn_Analysis");
   hneut_trel_v_ic_trel = new TH2D("neut_rf_trel_v_ic_rf_trel","neut_rf_trel_v_ic_rf_trel;neut_trel[ns];ic_trel[ns]",1024,-1023.,1023.,1024,-1023.,1023.);
   hneut_trel_v_sia_trel = new TH2D("neut_rf_trel_v_sia_rf_trel","neut_rf_trel_v_sia_rf_trel;neut_trel[ns];sia_trel[ns]",1024,-1023.,1023.,1024,-1023.,1023.);
   hneut_nai_trel_v_neut_t = new TH2D("neut_nai_trel_v_neut_t","neut_nai_trel_v_neut_t;neut_nai_trel[ns];neut_t[ns]",1024,-1023.,1023.,1024,-1023.,1023.);
@@ -59,10 +61,10 @@ bool F17dn_Analyzer::Begin(){
 
   hneut_time=new TH1D("neut_time","neut_time;nt[ns]",1024,0,1023);
   hneut_nai_trel=new TH1D("neut_nai_trel","neut_nai_trel;neut_nai_trel[ns]",1024,-1023,1023);
-  rootfile->cd("F17_dn_Analysis/ede");
+  RNROOT::gRootFile->cd("F17_dn_Analysis/ede");
   hproton_ede_ntime=new TH2D("proton_EdE_ntime","siPID;E[MeV];dE[MeV]",1024,0.,32.,1024,0.,32.);
   
-  rootfile->cd("F17_dn_Analysis/QvT");
+  RNROOT::gRootFile->cd("F17_dn_Analysis/QvT");
   hn1QvT = new TH2D("n1_QvT","n1_QvT;T;Q",1024,0.,1023.,1024,0.,1023.);
 
 
@@ -83,6 +85,7 @@ bool F17dn_Analyzer::Process(){
 }
 
 bool F17dn_Analyzer::ProcessFill(){
+  /*
   if(Narray.fT_mult>0 && ic.T()>0)
     hneut_trel_v_ic_trel->Fill(coinc::neut_rf_trel,coinc::ic_rf_trel);
 
@@ -98,16 +101,16 @@ bool F17dn_Analyzer::ProcessFill(){
       hneut_trel_v_nai_trel->Fill(coinc::neut_rf_trel,coinc::nai_rf_trel);
     }
   }
-  
+  */
   hn1QvT->Fill(neut[0].fT_Q,neut[0].fQ_long);
   if(Narray.fT_mult>0){
     hneut_time->Fill(Narray.fT_first);
-    if(nai_array.TMult())
-      hneut_nai_trel->Fill(coinc::neut_nai_trel);
+    //if(nai_array.TMult())
+    //  hneut_nai_trel->Fill(coinc::neut_nai_trel);
   }
   if(si_cluster_[1].fMult>0 && si_cluster_[0].fMult>0 && Narray.fT_mult>0)
-    hproton_ede_ntime->Fill(silicon::prot_E,silicon::prot_dE);
-
+    hproton_ede_ntime->Fill(si_array.E_AB(),si_array.E_A());
+  
   return 1;
 }
   
@@ -120,8 +123,8 @@ bool F17dn_Analyzer::Terminate(){
 }
 
 bool F17dn_Analyzer::TerminateIfLast(){
-  rootfile->Write();
-  rootfile->Close();
+  RNROOT::gRootFile->Write();
+  RNROOT::gRootFile->Close();
 
   return 1;
   

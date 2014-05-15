@@ -79,7 +79,7 @@ namespace silicon{
     
   }
 
-  void S2_Analyzer::ResetGlobals(){
+  void S2_Analyzer::Reset()(){
     
     //silicon telescope gate results
     protcheck = 0;
@@ -93,24 +93,24 @@ namespace silicon{
   
   bool S2_Analyzer::Begin(){   
     
-    if(!rootfile){
+    if(!RNROOT::gRootFile){
       std::cout<<"output file has not been created"<<std::endl;
       ClearGates();
       exit(EXIT_FAILURE);
     }
     
-    rootfile->mkdir("Silicon/f2b_ratio");
-    rootfile->mkdir("Silicon/f2b_ratio/charge_sharing");
-    rootfile->mkdir("Silicon/f2b_ratio/S1");
-    rootfile->mkdir("Silicon/f2b_ratio/S2");
-    rootfile->mkdir("Silicon/ede");
-    rootfile->mkdir("Silicon/evtheta");
-    rootfile->mkdir("mult/Silicon");
-    rootfile->mkdir("Silicon/Chlist");
-    rootfile->mkdir("Silicon/Theta");
-    rootfile->mkdir("Silicon/Timing");
+    RNROOT::gRootFile->mkdir("Silicon/f2b_ratio");
+    RNROOT::gRootFile->mkdir("Silicon/f2b_ratio/charge_sharing");
+    RNROOT::gRootFile->mkdir("Silicon/f2b_ratio/S1");
+    RNROOT::gRootFile->mkdir("Silicon/f2b_ratio/S2");
+    RNROOT::gRootFile->mkdir("Silicon/ede");
+    RNROOT::gRootFile->mkdir("Silicon/evtheta");
+    RNROOT::gRootFile->mkdir("mult/Silicon");
+    RNROOT::gRootFile->mkdir("Silicon/Chlist");
+    RNROOT::gRootFile->mkdir("Silicon/Theta");
+    RNROOT::gRootFile->mkdir("Silicon/Timing");
 
-    rootfile->cd("Silicon/Chlist");
+    RNROOT::gRootFile->cd("Silicon/Chlist");
     h_chlistf[0]=new TH1D("h_chlistf_1","Chlistf_S1;Ch",20,-1,18);
     h_chlistf[1]=new TH1D("h_chlistf_2","Chlistf_S2;Ch",20,-1,18);
     h_chlistb[0]=new TH1D("h_chlistb_1","Chlistb_S1;Ch",20,-1,18);
@@ -123,15 +123,15 @@ namespace silicon{
     h_chS1_chS2_rings=new TH2D("h_chS1_chS2_rings","h_chS1_chS2_rings;s1rings;s2rings",17,0,16,17,0,16);
     h_chS1_chS2_segments = new TH2D("h_chS1_chS2_segments","h_chS1_chS2_segments;s1segments;s2segments",17,0,16,17,0,16);
 
-    rootfile->cd("Silicon/f2b_ratio");
+    RNROOT::gRootFile->cd("Silicon/f2b_ratio");
     for(int i=0;i<16;i++){
-      rootfile->cd("Silicon/f2b_ratio/S1");
+      RNROOT::gRootFile->cd("Silicon/f2b_ratio/S1");
       front[0][i]=new TH2D(Form("s1_fc%d_corr",i),Form("s1_fc%d_corr;channel;ratio",i),17,0,16,512,0,2);
-      rootfile->cd("Silicon/f2b_ratio/S2");
+      RNROOT::gRootFile->cd("Silicon/f2b_ratio/S2");
       front[1][i]=new TH2D(Form("s2_fc%d_corr",i),Form("s2_fc%d_corr;channel;ratio",i),17,0,16,512,0,2);
     }
 
-    rootfile->cd("Silicon/f2b_ratio/charge_sharing");
+    RNROOT::gRootFile->cd("Silicon/f2b_ratio/charge_sharing");
     for(unsigned int i=0;i<2;i++){
       h_ch_f0vf1[i]=new TH2D(Form("h_ch_f0vf1_s%d",i+1),Form("h_ch_f0vf1_s%d;ch_f0;ch_f1",i+1),17,0,16,17,0,16);
       h_e_f0vf1[i]=new TH2D(Form("h_e_f0vf1_s%d",i+1),Form("h_e_f0vf1_s%d;e_f0;e_f1",i+1),128,0,16,128,0,16);
@@ -141,10 +141,10 @@ namespace silicon{
  
 
 
-    rootfile->cd("Silicon/ede");
+    RNROOT::gRootFile->cd("Silicon/ede");
     hpede=new TH2D("hpEdE","siPID;E[MeV];dE[MeV]",1024,0,32,1024,0,32);
 
-    rootfile->cd("Silicon/Theta");
+    RNROOT::gRootFile->cd("Silicon/Theta");
     hS1Theta_vS2Theta = new TH2D("hS1Theta_vS2Theta","hS1Theta_vS2Theta;S1Theta;S2Theta",180,0,179,180,0,179); ; 
     hS1Theta_vS2Theta_prot = new TH2D("hS1Theta_vS2Theta_prot","hS1Theta_vS2Theta_prot;S1Theta;S2Theta",180,0,179,180,0,179); 
     h_e_v_relangle = new TH2D("h_e_v_relangle","e_v_relangle;relangle[deg];E[MeV]",256,0,50,128,0,32);
@@ -158,20 +158,20 @@ namespace silicon{
     
     
     for(int i=0;i<2;i++){
-      rootfile->cd("Silicon/evtheta");
+      RNROOT::gRootFile->cd("Silicon/evtheta");
       h_evtheta[i]=new TH2D(Form("h_evtheta[%d]",i+1),Form("h_evtheta[%d];Theta;E",i+1),256,10,42,128,0,32);
       h_evtheta_protgated[i]=new TH2D(Form("h_evtheta_prot[%d]",i+1),Form("h_evtheta_prot[%d];Theta;E",i+1),256,10,42,128,0,32);
       h_si_x_y[i]=new TH2D(Form("h_si_x_y[%d]",i+1),Form("h_si_x_y[%d];X;Y",i+1),512,-100,100,512,-100,100);
       h_si_x_y_prot[i]=new TH2D(Form("h_si_x_y_prot[%d]",i+1),Form("h_si_x_y_prot[%d];X;Y",i+1),512,-100,100,512,-100,100);
       
       
-      rootfile->cd("mult/Silicon");
+      RNROOT::gRootFile->cd("mult/Silicon");
       h_si_fmult[i]= new TH1D(Form("h_si_fmult_%d",i),Form("h_si_fmult_%d;fmult",i),32,0,31);
       h_si_bmult[i]= new TH1D(Form("h_si_bmult_%d",i),Form("h_si_bmult_%d;bmult",i),32,0,31);
       h_si_cluster_mult[i] = new TH1D(Form("h_si_%d_cluster_mult",i),Form("h_si_%d_cluster_mult;mult",i),32,0,31);
     } 
     
-    rootfile->cd("Silicon/Timing");
+    RNROOT::gRootFile->cd("Silicon/Timing");
     h_s1_t=new TH1D("h_s1_t","s1_t;time",1024,0,4096);
     h_s1_t_noticds=new TH1D("h_s1_t_noticds","s1_t_noticds;time",1024,0,4096);
      
@@ -303,8 +303,8 @@ namespace silicon{
   }
 
   bool S2_Analyzer::TerminateIfLast(){
-    rootfile->Write();
-    rootfile->Close();
+    RNROOT::gRootFile->Write();
+    RNROOT::gRootFile->Close();
     
     return 1;
   }

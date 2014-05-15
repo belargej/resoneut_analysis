@@ -10,6 +10,8 @@
 #include "Mg24dn_Analyzer.hpp"
 #include "Q_ValueAnalyzer.hpp"
 
+using namespace RNROOT;
+
 namespace _Mg24{
   TH1D * h_rftime;
   TH2D * h_QvRF;
@@ -22,13 +24,13 @@ namespace _Mg24{
   }
   
 
-  void Mg24dn_Analyzer::ResetGlobals(){
+  void Mg24dn_Analyzer::Reset(){
 
   }
   
   bool Mg24dn_Analyzer::Begin(){
-    rootfile->mkdir("Mg24_analysis");
-    rootfile->cd("Mg24_analysis");
+    RNROOT::gRootFile->mkdir("Mg24_analysis");
+    RNROOT::gRootFile->cd("Mg24_analysis");
     
     h_rftime = new TH1D("hrftime","hrftime;rftime[ns]",1024,0,1023); 
     h_QvRF =   new TH2D("QvRf","QvRF;RF;Qp",1024,0,1023,512,-1.,10.);
@@ -47,10 +49,10 @@ namespace _Mg24{
     return 1;
   }
   bool Mg24dn_Analyzer::ProcessFill(){
-    h_rftime->Fill(rftime[0].T());
-    h_QvRF->Fill(rftime[0].T(),physical::q_val_p);
-    h_neut_rftrel->Fill(coinc::neut_rf_trel);
-    h_Qvneut_rftrel->Fill(coinc::neut_rf_trel,physical::q_val_p);
+    h_rftime->Fill(rftime.T());
+    h_QvRF->Fill(rftime.T(),physical::q_val_p);
+    h_neut_rftrel->Fill(Narray.T()-rftime.T());
+    h_Qvneut_rftrel->Fill(Narray.T()-rftime.T(),physical::q_val_p);
     return 1;
   }
   bool Mg24dn_Analyzer::Terminate(){
@@ -60,8 +62,8 @@ namespace _Mg24{
   }
   
   bool Mg24dn_Analyzer::TerminateIfLast(){
-    rootfile->Write();
-    rootfile->Close();
+    RNROOT::gRootFile->Write();
+    RNROOT::gRootFile->Close();
     
     return 1;
     

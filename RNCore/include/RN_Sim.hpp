@@ -12,13 +12,13 @@
 #include <TTree.h>
 #include <TLorentzVector.h>
 
-
 #include "RN_SiliconDetectors.hpp"
 #include "RN_VariableMap.hpp"
 #include "RN_SimPhysics.hpp"
 #include "RN_Particle.hpp"
 #include "RN_MassTable.hpp"
 #include "sak_ReadBuffer.hpp"
+
 
 namespace sim{
 
@@ -40,7 +40,6 @@ public:
   void SetAngularDistribution(std::string filename);
   int GenerateSingleParticleEvent(Long64_t evnum);
   int GenerateEvents(Long64_t evnum,std::string options);
-  double QValue(const double,const double,double&,double&);
   void Loop(Long64_t evnum,std::string options);
   void StartRun(std::string input);
   void initHists();

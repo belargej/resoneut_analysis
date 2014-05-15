@@ -17,6 +17,7 @@
 #include "IC_Analyzer.hpp"
 #include "RN_Root.hpp"
 
+using namespace RNROOT;
 
 namespace ionchamber{
   TCutG* ede_hi1;
@@ -32,7 +33,9 @@ namespace ionchamber{
   TH2D *hIC_ede;  
   TH2D *hIC_fefde;  
   TH1D *h_IC_t;
-  
+  TH1D *hIC_Theta;
+  TH1D *hIC_Phi;
+  TH2D *hIC_EvTheta;
   TH2D * h_xvy;
   TH2D * hIC_de_v_xgride;
 
@@ -42,36 +45,38 @@ namespace ionchamber{
   }  
   bool IC_Analyzer::Begin(){   
     
-    if(!rootfile){
+    if(!RNROOT::gRootFile){
       std::cout<<"output file has not been created"<<std::endl;
       ClearGates();
       exit(EXIT_FAILURE);
     }
     
     //make directory structure
-    rootfile->mkdir("IC");
-    rootfile->cd("IC");
+    RNROOT::gRootFile->mkdir("IC");
+    RNROOT::gRootFile->cd("IC");
     gDirectory->mkdir("ede");
     gDirectory->mkdir("t");
     gDirectory->mkdir("xy");
 
 
     //create histograms
-    rootfile->cd("IC/xy");
-    h_xvy= new TH2D("h_xvy","h_xvy;x_chan;y_chan",65,0,64,65,0,64);
-    
-    rootfile->cd("IC/ede");
+    RNROOT::gRootFile->cd("IC/xy");
+    h_xvy= new TH2D("h_xvy","h_xvy;x_chan;y_chan",128,-128,128,128,-128,128);
+    hIC_Theta = new TH1D("h_ICTheta","h_ICTheta;Theta",180,0,179);
+    hIC_EvTheta = new TH2D("h_IC_EvTheta","h_IC_EvTheta;Theta;E",180,0,179,512,0,8191);
+    hIC_Phi = new TH1D("h_ICPhi","h_ICPhi;Phi",180,0,179);
+    RNROOT::gRootFile->cd("IC/ede");
     hIC_ede=new TH2D("hIC_EdE","IC_EdE;E [arb];dE [arb]",1024,0,4096,1024,0,4096);
     hIC_fefde=new TH2D("hIC_fEdE","hIC_fEdE;fE [arb];fdE [arb]",1024,0,4096,1024,0,4096);
     hIC_de_v_xgride=new TH2D("hIC_dE_v_xgride","hIC_dE_v_xgride;E [arb];dE [arb]",1024,0,4096,1024,0,4096);
-    rootfile->cd("IC/t");
+    RNROOT::gRootFile->cd("IC/t");
     h_IC_t = new TH1D("h_IC_t","ICt;t",1024,0,4095);
 
 
     return 1;
   }
 
-  void IC_Analyzer::ResetGlobals(){
+  void IC_Analyzer::Reset(){
     for(int i=0;i<3;i++){
       hi_check[i]=0;
     }
@@ -79,10 +84,11 @@ namespace ionchamber{
   }
 
   bool IC_Analyzer::Process(){
-
-    hi_check[0]= (ede_hi1 && ede_hi1->IsInside(IC_TotalE,IC_ELoss));
-    hi_check[1]= (ede_hi2 && ede_hi2->IsInside(IC_TotalE,IC_ELoss));
-    hi_check[2]= (ede_hi3 && ede_hi3->IsInside(IC_TotalE,IC_ELoss));
+    ic.ReconstructHitPos();
+    
+    hi_check[0]= (ede_hi1 && ede_hi1->IsInside(ic.E(),ic.DE()));
+    hi_check[1]= (ede_hi2 && ede_hi2->IsInside(ic.E(),ic.DE()));
+    hi_check[2]= (ede_hi3 && ede_hi3->IsInside(ic.E(),ic.DE()));
     
     if (_require_hi1 && !hi_check[0])
       return 0;
@@ -96,11 +102,13 @@ namespace ionchamber{
   
   bool IC_Analyzer::ProcessFill(){
     
-    hIC_ede->Fill(IC_TotalE,IC_ELoss);
-    hIC_fefde->Fill(ic.fE,ic.fdE);
-    h_xvy->Fill(ic.xgrid.Ch(),ic.ygrid.Ch());
-    hIC_de_v_xgride->Fill(IC_ELoss,ic.xgrid.fE[0]);
-
+    hIC_ede->Fill(ic.TotalE(),ic.DE());
+    hIC_fefde->Fill(ic.E(),ic.DE());
+    h_xvy->Fill(ic.GetHitPos().X(),ic.GetHitPos().Y());
+    hIC_de_v_xgride->Fill(ic.DE(),ic.xgrid.fE[0]);
+    hIC_Theta->Fill(ic.Theta());
+    hIC_EvTheta->Fill(ic.Theta(),ic.TotalE());
+    hIC_Phi->Fill(ic.Phi());
     h_IC_t->Fill(ic.T());
     
 
@@ -116,8 +124,8 @@ namespace ionchamber{
   }
 
   bool IC_Analyzer::TerminateIfLast(){
-    rootfile->Write();
-    rootfile->Close();
+    RNROOT::gRootFile->Write();
+    RNROOT::gRootFile->Close();
     
     return 1;
   }

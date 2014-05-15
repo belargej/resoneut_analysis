@@ -12,15 +12,17 @@
 
 #include "Q_ValueAnalyzer.hpp"
 #include "RN_Root.hpp"
-#include "RN_Unpack2Root.hpp"
+
 #include "Si_IC_Analyzer.hpp"
 #include "Si_Analyzer.hpp"
 #include "IC_Analyzer.hpp"
 
+using namespace RNROOT;
+
 #if 1
-#define USEANGLE silicon::prot_theta
+#define USEANGLE si_array.Theta_A()
 #else
-#define USEANGLE silicon::rel_angle
+#define USEANGLE si_array.Theta_B()
 #endif
 
 #define Q_MIN 1.2
@@ -65,35 +67,35 @@ namespace physical{
 
   bool Q_ValueAnalyzer::Begin(){
 
-    if(!rootfile){
+    if(!RNROOT::gRootFile){
       std::cout<<"output file has not been created"<<std::endl;
       Clear();
       exit(EXIT_FAILURE);
     }
 
     //check for parameters necessary for q_value reconstruction
-    if(!global::m_beam || !global::m_target || !global::m_recoil || !global::m_frag || !global::m_decay_product || !global::m_heavy_decay){
+    if(!gReactionInfo.IsSet()){
       std::cout<<"Reaction Masses have not been set"<<std::endl;
       exit(EXIT_FAILURE);
     }
-    if(!global::E_fragment)
+    if(!gReactionInfo.E_Fragment())
       std::cout<<"Heavy Ion energy ansatz for Q value reconstruction needed"<<std::endl;
 
 
-    //if newtree is allocated go ahead and add the branch
-    if(newtree){
-      newtree->Branch("q_value_p",&q_val_p);
+    //if RNROOT::gNewTree is allocated go ahead and add the branch
+    if(RNROOT::gNewTree){
+      RNROOT::gNewTree->Branch("q_value_p",&q_val_p);
     }
 
     //create directory structure
-    rootfile->mkdir("physical");
-    rootfile->cd("physical");
+    RNROOT::gRootFile->mkdir("physical");
+    RNROOT::gRootFile->cd("physical");
     gDirectory->mkdir("Q");
     gDirectory->mkdir("QvParameters");
 
 
     //create histograms  
-    rootfile->cd("physical/Q");
+    RNROOT::gRootFile->cd("physical/Q");
     Q_Value=new TH1D("Q_val_p","Q_value_p;Q_value",512,-1,10);
     Q_Value_proton=new TH1D("Q_val_proton","Q_value_proton;Q_value",512,-1,10);
     Q_Value_proton_hi1=new TH1D("Q_val_proton_hi1","Q_val_proton_hi1;Q_value",512,-1,10);
@@ -101,7 +103,7 @@ namespace physical{
     Q_Value_proton_hi2=new TH1D("Q_val_proton_hi2","Q_val_proton_hi2;Q_value",512,-1,10);
 
 
-    rootfile->cd("physical/QvParameters");
+    RNROOT::gRootFile->cd("physical/QvParameters");
     Q_v_Phi=new TH2D("Q_v_Phi","Q_v_Phi;Q;Phi",512,-1,10,180,-180,180);
     Q_v_cosTheta=new TH2D("Q_v_cosTheta","Q_v_cosTheta;Q;cosTheta",512,-1,10,256,0.5,1);
     Q_v_EcosTheta=new TH2D("Q_v_EcosTheta","Q_v_EcosTheta;Q;EcosTheta",512,-1,10,512,0,20);
@@ -120,25 +122,23 @@ namespace physical{
 
 
 
-    rootfile->cd();
+    RNROOT::gRootFile->cd();
     return 1;
 
  
   }
 
-  void Q_ValueAnalyzer::ResetGlobals(){
+  void Q_ValueAnalyzer::Reset(){
     q_val_p=0;
     q_val_n=0;
   }
 
   bool Q_ValueAnalyzer::Process(){
-    //global::E_fragment is ansatz from MC simulation
+    //gPrimaryReaction.E_fragment is ansatz from MC simulation
   
-    if(silicon::prot_E>0&& silicon::prot_theta!=0){
+    if(si_array.E_AB()>0&& USEANGLE!=0){
     
-      q_val_p = (silicon::prot_E * (1.0 + (global::m_decay_product / global::m_heavy_decay)) 
-		 - (global::E_fragment * ( 1.0 - (global::m_frag / global::m_heavy_decay)))
-		 - ((2.0 / global::m_heavy_decay) * TMath::Sqrt(silicon::prot_E * global::m_decay_product * global::E_fragment * global::m_frag) * cos(TMath::Pi()*USEANGLE / 180)));
+      q_val_p = gReactionInfo.DecayQValueEstimate(si_array.E_AB(),(TMath::Pi()*USEANGLE / 180));
     
     }
 
@@ -153,27 +153,27 @@ namespace physical{
     //Q_Value parameter histograms
     Q_Value->Fill(q_val_p);
     Q_v_Phi->Fill(q_val_p,si_cluster_[0].fPos[0].Phi()*180/TMath::Pi());
-    Q_v_cosTheta->Fill(q_val_p,cos(TMath::Pi()*silicon::rel_angle/180));
-    Q_v_EcosTheta->Fill(q_val_p,TMath::Sqrt(silicon::prot_E)*cos(TMath::Pi()*silicon::rel_angle/180));
+    Q_v_cosTheta->Fill(q_val_p,cos(si_array.Theta_A()));
+    Q_v_EcosTheta->Fill(q_val_p,TMath::Sqrt(si_array.E_AB())*cos(si_array.Theta_A()));
 
     if(silicon::protcheck){
       Q_Value_proton->Fill(q_val_p);
-      Q_v_pTheta->Fill(q_val_p,silicon::prot_theta);   		       
-      Q_v_pE->Fill(q_val_p,silicon::prot_E);   			       
-      Q_v_pRelAngle->Fill(q_val_p,silicon::rel_angle);   		       
+      Q_v_pTheta->Fill(q_val_p,si_array.Theta_A());   		       
+      Q_v_pE->Fill(q_val_p,si_array.E_AB());   			       
+      Q_v_pRelAngle->Fill(q_val_p,si_array.Theta_A());   		       
       
       if(ionchamber::hi_check[0]){
 	Q_Value_proton_hi1->Fill(q_val_p);
-	Q_v_pTheta_proton_hi1->Fill(q_val_p,silicon::prot_theta);   	       
-	Q_v_pE_proton_hi1->Fill(q_val_p,silicon::prot_E);   	       
-	Q_v_pRelAngle_proton_hi1->Fill(q_val_p,silicon::rel_angle);   
+	Q_v_pTheta_proton_hi1->Fill(q_val_p,si_array.Theta_A());   	       
+	Q_v_pE_proton_hi1->Fill(q_val_p,si_array.E_AB());   	       
+	Q_v_pRelAngle_proton_hi1->Fill(q_val_p,si_array.Theta_A());   
 	
 	if(coinc::si_ic_tcheck){
 	  Q_Value_proton_hi1_ictime->Fill(q_val_p);
-	  Q_v_pTheta_proton_hi1_ictime->Fill(q_val_p,silicon::prot_theta);   
-	  Q_v_pE_proton_hi1_ictime->Fill(q_val_p,silicon::prot_E);          
-	  Q_v_pRelAngle_proton_hi1_ictime->Fill(q_val_p,silicon::rel_angle);   
-    
+	  Q_v_pTheta_proton_hi1_ictime->Fill(q_val_p,si_array.Theta_A());   
+	  Q_v_pE_proton_hi1_ictime->Fill(q_val_p,si_array.E_AB());          
+	  Q_v_pRelAngle_proton_hi1_ictime->Fill(q_val_p,si_array.Theta_A());   
+	  
     
 	}
 	
@@ -199,8 +199,8 @@ namespace physical{
 
 
   bool Q_ValueAnalyzer::TerminateIfLast(){
-    rootfile->Write();
-    rootfile->Close();
+    RNROOT::gRootFile->Write();
+    RNROOT::gRootFile->Close();
 
     return 1;
   

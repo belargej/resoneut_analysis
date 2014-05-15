@@ -16,7 +16,7 @@ void RN_IonChamber::Reset(){
 
 }
 
-Double32_t RN_IonChamber::SumE_X(){
+Double32_t RN_IonChamber::SumE_X() const{
   Double32_t e = 0;
   for(unsigned int i=0;i<xgrid.fMult;i++){
     e += xgrid.E(i);
@@ -24,8 +24,7 @@ Double32_t RN_IonChamber::SumE_X(){
   return e; 
 }
 
-
-Double32_t RN_IonChamber::SumE_Y(){
+Double32_t RN_IonChamber::SumE_Y() const{
   Double32_t e = 0;
   for(unsigned int i=0;i<ygrid.fMult;i++){
     e += ygrid.E(i);
@@ -45,7 +44,7 @@ Double32_t RN_IonChamber::Pos_X(){
   if(chB>0){
     ch = chA/chB;
   }
-  return ch; 
+  return (ch - 16.5); 
 }
 
 
@@ -60,8 +59,18 @@ Double32_t RN_IonChamber::Pos_Y(){
   if(chB>0){
     ch = chA/chB;
   }
-  return ch; 
+  return (ch - 16.5); 
 }                                               
+
+void RN_IonChamber::ReconstructHitPos(){
+  fHitPos.SetX(Pos_X() * wire_dist + _xpos);
+  fHitPos.SetY(Pos_Y() * wire_dist + _ypos);
+  fHitPos.SetZ(_zpos);
+  return ;
+
+}
+
+
 
 
 void RN_IonChamber::SetCalibrations(float elin, float eshift, float tlin, float tshift){
@@ -81,6 +90,11 @@ void RN_IonChamber::SetCalibrations(RN_VariableMap& detvar){
   detvar.GetParam(Form("%s.eshift",Name().c_str()),eshift);
   detvar.GetParam(Form("%s.tlin",Name().c_str()),tlin);
   detvar.GetParam(Form("%s.tshift",Name().c_str()),tshift);
+
+  detvar.GetParam(Form("%s.xpos",Name().c_str()),_xpos);
+  detvar.GetParam(Form("%s.ypos",Name().c_str()),_ypos);
+  detvar.GetParam(Form("%s.zpos",Name().c_str()),_zpos);
+  detvar.GetParam(Form("%s.wire_dist",Name().c_str()),wire_dist);
 
 }
 
