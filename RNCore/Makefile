@@ -29,10 +29,11 @@ else
 DEBUG=-O2
 endif
 
-CFLAGS=`root-config --cflags` -c ${DEBUG} -I$(HDRDIR)
+INCLUDE_DIRS=-I$(HDRDIR) -I${ROOTSYS}/include -I${ROOTSYS}/include/root
+CFLAGS=`root-config --cflags` -c ${DEBUG} $(INCLUDE_DIRS)
 GLIBS=`root-config --glibs`
 LINK_DIR=${PWD}/../lib
-LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} -I${ROOTSYS}/include -I$(HDRDIR)
+LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} ${INCLUDE_DIRS}
 
 
 ##########################################################################

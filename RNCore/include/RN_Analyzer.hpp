@@ -7,13 +7,15 @@ This change was made to combine the functinality of the RN_Unpack2Root
 with RN_Analyzer so that one may, if they wish, sort .evt files directly to histograms.  The following paragraph is still relevant to the method which also explains the RN_EventProcessor.
 
 Analyzer class follows the form of a simple MakeClass designed to
-read the tree structure of data extracted by the Unpack2Root Method.
+read the tree structure of data extracted by the Convert2Root Method.
 Approach this class in two ways,first by overriding the Begin(),Process(), 
 and Terminate() methods to create, fill and write histograms or new
 trees. The second by instantiating an object of RN_Analyzer and calling the
 GetDetectorEntry() function   
 from a Loop function in a different application. 
 Add user analyzers to the "gAnalyzer_stack" list(which is global in RN_Root) 
+
+See RN_EventProcessor.hpp for a more complete explanation of the use of this class
 
 ****************************************************************************/
 

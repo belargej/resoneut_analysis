@@ -17,7 +17,6 @@ compiles with gcc v4.1.2
 root 5.34/patch 04
 
 
-
 INSTALLING:
 ****************************************
 After cloning from the repo,
@@ -47,4 +46,8 @@ ie) /path_to/RNBatchMode /data/LSU/ run2008.root
 
 Known Issues:
 ****************************************************
-If when installing you get the error "RNRootDict already exists" you must do "Make newdict" to delete those files.  It shouldn't be like this its just how I have the dependencies written in the Makefile and I have not changed them yet.  You can also just do Make clean and start from scratch.
+Some versions of ROOT have the header files in the include directory: 
+${ROOTSYS}/include
+and some have it in an extra subdirectory:
+${ROOTSYS}/include/root 
+I've added both paths to the Makefiles, but if you get an error related to this and you are certain that your ${ROOTSYS} path is properly configured then the problem is likely related to this path difference.
