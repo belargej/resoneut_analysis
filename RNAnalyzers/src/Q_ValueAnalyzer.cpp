@@ -67,7 +67,7 @@ namespace physical{
 
   bool Q_ValueAnalyzer::Begin(){
 
-    if(!RNROOT::gRootFile){
+    if(!fgRootFile){
       std::cout<<"output file has not been created"<<std::endl;
       Clear();
       exit(EXIT_FAILURE);
@@ -88,14 +88,14 @@ namespace physical{
     }
 
     //create directory structure
-    RNROOT::gRootFile->mkdir("physical");
-    RNROOT::gRootFile->cd("physical");
+    fgRootFile->mkdir("physical");
+    fgRootFile->cd("physical");
     gDirectory->mkdir("Q");
     gDirectory->mkdir("QvParameters");
 
 
     //create histograms  
-    RNROOT::gRootFile->cd("physical/Q");
+    fgRootFile->cd("physical/Q");
     Q_Value=new TH1D("Q_val_p","Q_value_p;Q_value",512,-1,10);
     Q_Value_proton=new TH1D("Q_val_proton","Q_value_proton;Q_value",512,-1,10);
     Q_Value_proton_hi1=new TH1D("Q_val_proton_hi1","Q_val_proton_hi1;Q_value",512,-1,10);
@@ -103,7 +103,7 @@ namespace physical{
     Q_Value_proton_hi2=new TH1D("Q_val_proton_hi2","Q_val_proton_hi2;Q_value",512,-1,10);
 
 
-    RNROOT::gRootFile->cd("physical/QvParameters");
+    fgRootFile->cd("physical/QvParameters");
     Q_v_Phi=new TH2D("Q_v_Phi","Q_v_Phi;Q;Phi",512,-1,10,180,-180,180);
     Q_v_cosTheta=new TH2D("Q_v_cosTheta","Q_v_cosTheta;Q;cosTheta",512,-1,10,256,0.5,1);
     Q_v_EcosTheta=new TH2D("Q_v_EcosTheta","Q_v_EcosTheta;Q;EcosTheta",512,-1,10,512,0,20);
@@ -122,7 +122,7 @@ namespace physical{
 
 
 
-    RNROOT::gRootFile->cd();
+    fgRootFile->cd();
     return 1;
 
  
@@ -199,8 +199,8 @@ namespace physical{
 
 
   bool Q_ValueAnalyzer::TerminateIfLast(){
-    RNROOT::gRootFile->Write();
-    RNROOT::gRootFile->Close();
+    fgRootFile->Write();
+    fgRootFile->Close();
 
     return 1;
   

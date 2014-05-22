@@ -1,11 +1,15 @@
-////////////////////////////////////////////////////////////////////
-// RNBatchMode Binary:
-// provides a main for a compilable version of RNRoot
-// that runs in terminal given a few arguments.  Currently it serves
-// to quickly perform evt 2 root conversion operation.
-// 
-// Author: Sean Kuvin 
-////////////////////////////////////////////////////////////////////
+/**********************************************************************
+/ RNBatchMode Binary:
+/ provides a main for a compilable version of RNRoot
+/ that runs in terminal given a few arguments.  Currently it serves
+/ to quickly perform evt 2 root conversion operation.
+/ 
+/ 5/20: no longer need config file for RNBatchMode.  The  
+/ experiment daqconfig should be modified in the RN_Root.cpp file
+/
+/
+/ Author: Sean A. Kuvin 
+************************************************************************/
 
 //C and C++ libraries.
 #include <cstdlib>
@@ -42,10 +46,8 @@ TRint *myRint;
 int main(int argc, char*argv[])
 {
   RNROOT::Initialize();
-  if(argc==4){
-    gEventProcessor.InitStack(argv[3]);
+  if(argc==3){
     std::string runinput = argv[1];
-    
     if(runinput.find(".evt")!=std::string::npos){
       gEventProcessor.Convert2Root(runinput,argv[2]);
     }
@@ -63,7 +65,7 @@ int main(int argc, char*argv[])
     
   }
   else{
-    std::cout<<"To use Convert2Root: \n"<<"RNBatchMode dir output config"<<std::endl;
+    std::cout<<"To use Convert2Root: \n"<<"RNBatchMode dir output"<<std::endl;
     std::cout<<"Instead, we are running a standard root session with RNROOT libraries loaded"<<std::endl;
     myRint=new TRint("myRint",&argc,argv);
     myRint->Run();

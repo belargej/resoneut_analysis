@@ -45,31 +45,31 @@ namespace ionchamber{
   }  
   bool IC_Analyzer::Begin(){   
     
-    if(!RNROOT::gRootFile){
+    if(!fgRootFile){
       std::cout<<"output file has not been created"<<std::endl;
       ClearGates();
       exit(EXIT_FAILURE);
     }
     
     //make directory structure
-    RNROOT::gRootFile->mkdir("IC");
-    RNROOT::gRootFile->cd("IC");
+    fgRootFile->mkdir("IC");
+    fgRootFile->cd("IC");
     gDirectory->mkdir("ede");
     gDirectory->mkdir("t");
     gDirectory->mkdir("xy");
 
 
     //create histograms
-    RNROOT::gRootFile->cd("IC/xy");
+    fgRootFile->cd("IC/xy");
     h_xvy= new TH2D("h_xvy","h_xvy;x_chan;y_chan",128,-128,128,128,-128,128);
     hIC_Theta = new TH1D("h_ICTheta","h_ICTheta;Theta",180,0,179);
     hIC_EvTheta = new TH2D("h_IC_EvTheta","h_IC_EvTheta;Theta;E",180,0,179,512,0,8191);
     hIC_Phi = new TH1D("h_ICPhi","h_ICPhi;Phi",180,0,179);
-    RNROOT::gRootFile->cd("IC/ede");
+    fgRootFile->cd("IC/ede");
     hIC_ede=new TH2D("hIC_EdE","IC_EdE;E [arb];dE [arb]",1024,0,4096,1024,0,4096);
     hIC_fefde=new TH2D("hIC_fEdE","hIC_fEdE;fE [arb];fdE [arb]",1024,0,4096,1024,0,4096);
     hIC_de_v_xgride=new TH2D("hIC_dE_v_xgride","hIC_dE_v_xgride;E [arb];dE [arb]",1024,0,4096,1024,0,4096);
-    RNROOT::gRootFile->cd("IC/t");
+    fgRootFile->cd("IC/t");
     h_IC_t = new TH1D("h_IC_t","ICt;t",1024,0,4095);
 
 
@@ -124,8 +124,8 @@ namespace ionchamber{
   }
 
   bool IC_Analyzer::TerminateIfLast(){
-    RNROOT::gRootFile->Write();
-    RNROOT::gRootFile->Close();
+    fgRootFile->Write();
+    fgRootFile->Close();
     
     return 1;
   }

@@ -38,15 +38,15 @@ void F17dn_Analyzer::Reset(){
 bool F17dn_Analyzer::Begin(){
   
   //make directory structure
-  RNROOT::gRootFile->mkdir("F17_dn_Analysis");
-  RNROOT::gRootFile->cd("F17_dn_Analysis");
+  fgRootFile->mkdir("F17_dn_Analysis");
+  fgRootFile->cd("F17_dn_Analysis");
   gDirectory->mkdir("ede");
   gDirectory->mkdir("QvT");
 
 
 
   //create histrograms
-  RNROOT::gRootFile->cd("F17_dn_Analysis");
+  fgRootFile->cd("F17_dn_Analysis");
   hneut_trel_v_ic_trel = new TH2D("neut_rf_trel_v_ic_rf_trel","neut_rf_trel_v_ic_rf_trel;neut_trel[ns];ic_trel[ns]",1024,-1023.,1023.,1024,-1023.,1023.);
   hneut_trel_v_sia_trel = new TH2D("neut_rf_trel_v_sia_rf_trel","neut_rf_trel_v_sia_rf_trel;neut_trel[ns];sia_trel[ns]",1024,-1023.,1023.,1024,-1023.,1023.);
   hneut_nai_trel_v_neut_t = new TH2D("neut_nai_trel_v_neut_t","neut_nai_trel_v_neut_t;neut_nai_trel[ns];neut_t[ns]",1024,-1023.,1023.,1024,-1023.,1023.);
@@ -61,10 +61,10 @@ bool F17dn_Analyzer::Begin(){
 
   hneut_time=new TH1D("neut_time","neut_time;nt[ns]",1024,0,1023);
   hneut_nai_trel=new TH1D("neut_nai_trel","neut_nai_trel;neut_nai_trel[ns]",1024,-1023,1023);
-  RNROOT::gRootFile->cd("F17_dn_Analysis/ede");
+  fgRootFile->cd("F17_dn_Analysis/ede");
   hproton_ede_ntime=new TH2D("proton_EdE_ntime","siPID;E[MeV];dE[MeV]",1024,0.,32.,1024,0.,32.);
   
-  RNROOT::gRootFile->cd("F17_dn_Analysis/QvT");
+  fgRootFile->cd("F17_dn_Analysis/QvT");
   hn1QvT = new TH2D("n1_QvT","n1_QvT;T;Q",1024,0.,1023.,1024,0.,1023.);
 
 
@@ -123,8 +123,8 @@ bool F17dn_Analyzer::Terminate(){
 }
 
 bool F17dn_Analyzer::TerminateIfLast(){
-  RNROOT::gRootFile->Write();
-  RNROOT::gRootFile->Close();
+  fgRootFile->Write();
+  fgRootFile->Close();
 
   return 1;
   

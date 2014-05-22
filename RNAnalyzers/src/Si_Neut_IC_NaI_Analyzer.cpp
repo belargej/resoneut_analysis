@@ -54,28 +54,28 @@ namespace coinc{
 
   bool Si_Neut_IC_NaI_Analyzer::Begin(){   
     
-    if(!RNROOT::gRootFile){
+    if(!fgRootFile){
       std::cout<<"output file has not been created"<<std::endl;
       Clear();
       exit(EXIT_FAILURE);
     }
 
     //create directory structure
-    if(!RNROOT::gRootFile->GetDirectory("coinc"))
-      RNROOT::gRootFile->mkdir("coinc");
-    RNROOT::gRootFile->cd("coinc");
+    if(!fgRootFile->GetDirectory("coinc"))
+      fgRootFile->mkdir("coinc");
+    fgRootFile->cd("coinc");
     gDirectory->mkdir("Si_Neut");
     gDirectory->mkdir("Si_NaI");
     gDirectory->cd("Si_Neut");
     gDirectory->mkdir("timing");
-    RNROOT::gRootFile->cd("coinc/Si_NaI");
+    fgRootFile->cd("coinc/Si_NaI");
     gDirectory->mkdir("timing");
 
     //create histograms
     
-    RNROOT::gRootFile->cd("coinc/Si_NaI/timing");
+    fgRootFile->cd("coinc/Si_NaI/timing");
     h_nai_t_v_si_t = new  TH2D("h_nai_t_v_si_t","h_nai_t_v_si_t;nai_t;si_t",1024,0,4095,1024,0,4095);
-    RNROOT::gRootFile->cd("coinc/Si_Neut/timing");
+    fgRootFile->cd("coinc/Si_Neut/timing");
     h_n_t_v_si_t = new  TH2D("h_n_t_v_si_t","h_n_t_v_si_t;n_t;si_t",1024,0,4095,1024,0,4095);
     h_n_minus_sit=new TH1D("h_minus_sit","h_n_minus_sit;nt-sit",4096,-2048,2047);
     
@@ -119,8 +119,8 @@ namespace coinc{
   }
   
   bool Si_Neut_IC_NaI_Analyzer::TerminateIfLast(){
-    RNROOT::gRootFile->Write();
-    RNROOT::gRootFile->Close();
+    fgRootFile->Write();
+    fgRootFile->Close();
     return 1;    
   }
   

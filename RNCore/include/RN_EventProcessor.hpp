@@ -132,25 +132,27 @@ typedef std::vector<Double32_t>::iterator ScalerValueIterator;
 
 class RN_EventProcessor:public RN_BaseClass{
 protected:
-  TFile* RootFile;
-  TTree* DataTree;
-  TTree* ScalerTree;
+  static TFile* fgRootFile;
+  static TTree* fgDataTree;
+  static TTree* fgScalerTree;
   TChain* fChain;
 
   //reading from evt file
-  unsigned int BufferWords; //number of short length words, each 2 bytes
-  unsigned int BufferBytes; //number of bytes to be stored
-  unsigned int BufferType;
-  unsigned int NBuffers; 
-  int BufferPhysics;
-  std::ifstream evtfile;
-  std::ofstream logfile;
-  unsigned short * buffer;
-  int timer; 
-  ScalerNames scaler_names;
-  ScalerValues scaler_values;
-  Int_t Event[3];
-
+  unsigned int fBufferWords; //number of short length words, each 2 bytes
+  unsigned int fBufferBytes; //number of bytes to be stored
+  unsigned int fBufferType;
+  unsigned int fNBuffers; 
+  int fBufferPhysics;
+  std::ifstream fEvtFile;
+  std::ofstream fLogFile;
+  unsigned short * fBuffer;
+  int fTimer; 
+  Double32_t fScalerValues[32]; //CAEN Scaler Module 32 channels  
+  Double32_t fScalerSums[32]; //CAEN Scaler Module 32 channels  
+  Int_t fEvent[3];
+  // ScalerNames scaler_names;
+  //ScalerValues scaler_values; //CAEN Scaler Module 32 channels
+  
   int ExtractRingBuffer();
   int UnpackBeginRun();
   int UnpackEndRun();
@@ -166,7 +168,7 @@ protected:
   
 public:
   TBranch * b_Event;
-  RN_EventProcessor(const std::string&a="",const std::string&b=""):RN_BaseClass(a.c_str(),b.c_str()){}
+  RN_EventProcessor(const std::string&a="",const std::string&b="");
   
   
   virtual void Loop(Long64_t start = 0, Long64_t evnum = 0);
@@ -176,7 +178,10 @@ public:
 
   void AddTree(TString a){fChain->Add(a);}
   virtual void InitRootFile(TString file);
-  virtual bool InitStack(const std::string& configfile);
+  void SetRootOutputFile(const std::string & filename);
+  void SetRootOutputFileAndTree(const std::string& filename,const std::string& treename);
+  void WriteOut();
+  
   Long64_t TotEntries() const{return fChain->GetEntries();} 
   virtual Int_t GetEntry(Long64_t entry, Int_t getall = 0) { return fChain ? fChain->GetEntry(entry, getall) : 0; }
   virtual int GetDetectorEntry(){return 1;};
@@ -185,5 +190,15 @@ public:
 };
 
 extern RN_EventProcessor gEventProcessor;
+
+
+#ifdef __RNEVENTPROCESSOR_CXX
+TFile * RN_EventProcessor::fgRootFile = 0;
+TTree * RN_EventProcessor::fgDataTree = 0;
+TTree * RN_EventProcessor::fgScalerTree = 0;
+
+#endif
+
+
 
 #endif

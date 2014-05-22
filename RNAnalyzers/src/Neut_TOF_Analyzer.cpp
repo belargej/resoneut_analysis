@@ -40,16 +40,16 @@ namespace neut_tof{
 
 
   bool Neut_TOF_Analyzer::Begin(){
-    if(!RNROOT::gRootFile){
+    if(!fgRootFile){
       std::cout<<"output file has not been created"<<std::endl;
       exit(EXIT_FAILURE);
     }
     
     //create directory structure
 
-    if(!RNROOT::gRootFile->cd("neut")){
-      RNROOT::gRootFile->mkdir("neut");
-      RNROOT::gRootFile->cd("neut");
+    if(!fgRootFile->cd("neut")){
+      fgRootFile->mkdir("neut");
+      fgRootFile->cd("neut");
     }
     gDirectory->mkdir("TOF");
     gDirectory->cd("TOF");
@@ -111,8 +111,8 @@ namespace neut_tof{
   }
   
   bool Neut_TOF_Analyzer::TerminateIfLast(){
-    RNROOT::gRootFile->Write();
-    RNROOT::gRootFile->Close();
+    fgRootFile->Write();
+    fgRootFile->Close();
     return 1;
   }
 

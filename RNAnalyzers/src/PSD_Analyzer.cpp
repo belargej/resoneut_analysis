@@ -121,43 +121,43 @@ namespace psd{
 
   bool NeutAnalyzer::Begin(){
 
-    if(!RNROOT::gRootFile){
+    if(!fgRootFile){
       std::cout<<"output file has not been created"<<std::endl;
       ClearGates();
       exit(EXIT_FAILURE);
     }
     
     //create directory structure
-    RNROOT::gRootFile->mkdir("neut");
-    RNROOT::gRootFile->cd("neut");
+    fgRootFile->mkdir("neut");
+    fgRootFile->cd("neut");
     gDirectory->mkdir("PSD");
     gDirectory->cd("PSD");
     gDirectory->mkdir("raw");
     gDirectory->mkdir("cal");
     
-    RNROOT::gRootFile->cd("neut");
+    fgRootFile->cd("neut");
     gDirectory->mkdir("TRel");
     gDirectory->mkdir("mult");
   
 
     //create histograms
-    RNROOT::gRootFile->cd("neut/mult");
+    fgRootFile->cd("neut/mult");
     h_ndetMult=new TH1D("h_ndetmult","nmult;mult",NEUTNUM+1,0,NEUTNUM);
     h_ndetMult_ngated=new TH1D("h_ndetmult_ngated","nmult_ngated;mult",NEUTNUM+1,0,NEUTNUM);
     
 
     for(unsigned int i=0;i<NEUTNUM;i++){  
-      RNROOT::gRootFile->cd("neut/TRel");
+      fgRootFile->cd("neut/TRel");
       hQvT_n[i]=new TH2D(Form("hQvT_n%d",i),Form("hQvT_n%d;T;Q",i),128,0,128,1024,0,4095);
       hQvT_ngated[i]=new TH2D(Form("hQvT_n%d_ngated",i),Form("hQvT_n%d_ngated;T;Q",i),128,0,128,1024,0,4095);
-      RNROOT::gRootFile->cd("neut/PSD/raw");
+      fgRootFile->cd("neut/PSD/raw");
       hPSDq_n[i]=new TH2D(Form("hPSDq_n%d",i),Form("hPSDq_n%d",i),1024,0,4096,1024,0,4096);
       hPSDq_n_evtgated[i]=new TH2D(Form("hPSDq_n%d_evtgated",i),Form("hPSDq_n%d_evtgated",i),1024,0,4096,1024,0,4096);
   
-      RNROOT::gRootFile->cd("neut/PSD/cal");
+      fgRootFile->cd("neut/PSD/cal");
       hPSD_n_[i]=new TH2D(Form("hPSD_neut%d",i),Form("hPSD_neut%d",i),256,-2.,2.,1024,50,4096);
     } 
-    RNROOT::gRootFile->cd();
+    fgRootFile->cd();
 
     
     return 1;
@@ -325,8 +325,8 @@ namespace psd{
   }
   
   bool NeutAnalyzer::TerminateIfLast(){
-    RNROOT::gRootFile->Write();
-    RNROOT::gRootFile->Close();
+    fgRootFile->Write();
+    fgRootFile->Close();
     return 1;
   }
 

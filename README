@@ -5,7 +5,7 @@ Some Methods and functions have been adapted from the methods used in our SpecTc
 
 Daniel Santiago provided help with understanding ROOT functionality as well as providing examples of his scripts which I have integrated into my classes.  (primarily in the detector classes and ChannelMap)
 
-The RNUnpack2Root included here unpacks from the new RING_MASTER (NSCL) method of data buffering wheras the evt2root, used by Daniel, uses the older 'Fixed Buffer' method.  This older method was (and is still being used) for experiments with ANASEN.  As of 5/15 only ResoNeut has been upgraded to the newer firmware. 
+The RN_EventProcessor unpacks from the new RING_MASTER (NSCL) format of data buffers.
 
 Setups i've tested these modules on:
 on my laptop:i686 linux mint 14 
@@ -30,7 +30,7 @@ typing 'make' while in resoneut_analysis_hc/. will look inside resoneut_analysis
 
 be sure to add /path/to/this/folder/lib to your $LD_LIBRARY_PATH
 and next
-Load->("libRNeut.so") into your root session to run interactively.
+Load->("libRNCore.so") into your root session to run interactively.
 
 I recommend adding it to your rootlogon.C so you don't have to repeat this process repeatedly.
 

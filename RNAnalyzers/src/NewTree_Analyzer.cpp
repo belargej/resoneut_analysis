@@ -28,18 +28,18 @@ NewTree_Analyzer::NewTree_Analyzer()
 
 bool NewTree_Analyzer::Begin(){
 
-  if(!RNROOT::gRootFile){
+  if(!fgRootFile){
     std::cout<<"output file has not been created"<<std::endl;
     exit(EXIT_FAILURE);
   }
-  if(!RNROOT::gNewTree){
+  if(!fgDataTree){
     std::cout<<"new tree has not been created"<<std::endl;   
     exit(EXIT_FAILURE);
   }
  
 
-  RNROOT::gParameter_stack.AddBranches(RNROOT::gNewTree);
-  RNROOT::gModule_stack.AddBranches(RNROOT::gNewTree);
+  RNROOT::gParameter_stack.AddBranches(fgDataTree);
+  RNROOT::gModule_stack.AddBranches(fgDataTree);
 
   return 1;
 }
@@ -57,8 +57,8 @@ void NewTree_Analyzer::Reset(){
 }
 
 bool NewTree_Analyzer::TerminateIfLast(){
-  RNROOT::gRootFile->Write();
-  RNROOT::gRootFile->Close();
+  fgRootFile->Write();
+  fgRootFile->Close();
   return 1;
 }
 

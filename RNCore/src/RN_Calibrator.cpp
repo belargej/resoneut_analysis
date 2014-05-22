@@ -97,7 +97,7 @@ namespace si_cal{
 				    const double& ymin, 
 				    const double& ymax){
     if (!gRootFile){
-      std::cout<<"gRootFile path not set, use SetRootOutputFile<>\n";
+      std::cout<<"gRootFile path not set, use RNROOT::SetRootOutputFile<>\n";
       return;
     }
     gRootFile->mkdir(Form("S%d/FrontMatch",DetID+1));   

@@ -39,15 +39,15 @@ void Module_Analyzer::Reset(){
 
 bool Module_Analyzer::Begin(){
 
-  if(!RNROOT::gRootFile){
+  if(!fgRootFile){
     std::cout<<"output file has not been created"<<std::endl;
     Clear();
     exit(EXIT_FAILURE);
   }
 
   //make directory structure
-  RNROOT::gRootFile->mkdir("Parameters");
-  RNROOT::gRootFile->cd("Parameters");
+  fgRootFile->mkdir("Parameters");
+  fgRootFile->cd("Parameters");
   gDirectory->mkdir("TDC1");
   gDirectory->mkdir("TDC2");
   gDirectory->mkdir("TDC3");
@@ -66,33 +66,33 @@ bool Module_Analyzer::Begin(){
   
   //create histograms
   for(unsigned int i=0;i<32;i++){
-    RNROOT::gRootFile->cd("Parameters/TDC1");
+    fgRootFile->cd("Parameters/TDC1");
     hTDC1[i]=new TH1D(Form("hTDC1[%d]",i),Form("TDC1[%d];TDC1[%d]",i,i),4096,0,4095);    
-    RNROOT::gRootFile->cd("Parameters/TDC2");   
+    fgRootFile->cd("Parameters/TDC2");   
     hTDC2[i]=new TH1D(Form("hTDC2[%d]",i),Form("TDC2[%d];TDC2[%d]",i,i),4096,0,4095);    
-    RNROOT::gRootFile->cd("Parameters/TDC3");    
+    fgRootFile->cd("Parameters/TDC3");    
     hTDC3[i]=new TH1D(Form("hTDC3[%d]",i),Form("TDC3[%d];TDC3[%d]",i,i),4096,0,4095);    
-    RNROOT::gRootFile->cd("Parameters/TDC4");   
+    fgRootFile->cd("Parameters/TDC4");   
     hTDC4[i]=new TH1D(Form("hTDC4[%d]",i),Form("TDC4[%d];TDC4[%d]",i,i),4096,0,4095);    
-    RNROOT::gRootFile->cd("Parameters/ADC1");    
+    fgRootFile->cd("Parameters/ADC1");    
     hADC1[i]=new TH1D(Form("hADC1[%d]",i),Form("ADC1[%d];ADC1[%d]",i,i),4096,0,4095);    
-    RNROOT::gRootFile->cd("Parameters/ADC2");    
+    fgRootFile->cd("Parameters/ADC2");    
     hADC2[i]=new TH1D(Form("hADC2[%d]",i),Form("ADC2[%d];ADC2[%d]",i,i),4096,0,4095);    
-    RNROOT::gRootFile->cd("Parameters/ADC3");    
+    fgRootFile->cd("Parameters/ADC3");    
     hADC3[i]=new TH1D(Form("hADC3[%d]",i),Form("ADC3[%d];ADC3[%d]",i,i),4096,0,4095);    
-    RNROOT::gRootFile->cd("Parameters/ADC4");        
+    fgRootFile->cd("Parameters/ADC4");        
     hADC4[i]=new TH1D(Form("hADC4[%d]",i),Form("ADC4[%d];ADC4[%d]",i,i),4096,0,4095);    
-    RNROOT::gRootFile->cd("Parameters/ADC5");        
+    fgRootFile->cd("Parameters/ADC5");        
     hADC5[i]=new TH1D(Form("hADC5[%d]",i),Form("ADC5[%d];ADC5[%d]",i,i),4096,0,4095);    
-    RNROOT::gRootFile->cd("Parameters/ADC6");        
+    fgRootFile->cd("Parameters/ADC6");        
     hADC6[i]=new TH1D(Form("hADC6[%d]",i),Form("ADC6[%d];ADC6[%d]",i,i),4096,0,4095);    
-    RNROOT::gRootFile->cd("Parameters/ADC7");        
+    fgRootFile->cd("Parameters/ADC7");        
     hADC7[i]=new TH1D(Form("hADC7[%d]",i),Form("ADC7[%d];ADC7[%d]",i,i),4096,0,4095);       
-    RNROOT::gRootFile->cd("Parameters/QDC1");        
+    fgRootFile->cd("Parameters/QDC1");        
     hQDC1[i]=new TH1D(Form("hQDC1[%d]",i),Form("QDC1[%d];QDC1[%d]",i,i),4096,0,4095);    
-    RNROOT::gRootFile->cd("Parameters/QDC2");        
+    fgRootFile->cd("Parameters/QDC2");        
     hQDC2[i]=new TH1D(Form("hQDC2[%d]",i),Form("QDC2[%d];QDC2[%d]",i,i),4096,0,4095);    
-    RNROOT::gRootFile->cd("Parameters/QDC3");        
+    fgRootFile->cd("Parameters/QDC3");        
     hQDC3[i]=new TH1D(Form("hQDC3[%d]",i),Form("QDC3[%d];QDC3[%d]",i,i),4096,0,4095);    
 
   }

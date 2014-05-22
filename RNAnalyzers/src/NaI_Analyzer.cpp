@@ -44,14 +44,14 @@ namespace gamma_nai{
   
   bool NaI_Analyzer::Begin(){
  
-    if(!RNROOT::gRootFile){
+    if(!fgRootFile){
       std::cout<<"output file has not been created"<<std::endl;
       Clear();
       exit(EXIT_FAILURE);
     }
 
-    RNROOT::gRootFile->mkdir("NaIArray");
-    RNROOT::gRootFile->cd("NaIArray");
+    fgRootFile->mkdir("NaIArray");
+    fgRootFile->cd("NaIArray");
     hNaIArray_Detector = new TH1D("hNaIArray_Detector","hNaIArray_Detector;T",21,0,20);
     hNaIArray_T = new TH1D("hNaIArray_T","hNaIArray_T;T",4096,0,4095);	          
     hNaIArray_E = new TH1D("hNaIArray_E","hNaIArray_E;E",4096,0,4095);	      
@@ -59,7 +59,7 @@ namespace gamma_nai{
     hNaIArray_TvRftime=new TH2D("hNaIArray_TvRftime","hNaIArray_TvRftime",128,0,127,512,0,4095);
 
     for (unsigned int i=0;i<20;i++){
-      RNROOT::gRootFile->cd("NaIArray");
+      fgRootFile->cd("NaIArray");
       gDirectory->mkdir(Form("NaI[%d]",i));
       gDirectory->cd(Form("NaI[%d]",i));
       hNaI_T[i] = new TH1D(Form("hNaI[%d]_T",i),Form("hNaI[%d]_T;T",i),4096,0,4095);	     
@@ -83,7 +83,7 @@ namespace gamma_nai{
       hNaIArray_T->Fill(nai_array.fT[0]);
       hNaIArray_E->Fill(nai_array.fE[0]);
       hNaIArray_Position->Fill(nai_array.fPosition[0]); 
-      hNaIArray_TvRftime->Fill(rftime[0].T_Wrapped(),nai_array.fT[0]);
+      hNaIArray_TvRftime->Fill(rftime.T_Wrapped(),nai_array.fT[0]);
     }
     for (unsigned int i=0;i<20;i++){
       if(nai[i].SumE()>0){
@@ -105,8 +105,8 @@ namespace gamma_nai{
     return 1;
   }
   bool NaI_Analyzer::TerminateIfLast(){
-    RNROOT::gRootFile->Write();
-    RNROOT::gRootFile->Close();
+    fgRootFile->Write();
+    fgRootFile->Close();
     return 1;
   }
 

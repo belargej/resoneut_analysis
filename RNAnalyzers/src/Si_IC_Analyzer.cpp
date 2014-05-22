@@ -50,21 +50,21 @@ namespace coinc{
 
   bool Si_IC_Analyzer::Begin(){   
     
-    if(!RNROOT::gRootFile){
+    if(!fgRootFile){
       std::cout<<"output file has not been created"<<std::endl;
       Clear();
       exit(EXIT_FAILURE);
     }
 
-    if(!RNROOT::gRootFile->GetDirectory("coinc"))
-      RNROOT::gRootFile->mkdir("coinc");
-    RNROOT::gRootFile->cd("coinc");
+    if(!fgRootFile->GetDirectory("coinc"))
+      fgRootFile->mkdir("coinc");
+    fgRootFile->cd("coinc");
     gDirectory->mkdir("Si_IC");
     gDirectory->cd("Si_IC");
     gDirectory->mkdir("timing");
 
 
-    RNROOT::gRootFile->cd("coinc/Si_IC/timing");
+    fgRootFile->cd("coinc/Si_IC/timing");
     h_si_t_v_ic_t= new TH2D("h_si_t_v_ic_t","h_si_t_v_ic_t;si_t;ic_t",1024,0,4095,1024,0,4095);
     h_si_trel_v_ic_t=new TH2D("h_si_trel_v_ic_t","h_si_trel_v_ic_t;si_trel;ic_t",1024,-2047,2048,1024,0,4095);
     h_sia_trel_v_ic_trel = new TH2D("sia_trel_v_ic_trel","sia_trel_v_ic_trel;sia_trel[ns];ic_trel[ns]",1024,-1023.,1023.,1024,-1023.,1023.);
@@ -102,8 +102,8 @@ namespace coinc{
   }
 
   bool Si_IC_Analyzer::TerminateIfLast(){
-    RNROOT::gRootFile->Write();
-    RNROOT::gRootFile->Close();
+    fgRootFile->Write();
+    fgRootFile->Close();
     return 1;
   }
   

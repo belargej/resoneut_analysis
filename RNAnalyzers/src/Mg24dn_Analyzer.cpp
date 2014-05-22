@@ -29,8 +29,8 @@ namespace _Mg24{
   }
   
   bool Mg24dn_Analyzer::Begin(){
-    RNROOT::gRootFile->mkdir("Mg24_analysis");
-    RNROOT::gRootFile->cd("Mg24_analysis");
+    fgRootFile->mkdir("Mg24_analysis");
+    fgRootFile->cd("Mg24_analysis");
     
     h_rftime = new TH1D("hrftime","hrftime;rftime[ns]",1024,0,1023); 
     h_QvRF =   new TH2D("QvRf","QvRF;RF;Qp",1024,0,1023,512,-1.,10.);
@@ -62,8 +62,8 @@ namespace _Mg24{
   }
   
   bool Mg24dn_Analyzer::TerminateIfLast(){
-    RNROOT::gRootFile->Write();
-    RNROOT::gRootFile->Close();
+    fgRootFile->Write();
+    fgRootFile->Close();
     
     return 1;
     

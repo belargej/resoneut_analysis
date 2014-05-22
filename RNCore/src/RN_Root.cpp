@@ -52,6 +52,7 @@ CAEN_ADC ADC4("ADC4",5);
 CAEN_ADC ADC5("ADC5",6);
 CAEN_ADC ADC6("ADC6",7);
 CAEN_ADC ADC7("ADC7",8);
+CAEN_TDC TDC0("TDC0",9);
 CAEN_TDC TDC1("TDC1",10);
 CAEN_TDC TDC2("TDC2",11);
 CAEN_TDC TDC3("TDC3",12);
@@ -97,6 +98,7 @@ namespace RNROOT{
     gModule_stack.Add(&ADC5);
     gModule_stack.Add(&ADC6);
     gModule_stack.Add(&ADC7);
+    gModule_stack.Add(&TDC0);
     gModule_stack.Add(&TDC1);
     gModule_stack.Add(&TDC2);
     gModule_stack.Add(&TDC3);

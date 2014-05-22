@@ -107,18 +107,18 @@ namespace silicon{
   
   bool Si_Analyzer::Begin(){   
     
-    if(!RNROOT::gRootFile){
+    if(!fgRootFile){
       std::cout<<"output file has not been created"<<std::endl;
       ClearGates();
       exit(EXIT_FAILURE);
     }
     
     //make directory structure
-    RNROOT::gRootFile->mkdir("Silicon");
-    RNROOT::gRootFile->cd("Silicon");
+    fgRootFile->mkdir("Silicon");
+    fgRootFile->cd("Silicon");
     gDirectory->mkdir("DE-E");    
     for(unsigned int i=0;i<si_.size();i++){
-      RNROOT::gRootFile->cd("Silicon");
+      fgRootFile->cd("Silicon");
       gDirectory->mkdir(si_[i].GetName());
       gDirectory->cd(si_[i].GetName());
       gDirectory->mkdir("F2B_Ratio");    
@@ -131,13 +131,13 @@ namespace silicon{
     
     //create histograms
 
-    RNROOT::gRootFile->cd("Silicon");
+    fgRootFile->cd("Silicon");
     if(si_.size()>1){
       h_ringsA_v_ringsB=new TH2D("h_ringsA_v_ringsB","h_ringsA_v_ringsB;sia_rings;sib_rings",17,0,16,17,0,16);
       h_segmentsA_v_segmentsB = new TH2D("h_segmentsA_v_segmentsB","h_segmentsA_v_segmentsB;sia_segments;sib_segments",17,0,16,17,0,16);    
       hThetaA_vThetaB = new TH2D("hThetaA_vThetaB","hThetaA_vThetaB;ThetaB;ThetaA",180,0,44,180,0,44); 
       hPhiA_vPhiB = new TH2D("hPhiA_v_PhiB","phiA_v_phiB;phiB;phiA",360,-180,180,360,-180,180);      
-      RNROOT::gRootFile->cd("Silicon/DE-E");
+      fgRootFile->cd("Silicon/DE-E");
       hpede=new TH2D("hpEdE","siPID;E[MeV];dE[MeV]",1024,0,63,1024,0,63);
       hpede_arb=new TH2D("hpEdE_arb","siPID;E[arb];dE[arb]",1024,0,4095,1024,0,4095);
       hpede_arb_front=new TH2D("hpEdE_arb_front","siPID_front;E[arb];dE[arb]",1024,0,4095,1024,0,4095);
@@ -148,12 +148,12 @@ namespace silicon{
     
     
     for(unsigned int i=0;i<si_.size();i++){
-      RNROOT::gRootFile->cd(Form("Silicon/%s",si_[i].GetName()));
+      fgRootFile->cd(Form("Silicon/%s",si_[i].GetName()));
       h_si_back_a[i]=new TH1D(Form("h_%s_back_a",si_[i].GetName()),Form("%s_e_before;E",si_[i].GetName()),4096,-20,4095);
       h_si_back[i]=new TH1D(Form("h_%s_back",si_[i].GetName()),Form("%s_e_after;E[MeV]",si_[i].GetName()),512,-1,16);
       h_si_front_a[i]=new TH1D(Form("h_%s_front_a",si_[i].GetName()),Form("%s_e_before;E",si_[i].GetName()),4096,-20,4095);
       h_si_front[i]=new TH1D(Form("h_%s_front",si_[i].GetName()),Form("%s_e_after;E[MeV]",si_[i].GetName()),512,-1,16);
-      RNROOT::gRootFile->cd(Form("Silicon/%s/Mult",si_[i].GetName()));
+      fgRootFile->cd(Form("Silicon/%s/Mult",si_[i].GetName()));
       h_si_fmult[i]= new TH1D(Form("h_si_fmult_%s",si_[i].GetName()),Form("h_si_fmult_%s;fmult",si_[i].GetName()),32,0,31);
       h_si_bmult[i]= new TH1D(Form("h_si_bmult_%s",si_[i].GetName()),Form("h_si_bmult_%s;bmult",si_[i].GetName()),32,0,31);
       h_si_cluster_mult[i] = new TH1D(Form("h_si_%s_cluster_mult",si_[i].GetName()),Form("h_si_%s_cluster_mult;mult",si_[i].GetName()),32,0,31);
@@ -161,13 +161,13 @@ namespace silicon{
       h_chlistb[i]=new TH1D(Form("h_chlistb_%s",si_[i].GetName()),Form("Chlistb_%s;Ch",si_[i].GetName()),20,-1,18);
       h_chlist_cluster_ring[i]=new TH1D(Form("h_chlist_cluster_ring_%s",si_[i].GetName()),Form("Chlist_cluster_ring_%s;Ch",si_[i].GetName()),20,-1,18);
       h_chlist_cluster_segment[i]=new TH1D(Form("h_chlist_cluster_segment_%s",si_[i].GetName()),Form("Chlist_cluster_segment_%s;Ch",si_[i].GetName()),20,-1,18);
-      RNROOT::gRootFile->cd(Form("Silicon/%s/F2B_Ratio",si_[i].GetName()));
+      fgRootFile->cd(Form("Silicon/%s/F2B_Ratio",si_[i].GetName()));
       h_ch_f0vf1[i]=new TH2D(Form("h_ch_f0vf1_%s",si_[i].GetName()),Form("h_ch_f0vf1_%s;ch_f0;ch_f1",si_[i].GetName()),17,0,16,17,0,16);
       h_e_f0vf1[i]=new TH2D(Form("h_e_f0vf1_%s",si_[i].GetName()),Form("h_e_f0vf1_%s;e_f0;e_f1",si_[i].GetName()),128,0,16,128,0,16);
       for(int j=0;j<16;j++){
 	front[i][j]=new TH2D(Form("%s_fc%d_corr",si_[i].GetName(),j),Form("%s_fc%d_corr;channel;ratio",si_[i].GetName(),j),17,0,16,512,0,2);
       }
-      RNROOT::gRootFile->cd(Form("Silicon/%s/EvTheta",si_[i].GetName()));
+      fgRootFile->cd(Form("Silicon/%s/EvTheta",si_[i].GetName()));
       h_theta[i] = new TH1D(Form("%s_theta",si_[i].GetName()),Form("%s_theta;theta",si_[i].GetName()),180,0,45);
       h_evtheta_arb[i]=new TH2D(Form("h_evtheta_arb[%s]",si_[i].GetName()),Form("h_evtheta[%s];Ch;E",si_[i].GetName()),17,0,16,1024,0,4095);   
       h_evtheta[i]=new TH2D(Form("h_evtheta[%s]",si_[i].GetName()),Form("h_evtheta[%s];Theta;E",si_[i].GetName()),256,10,42,128,0,32);
@@ -175,11 +175,11 @@ namespace silicon{
       h_si_x_y[i]=new TH2D(Form("h_si_x_y[%s]",si_[i].GetName()),Form("h_si_x_y[%s];X;Y",si_[i].GetName()),512,-100,100,512,-100,100);
       h_si_x_y_prot[i]=new TH2D(Form("h_si_x_y_prot[%s]",si_[i].GetName()),Form("h_si_x_y_prot[%s];X;Y",si_[i].GetName()),512,-100,100,512,-100,100);
 
-      RNROOT::gRootFile->cd(Form("Silicon/%s/Timing",si_[i].GetName()));
+      fgRootFile->cd(Form("Silicon/%s/Timing",si_[i].GetName()));
       h_t[i]=new TH1D(Form("h_%s_t",si_[i].GetName()),Form("%s_t;time",si_[i].GetName()),1024,0,4096);
       hsi_EvT[i]=new TH2D(Form("h%s_evt",si_[i].GetName()),Form("h%s_evt;T;E",si_[i].GetName()),1024,0,4095,512,0,4095);    
     
-    RNROOT::gRootFile->cd(Form("Silicon/%s/Timing/rftime",si_[i].GetName()));
+    fgRootFile->cd(Form("Silicon/%s/Timing/rftime",si_[i].GetName()));
     rfvt_si[i] = new TH2D(Form("rfvt_%s",si_[i].GetName()),Form("rfvt_%s;rftime;s1_t",si_[i].GetName()),1024,256,2304,1024,0,4096);;	  
     rfvtrel_si[i] =new TH2D(Form("rfvtrel_%s",si_[i].GetName()),Form("rfvtrel_%s;rftime;trelRF",si_[i].GetName()),1024,256,2304,1024,0,4096);  	
     rfvt_prot_si_[i]=new TH2D(Form("rfvt_prot_%s",si_[i].GetName()),Form("rfvt_prot_%s;rftime;s1_t",si_[i].GetName()),1024,256,2304,1024,0,4096); 
@@ -320,8 +320,8 @@ namespace silicon{
   }
 
   bool Si_Analyzer::TerminateIfLast(){
-    RNROOT::gRootFile->Write();
-    RNROOT::gRootFile->Close();
+    fgRootFile->Write();
+    fgRootFile->Close();
     
     return 1;
   }
