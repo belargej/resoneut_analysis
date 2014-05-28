@@ -147,7 +147,7 @@ protected:
   std::ofstream fLogFile;
   unsigned short * fBuffer;
   int fTimer; 
-  Double32_t fScalerValues[32]; //CAEN Scaler Module 32 channels  
+  Float_t fScalerValues[32]; //CAEN Scaler Module 32 channels  
   Double32_t fScalerSums[32]; //CAEN Scaler Module 32 channels  
   Int_t fEvent[3];
   // ScalerNames scaler_names;
@@ -174,6 +174,8 @@ public:
   virtual void Loop(Long64_t start = 0, Long64_t evnum = 0);
   int Convert2Root(std::vector<std::string>&run_number,std::string data_dir,std::string output_file); 
   int Convert2Root(const std::string& name,std::string output_file);
+
+  int AttachFromEVT(const TString& evtfilename,const std::string & outputfile);
   int AttachFromEVT(const TString& evtfilename);
 
   void AddTree(TString a){fChain->Add(a);}

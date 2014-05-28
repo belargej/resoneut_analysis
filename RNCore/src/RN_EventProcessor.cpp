@@ -82,6 +82,16 @@ void RN_EventProcessor::SetRootOutputFileAndTree(const std::string& filename,con
   
   fgRootFile=new TFile(filename.c_str(),"RECREATE");
   fgDataTree=new TTree(treename.c_str(),treename.c_str());
+  fgScalerTree = new TTree("ScalerTree","ScalerTree");
+
+  //flag is used to notify the user of any issues seen during unpacking
+  fgDataTree->Branch("Event",&fEvent,"RunNum/I:flag/I:ScalerIDX/I"); 
+  
+  RNROOT::gModule_stack.AddBranches(fgDataTree);
+  
+  fgScalerTree->Branch("Scaler",&fScalerValues,"Scaler[32]/F");
+  
+
 }
 
 void RN_EventProcessor::WriteOut(){
@@ -334,23 +344,12 @@ int RN_EventProcessor::Convert2Root(std::vector<std::string>&run_number,std::str
     std::cout<<"Output TFile already open, please close it, and try again"<<std::endl;
     return 1;
   }
-  
-  
-  fgRootFile = new TFile(output_file.c_str(),"RECREATE");  
+
   std::string logger = Form("%s.log",output_file.c_str());
   fLogFile.open(logger.c_str(),std::ios::out);
-  
-  // Data Tree
-  fgDataTree = new TTree("DataTree","DataTree");
-  fgScalerTree = new TTree("ScalerTree","ScalerTree");
-  
-  //flag is used to notify the user of any issues seen during unpacking
-  fgDataTree->Branch("Event",&fEvent,"RunNum/I:flag/I:ScalerIDX/I"); 
-  
-  RNROOT::gModule_stack.AddBranches(fgDataTree);
- 
-  fgScalerTree->Branch("Scaler",&fScalerValues,"Scaler[32]/F");
-  
+  SetRootOutputFileAndTree(output_file,"DataTree");
+
+
   //Loop over files in the data file list.
   for(unsigned int b=0;b<run_number.size();b++){
     //this section to properly format the evt number to fBuffer run number with zeroes.
@@ -394,22 +393,11 @@ int RN_EventProcessor::Convert2Root(const std::string& name,std::string output_f
     std::cout<<"Output TFile already open, please close it, and try again"<<std::endl;
     return 1;
   }
-  
-  fgRootFile = new TFile(output_file.c_str(),"RECREATE");  
+
   std::string logger = Form("%s.log",output_file.c_str());
   fLogFile.open(logger.c_str(),std::ios::out);
-  
-    // Data Tree
-  fgDataTree = new TTree("DataTree","DataTree");
-  fgScalerTree = new TTree("ScalerTree","ScalerTree");
-  
-  //flag is used to notify the user of any issues seen during unpacking
-  fgDataTree->Branch("Event",&fEvent,"RunNum/I:flag/I:ScalerIDX/I"); 
-    
-  RNROOT::gModule_stack.AddBranches(fgDataTree);
- 
-  fgScalerTree->Branch("Scaler",&fScalerValues,"Scaler[32]/F");
-  
+  SetRootOutputFileAndTree(output_file,"DataTree");
+
   //Loop over files in the data file list.
   
   //this section to properly format the evt number to buffer run number with zeroes.
@@ -450,6 +438,11 @@ int RN_EventProcessor::Convert2Root(const std::string& name,std::string output_f
   return 0;
 }
 
+int RN_EventProcessor::AttachFromEVT(const TString& evtfilename,const std::string& outputfile){
+  SetRootOutputFileAndTree(outputfile,"DataTree");
+  return AttachFromEVT(evtfilename);
+  
+}
     
 int RN_EventProcessor::AttachFromEVT(const TString& fEvtFilename){
   //Open evt file

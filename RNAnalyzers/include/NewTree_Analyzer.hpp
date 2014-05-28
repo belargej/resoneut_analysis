@@ -21,13 +21,11 @@
 #include <string>
 #include <new>
 #include "RN_Analyzer.hpp"
-
-
-
+#include "TTree.h"
 
 class NewTree_Analyzer:public RN_Analyzer{
 private:
-
+  TTree *fNewTree;
 public:
   
   NewTree_Analyzer();

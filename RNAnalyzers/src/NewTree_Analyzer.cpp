@@ -32,14 +32,13 @@ bool NewTree_Analyzer::Begin(){
     std::cout<<"output file has not been created"<<std::endl;
     exit(EXIT_FAILURE);
   }
-  if(!fgDataTree){
-    std::cout<<"new tree has not been created"<<std::endl;   
-    exit(EXIT_FAILURE);
-  }
- 
+  fgRootFile->cd();
+  fNewTree = new TTree("DataTree","DataTree");
 
-  RNROOT::gParameter_stack.AddBranches(fgDataTree);
-  RNROOT::gModule_stack.AddBranches(fgDataTree);
+  fNewTree->Branch("Event",&fEvent,"RunNum/I:flag/I:ScalerIDX/I");
+
+  RNROOT::gParameter_stack.AddBranches(fNewTree);
+  RNROOT::gModule_stack.AddBranches(fNewTree);
 
   return 1;
 }
@@ -49,7 +48,7 @@ bool NewTree_Analyzer::Process(){
 }
 
 bool NewTree_Analyzer::ProcessFill(){
-  RNROOT::gNewTree->Fill();
+  fNewTree->Fill();
   return 1;
 }
 
