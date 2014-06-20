@@ -2,10 +2,12 @@
 #define RN_MASSTABLE_CXX
 
 #include "RN_MassTable.hpp"
+#include <cstdlib>
+#include "sak_ReadBuffer.hpp"
 
 
 RN_MassTable::RN_MassTable(const std::string &name):RN_VariableMap(name){
-
+  /*
   //AddParam("proton",938.2720137); 
   //AddParam("p",938.2720137);      
   AddParam("proton",938.7830137); //+e
@@ -50,7 +52,40 @@ RN_MassTable::RN_MassTable(const std::string &name):RN_VariableMap(name){
   AddParam("a",3727.37924);
   AddParam("alpha",3727.37924);
   AddParam("4He",3727.37924);
-
+  */
+  std::string key;double value;
+  std::ifstream masses;
+  char* pPath;
+  pPath = getenv ("RN_ANALYSIS");
+  if (pPath!=NULL){
+    printf ("The current path is: %s\n",pPath);
+    masses.open(Form("%s/input/masses.in",pPath));
+    if (!masses.is_open()){
+      std::cout << "masses.in file missing from input folder" << std::endl;
+      return;
+    }
+    else{
+      std::cout<<"Loading masses from"<<Form("%s/input/masses.in\n",pPath);
+    }
+  }
+  else{
+    std::cout<<"environment variable RN_ANALYSIS not set\n";
+    std::cout<<"mass table not set"<<std::endl;
+  }
+  do{
+    std::vector<std::string>input;
+    sak::ReadLine(masses,input,5);
+    if (input.size()!=5){
+      std::cout<<"masses file has line with diff than 5 entries"<<std::endl;
+      continue;
+    }
+    key=input[2];
+    value=sak::string_to_double(input[4]);
+    AddParam(key,value);
+  }while(!masses.eof());
 }
+
+
+
 
 #endif
