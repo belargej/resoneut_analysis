@@ -21,6 +21,8 @@ TH1D *hADC4[32];
 TH1D *hADC5[32];
 TH1D *hADC6[32];
 TH1D *hADC7[32];
+TH2D *hADC5SUM;
+TH2D *hADC6SUM;
 TH1D *hQDC1[32];
 TH1D *hQDC2[32];
 TH1D *hQDC3[32];
@@ -65,7 +67,12 @@ bool Module_Analyzer::Begin(){
 
   
   //create histograms
-  for(unsigned int i=0;i<32;i++){
+  fgRootFile->cd("Parameters/ADC5");
+  hADC5SUM=new TH2D("hADC5SUM","hADC5SUM;Channel;Signal",34,0,33,4096,0,4095);
+  fgRootFile->cd("Parameters/ADC6");
+  hADC6SUM=new TH2D("hADC6SUM","hADC6SUM;Channel;Signal",34,0,33,4096,0,4095);
+  
+    for(unsigned int i=0;i<32;i++){
     fgRootFile->cd("Parameters/TDC1");
     hTDC1[i]=new TH1D(Form("hTDC1[%d]",i),Form("TDC1[%d];TDC1[%d]",i,i),4096,0,4095);    
     fgRootFile->cd("Parameters/TDC2");   
@@ -108,6 +115,7 @@ bool Module_Analyzer::Process(){
 bool Module_Analyzer::ProcessFill(){
 
   for(unsigned int i=0;i<32;i++){
+    
     if(TDC1[i]>0) hTDC1[i]->Fill(TDC1[i]);
     if(TDC2[i]>0) hTDC2[i]->Fill(TDC2[i]);
     if(TDC3[i]>0) hTDC3[i]->Fill(TDC3[i]);
@@ -117,6 +125,8 @@ bool Module_Analyzer::ProcessFill(){
     if(ADC3[i]>0) hADC3[i]->Fill(ADC3[i]);
     if(ADC4[i]>0) hADC4[i]->Fill(ADC4[i]);
     if(ADC5[i]>0) hADC5[i]->Fill(ADC5[i]);
+    if(ADC5[i]>0) hADC5SUM->Fill(i,ADC5[i]);
+    if(ADC6[i]>0) hADC6SUM->Fill(i,ADC6[i]);
     if(ADC6[i]>0) hADC6[i]->Fill(ADC6[i]);
     if(ADC7[i]>0) hADC7[i]->Fill(ADC7[i]);
     if(QDC1[i]>0) hQDC1[i]->Fill(QDC1[i]);

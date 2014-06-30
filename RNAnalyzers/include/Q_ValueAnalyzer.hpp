@@ -21,6 +21,7 @@ namespace physical{
 
   class Q_ValueAnalyzer:public RN_Analyzer{
   private:
+    int fSiAngle; //which detector to use for silicon angle
     
   public:  
     Q_ValueAnalyzer();
@@ -33,7 +34,7 @@ namespace physical{
     virtual bool Terminate();
     virtual bool TerminateIfLast();
     virtual void Reset();
-    
+    void SetSiliconAngle(const int& index);
 
     ClassDef(Q_ValueAnalyzer,0);
   };

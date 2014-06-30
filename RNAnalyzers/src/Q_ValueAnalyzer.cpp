@@ -59,7 +59,7 @@ namespace physical{
   Double32_t q_val_n;
 
 
-  Q_ValueAnalyzer::Q_ValueAnalyzer()
+  Q_ValueAnalyzer::Q_ValueAnalyzer():fSiAngle(0)
   {
   
   }
@@ -135,10 +135,23 @@ namespace physical{
 
   bool Q_ValueAnalyzer::Process(){
     //gPrimaryReaction.E_fragment is ansatz from MC simulation
-  
-    if(si_array.E_AB()>0&& USEANGLE!=0){
+    Double32_t useangle(0);
+
+    switch (fSiAngle){
+    case 0:
+      useangle = si_array.Theta_A();
+      break;
+    case 1:
+      useangle = si_array.Theta_B();
+      break;
+    default:
+      useangle = si_array.Theta_A();
+      break;
+    }
     
-      q_val_p = gReactionInfo.DecayQValueEstimate(si_array.E_AB(),(TMath::Pi()*USEANGLE / 180));
+    if(si_array.E_AB()>0&& useangle!=0){
+    
+      q_val_p = gReactionInfo.DecayQValueEstimate(si_array.E_AB(),USEANGLE);
     
     }
 
@@ -211,6 +224,19 @@ namespace physical{
     return 1;
   
   }
+
+  void Q_ValueAnalyzer::SetSiliconAngle(const int& index){
+    if(index<si_array.NumOfSi()){
+      fSiAngle = index;
+    }
+    else{
+      std::cout<<"Index provided larger than Silicon array size\n";
+      std::cout<<"Index returned to default: 0\n";
+      fSiAngle = 0;
+    }
+    
+  }
+
 
 
 }

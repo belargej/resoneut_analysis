@@ -2,33 +2,37 @@
 #define __BaseDetector__CXX
 
 #include "RN_BaseDetector.hpp"
-
+#include <cstdlib>
+#include <iostream>
 ClassImp(RN_BaseDetector);
 
 RN_BaseDetector::RN_BaseDetector(std::string name, int num):RN_BaseClass(name,name),
 							    fNumOfCh(num),
-							    sorted_by_channel(0),
-							    lowlimit(0),
-							    highlimit(4096),		
-							    fCh_cal(num,int(0)),
-							    a0(num,double(0)),
-							    a1(num,double(1)),
-							    t0(num,double(0)),
-							    t1(num,double(1)),
-							    q_offset(num,double(0)),
-							    t_offset(num,double(0)),
-
+							    fSortedByChannel(0),
+							    fLowLimit(0),
+							    fHighLimit(4096),		
+							    fChCal(num,int(0)),
+							    fA0(num,double(0)),
+							    fA1(num,double(1)),
+							    fT0(num,double(0)),
+							    fT1(num,double(1)),
+							    fQOffset(num,double(0)),
+							    fTOffset(num,double(0)),
+							    fELin(1),
+							    fEShift(0),
+							    fTLin(1),
+							    fTShift(0),
 							    fMult(0),
 							    fChlist(num,double(0)),
-							    fE(num,double(0)),
-							    fT(num,double(0))
+							    fE(num,double(-1)),
+							    fT(num,double(-1))
 							    
 							    
 				       
 				       
 {
   for(int i=0;i<num;i++){
-    fCh_cal[i]=i;
+    fChCal[i]=i;
   }
 
 
@@ -36,8 +40,8 @@ RN_BaseDetector::RN_BaseDetector(std::string name, int num):RN_BaseClass(name,na
 
 void RN_BaseDetector::Reset(){
   for(unsigned int i=0;i<fMult;i++){
-    fE[i]=0;
-    fT[i]=0;
+    fE[i]=-1;
+    fT[i]=-1;
     fChlist[i]=-1;
  }
   fMult=0;
@@ -53,42 +57,62 @@ void RN_BaseDetector::Init(const double& num){
 }
 
 void RN_BaseDetector::SetELimits(const double& elow,const double& ehigh){
-  lowlimit=elow;
-  highlimit=ehigh;
+  fLowLimit=elow;
+  fHighLimit=ehigh;
 }
 
 void RN_BaseDetector::SetCalibrations(RN_VariableMap& detvar){
   for(int i=0;i<NumOfCh();i++){
-    detvar.GetParam(Form("%s.ch[%d]",GetName(),i),fCh_cal[i]);
-    detvar.GetParam(Form("%s.a0[%d]",GetName(),i),a0[i]);  
-    detvar.GetParam(Form("%s.a1[%d]",GetName(),i),a1[i]);
-    detvar.GetParam(Form("%s.t0[%d]",GetName(),i),t0[i]);  
-    detvar.GetParam(Form("%s.t1[%d]",GetName(),i),t1[i]);
-    detvar.GetParam(Form("%s.q_offset[%d]",GetName(),i),q_offset[i]); 
-    detvar.GetParam(Form("%s.t_offset[%d]",GetName(),i),t_offset[i]);  
+    detvar.GetParam(Form("%s.ch[%d]",GetName(),i),fChCal[i]);
+    detvar.GetParam(Form("%s.a0[%d]",GetName(),i),fA0[i]);  
+    detvar.GetParam(Form("%s.a1[%d]",GetName(),i),fA1[i]);
+    detvar.GetParam(Form("%s.t0[%d]",GetName(),i),fT0[i]);  
+    detvar.GetParam(Form("%s.t1[%d]",GetName(),i),fT1[i]);
+    detvar.GetParam(Form("%s.q_offset[%d]",GetName(),i),fQOffset[i]); 
+    detvar.GetParam(Form("%s.t_offset[%d]",GetName(),i),fTOffset[i]);  
   } 
-  detvar.GetParam(Form("%s.elowlimit",GetName()),lowlimit);
-  detvar.GetParam(Form("%s.ehighlimit",GetName()),highlimit);
-  detvar.GetParam(Form("%s.sorted_by_channel",GetName()),sorted_by_channel);
+  detvar.GetParam(Form("%s.elowlimit",GetName()),fLowLimit);
+  detvar.GetParam(Form("%s.ehighlimit",GetName()),fHighLimit);
+  detvar.GetParam(Form("%s.sorted_by_channel",GetName()),fSortedByChannel);
+  detvar.GetParam(Form("%s.elin",GetName()),fELin);
+  detvar.GetParam(Form("%s.eshift",GetName()),fEShift);
+  detvar.GetParam(Form("%s.tlin",GetName()),fTLin);
+  detvar.GetParam(Form("%s.tshift",GetName()),fTShift);
 
 }
 
 void RN_BaseDetector::Print(){
   TObject::Print();
   std::cout<<"number of channels: "<<NumOfCh()<<"\n";
-  std::cout<<"sorted by channel: "<<sorted_by_channel<<"\n";
-  std::cout<<"elowlimit: "<<lowlimit<<"\n";
-  std::cout<<"ehighlimit: "<<highlimit<<"\n";
+  std::cout<<"sorted by channel: "<<fSortedByChannel<<"\n";
+  std::cout<<"elowlimit: "<<fLowLimit<<"\n";
+  std::cout<<"ehighlimit: "<<fHighLimit<<"\n";
 
   return;
 }
 
 int RN_BaseDetector::InsertHit(const double& e,const double& t,const double& ch){
 
-  if(e <= lowlimit || e > highlimit) 
+  //if there is a time we should continue with the sorting process even if there is no energy...if there is no time, check whether the energy is within the limit. if its not, exit.
+
+  if(!(t>0)){
+    if(e <= fLowLimit || e > fHighLimit){ 
+      return -1;
+    }
+  }
+  if(fMult>=NumOfCh()){
+    std::cout<<"Attempting to insert a hit into an already fully allocated detector:\n fMult = "<<fMult<<" fNumOfCh = "<<fNumOfCh<<"\n Double check your channel mapping\n Enter 1 to EXIT with failure\n";
+    int query = 0;
+    std::cin>>query;
+    if (query == 1){ 
+      exit(EXIT_FAILURE);
+    }
     return -1;
+  }
+    
+
   int i,j;
-  if (sorted_by_channel){ 
+  if (fSortedByChannel){ 
     /* insert into list sorted by channel */
     for (i=(int)fMult-1;i>=0;i--){
       if (ch>fChlist[i])

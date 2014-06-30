@@ -8,9 +8,8 @@ ClassImp(RN_IonChamber);
 
 
 void RN_IonChamber::Reset(){
-  fE=0;
-  fdE=0;
-  fT=0;
+  esegment.Reset();
+  desegment.Reset();
   xgrid.Reset();
   ygrid.Reset();
 
@@ -18,7 +17,7 @@ void RN_IonChamber::Reset(){
 
 Double32_t RN_IonChamber::SumE_X() const{
   Double32_t e = 0;
-  for(unsigned int i=0;i<xgrid.fMult;i++){
+  for(unsigned int i=0;i<xgrid.Mult();i++){
     e += xgrid.E(i);
   }
   return e; 
@@ -26,7 +25,7 @@ Double32_t RN_IonChamber::SumE_X() const{
 
 Double32_t RN_IonChamber::SumE_Y() const{
   Double32_t e = 0;
-  for(unsigned int i=0;i<ygrid.fMult;i++){
+  for(unsigned int i=0;i<ygrid.Mult();i++){
     e += ygrid.E(i);
   }
   return e; 
@@ -37,7 +36,7 @@ Double32_t RN_IonChamber::Pos_X(){
   Double32_t ch = 0;
   Double32_t chA = 0;
   Double32_t chB = 0;
-  for(unsigned int i=0;i<xgrid.fMult;i++){
+  for(unsigned int i=0;i<xgrid.Mult();i++){
     chA += xgrid.E(i)*xgrid.Ch(i);
     chB += xgrid.E(i);
   }
@@ -52,7 +51,7 @@ Double32_t RN_IonChamber::Pos_Y(){
   Double32_t ch = 0;
   Double32_t chA = 0;
   Double32_t chB = 0;
-  for(unsigned int i=0;i<ygrid.fMult;i++){
+  for(unsigned int i=0;i<ygrid.Mult();i++){
     chA += ygrid.E(i)*ygrid.Ch(i);
     chB += ygrid.E(i);
   }
@@ -63,38 +62,23 @@ Double32_t RN_IonChamber::Pos_Y(){
 }                                               
 
 void RN_IonChamber::ReconstructHitPos(){
-  fHitPos.SetX(Pos_X() * wire_dist + _xpos);
-  fHitPos.SetY(Pos_Y() * wire_dist + _ypos);
-  fHitPos.SetZ(_zpos);
+  fHitPos.SetX(Pos_X() * fWireDist + fXPos);
+  fHitPos.SetY(Pos_Y() * fWireDist + fYPos);
+  fHitPos.SetZ(fZPos);
   return ;
 
 }
 
 
-
-
-void RN_IonChamber::SetCalibrations(float elin, float eshift, float tlin, float tshift){
-  this->elin=elin;
-  this->eshift=eshift;
-  this->tlin=tlin;
-  this->tshift=tshift;
-  
-}
-
-
 void RN_IonChamber::SetCalibrations(RN_VariableMap& detvar){
+  esegment.SetCalibrations(detvar);
+  desegment.SetCalibrations(detvar);
   xgrid.SetCalibrations(detvar);
   ygrid.SetCalibrations(detvar);
-
-  detvar.GetParam(Form("%s.elin",Name().c_str()),elin);
-  detvar.GetParam(Form("%s.eshift",Name().c_str()),eshift);
-  detvar.GetParam(Form("%s.tlin",Name().c_str()),tlin);
-  detvar.GetParam(Form("%s.tshift",Name().c_str()),tshift);
-
-  detvar.GetParam(Form("%s.xpos",Name().c_str()),_xpos);
-  detvar.GetParam(Form("%s.ypos",Name().c_str()),_ypos);
-  detvar.GetParam(Form("%s.zpos",Name().c_str()),_zpos);
-  detvar.GetParam(Form("%s.wire_dist",Name().c_str()),wire_dist);
+  detvar.GetParam(Form("%s.xpos",Name().c_str()),fXPos);
+  detvar.GetParam(Form("%s.ypos",Name().c_str()),fYPos);
+  detvar.GetParam(Form("%s.zpos",Name().c_str()),fZPos);
+  detvar.GetParam(Form("%s.wire_dist",Name().c_str()),fWireDist);
 
 }
 

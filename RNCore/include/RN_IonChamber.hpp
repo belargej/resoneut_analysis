@@ -36,64 +36,63 @@
 
 class RN_IonChamber:public RN_BaseClass{
  private:
-  float elin;//!
-  float eshift;//!
-  float tlin;//!
-  float tshift;//!
   TVector3 fHitPos;//!
-  Double32_t _zpos;//!
-  Double32_t _ypos;//!
-  Double32_t _xpos;//!
-  Double32_t wire_dist;//!
+  Double32_t fZPos;//!
+  Double32_t fYPos;//!
+  Double32_t fXPos;//!
+  Double32_t fWireDist;//!
+
  public:
   RN_IonChamber(std::string name="ic"):RN_BaseClass(name,name),
-				  elin(1),
-				  eshift(0),
-				  tlin(1),
-				  tshift(0),
-				  fHitPos(TVector3(0,0,0)),
-				  _zpos(250),
-				  _ypos(0),
-				  _xpos(0),
-				  wire_dist(5),//mm
-				  fE(0),
-				  fdE(0),
-				  xgrid(name+".xgrid",32),
-				  ygrid(name+".ygrid",32)
-					 
+				       fHitPos(TVector3(0,0,0)),
+				       fZPos(250),
+				       fYPos(0),
+				       fXPos(0),
+				       fWireDist(5),//mm
+				       esegment(name+".esegment",1),
+				       desegment(name+"desegment",1),
+				       xgrid(name+".xgrid",32),
+				       ygrid(name+".ygrid",32)
   {
   }
-  Double32_t fE;
-  Double32_t fdE;
-  Double32_t fT;
+
+  RN_BaseDetector esegment;
+  RN_BaseDetector desegment;
   RN_BaseDetector xgrid;
   RN_BaseDetector ygrid;
 
   
   std::string Name()const{return GetName();}//!
   void Reset();
-  void SetCalibrations(float, float, float, float);
   void SetCalibrations(RN_VariableMap& detvar);
-  Double32_t E() const {return fE>0 ? (fE * elin + eshift) : 0;}
-  Double32_t DE() const {return fdE>0 ? (fdE * elin + eshift) : 0;}
-  Double32_t TotalE() const{return E()+DE();}//sum-all sections
-  Double32_t SumE_Pos()const {return SumE_X()+SumE_Y();}//sum-both pos grid sections
   Double32_t SumE_X() const;//sum all wires xgrid section
   Double32_t SumE_Y() const;//sum all wires ygrid section
   Double32_t Pos_X();
   Double32_t Pos_Y();
   void ReconstructHitPos();
   TVector3 GetHitPos() const {return fHitPos;}
-
-  inline Double32_t T() const{return fT>0 ? ((fT * tlin) + tshift): 0;}
   Double32_t Theta() const {return fHitPos.Theta() * 180 / TMath::Pi();}
   Double32_t Phi() const {return fHitPos.Phi() * 180 / TMath::Pi() ;}
 
+  Double32_t E() const ;
+  Double32_t DE() const ;
+  Double32_t ERaw() const ;
+  Double32_t DERaw() const ;
+  Double32_t TotalE() const; 
+  Double32_t SumE_Pos()const;
+  Double32_t T() const ;
+  Double32_t TRaw() const ;
+ 
   ClassDef(RN_IonChamber,1);
   
 };
-
-
-
+inline Double32_t RN_IonChamber::ERaw()const {return esegment.ERaw();}
+inline Double32_t RN_IonChamber::DERaw()const {return desegment.ERaw();}
+inline Double32_t RN_IonChamber::E() const {return esegment.E();}
+inline Double32_t RN_IonChamber::DE() const {return desegment.E();}
+inline Double32_t RN_IonChamber::T() const {return esegment.T();}
+inline Double32_t RN_IonChamber::TRaw() const {return esegment.TRaw();}
+inline Double32_t RN_IonChamber::TotalE() const{return E()+DE();}//sum-all sections
+inline Double32_t RN_IonChamber::SumE_Pos()const {return SumE_X()+SumE_Y();}//sum-both pos grid sections
 
 #endif

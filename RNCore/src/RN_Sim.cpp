@@ -165,18 +165,18 @@ namespace sim{
     for(RN_NeutCollectionRef it=neut.begin();it!=neut.end();it++){
       if((*it).GetHitPos().X()!=0)
 	hpos_in->Fill((*it).GetHitPos().X(),(*it).GetHitPos().Y());
-      if((*it).fT_Sim>0){
-	hn_tof->Fill(((*it).fT_Sim));
-	htof_n[cref]->Fill((*it).fT_Sim);
-	hE_n->Fill(cref,(*it).fEsum);
+      if((*it).fTSim>0){
+	hn_tof->Fill(((*it).fTSim));
+	htof_n[cref]->Fill((*it).fTSim);
+	hE_n->Fill(cref,(*it).fESum);
 	hpos->Fill((*it).GetHitPos().X(),(*it).GetHitPos().Y());
 	double nKE=0,hiKE=0;
-	double q_value=gReactionInfo.RecoilQValue((*it).GetPosVect().Z(),(*it).fT_Sim,nKE,hiKE);
+	double q_value=gReactionInfo.RecoilQValue((*it).GetPosVect().Z(),(*it).fTSim,nKE,hiKE);
 	hQ->Fill(q_value);
 	hQ_n[cref]->Fill(q_value);
 	h_nKE->Fill(nKE);
 	h_hiKE->Fill(hiKE);
-	hT_v_theta->Fill(particle.LV.Theta()*180/3.14,(*it).fT_Sim);
+	hT_v_theta->Fill(particle.LV.Theta()*180/3.14,(*it).fTSim);
 	
       }
       cref++;

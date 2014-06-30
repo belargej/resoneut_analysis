@@ -37,9 +37,22 @@ Author: Sean A. Kuvin -2013
 
 using namespace RNROOT;
 
+RN_S2Calibrator::RN_S2Calibrator(const int& corrnum,
+				 std::string dname,
+				 const double& lowlimit,
+				 const double& highlimit):fA0(corrnum,double(0)),
+  fA1(corrnum,double(1)),
+  fPoint(corrnum,int(0)),
+  fCorr(corrnum,TGraph()),
+  fDetName(dname),
+  fELowLimit(lowlimit),
+  fEHighLimit(highlimit)
+{
+}
+
 void RN_S2Calibrator::AddHit(const double& ematch, const double& ech,const int& ch){
-  Corr[ch].SetPoint(point[ch],ech,ematch);
-  point[ch]++;
+  fCorr[ch].SetPoint(fPoint[ch],ech,ematch);
+  fPoint[ch]++;
 
 }
 
@@ -48,17 +61,17 @@ void RN_S2Calibrator::AddHit(const double& ematch, const double& ech,const int& 
 
 void RN_S2Calibrator::PerformFit(){
   //op==1 matches all front channels to one back channel
-  TF1 *fitter= new TF1("fitter","pol1",elowlimit,ehighlimit);
-  unsigned int num=a0.size();
+  TF1 *fitter= new TF1("fitter","pol1",fELowLimit,fEHighLimit);
+  unsigned int num=fA0.size();
   for(unsigned int l=0;l<num;l++){
-    if(Corr[l].GetN()<50){
+    if(fCorr[l].GetN()<50){
       std::cout<<"Not enough points for fitting this detector/channel"<<std::endl;
       continue;
     }
-    Corr[l].Fit(fitter,"ROB=0.52","",elowlimit,ehighlimit);
-    a0[l]=fitter->GetParameter(0);
-    a1[l]=fitter->GetParameter(1);
-    std::cout<<l<<": RESULT: "<<a0[l]<<" "<<a1[l]<<std::endl;
+    fCorr[l].Fit(fitter,"ROB=0.52","",fELowLimit,fEHighLimit);
+    fA0[l]=fitter->GetParameter(0);
+    fA1[l]=fitter->GetParameter(1);
+    std::cout<<l<<": RESULT: "<<fA0[l]<<" "<<fA1[l]<<std::endl;
   }
 }
  
@@ -70,11 +83,11 @@ int RN_S2Calibrator::PrintCoefficients(std::string printfile){
     return 0;
   }
  
-  unsigned int num=a0.size();
+  unsigned int num=fA0.size();
 
   for(unsigned int j=0;j<num;j++){
-    coeff<<Form("%s.a0[%d]  ",detname.c_str(),j)<<a0[j]<<std::endl;
-    coeff<<Form("%s.a1[%d]  ",detname.c_str(),j)<<a1[j]<<std::endl;
+    coeff<<Form("%s.a0[%d]  ",fDetName.c_str(),j)<<fA0[j]<<std::endl;
+    coeff<<Form("%s.a1[%d]  ",fDetName.c_str(),j)<<fA1[j]<<std::endl;
   }
   
   return 1;
@@ -115,13 +128,13 @@ namespace si_cal{
     for (Long64_t i=0;i<totentries;i++){
       EventProcessor.GetEntry(i);
       EventProcessor.GetDetectorEntry();
-      if(si_[DetID].front.fMult < 1 || si_[DetID].back.fMult < 1)
+      if(si_[DetID].front.Mult() < 1 || si_[DetID].back.Mult() < 1)
 	continue;
-      if(si_[DetID].front.fChlist[0]==matchfront){
-	si_fch_v_bch[(int)si_[DetID].back.fChlist[0]]->Fill(si_[DetID].Back_E(),si_[DetID].Front_E());
+      if(si_[DetID].front.ChRaw(0)==matchfront){
+	si_fch_v_bch[(int)si_[DetID].back.ChRaw(0)]->Fill(si_[DetID].Back_E(),si_[DetID].Front_E());
       }
-      if(si_[DetID].back.fChlist[0]==matchback){
-	si_bch_v_fch[(int)si_[DetID].front.fChlist[0]]->Fill(si_[DetID].Front_E(),si_[DetID].Back_E());		  
+      if(si_[DetID].back.ChRaw(0)==matchback){
+	si_bch_v_fch[(int)si_[DetID].front.ChRaw(0)]->Fill(si_[DetID].Front_E(),si_[DetID].Back_E());		  
       }
 
     }
@@ -171,9 +184,9 @@ namespace si_cal{
       for(RN_S2CalCollectionRef it=s2front.begin();it!=s2front.end();it++){
 	
 	if(idx<si_.size()){
-	  if(si_[idx].back.fMult==1&&si_[idx].back.fChlist[0]==matchback){
-	    if(si_[idx].front.fMult==1)
-	      (*it).AddHit(si_[idx].Back_E(0),si_[idx].Front_E(0),(int)si_[idx].front.fChlist[0]);
+	  if(si_[idx].back.Mult()==1&&si_[idx].back.ChRaw(0)==matchback){
+	    if(si_[idx].front.Mult()==1)
+	      (*it).AddHit(si_[idx].Back_E(0),si_[idx].Front_E(0),(int)si_[idx].front.ChRaw(0));
 	  }
 	}
 	idx++;
@@ -206,9 +219,9 @@ namespace si_cal{
       for(RN_S2CalCollectionRef it=s2back.begin();it!=s2back.end();it++){
 	
 	if(idx<si_.size()){
-	  if(si_[idx].front.fMult==1&&si_[idx].front.fChlist[0]==matchfront){
-	    if(si_[idx].back.fMult==1)
-	      (*it).AddHit(si_[idx].Front_E(),si_[idx].Back_E(),(int)si_[idx].back.fChlist[0]);
+	  if(si_[idx].front.Mult()==1&&si_[idx].front.ChRaw(0)==matchfront){
+	    if(si_[idx].back.Mult()==1)
+	      (*it).AddHit(si_[idx].Front_E(),si_[idx].Back_E(),(int)si_[idx].back.ChRaw(0));
 	  }
 	}
 	idx++;

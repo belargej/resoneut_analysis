@@ -22,12 +22,14 @@ namespace neut_tof{
 
   TH1D *hrftime_n[NEUTNUM];
   TH1D *hrftime_PSDn[NEUTNUM];
+  TH1D *hT_nALL;
+  TH1D *hT_nPSD_ALL;
   TH1D *hT_n[NEUTNUM];
   TH1D *hT_PSDn[NEUTNUM];
   TH1D *hTRelRF_PSDn[NEUTNUM];
   TH1D *hTRelRF_n[NEUTNUM];
   TH2D *hQvrftime_n[NEUTNUM];
- 
+  TH2D *hnT_vRF[NEUTNUM];
   TH2D *hQvT_n[NEUTNUM];
   TH1D *hrftime_nPSD;
  
@@ -55,6 +57,8 @@ namespace neut_tof{
     gDirectory->cd("TOF");
     gDirectory->mkdir("RF");
     hrftime_nPSD=new TH1D("hrftime_nPSD","hrftime_nPSD",128,0,127);
+    hT_nPSD_ALL=new TH1D("hT_nPSD_ALL","hT_nPSD_ALL",512,0,1024);
+    hT_nALL=new TH1D("hT_nALL","hT_nALL",512,0,1024);
     for(unsigned int i=0;i<NEUTNUM;i++){
       hT_n[i]=new TH1D(Form("hT_n[%d]",i),Form("hT_n[%d]",i),512,0,1024);
       hT_PSDn[i]=new TH1D(Form("hT_PSDn[%d]",i),Form("hT_PSDn[%d]",i),512,0,1024);
@@ -63,6 +67,7 @@ namespace neut_tof{
       hrftime_n[i]=new TH1D(Form("hrftime_n[%d]",i),Form("hrftime_n[%d]",i),128,0,127);
       hrftime_PSDn[i]=new TH1D(Form("hrftime_PSDn[%d]",i),Form("hrftime_PSDn[%d]",i),128,0,127);
       hQvrftime_n[i]=new TH2D(Form("hQvrftime_n[%d]",i),Form("hQvrftime_n[%d]",i),128,0,127,512,0,4095);
+      hnT_vRF[i]=new TH2D(Form("hT_vRF_n[%d]",i),Form("hT_vRF_n[%d]",i),512,0,4095,512,0,1024);
       hQvT_n[i]=new TH2D(Form("hQvT_n[%d]",i),Form("hQvT_n[%d]",i),512,0,1024,512,0,4095);
 
     }
@@ -90,13 +95,14 @@ namespace neut_tof{
       if(neut[i].T()>0){
 	hT_n[i]->Fill(neut[i].T());
 	hrftime_n[i]->Fill(rftime.T_Wrapped());
+	hnT_vRF[i]->Fill(rftime.fT,neut[i].T());
       }
       if(psd::rawneutcheck[i]){
 	hT_PSDn[i]->Fill(neut[i].T());
 	hTRelRF_PSDn[i]->Fill(neut[i].T()-rftime.T_Wrapped());
 	hrftime_PSDn[i]->Fill(rftime.T_Wrapped());
-	hQvrftime_n[i]->Fill(rftime.T_Wrapped(),neut[i].fQ_long);
-	hQvT_n[i]->Fill(neut[i].T(),neut[i].fQ_long);
+	hQvrftime_n[i]->Fill(rftime.T_Wrapped(),neut[i].QLong());
+	hQvT_n[i]->Fill(neut[i].T(),neut[i].QLong());
       }
 
     }
@@ -107,6 +113,10 @@ namespace neut_tof{
 
   
   bool Neut_TOF_Analyzer::Terminate(){
+    for(unsigned int i=0;i<neut.size();i++){
+      hT_nALL->Add(hT_n[i]);
+      hT_nPSD_ALL->Add(hT_PSDn[i]);
+    }
     return 1;
   }
   

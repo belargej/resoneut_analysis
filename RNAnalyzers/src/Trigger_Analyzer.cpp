@@ -64,6 +64,7 @@ namespace trigger{
   int require_nemult(0);
   int _requireOFF_nai(0);
   int _requireOFF_S2(0);
+  int _requireOFF_SIB(0);
 
 
 
@@ -91,6 +92,7 @@ namespace trigger{
   void RequireOFF_NaI(){_requireOFF_nai = 1;}
   void RequireS2(){_require_S2 = 1;}
   void RequireOFF_S2(){_requireOFF_S2 = 1;}
+  void RequireOFF_SIB(){_requireOFF_SIB = 1;}
   void RequireIC_E(){_require_ic = 1;}
   Trigger_Analyzer::Trigger_Analyzer()
   {
@@ -145,17 +147,17 @@ namespace trigger{
     
     //find the earliest neut time
     for(unsigned int i=0;i<neut.size();i++){
-      if(neut[i].fQ_long>0){
+      if(neut[i].QLong()>0){
 	n_emult++;
       }
     }
     
     //find the earliest si time, this requires an E hit
-    for(unsigned int i=0;i<si_[0].back.fMult;i++){
-      if(si_[0].back.fE[i]>0){
+    for(unsigned int i=0;i<si_[0].back.Mult();i++){
+      if(si_[0].back.ERaw(i)>0){
 	s1_emult++;
       }
-      if(si_[0].back.fT[i]>0){
+      if(si_[0].back.TRaw(i)>0){
 	s1_tmult++;
 	if(si_[0].Back_T(i)<s1_tfirst){
 	  s1_tfirst=si_[0].Back_T(i);
@@ -185,7 +187,7 @@ namespace trigger{
 	}
       }
     }
-
+    
     //find the raw_unsorted TDC time corresponding to the S1 detector
     for(unsigned int i=0;i<16;i++){
       if(TDC2[i]>0){
@@ -194,10 +196,13 @@ namespace trigger{
 	  s1raw_tfirst=TDC2[i];
 	}
       }
+      
       if(TDC2[i+16]>0){
 	s2_tmult++;	
       }
       
+
+
       
     }
 
@@ -243,6 +248,9 @@ namespace trigger{
     if(require_S1 && !triggerinfo[1])
       return 0;
     
+    if(_requireOFF_SIB && triggerinfo[1])
+      return 0;
+
     if(require_neut && !triggerinfo[0])
       return 0;
 
@@ -252,13 +260,13 @@ namespace trigger{
     if(_requireOFF_nai && (triggerinfo[2]||triggerinfo[3]))
       return 0;
     
-    if(_requireOFF_S2 && si_cluster_[1].fMult>0)
+    if(_requireOFF_S2 && s2_tmult>0)
+      return 0;
+
+    if(_require_S2 && !s2_tmult>0)
       return 0;
     
-    if(_require_S2 && !si_cluster_[1].fMult>0)
-      return 0;
-    
-    if(_require_ic && !(ic.fE && ic.fdE))
+    if(_require_ic && !(ic.ERaw() && ic.DERaw()))
       return 0;
 
     /*

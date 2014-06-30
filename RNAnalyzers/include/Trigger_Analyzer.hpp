@@ -60,6 +60,7 @@ public:
   void RequireS2();
   void RequireOFF_NaI();
   void RequireOFF_S2();
+  void RequireOFF_SIB();
   void RequireIC_E();
 
   //extern double n_triggerloc;

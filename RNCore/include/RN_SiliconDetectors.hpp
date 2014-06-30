@@ -70,10 +70,10 @@ Author: Sean A. Kuvin 2013
 
 class RN_S2Detector:public RN_BaseClass{
 protected:
-  Double32_t elin;//!
-  Double32_t eshift;//!
-  Double32_t tlin;//!
-  Double32_t tshift;//! 
+  Double32_t fELin;//!
+  Double32_t fEShift;//!
+  Double32_t fTLin;//!
+  Double32_t fTShift;//! 
   TVector3 normv_;//!
   TVector3 shiftv_;//!
   TVector3 posv_;//!
@@ -111,13 +111,15 @@ public:
   bool Vect_to_ch(const TVector3&, double&, double&);
   void Reset();
   void SetCalibrations(double,double,double,double); 
-  inline Int_t IsS1()const {return _s1switch;}
+  Int_t IsS1()const;
   
   void SetCalibrations(RN_VariableMap& detvar);
   std::string Name()const{return GetName();}//!
-  ClassDef(RN_S2Detector,2);
+  ClassDef(RN_S2Detector,3);
  
 };
+
+inline Int_t RN_S2Detector::IsS1() const {return _s1switch;}
 
 
 typedef std::vector<RN_S2Detector> RN_S2Collection;

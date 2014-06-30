@@ -31,9 +31,9 @@ class RN_TriggerBit:public RN_BaseClass{
 private:  
   Double32_t bitmin;
   Double32_t bitmax;
-public:
   Double32_t fBit;
 
+public:
   RN_TriggerBit(){}
   RN_TriggerBit(std::string name):RN_BaseClass(name,name),
 				  bitmin(0),
@@ -44,7 +44,8 @@ public:
   {
   }
 
-  
+  void SetBit(Double32_t val);
+  Double32_t Bit() const;
   std::string Name() const{return GetName();}
   void Reset();
   int Check();
@@ -55,9 +56,20 @@ public:
 
 };
 
+inline Double32_t RN_TriggerBit::Bit() const { return fBit;}
+
+
 typedef std::vector<RN_TriggerBit> RN_TriggerBitCollection;
 typedef std::vector<RN_TriggerBit>::iterator RN_TriggerBitCollectionRef;
 
 
+#ifdef __RNTRIGGERBIT__CXX
+
+void RN_TriggerBit::SetBit(Double32_t val)
+{
+  fBit = val;
+}
+
+#endif
 
 #endif

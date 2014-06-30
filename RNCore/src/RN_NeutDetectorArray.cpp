@@ -20,30 +20,28 @@ using namespace sim;
 
 
 RN_NeutDetector::RN_NeutDetector(std::string name,int num,int ap):RN_BaseDetector(name,num),
-								  elin(1),
-								  eshift(0),
-								  tlin(1),
-								  tshift(0),
-								  zero_off(0),
-								  apos(ap),
-								  HitPos(0,0,0),
-								  phe_lin(1),
-								  phe_shift(0),
+								  fTLin(1),
+								  fTShift(0),
+								  fShortOffset(0),
+								  fAPos(ap),
+								  fHitPos(0,0,0),
+								  fPheLin(1),
+								  fPheShift(0),
 								  fRadius(34),
 								  fThickness(25.4),
 								  fThreshold(0.05),
-								  fQ_long(0),
-								  fQ_short(0),
+								  fQLong(0),
+								  fQShort(0),
 								  fPSD(0),
-								  fT_Q(0),
-								  fTrel(0),
+								  fTQ(0),
+								  fTRel(0),
 								  fDt(0),
-								  fT_Sim(0),
-								  fEsum(0),
-								  fE_lost(0)
+								  fTSim(0),
+								  fESum(0),
+								  fELost(0)
 {
   fPos.SetXYZ(0,0,-228.7);//set default zpos
-  RNArray::PositionMap(apos,fPos);//set xpos and ypos
+  RNArray::PositionMap(fAPos,fPos);//set xpos and ypos
   Build();
 }
 
@@ -54,29 +52,16 @@ void RN_NeutDetector::Build(){
   
 }
 
-
-
-
-void RN_NeutDetector::SetCalibrations(double elin, double eshift, double tlin, double tshift,double zero_off){
-  this->elin=elin;
-  this->eshift=eshift;
-  this->tlin=tlin;
-  this->tshift=tshift;
-  this->zero_off=zero_off;
-}
-
 void RN_NeutDetector::SetCalibrations(RN_VariableMap& detvar){
   double temp;
-  detvar.GetParam(Form("%s.elin",Name().c_str()),elin);
-  detvar.GetParam(Form("%s.eshift",Name().c_str()),eshift);
-  detvar.GetParam(Form("%s.tlin",Name().c_str()),tlin);
-  detvar.GetParam(Form("%s.tshift",Name().c_str()),tshift);
-  detvar.GetParam(Form("%s.z_off",Name().c_str()),zero_off);
+  detvar.GetParam(Form("%s.tlin",Name().c_str()),fTLin);
+  detvar.GetParam(Form("%s.tshift",Name().c_str()),fTShift);
+  detvar.GetParam(Form("%s.shortoffset",Name().c_str()),fShortOffset);
   if(detvar.GetParam("neutarray.zpos",temp))
     fPos.SetZ(temp);
   if(detvar.GetParam(Form("%s.apos",Name().c_str()),temp)){
-    apos=(int)temp;
-    RNArray::PositionMap(apos,fPos);
+    fAPos=(int)temp;
+    RNArray::PositionMap(fAPos,fPos);
   }
   detvar.GetParam("all.radius",fRadius);
   detvar.GetParam("all.thickness",fThickness);
@@ -84,15 +69,15 @@ void RN_NeutDetector::SetCalibrations(RN_VariableMap& detvar){
   detvar.GetParam(Form("%s.radius",Name().c_str()),fRadius);
   detvar.GetParam(Form("%s.thickness",Name().c_str()),fThickness);
   detvar.GetParam(Form("%s.threshold",Name().c_str()),fThreshold);
-  detvar.GetParam(Form("%s.phe_lin",Name().c_str()),phe_lin);
-  detvar.GetParam(Form("%s.phe_shift",Name().c_str()),phe_shift);
+  detvar.GetParam(Form("%s.phelin",Name().c_str()),fPheLin);
+  detvar.GetParam(Form("%s.pheshift",Name().c_str()),fPheShift);
 
 
 }
 
 Int_t RN_NeutDetector::IsANeutron(){
   TCutG * neut= (TCutG*)gROOT->GetListOfSpecials()->FindObject(Form("%s_neuts",GetName()));
-  if(neut&& neut->IsInside(fQ_long,fQ_short))
+  if(neut&& neut->IsInside(fQLong,fQShort))
     return 1;
   else return 0;
 }
@@ -110,7 +95,7 @@ Int_t RN_NeutDetector::HitID(){
 
 Int_t RN_NeutDetector::IsAGamma(){
   TCutG * gam = (TCutG*)gROOT->GetListOfSpecials()->FindObject(Form("%s_gammas",GetName()));
-  if(gam && gam->IsInside(fQ_long,fQ_short))
+  if(gam && gam->IsInside(fQLong,fQShort))
     return 1;
   else return 0;
 
@@ -119,34 +104,22 @@ Int_t RN_NeutDetector::IsAGamma(){
 
 void RN_NeutDetector::Reset(){
   RN_BaseDetector::Reset();
-  fQ_long=0;
-  fQ_short=0;
-  fTrel=0;
-  fT_Q=0;
+  fQLong=0;
+  fQShort=0;
+  fTRel=0;
+  fTQ=0;
   fPSD=0;
   fDt=0;
-  fEsum=0;
-  fT_Sim=0;
+  fESum=0;
+  fTSim=0;
   fCounter=0;
-  fCounter_carbon=0;
-  fE_lost=0;
-  HitPos.SetXYZ(0,0,0);
-}
-
-Double_t RN_NeutDetector::E_est() const{
-  return fQ_long*elin+eshift; 
-}
-
-Double_t RN_NeutDetector::Q_Long() const{
-  return fQ_long*elin+eshift;
-}
-
-Double_t RN_NeutDetector::Q_Short_Off() const{
-  return (fQ_short-zero_off);
+  fCounterCarbon=0;
+  fELost=0;
+  fHitPos.SetXYZ(0,0,0);
 }
 
 Double_t RN_NeutDetector::T() const{
-  return fT_Q>0 ? (fT_Q * tlin + tshift) : 0;//from TDC
+  return fTQ>0 ? (fTQ * fTLin + fTShift) : 0;//from TDC
 }
 
 Double_t RN_NeutDetector::nKE(double tof) const{
@@ -174,29 +147,24 @@ Double_t RN_NeutDetector::Q_value_est(double tof,
 }
 
 void RN_NeutDetector::InsertPSDHit(const double& q_long,const double& q_short,const double& t){
-  fQ_long=q_long;
-  fQ_short=q_short;
-  fT_Q=t;
+ fQLong=q_long;
+  fQShort=q_short;
+  fTQ=t;
 
-  if(fQ_short>0 && fQ_long>0) 
-    fPSD = Q_Short_Off()/fQ_long;
+  if(fQShort>0 && fQLong>0) 
+    fPSD = QShortOffset()/fQLong;
 
-}
-
-Double_t RN_NeutDetector::PSD() const{
-  if (fQ_long>0) return fQ_short/fQ_long;
-  else return 0;
 }
 
 
 double RN_NeutDetector::CalculateTRel(const double &tfirst){
-  if(fT_Q)
-    fTrel=T()-tfirst;
-  return fTrel;
+  if(fTQ)
+    fTRel=T()-tfirst;
+  return fTRel;
 }
 
-Double_t RN_NeutDetector::keVee() const {
-  return (fQ_long*phe_lin+phe_shift);
+Double_t RN_NeutDetector::QkeVee() const {
+  return (fQLong*fPheLin+fPheShift);
 }
 
 
@@ -219,9 +187,9 @@ int RN_NeutDetectorArray::ReconstructHits(RN_NeutCollection& in){
 
   int cref=0;
   for(RN_NeutCollectionRef it=in.begin();it!=in.end();it++){  
-    if((*it).fQ_long>0){
-      double ql=(*it).Q_Long();
-      double qs=(*it).Q_Short_Off();
+    if((*it).QLong()>0){
+      double ql=(*it).QLong();
+      double qs=(*it).QShortOffset();
       TVector3 pos=(*it).GetPosVect();
       double t=(*it).T();
       InsertHit(ql,qs,t,pos,cref);
@@ -328,7 +296,7 @@ int RN_NeutDetector::NeutIn(TLorentzVector nLV,double& t,double& e){
   fDt=0;//time to first reaction
   double x_pos=(px*tof*300/(M_N))-fPos.X();
   double y_pos=(py*tof*300/(M_N))-fPos.Y();
-  HitPos.SetXYZ(x_pos+fPos.X(),y_pos+fPos.Y(),fPos.Z());
+  fHitPos.SetXYZ(x_pos+fPos.X(),y_pos+fPos.Y(),fPos.Z());
   double radial_pos=sqrt(x_pos*x_pos+y_pos*y_pos);  
 
   stepcounter=0;
@@ -363,10 +331,10 @@ int RN_NeutDetector::NeutIn(TLorentzVector nLV,double& t,double& e){
   }
   
 
-  if(fEsum>fThreshold){
-    e = fEsum;
+  if(fESum>fThreshold){
+    e = fESum;
     t = tof+ fDt;
-    fT_Sim=t;
+    fTSim=t;
     return true;
   }
   else{
@@ -422,9 +390,9 @@ int RN_NeutDetector::H_hit(TLorentzVector& inLV,double step/*mm*/){
   //Get Energy Loss
   double nEdep = inLV.E()-neut_LVcopy.E();
   if(nEdep>fThreshold)
-    fEsum += nEdep;
+    fESum += nEdep;
   else
-    fE_lost += nEdep;
+    fELost += nEdep;
   //return the new E/angle to the original neut Lorentz Vector
   inLV = neut_LVcopy;
 
@@ -454,7 +422,7 @@ int RN_NeutDetector::C_hit(TLorentzVector& inLV,double step/*mm*/){
   }  
 
   //increment Carbon hit counter to see how much energy gets lost
-  fCounter_carbon++;
+  fCounterCarbon++;
 
   //Calculate En CM + random CM_Angles
   double theta = 3.14 * global::myRnd.Rndm(); 
@@ -469,7 +437,7 @@ int RN_NeutDetector::C_hit(TLorentzVector& inLV,double step/*mm*/){
   neut_LVcopy.SetPhi(neut_LVcopy.Phi()+inLV.Phi());
     
   //Get Energy Loss
-  fE_lost += inLV.E()- neut_LVcopy.E();//add what neut loses
+  fELost += inLV.E()- neut_LVcopy.E();//add what neut loses
 
   //return the new E/angle to the original neut Lorentz Vector
   inLV = neut_LVcopy;

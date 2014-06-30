@@ -33,60 +33,63 @@
 
 
 class RN_NeutDetector:public RN_BaseDetector{
- private:
-  double elin;//!
-  double eshift;//!
-  double tlin; //!
-  double tshift;//!
-  double zero_off;//!
-  int apos;//!
-  TVector3 HitPos;//!
+ protected:
+  double fTLin; //!
+  double fTShift;//!
+  double fShortOffset;//!
+  int fAPos;//!
+  TVector3 fHitPos;//!
   TVector3 fPos;//!
-  double phe_lin;//!
-  double phe_shift;//!
+  double fPheLin;//!
+  double fPheShift;//!
 
   //simulation parameters
   double fRadius;//!
   double fThickness;//!
   double fThreshold;//!
   int fCounter;
-  int fCounter_carbon;
+  int fCounterCarbon;
+
+
+  //NeutDetector Specific Parameterss 
+  Double32_t fQLong;
+  Double32_t fQShort;
+  Double32_t fPSD;
+  Double32_t fTQ;
+  Double32_t fTRel; //relative to other detectors
+
 
  public:
   RN_NeutDetector(std::string name="",int num=4,int ap=0);
 
   ~RN_NeutDetector(){}
 
-  //NeutDetector Specific Parameterss 
-  Double32_t fQ_long;
-  Double32_t fQ_short;
-  Double32_t fPSD;
-  Double32_t fT_Q;
-  Double32_t fTrel;
-
   //Simulation Parameters
   Double32_t fDt;
-  Double32_t fT_Sim;
-  Double32_t fEsum;
-  Double32_t fE_lost;
-  
+  Double32_t fTSim;
+  Double32_t fESum;
+  Double32_t fELost;
+
 
   void InsertPSDHit(const double& fql,const double& fqs,const double& t = 0.0);
  
   Double_t PSD() const ;
-  Double_t Q_Long() const ;
-  Double_t Q_Short_Off() const;
-  Double_t E_est() const;
+  Double_t QLong() const ;
+  Double_t QShort() const;
+  Double_t QShortOffset() const;
+  Double_t QkeVee() const;  
   Double_t T() const;
+  Double_t TRaw() const;
+  Double_t TRel() const;
   Double_t nKE(Double_t tof) const;
-  Double_t keVee() const;
   Double_t nKE_R(Double_t tof) const;
-  Double_t GetRadius()const {return fRadius;}
-  Double_t GetThickness()const {return fThickness;}
-  Double_t GetThreshold()const{return fThreshold;}
-  TVector3 GetHitPos()const{return HitPos;}
-  int HitCounter() const {return fCounter;}
-  Int_t GetArrayPos() const{return apos;}
+  Double_t GetRadius()const ;
+  Double_t GetThickness()const;
+  Double_t GetThreshold()const;
+  TVector3 GetHitPos()const;
+  Int_t HitCounter() const ;
+  Int_t GetArrayPos() const;
+  TVector3 GetPosVect() const; 
   Double_t Q_value_est(double tof,
 		       double m1,
 		       double m2,
@@ -94,18 +97,13 @@ class RN_NeutDetector:public RN_BaseDetector{
 		       double& hi_KE,
 		       double& Q_val);
 
-  TVector3 GetPosVect() const{return fPos;}//!
+  
   bool inDet(const TVector3& v);
   int H_hit(TLorentzVector& inLV,double step);
   int NeutIn(TLorentzVector nLV,double& t,double& e);
   int C_hit(TLorentzVector& inLV,double step);
   void Reset();
   void Build();
-  void SetCalibrations(double elin, 
-		       double eshift,
-		       double tlin,
-		       double tshift,
-		       double zero_off);
   void SetCalibrations(RN_VariableMap& detvar);
   double CalculateTRel(const double &tfirst);
   Int_t IsANeutron();
@@ -120,6 +118,21 @@ class RN_NeutDetector:public RN_BaseDetector{
 typedef std::vector<RN_NeutDetector> RN_NeutCollection;
 typedef std::vector<RN_NeutDetector>::iterator RN_NeutCollectionRef;
 
+
+
+inline Double_t RN_NeutDetector::QLong() const{return fQLong;}
+inline Double_t RN_NeutDetector::QShort() const{return fQShort;}
+inline Double_t RN_NeutDetector::QShortOffset() const{return (fQShort + fShortOffset);}
+inline Double_t RN_NeutDetector::TRaw() const {return fTQ;}
+inline Double_t RN_NeutDetector::TRel() const {return fTRel;}
+inline Double_t RN_NeutDetector::PSD() const {return fPSD;}
+inline Double_t RN_NeutDetector::GetRadius()const {return fRadius;}
+inline Double_t RN_NeutDetector::GetThickness()const {return fThickness;}
+inline Double_t RN_NeutDetector::GetThreshold()const{return fThreshold;}
+inline TVector3 RN_NeutDetector::GetHitPos()const{return fHitPos;}
+inline Int_t RN_NeutDetector::HitCounter() const {return fCounter;}
+inline Int_t RN_NeutDetector::GetArrayPos() const{return fAPos;}
+inline TVector3 RN_NeutDetector::GetPosVect() const{return fPos;}
 
 
 

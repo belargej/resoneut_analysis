@@ -17,6 +17,7 @@
 #include "RN_Root.hpp"
 
 using namespace RNROOT;
+using namespace TMath;
 
 namespace silicon{
   TCutG* prots1;
@@ -170,8 +171,9 @@ namespace silicon{
       fgRootFile->cd(Form("Silicon/%s/EvTheta",si_[i].GetName()));
       h_theta[i] = new TH1D(Form("%s_theta",si_[i].GetName()),Form("%s_theta;theta",si_[i].GetName()),180,0,45);
       h_evtheta_arb[i]=new TH2D(Form("h_evtheta_arb[%s]",si_[i].GetName()),Form("h_evtheta[%s];Ch;E",si_[i].GetName()),17,0,16,1024,0,4095);   
-      h_evtheta[i]=new TH2D(Form("h_evtheta[%s]",si_[i].GetName()),Form("h_evtheta[%s];Theta;E",si_[i].GetName()),256,10,42,128,0,32);
-      h_evtheta_protgated[i]=new TH2D(Form("h_evtheta_prot[%s]",si_[i].GetName()),Form("h_evtheta_prot[%s];Theta;E",si_[i].GetName()),256,10,42,128,0,32);
+      h_evtheta[i]=new 
+TH2D(Form("h_evtheta[%s]",si_[i].GetName()),Form("h_evtheta[%s];Theta;E",si_[i].GetName()),256,0,42,128,0,32);
+      h_evtheta_protgated[i]=new TH2D(Form("h_evtheta_prot[%s]",si_[i].GetName()),Form("h_evtheta_prot[%s];Theta;E",si_[i].GetName()),256,0,42,128,0,32);
       h_si_x_y[i]=new TH2D(Form("h_si_x_y[%s]",si_[i].GetName()),Form("h_si_x_y[%s];X;Y",si_[i].GetName()),512,-100,100,512,-100,100);
       h_si_x_y_prot[i]=new TH2D(Form("h_si_x_y_prot[%s]",si_[i].GetName()),Form("h_si_x_y_prot[%s];X;Y",si_[i].GetName()),512,-100,100,512,-100,100);
 
@@ -191,7 +193,7 @@ namespace silicon{
   
 
   bool Si_Analyzer::Process(){
-
+    
     //prot_E and prot_dE require cluster reconstruction
     if(silicon::prots1)
       protcheck=silicon::prots1->IsInside(si_array.E_AB(),si_array.E_A());
@@ -207,10 +209,10 @@ namespace silicon{
       deutcheck=silicon::deuterons->IsInside(si_array.E_AB(),si_array.E_A());
     
     if(silicon::thetatheta_cut)
-      thetathetacheck= silicon::thetatheta_cut->IsInside(si_array.Theta_A()*180/3.14,si_array.Theta_B()*180/3.14);
+      thetathetacheck= silicon::thetatheta_cut->IsInside(si_array.Theta_A()*RadToDeg(),si_array.Theta_B()*RadToDeg());
     
     if(silicon::ptheta_cut)
-      pthetacheck = silicon::ptheta_cut->IsInside(si_array.Theta_A(),si_array.E_AB());
+      pthetacheck = silicon::ptheta_cut->IsInside(si_array.Theta_B()*RadToDeg(),si_array.E_AB());
     
     if(silicon::ptheta2_cut)
       ptheta2check = silicon::ptheta2_cut->IsInside(si_[1].front.Ch(),si_[0].front.E()+si_[1].front.E());
@@ -248,7 +250,11 @@ namespace silicon{
       return 0;
     }
 
-
+    /*    //TEMP
+     if(rftime.T_Wrapped()<8 || rftime.T_Wrapped()>75){
+      return 0;
+    }
+    */
     return 1;
   }
   bool Si_Analyzer::ProcessFill(){
@@ -258,8 +264,8 @@ namespace silicon{
       Prot_E_Arb= si_[0].front.E() + si_[1].front.E();
       h_ringsA_v_ringsB->Fill(si_[0].front.Ch(),si_[1].front.Ch());
       h_segmentsA_v_segmentsB->Fill(si_[0].back.Ch(),si_[1].back.Ch());
-      hThetaA_vThetaB->Fill(si_array.Theta_A(),si_array.Theta_B());
-      hPhiA_vPhiB->Fill(si_array.Phi_A(),si_array.Phi_B());
+      hThetaA_vThetaB->Fill(si_array.Theta_A()*RadToDeg(),si_array.Theta_B()*RadToDeg());
+      hPhiA_vPhiB->Fill(si_array.Phi_A()*RadToDeg(),si_array.Phi_B()*RadToDeg());
       hpede->Fill(si_array.E_AB(),si_array.E_A());
       hpede_arb_front->Fill(si_[0].front.E()+si_[1].front.E(),si_[0].front.E());
       hpede_arb_back->Fill(si_[0].back.E()+si_[1].back.E(),si_[0].back.E());
@@ -270,28 +276,28 @@ namespace silicon{
     
 
     for(unsigned int i=0;i<si_.size();i++){
-      for(unsigned int j=0;j<si_[i].back.fMult;j++){
+      for(unsigned int j=0;j<si_[i].back.Mult();j++){
 	h_si_back_a[i]->Fill(si_[i].back.E(j));
 	h_si_back[i]->Fill(si_[i].Back_E(j));
       }
-      for(unsigned int j=0;j<si_[i].front.fMult;j++){
+      for(unsigned int j=0;j<si_[i].front.Mult();j++){
 	h_si_front_a[i]->Fill(si_[i].front.E(j));
 	h_si_front[i]->Fill(si_[i].Front_E(j));
       }
       
-      h_si_fmult[i]->Fill(si_[i].front.fMult);
-      h_si_bmult[i]->Fill(si_[i].back.fMult);
-      h_si_cluster_mult[i]->Fill(si_cluster_[i].fMult);
+      h_si_fmult[i]->Fill(si_[i].front.Mult());
+      h_si_bmult[i]->Fill(si_[i].back.Mult());
+      h_si_cluster_mult[i]->Fill(si_cluster_[i].Mult());
       h_chlistf[i]->Fill(si_[i].front.Ch());
       h_chlistb[i]->Fill(si_[i].back.Ch());
-      h_chlist_cluster_ring[i]->Fill(si_cluster_[i].fChlist[0]);
+      h_chlist_cluster_ring[i]->Fill(si_cluster_[i].ChRaw(0));
       h_chlist_cluster_segment[i]->Fill(si_cluster_[i].fChlist_b[0]);
       h_ch_f0vf1[i]->Fill(si_[i].front.Ch(0),si_[i].front.Ch(1));
       h_e_f0vf1[i]->Fill(si_[i].Front_E(0),si_[i].Front_E(1));
       
-      int idx=(int)si_[i].front.fChlist[0];
+      int idx=(int)si_[i].front.ChRaw(0);
       if(idx>=0){
-	front[i][idx]->Fill(si_[i].back.fChlist[0],(si_[i].Back_E(0)/si_[i].Front_E(0))); 
+	front[i][idx]->Fill(si_[i].back.ChRaw(0),(si_[i].Back_E(0)/si_[i].Front_E(0))); 
       }
       h_theta[i]->Fill(si_cluster_[i].Theta()*180/TMath::Pi());
       h_evtheta_arb[i]->Fill(si_[i].front.Ch(),Prot_E_Arb);
@@ -299,8 +305,8 @@ namespace silicon{
       h_si_x_y[i]->Fill(si_cluster_[i].fPos[0].X(),si_cluster_[i].fPos[0].Y());
       h_t[i]->Fill(si_[i].Back_T());
       hsi_EvT[i]->Fill(si_[i].back.T(),si_[i].back.E());    
-      rfvt_si[i]->Fill(rftime.fT,si_[0].Back_T(0));
-      rfvtrel_si[i]->Fill(rftime.fT,si_[0].Back_T(0)); 
+      rfvt_si[i]->Fill(rftime.fT,si_[i].Back_T(0));
+      rfvtrel_si[i]->Fill(rftime.fT,si_[i].Back_T(0)); 
       
      if(protcheck){
 	h_evtheta_protgated[i]->Fill(si_cluster_[i].Theta()*180/TMath::Pi(),si_array.E_AB());

@@ -78,12 +78,12 @@ namespace gamma_nai{
     return 1;
   }
   bool NaI_Analyzer::ProcessFill(){
-    if(nai_array.fMult>0){
-      hNaIArray_Detector->Fill(nai_array.fChlist[0]);    
-      hNaIArray_T->Fill(nai_array.fT[0]);
-      hNaIArray_E->Fill(nai_array.fE[0]);
+    if(nai_array.Mult()>0){
+      hNaIArray_Detector->Fill(nai_array.ChRaw(0));    
+      hNaIArray_T->Fill(nai_array.TRaw(0));
+      hNaIArray_E->Fill(nai_array.ERaw(0));
       hNaIArray_Position->Fill(nai_array.fPosition[0]); 
-      hNaIArray_TvRftime->Fill(rftime.T_Wrapped(),nai_array.fT[0]);
+      hNaIArray_TvRftime->Fill(rftime.T_Wrapped(),nai_array.TRaw(0));
     }
     for (unsigned int i=0;i<20;i++){
       if(nai[i].SumE()>0){

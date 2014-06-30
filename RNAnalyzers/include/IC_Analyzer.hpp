@@ -46,11 +46,13 @@ namespace ionchamber{
   extern TCutG* ede_hi1;
   extern TCutG* ede_hi2;
   extern TCutG* ede_hi3;
+  extern TCutG* posede;
 
   extern int hi_check[3];
   void RequireHI1();
   void RequireHI2();
   void RequireHI3();
+  void RequirePosEDE();
 
   void LoadGates(const std::string &input);  
   void ClearGates();  

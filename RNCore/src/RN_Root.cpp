@@ -116,9 +116,10 @@ namespace RNROOT{
       si_idx++; 
     }
     
-    for(unsigned int i=0;i<TRIGBIT_NUM;i++){
-      triggerbit.push_back(RN_TriggerBit(Form("triggerbit_%d",i)));
-    }
+    triggerbit.push_back(RN_TriggerBit("sibBit"));
+    triggerbit.push_back(RN_TriggerBit("icdsBit"));
+
+
     //neutron detectors - name - pos grid channel num - slot num
     for(unsigned int i=0;i<NEUTNUM;i++){
       neut.push_back(RN_NeutDetector(Form("neut%d",i),4,i+1));
@@ -186,8 +187,14 @@ namespace RNROOT{
     for(RN_NaICollectionRef it=nai.begin();it!=nai.end();it++){
       (*it).Reset();
     }
-    
+
     nai_array.Reset();
+
+    for(RN_TriggerBitCollectionRef it=triggerbit.begin();it!=triggerbit.end();it++){
+      (*it).Reset();
+    }
+    
+   
     
 
 

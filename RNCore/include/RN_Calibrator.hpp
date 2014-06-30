@@ -57,20 +57,16 @@ Multiple output files are produced with the calibration results. Two per detecto
 class RN_S2Calibrator{
 private:
 public:
-  RN_S2Calibrator(const int& corrnum,std::string dname,const double& lowlimit=0.,const double& highlimit=4096.):a0(corrnum,double(0)),
-														a1(corrnum,double(1)),
-														point(corrnum,int(0)),
-														Corr(corrnum,TGraph()),
-														detname(dname),
-														elowlimit(lowlimit),
-														ehighlimit(highlimit){
-  }
-  std::vector<Double32_t> a0,a1;
-  std::vector<int> point;
-  std::vector<TGraph> Corr;//for matching all front to one back channel
-  std::string detname;
-  int elowlimit;
-  int ehighlimit;
+  RN_S2Calibrator(const int& corrnum,
+		  std::string dname,
+		  const double& lowlimit=0.,
+		  const double& highlimit=4096.);
+  std::vector<Double32_t> fA0,fA1;
+  std::vector<int> fPoint;
+  std::vector<TGraph> fCorr;//for matching all front to one back channel
+  std::string fDetName;
+  int fELowLimit;
+  int fEHighLimit;
 
   void AddHit(const double & e,const double& e1, const int& ch);
   void PerformFit();

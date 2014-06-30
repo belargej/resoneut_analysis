@@ -7,7 +7,7 @@
 #pragma link C++ defined_in "Si_Analyzer.hpp";
 #pragma link C++ defined_in "IC_Analyzer.hpp";
 #pragma link C++ defined_in "Si_IC_Analyzer.hpp";
-#pragma link C++ defined_in "Si_Neut_IC_NaI_Analyzer.hpp";
+#pragma link C++ defined_in "TRel_Analyzer.hpp";
 #pragma link C++ defined_in "Trigger_Analyzer.hpp";
 #pragma link C++ defined_in "Module_Analyzer.hpp";
 #pragma link C++ defined_in "NaI_Analyzer.hpp";
@@ -17,7 +17,7 @@
 #pragma link C++ defined_in "F17dn_Analyzer.hpp";
 #pragma link C++ defined_in "Mg24dn_Analyzer.hpp";
 #pragma link C++ defined_in "Neut_TOF_Analyzer.hpp";
-
+#pragma link C++ defined_in "BeamSpot.hpp";
 
 
 

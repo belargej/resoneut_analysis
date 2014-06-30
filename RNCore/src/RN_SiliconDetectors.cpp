@@ -36,18 +36,18 @@ void RN_S2Detector::Reset(){
 }
 
 void RN_S2Detector::SetCalibrations(double elin,double eshift,double tlin, double tshift){
-  this->elin=elin;
-  this->eshift=eshift;
-  this->tlin=tlin;
-  this->tshift=tshift;
+  this->fELin=elin;
+  this->fEShift=eshift;
+  this->fTLin=tlin;
+  this->fTShift=tshift;
 }
 
 
 RN_S2Detector::RN_S2Detector(std::string name,const int& fnum, const int& bnum):RN_BaseClass(name,name),
-  elin(1),
-  eshift(0),
-  tlin(1),
-  tshift(0),
+  fELin(1),
+  fEShift(0),
+  fTLin(1),
+  fTShift(0),
   normv_(0,0,0),
   shiftv_(0,0,0),
   posv_(0,0,0),
@@ -78,10 +78,10 @@ void RN_S2Detector::SetCalibrations(RN_VariableMap& detvar){
   back.SetCalibrations(detvar);
 
   //get the calibrations specific to this class
-  detvar.GetParam(Form("%s.elin",GetName()),elin);
-  detvar.GetParam(Form("%s.eshift",GetName()),eshift);
-  detvar.GetParam(Form("%s.tlin",GetName()),tlin);
-  detvar.GetParam(Form("%s.tshift",GetName()),tshift);
+  detvar.GetParam(Form("%s.elin",GetName()),fELin);
+  detvar.GetParam(Form("%s.eshift",GetName()),fEShift);
+  detvar.GetParam(Form("%s.tlin",GetName()),fTLin);
+  detvar.GetParam(Form("%s.tshift",GetName()),fTShift);
   double tempx=0,tempy=0,tempz=0;
   detvar.GetParam(Form("%s.xpos",GetName()),tempx);
   detvar.GetParam(Form("%s.ypos",GetName()),tempy);
@@ -121,36 +121,36 @@ void RN_S2Detector::Calcnormv(){
 //apply global calibrations elin and eshift to calibrated basedetectors front and back
 
 Double_t RN_S2Detector::Front_E(unsigned int i) const{
-  if(i>=front.fMult)
+  if(i>=front.Mult())
     return 0;
-  if (!(front.fE[i]>0))
+  if (!(front.ERaw(i)>0))
     return 0;
-  return ((front.E(i) * elin) + eshift);
+  return ((front.E(i) * fELin) + fEShift);
 }
 
 Double_t RN_S2Detector::Front_T(unsigned int i) const{
-  if(i>=front.fMult)
+  if(i>=front.Mult())
     return 0;
-  if (!(front.fT[i]>0))
+  if (!(front.TRaw(i)>0))
     return 0;
-  return (( front.T(i) * tlin ) + tshift);
+  return (( front.T(i) * fTLin ) + fTShift);
   
 }
 
 Double_t RN_S2Detector::Back_E(unsigned int i) const{
-  if(i>=back.fMult)
+  if(i>=back.Mult())
     return 0;
-  if(!(back.fE[i]>0))
+  if(!(back.ERaw(i)>0))
     return 0;
-  return (( back.E(i) * elin) + eshift);   
+  return (( back.E(i) * fELin) + fEShift);   
 }
 
 Double_t RN_S2Detector::Back_T(unsigned int i) const{
-  if (i>=back.fMult)
+  if (i>=back.Mult())
     return 0;
-  if (!(back.fT[i]>0))
+  if (!(back.TRaw(i)>0))
     return 0;
-  return ((back.T(i) * tlin)  + tshift);
+  return ((back.T(i) * fTLin)  + fTShift);
 }
 
 
@@ -363,7 +363,7 @@ void RN_S2Cluster::SetCalibrations(RN_VariableMap& detvar){
 
 int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
   RNTempList FrontClusters(in.front.NumOfCh()), BackClusters(in.back.NumOfCh());
-  if(!in.back.fMult) return 0;
+  if(!in.back.Mult()) return 0;
   unsigned int i,front_match;
   unsigned int frontstatus=0;
   unsigned int backstatus=0;
@@ -372,11 +372,11 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
 
   // first add-back neighboring hits
   // in the back
-  for (i=0;i<in.back.fMult;i++){
+  for (i=0;i<in.back.Mult();i++){
     backstatus |= (((unsigned int)in.back.Ch(i)));
     ebacktotal = ebacktotal+in.Back_E(i);
     if (addback_back&&
-	(i+1<in.back.fMult)&&(in.back.Ch(i+1)==in.back.Ch(i)+1)){
+	(i+1<in.back.Mult())&&(in.back.Ch(i+1)==in.back.Ch(i)+1)){
       float ecluster=in.Back_E(i)+in.Back_E(i+1);
       float tcluster=(in.Back_T(i+1)+in.Back_T(i))/2.0;
       float chnew=(in.back.Ch(i+1)+in.back.Ch(i))/2.0;
@@ -394,13 +394,13 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
     }
   }
   //in the front
-  for (i=0;i<in.front.fMult;i++){
+  for (i=0;i<in.front.Mult();i++){
     efronttotal = efronttotal+in.Front_E(i);
   }
-  for (i=0;i<in.front.fMult;i++){
+  for (i=0;i<in.front.Mult();i++){
     frontstatus |= (((unsigned int)in.front.Ch(i)));
     if (addback_front&&
-	(i+1<in.front.fMult)&&(in.front.Ch(i+1)==in.front.Ch(i)+1)){
+	(i+1<in.front.Mult())&&(in.front.Ch(i+1)==in.front.Ch(i)+1)){
       float ecluster=in.Front_E(i+1)+in.Front_E(i);
       float tcluster=(in.Front_T(i+1)+in.Front_T(i))/2.0;
       float chnew=(in.front.Ch(i+1)+in.front.Ch(i))/2.0;
@@ -530,9 +530,9 @@ void RN_SiArray::ReconstructHits(RN_S2ClusterCollection& si_c_)
     if(i>0){
       fE_[i]=fE_[i-1];
     }
-    fE_[i] += si_c_[i].fE[0]; 
+    fE_[i] += si_c_[i].ERaw(0); 
     fPos_[i] = si_c_[i].fPos[0]; 
-    fT_[i] = si_c_[i].fT[0]; 
+    fT_[i] = si_c_[i].TRaw(0); 
   }
   
 }

@@ -185,79 +185,79 @@ namespace psd{
   bool NeutAnalyzer::Process(){ 
  
     
-    neutcheck[0] = (n0_neuts && n0_neuts->IsInside(neut[0].fPSD,neut[0].fQ_long));
-    gammacheck[0] = (n0_gammas && n0_gammas->IsInside(neut[0].fPSD,neut[0].fQ_long));
+    neutcheck[0] = (n0_neuts && n0_neuts->IsInside(neut[0].PSD(),neut[0].QLong()));
+    gammacheck[0] = (n0_gammas && n0_gammas->IsInside(neut[0].PSD(),neut[0].QLong()));
    
 		   
-    neutcheck[1] = (n1_neuts && n1_neuts->IsInside(neut[1].fPSD,neut[1].fQ_long));
-    gammacheck[1] = (n1_gammas && n1_gammas->IsInside(neut[1].fPSD,neut[1].fQ_long));
+    neutcheck[1] = (n1_neuts && n1_neuts->IsInside(neut[1].PSD(),neut[1].QLong()));
+    gammacheck[1] = (n1_gammas && n1_gammas->IsInside(neut[1].PSD(),neut[1].QLong()));
    
 
-    neutcheck[2] = (n2_neuts && n2_neuts->IsInside(neut[2].fPSD,neut[2].fQ_long));
-    gammacheck[2] = (n2_gammas && n2_gammas->IsInside(neut[2].fPSD,neut[2].fQ_long));
+    neutcheck[2] = (n2_neuts && n2_neuts->IsInside(neut[2].PSD(),neut[2].QLong()));
+    gammacheck[2] = (n2_gammas && n2_gammas->IsInside(neut[2].PSD(),neut[2].QLong()));
     
-    neutcheck[3] = (n3_neuts && n3_neuts->IsInside(neut[3].fPSD,neut[3].fQ_long));
-    gammacheck[3] =(n3_gammas && n3_gammas->IsInside(neut[3].fPSD,neut[3].fQ_long));
+    neutcheck[3] = (n3_neuts && n3_neuts->IsInside(neut[3].PSD(),neut[3].QLong()));
+    gammacheck[3] =(n3_gammas && n3_gammas->IsInside(neut[3].PSD(),neut[3].QLong()));
     
-    neutcheck[4] = (n4_neuts && n4_neuts->IsInside(neut[4].fPSD,neut[4].fQ_long));
-    gammacheck[4] = (n4_gammas && n4_gammas->IsInside(neut[4].fPSD,neut[4].fQ_long));
+    neutcheck[4] = (n4_neuts && n4_neuts->IsInside(neut[4].PSD(),neut[4].QLong()));
+    gammacheck[4] = (n4_gammas && n4_gammas->IsInside(neut[4].PSD(),neut[4].QLong()));
     
-    neutcheck[5] = (n5_neuts && n5_neuts->IsInside(neut[5].fPSD,neut[5].fQ_long));
-    gammacheck[5] = (n5_gammas && n5_gammas->IsInside(neut[5].fPSD,neut[5].fQ_long));
+    neutcheck[5] = (n5_neuts && n5_neuts->IsInside(neut[5].PSD(),neut[5].QLong()));
+    gammacheck[5] = (n5_gammas && n5_gammas->IsInside(neut[5].PSD(),neut[5].QLong()));
     
-    neutcheck[6] = (n6_neuts && n6_neuts->IsInside(neut[6].fPSD,neut[6].fQ_long));
-    gammacheck[6] = (n6_gammas && n6_gammas->IsInside(neut[6].fPSD,neut[6].fQ_long));
+    neutcheck[6] = (n6_neuts && n6_neuts->IsInside(neut[6].PSD(),neut[6].QLong()));
+    gammacheck[6] = (n6_gammas && n6_gammas->IsInside(neut[6].PSD(),neut[6].QLong()));
     
-    neutcheck[7] = (n7_neuts && n7_neuts->IsInside(neut[7].fPSD,neut[7].fQ_long));
-    gammacheck[7]= (n7_gammas && n7_gammas->IsInside(neut[7].fPSD,neut[7].fQ_long));
+    neutcheck[7] = (n7_neuts && n7_neuts->IsInside(neut[7].PSD(),neut[7].QLong()));
+    gammacheck[7]= (n7_gammas && n7_gammas->IsInside(neut[7].PSD(),neut[7].QLong()));
     
-    neutcheck[8] = (n8_neuts && n8_neuts->IsInside(neut[8].fPSD,neut[8].fQ_long));
-    gammacheck[8] = (n8_gammas && n8_gammas->IsInside(neut[8].fPSD,neut[8].fQ_long));
+    neutcheck[8] = (n8_neuts && n8_neuts->IsInside(neut[8].PSD(),neut[8].QLong()));
+    gammacheck[8] = (n8_gammas && n8_gammas->IsInside(neut[8].PSD(),neut[8].QLong()));
     
-    neutcheck[9] = (n9_neuts && n9_neuts->IsInside(neut[9].fPSD,neut[9].fQ_long));
-    gammacheck[9] =(n9_gammas && n9_gammas->IsInside(neut[9].fPSD,neut[9].fQ_long));
+    neutcheck[9] = (n9_neuts && n9_neuts->IsInside(neut[9].PSD(),neut[9].QLong()));
+    gammacheck[9] =(n9_gammas && n9_gammas->IsInside(neut[9].PSD(),neut[9].QLong()));
     
-    rawneutcheck[0] = (n0_neuts_raw && n0_neuts_raw->IsInside(neut[0].fQ_long,neut[0].fQ_short));
-    rawgammacheck[0] = (n0_gammas_raw && n0_gammas_raw->IsInside(neut[0].fQ_long,neut[0].fQ_short));
+    rawneutcheck[0] = (n0_neuts_raw && n0_neuts_raw->IsInside(neut[0].QLong(),neut[0].QShort()));
+    rawgammacheck[0] = (n0_gammas_raw && n0_gammas_raw->IsInside(neut[0].QLong(),neut[0].QShort()));
 
-    rawneutcheck[1] = (n1_neuts_raw &&  n1_neuts_raw->IsInside(neut[1].fQ_long,neut[1].fQ_short));
-    rawgammacheck[1] = (n1_gammas_raw && n1_gammas_raw->IsInside(neut[1].fQ_long,neut[1].fQ_short));
+    rawneutcheck[1] = (n1_neuts_raw &&  n1_neuts_raw->IsInside(neut[1].QLong(),neut[1].QShort()));
+    rawgammacheck[1] = (n1_gammas_raw && n1_gammas_raw->IsInside(neut[1].QLong(),neut[1].QShort()));
 
-    rawneutcheck[2] = (n2_neuts_raw && n2_neuts_raw->IsInside(neut[2].fQ_long,neut[2].fQ_short));
-    rawgammacheck[2] = (n2_gammas_raw && n2_gammas_raw->IsInside(neut[2].fQ_long,neut[2].fQ_short));
+    rawneutcheck[2] = (n2_neuts_raw && n2_neuts_raw->IsInside(neut[2].QLong(),neut[2].QShort()));
+    rawgammacheck[2] = (n2_gammas_raw && n2_gammas_raw->IsInside(neut[2].QLong(),neut[2].QShort()));
 
-    rawneutcheck[3] = (n3_neuts_raw && n3_neuts_raw->IsInside(neut[3].fQ_long,neut[3].fQ_short));
-    rawgammacheck[3] = (n3_gammas_raw && n3_gammas_raw->IsInside(neut[3].fQ_long,neut[3].fQ_short));
+    rawneutcheck[3] = (n3_neuts_raw && n3_neuts_raw->IsInside(neut[3].QLong(),neut[3].QShort()));
+    rawgammacheck[3] = (n3_gammas_raw && n3_gammas_raw->IsInside(neut[3].QLong(),neut[3].QShort()));
 
-    rawneutcheck[4] = (n4_neuts_raw && n4_neuts_raw->IsInside(neut[4].fQ_long,neut[4].fQ_short));
-    rawgammacheck[4] = (n4_gammas_raw && n4_gammas_raw->IsInside(neut[4].fQ_long,neut[4].fQ_short));
+    rawneutcheck[4] = (n4_neuts_raw && n4_neuts_raw->IsInside(neut[4].QLong(),neut[4].QShort()));
+    rawgammacheck[4] = (n4_gammas_raw && n4_gammas_raw->IsInside(neut[4].QLong(),neut[4].QShort()));
 
-    rawneutcheck[5] = (n5_neuts_raw && n5_neuts_raw->IsInside(neut[5].fQ_long,neut[5].fQ_short));
-    rawgammacheck[5] = (n5_gammas_raw && n5_gammas_raw->IsInside(neut[5].fQ_long,neut[5].fQ_short));
+    rawneutcheck[5] = (n5_neuts_raw && n5_neuts_raw->IsInside(neut[5].QLong(),neut[5].QShort()));
+    rawgammacheck[5] = (n5_gammas_raw && n5_gammas_raw->IsInside(neut[5].QLong(),neut[5].QShort()));
 
-    rawneutcheck[6] = (n6_neuts_raw && n6_neuts_raw->IsInside(neut[6].fQ_long,neut[6].fQ_short));
-    rawgammacheck[6] = (n6_gammas_raw && n6_gammas_raw->IsInside(neut[6].fQ_long,neut[6].fQ_short));
+    rawneutcheck[6] = (n6_neuts_raw && n6_neuts_raw->IsInside(neut[6].QLong(),neut[6].QShort()));
+    rawgammacheck[6] = (n6_gammas_raw && n6_gammas_raw->IsInside(neut[6].QLong(),neut[6].QShort()));
 
-    rawneutcheck[7] = (n7_neuts_raw && n7_neuts_raw->IsInside(neut[7].fQ_long,neut[7].fQ_short));
-    rawgammacheck[7] = (n7_gammas_raw && n7_gammas_raw->IsInside(neut[7].fQ_long,neut[7].fQ_short));
+    rawneutcheck[7] = (n7_neuts_raw && n7_neuts_raw->IsInside(neut[7].QLong(),neut[7].QShort()));
+    rawgammacheck[7] = (n7_gammas_raw && n7_gammas_raw->IsInside(neut[7].QLong(),neut[7].QShort()));
 
-    rawneutcheck[8] = (n8_neuts_raw && n8_neuts_raw->IsInside(neut[8].fQ_long,neut[8].fQ_short));
-    rawgammacheck[8] = (n8_gammas_raw && n8_gammas_raw->IsInside(neut[8].fQ_long,neut[8].fQ_short));
+    rawneutcheck[8] = (n8_neuts_raw && n8_neuts_raw->IsInside(neut[8].QLong(),neut[8].QShort()));
+    rawgammacheck[8] = (n8_gammas_raw && n8_gammas_raw->IsInside(neut[8].QLong(),neut[8].QShort()));
 
-    rawneutcheck[9] = (n9_neuts_raw && n9_neuts_raw->IsInside(neut[9].fQ_long,neut[9].fQ_short));
-    rawgammacheck[9] = (n9_gammas_raw && n9_gammas_raw->IsInside(neut[9].fQ_long,neut[9].fQ_short));
+    rawneutcheck[9] = (n9_neuts_raw && n9_neuts_raw->IsInside(neut[9].QLong(),neut[9].QShort()));
+    rawgammacheck[9] = (n9_gammas_raw && n9_gammas_raw->IsInside(neut[9].QLong(),neut[9].QShort()));
 
 
-    evtcheck[0] = (n0_evt && n0_evt->IsInside(neut[0].fTrel,neut[0].fQ_long));
-    evtcheck[1] = (n1_evt && n1_evt->IsInside(neut[1].fTrel,neut[1].fQ_long));    
-    evtcheck[2] = (n2_evt && n2_evt->IsInside(neut[2].fTrel,neut[2].fQ_long));
-    evtcheck[3] = (n3_evt && n3_evt->IsInside(neut[3].fTrel,neut[3].fQ_long));
-    evtcheck[4] = (n4_evt && n4_evt->IsInside(neut[4].fTrel,neut[4].fQ_long));
-    evtcheck[5] = (n5_evt && n5_evt->IsInside(neut[5].fTrel,neut[5].fQ_long));
-    evtcheck[6] = (n6_evt && n6_evt->IsInside(neut[6].fTrel,neut[6].fQ_long));
-    evtcheck[7] = (n7_evt && n7_evt->IsInside(neut[7].fTrel,neut[7].fQ_long));
-    evtcheck[8] = (n8_evt && n8_evt->IsInside(neut[8].fTrel,neut[8].fQ_long));
-    evtcheck[9] = (n9_evt && n9_evt->IsInside(neut[9].fTrel,neut[9].fQ_long));
+    evtcheck[0] = (n0_evt && n0_evt->IsInside(neut[0].TRel(),neut[0].QLong()));
+    evtcheck[1] = (n1_evt && n1_evt->IsInside(neut[1].TRel(),neut[1].QLong()));    
+    evtcheck[2] = (n2_evt && n2_evt->IsInside(neut[2].TRel(),neut[2].QLong()));
+    evtcheck[3] = (n3_evt && n3_evt->IsInside(neut[3].TRel(),neut[3].QLong()));
+    evtcheck[4] = (n4_evt && n4_evt->IsInside(neut[4].TRel(),neut[4].QLong()));
+    evtcheck[5] = (n5_evt && n5_evt->IsInside(neut[5].TRel(),neut[5].QLong()));
+    evtcheck[6] = (n6_evt && n6_evt->IsInside(neut[6].TRel(),neut[6].QLong()));
+    evtcheck[7] = (n7_evt && n7_evt->IsInside(neut[7].TRel(),neut[7].QLong()));
+    evtcheck[8] = (n8_evt && n8_evt->IsInside(neut[8].TRel(),neut[8].QLong()));
+    evtcheck[9] = (n9_evt && n9_evt->IsInside(neut[9].TRel(),neut[9].QLong()));
     
 
     
@@ -304,16 +304,16 @@ namespace psd{
     for(unsigned int i=0;i<NEUTNUM;i++){
       if(i>=neut.size())
 	break;
-      hPSD_n_[i]->Fill(neut[i].fPSD,neut[i].fQ_long); 
-      hPSDq_n[i]->Fill(neut[i].fQ_long,neut[i].fQ_short);    
+      hPSD_n_[i]->Fill(neut[i].PSD(),neut[i].QLong()); 
+      hPSDq_n[i]->Fill(neut[i].QLong(),neut[i].QShort());    
     
-    hQvT_n[i]->Fill(neut[i].fTrel,neut[i].fQ_long);
+    hQvT_n[i]->Fill(neut[i].TRel(),neut[i].QLong());
     if(rawneut_orcheck){
       h_ndetMult_ngated->Fill(Narray.fMult);
-      hQvT_ngated[i]->Fill(neut[i].fTrel,neut[i].fQ_long);
+      hQvT_ngated[i]->Fill(neut[i].TRel(),neut[i].QLong());
     }
     if(evtcheck[i])
-      hPSDq_n_evtgated[i]->Fill(neut[i].fQ_long,neut[i].fQ_short);
+      hPSDq_n_evtgated[i]->Fill(neut[i].QLong(),neut[i].QShort());
     }
     
     return 1;

@@ -474,6 +474,8 @@ int RN_EventProcessor::AttachFromEVT(const TString& fEvtFilename){
 
   RNROOT::gAnalyzer_stack.Terminate();
   Terminate();
+
+  return 1;
 }
 
 
