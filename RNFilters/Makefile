@@ -21,7 +21,7 @@ endif
 
 CFLAGS=`root-config --cflags` -c ${DEBUG}
 GLIBS=`root-config --glibs`
-LINK_DIR=${PWD}/../../lib
+LINK_DIR=${PWD}/../lib
 LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} 
 INC_DIR=-I${ROOTSYS}/include -I$(PWD)/../RNCore/include -I$(PWD)/../ -I$(HDRDIR)
 

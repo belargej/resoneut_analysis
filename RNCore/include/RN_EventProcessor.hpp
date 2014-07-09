@@ -137,6 +137,7 @@ protected:
   static TTree* fgScalerTree;
   TChain* fChain;
 
+
   //reading from evt file
   unsigned int fBufferWords; //number of short length words, each 2 bytes
   unsigned int fBufferBytes; //number of bytes to be stored
@@ -149,7 +150,7 @@ protected:
   int fTimer; 
   Float_t fScalerValues[32]; //CAEN Scaler Module 32 channels  
   Double32_t fScalerSums[32]; //CAEN Scaler Module 32 channels  
-  Int_t fEvent[3];
+  Int_t fEvent[3];  
   // ScalerNames scaler_names;
   //ScalerValues scaler_values; //CAEN Scaler Module 32 channels
   

@@ -35,7 +35,8 @@ bool NewTree_Analyzer::Begin(){
   fgRootFile->cd();
   fNewTree = new TTree("DataTree","DataTree");
 
-  fNewTree->Branch("Event",&fEvent,"RunNum/I:flag/I:ScalerIDX/I");
+  //this fEvent, since fEvent is not a static global member of RN_EventProcessors, we must set this newtree branch to the fEvent which belongs to this RN_Analyzer and then, in Process(),retrieve the Event info from the MainAnalyzer.
+  fNewTree->Branch("Event",&this->fEvent,"RunNum/I:flag/I:ScalerIDX/I");
 
   RNROOT::gParameter_stack.AddBranches(fNewTree);
   RNROOT::gModule_stack.AddBranches(fNewTree);
@@ -44,6 +45,10 @@ bool NewTree_Analyzer::Begin(){
 }
 
 bool NewTree_Analyzer::Process(){
+  for(unsigned int i=0 ;i<3;i++){
+  this->fEvent[i] = RNROOT::gMainAnalyzer.EventInfo(i);
+
+  }
   return 1;
 }
 
@@ -53,6 +58,9 @@ bool NewTree_Analyzer::ProcessFill(){
 }
 
 void NewTree_Analyzer::Reset(){
+  for(unsigned int i=0; i<3;i++){
+    this->fEvent[i] = 0;
+  }
 }
 
 bool NewTree_Analyzer::TerminateIfLast(){

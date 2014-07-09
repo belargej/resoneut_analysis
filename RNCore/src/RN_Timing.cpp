@@ -14,7 +14,6 @@ RN_RFTime::RN_RFTime(std::string name):RN_BaseClass(name,name),
   
 }
 
-
 void RN_RFTime::SetCalibrations(RN_VariableMap&detvar){
   detvar.GetParam(Form("%s.tlin",GetName()),fTLin);
   detvar.GetParam(Form("%s.tshift",GetName()),fTShift);
