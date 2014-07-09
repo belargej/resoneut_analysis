@@ -4,7 +4,8 @@ SRCFILES=PSD_Analyzer.cpp IC_Analyzer.cpp Si_Analyzer.cpp \
 	Trigger_Analyzer.cpp Si_IC_Analyzer.cpp Module_Analyzer.cpp \
 	NaI_Analyzer.cpp TRel_Analyzer.cpp Q_ValueAnalyzer.cpp\
 	NewTree_Analyzer.cpp NaI_NeutAnalyzer.cpp F17dn_Analyzer.cpp \
-	Mg24dn_Analyzer.cpp Neut_TOF_Analyzer.cpp BeamSpot.cpp
+	Mg24dn_Analyzer.cpp Neut_TOF_Analyzer.cpp BeamSpot.cpp \
+	EventAnalyzer.cpp
 ########Directories and Files###########################################################
 SRCDIR=src
 HDRDIR=include

@@ -30,7 +30,7 @@ Double_t RN_RFTime::T_Wrapped() const{
     time=fabs(82.417-time);  
     return time;
   }
-  else return -1;
+  else return 0;
   
 }
 

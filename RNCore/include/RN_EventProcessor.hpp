@@ -137,6 +137,7 @@ protected:
   static TTree* fgScalerTree;
   TChain* fChain;
 
+
   //reading from evt file
   unsigned int fBufferWords; //number of short length words, each 2 bytes
   unsigned int fBufferBytes; //number of bytes to be stored
@@ -149,7 +150,7 @@ protected:
   int fTimer; 
   Float_t fScalerValues[32]; //CAEN Scaler Module 32 channels  
   Double32_t fScalerSums[32]; //CAEN Scaler Module 32 channels  
-  Int_t fEvent[3];
+  Int_t fEvent[3];  
   // ScalerNames scaler_names;
   //ScalerValues scaler_values; //CAEN Scaler Module 32 channels
   
@@ -188,6 +189,9 @@ public:
   virtual Int_t GetEntry(Long64_t entry, Int_t getall = 0) { return fChain ? fChain->GetEntry(entry, getall) : 0; }
   virtual int GetDetectorEntry(){return 1;};
 
+
+  Int_t EventInfo(int i=0)const;
+
   ClassDef(RN_EventProcessor,1);
 };
 
@@ -198,6 +202,9 @@ extern RN_EventProcessor gEventProcessor;
 TFile * RN_EventProcessor::fgRootFile = 0;
 TTree * RN_EventProcessor::fgDataTree = 0;
 TTree * RN_EventProcessor::fgScalerTree = 0;
+
+Int_t RN_EventProcessor::EventInfo(int i)const{ return ((i<3) ? fEvent[i] : 0);}
+  
 
 #endif
 

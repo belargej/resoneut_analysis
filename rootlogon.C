@@ -2,6 +2,7 @@
   gSystem->Load("libRNCore.so");
   gSystem->Load("libSAK.so");
   gSystem->Load("libRNanalyzers.so");
+  gSystem->Load("libRNfilters.so");
 
  
 
