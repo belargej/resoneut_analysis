@@ -14,8 +14,6 @@
 using namespace RNROOT;
 
 namespace gamma_nai{
-  
-  Double32_t nai_t(0);
   TH1D *hNaIArray_T;	      
   TH1D *hNaIArray_E;	      
   TH1D *hNaIArray_Position;
@@ -39,7 +37,6 @@ namespace gamma_nai{
   }
   
   void NaI_Analyzer::Reset(){
-    nai_t=0;
   }
   
   bool NaI_Analyzer::Begin(){
@@ -79,22 +76,19 @@ namespace gamma_nai{
   }
   bool NaI_Analyzer::ProcessFill(){
     if(nai_array.Mult()>0){
-      hNaIArray_Detector->Fill(nai_array.ChRaw(0));    
-      hNaIArray_T->Fill(nai_array.TRaw(0));
-      hNaIArray_E->Fill(nai_array.ERaw(0));
+      hNaIArray_Detector->Fill(nai_array.Ch());    
+      hNaIArray_T->Fill(nai_array.TRaw());
+      hNaIArray_E->Fill(nai_array.ERaw());
       hNaIArray_Position->Fill(nai_array.fPosition[0]); 
-      hNaIArray_TvRftime->Fill(rftime.T_Wrapped(),nai_array.TRaw(0));
+      hNaIArray_TvRftime->Fill(rftime.TMod2(),nai_array.TRaw());
     }
     for (unsigned int i=0;i<20;i++){
-      if(nai[i].SumE()>0){
-	
 	hNaI_T[i]->Fill(nai[i].T());
 	hNaI_T1[i]->Fill(nai[i].T1());
 	hNaI_T2[i]->Fill(nai[i].T2());
 	hNaI_ESum[i]->Fill(nai[i].SumE());
 	hNaI_EGamma[i]->Fill(nai[i].E_Gamma());
-	hNaI_Position[i]->Fill(nai[i].Position()); 
-      }
+	hNaI_Position[i]->Fill(nai[i].Position());
     }
     return 1;
   }
@@ -104,11 +98,7 @@ namespace gamma_nai{
   bool NaI_Analyzer::Terminate(){
     return 1;
   }
-  bool NaI_Analyzer::TerminateIfLast(){
-    fgRootFile->Write();
-    fgRootFile->Close();
-    return 1;
-  }
+
 
  
 

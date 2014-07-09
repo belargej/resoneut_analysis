@@ -249,12 +249,11 @@ TH2D(Form("h_evtheta[%s]",si_[i].GetName()),Form("h_evtheta[%s];Theta;E",si_[i].
     if(gRequirePTheta2 && !ptheta2check){
       return 0;
     }
-
-    /*    //TEMP
-     if(rftime.T_Wrapped()<8 || rftime.T_Wrapped()>75){
+    /*
+    if(!(si_[1].back.TRaw()>0))
       return 0;
-    }
     */
+
     return 1;
   }
   bool Si_Analyzer::ProcessFill(){
@@ -305,14 +304,14 @@ TH2D(Form("h_evtheta[%s]",si_[i].GetName()),Form("h_evtheta[%s];Theta;E",si_[i].
       h_si_x_y[i]->Fill(si_cluster_[i].fPos[0].X(),si_cluster_[i].fPos[0].Y());
       h_t[i]->Fill(si_[i].Back_T());
       hsi_EvT[i]->Fill(si_[i].back.T(),si_[i].back.E());    
-      rfvt_si[i]->Fill(rftime.fT,si_[i].Back_T(0));
-      rfvtrel_si[i]->Fill(rftime.fT,si_[i].Back_T(0)); 
+      rfvt_si[i]->Fill(rftime.TRaw(),si_[i].Back_T(0));
+      rfvtrel_si[i]->Fill(rftime.TRaw(),si_[i].Back_T(0)); 
       
      if(protcheck){
 	h_evtheta_protgated[i]->Fill(si_cluster_[i].Theta()*180/TMath::Pi(),si_array.E_AB());
 	h_si_x_y_prot[i]->Fill(si_cluster_[i].fPos[0].X(),si_cluster_[i].fPos[0].Y());
-	rfvt_prot_si_[i]->Fill(rftime.fT,si_[i].Back_T(0));
-	rfvtrel_prot_si[i]->Fill(rftime.fT,rftime.fT - si_[i].Back_T(0));
+	rfvt_prot_si_[i]->Fill(rftime.TRaw(),si_[i].Back_T(0));
+	rfvtrel_prot_si[i]->Fill(rftime.TRaw(),rftime.TRaw() - si_[i].Back_T(0));
      }
     }
     

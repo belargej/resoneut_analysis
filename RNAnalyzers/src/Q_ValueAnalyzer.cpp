@@ -13,20 +13,10 @@
 #include "Q_ValueAnalyzer.hpp"
 #include "RN_Root.hpp"
 
-#include "Si_IC_Analyzer.hpp"
 #include "Si_Analyzer.hpp"
 #include "IC_Analyzer.hpp"
 
 using namespace RNROOT;
-
-#if 1
-#define USEANGLE si_array.Theta_A()
-#else
-#define USEANGLE si_array.Theta_B()
-#endif
-
-#define Q_MIN 1.2
-#define Q_MAX 1.6
 
 namespace physical{
 
@@ -35,7 +25,6 @@ namespace physical{
   TH1D *Q_Value_protontheta;
   TH1D *Q_Value_protontheta_hi1;
   TH1D *Q_Value_proton_hi1;
-  TH1D *Q_Value_proton_hi1_ictime;
   TH1D *Q_Value_proton_hi2;
 
   //Q v Parameters
@@ -50,11 +39,6 @@ namespace physical{
   TH2D *Q_v_pE_proton_hi1;	       
   TH2D *Q_v_pRelAngle_proton_hi1;       
 	       				       	       
-  TH2D *Q_v_pTheta_proton_hi1_ictime;   
-  TH2D *Q_v_pE_proton_hi1_ictime;       
-  TH2D *Q_v_pRelAngle_proton_hi1_ictime;
-
-
   Double32_t q_val_p;
   Double32_t q_val_n;
 
@@ -81,12 +65,6 @@ namespace physical{
     if(!gReactionInfo.E_Fragment())
       std::cout<<"Heavy Ion energy ansatz for Q value reconstruction needed"<<std::endl;
 
-
-    //if RNROOT::gNewTree is allocated go ahead and add the branch
-    if(RNROOT::gNewTree){
-      RNROOT::gNewTree->Branch("q_value_p",&q_val_p);
-    }
-
     //create directory structure
     fgRootFile->mkdir("physical");
     fgRootFile->cd("physical");
@@ -99,7 +77,6 @@ namespace physical{
     Q_Value=new TH1D("Q_val_p","Q_value_p;Q_value",512,-1,10);
     Q_Value_proton=new TH1D("Q_val_proton","Q_value_proton;Q_value",512,-1,10);
     Q_Value_proton_hi1=new TH1D("Q_val_proton_hi1","Q_val_proton_hi1;Q_value",512,-1,10);
-    Q_Value_proton_hi1_ictime=new TH1D("Q_val_proton_hi1_ictime","Q_val_proton_hi1_ictime;Q_value",512,-1,10);
     Q_Value_proton_hi2=new TH1D("Q_val_proton_hi2","Q_val_proton_hi2;Q_value",512,-1,10);
 
 
@@ -114,13 +91,6 @@ namespace physical{
     Q_v_pTheta_proton_hi1=new TH2D("Q_v_pTheta_proton_hi1","Q_v_pTheta_proton_hi1;Q;Theta",512,-1,10,180,0,179);;
     Q_v_pE_proton_hi1=new TH2D("Q_v_pE_proton_hi1","Q_v_pE_proton_hi1;Q;E",512,-1,10,512,0,32);;
     Q_v_pRelAngle_proton_hi1=new TH2D("Q_v_pRelAngle_proton_hi1","Q_v_pRelAngle_proton_hi1;Q;RelAngle",512,-1,10,180,0,179);
-
-    Q_v_pTheta_proton_hi1_ictime=new TH2D("Q_v_pTheta_proton_hi1_ictime","Q_v_pTheta_proton_hi1_ictime;Q;Theta",512,0,32,180,0,179);
-    Q_v_pE_proton_hi1_ictime=new TH2D("Q_v_pE_proton_hi1_ictime","Q_v_pE_proton_hi1_ictime;Q;E",512,-1,10,512,0,32);
-    Q_v_pRelAngle_proton_hi1_ictime=new TH2D("Q_v_pRelAngle_proton_hi_ictime","Q_v_pRelAngle_proton_hi_ictime;Q;RelAngle",512,-1,10,180,0,179);;
-    
-
-
 
     fgRootFile->cd();
     return 1;
@@ -151,12 +121,9 @@ namespace physical{
     
     if(si_array.E_AB()>0&& useangle!=0){
     
-      q_val_p = gReactionInfo.DecayQValueEstimate(si_array.E_AB(),USEANGLE);
+      q_val_p = gReactionInfo.DecayQValueEstimate(si_array.E_AB(),useangle);
     
     }
-
-    // if(q_val_p<Q_MIN||q_val_p>Q_MAX)
-    // return 0;
 
     return 1;
   }
@@ -180,15 +147,6 @@ namespace physical{
 	Q_v_pTheta_proton_hi1->Fill(q_val_p,si_array.Theta_A());   	       
 	Q_v_pE_proton_hi1->Fill(q_val_p,si_array.E_AB());   	       
 	Q_v_pRelAngle_proton_hi1->Fill(q_val_p,si_array.Theta_A());   
-	
-	if(coinc::si_ic_tcheck){
-	  Q_Value_proton_hi1_ictime->Fill(q_val_p);
-	  Q_v_pTheta_proton_hi1_ictime->Fill(q_val_p,si_array.Theta_A());   
-	  Q_v_pE_proton_hi1_ictime->Fill(q_val_p,si_array.E_AB());          
-	  Q_v_pRelAngle_proton_hi1_ictime->Fill(q_val_p,si_array.Theta_A());   
-	  
-    
-	}
 	
       }
       if(ionchamber::hi_check[1]){

@@ -34,62 +34,76 @@
 
 class RN_RFTime:public RN_BaseClass{
 protected:
-  double tlin;//!
-  double tshift;//!
+  double fTLin;//!
+  double fTShift;//!
   double fTo;//!
+ 
+  //data parameters 
+  double fT;
+  
 
 public:
-  RN_RFTime(int i = 0):tlin(1),
-		       tshift(0),
-		       fTo(0)
-  {
-  }
-  RN_RFTime(std::string name);
+  RN_RFTime(std::string name = "rftime");
   ~RN_RFTime(){};
-  /*
-  RN_RFTime(const RN_RFTime& old):TObject(old){
-    fName=old.Name();
-    fT=old.fT;
-    tlin=old.tlin;
-    tshift=old.tshift;
-    fTo=old.fTo;
-  }
-  */
-  /*
-  RN_RFTime& operator=(const RN_RFTime& other){
-    if(this !=&other){
-      fName=other.Name();
-      fT=other.fT;
-      tlin=other.tlin;
-      tshift=other.tshift;
-      fTo=other.fTo;
-    }
-    return *this;
-  }
-  */
-
- //data variables 
-  double fT;
 
   Double_t T()const;
-  Double_t T_Wrapped()const;
-
-
+  Double_t TRaw()const;
+  Double_t TWrapped()const;
+  Double_t TMod()const;
+  Double_t TMod2()const;
 
   void SetCalibrations(RN_VariableMap&);
   void InsertHit(const double&);
   void Reset();
- 
- 
-  
- 
-  ClassDef(RN_RFTime,1);  
+
+  ClassDef(RN_RFTime,2);  
 };
 
 
 typedef std::vector<RN_RFTime> RN_RFCollection;
 typedef std::vector<RN_RFTime>::iterator RN_RFCollectionRef;
 
+//fT is protected, so we need a safe way to access the data
+inline Double_t RN_RFTime::TRaw() const{
+  return fT;
+}
+
+/***********************************************************************/
+#ifdef __RFTIME_CXX
+
+//for calibrating the time into ns
+Double_t RN_RFTime::T() const{
+  return ( fT > 0 ? ( ( fT * fTLin ) + fTShift ) : 0 );
+}
+
+//TMod returns the modulus, offset.  This offset is provided
+//in the configuration file as tzero and is after calibration into
+//ns
+Double_t RN_RFTime::TMod() const{
+  double time=T();
+  if(fT>0 && fTo){
+    time = fmod((time - fTo),82.417);
+    if (time < 0)
+      time+=82.417;
+  }
+  return time;
+}
+
+//TMod2 returns the modulus of fT after calibrating into ns
+//82.417ns is the time difference between 2 beam bunches
+Double_t RN_RFTime::TMod2() const{
+  return ((fT>0) ? fmod(T(),82.417) : 0);
+}
+
+//TWrapped just flips the correlation in Time so that it reads from left to right instead of right to left.
+
+Double_t RN_RFTime::TWrapped() const{
+  return (fT>0 ? (82.417-TMod()) : 0);  
+}
+
+
+
+#endif
 
 
 

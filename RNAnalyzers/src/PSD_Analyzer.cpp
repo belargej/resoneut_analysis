@@ -1,9 +1,9 @@
 /***************************************************************/
-//Class: NeutAnalyzer
+//Class: NeutPSDAnalyzer
 //
 //Author:Sean Kuvin
 //
-//NeutAnalyzer is added to the analyzer list to sort neutron detector
+//NeutPSDAnalyzer is added to the analyzer list to sort neutron detector
 //parameters.  Make histograms, load cuts, and check cuts 
 //using parameters related to the neutron detector pulse shape
 // discrimination spectra.  Also, neutron timing.
@@ -113,13 +113,13 @@ namespace psd{
   TH2D *hPSDq_n_evtgated[NEUTNUM];
 
 
-  NeutAnalyzer::NeutAnalyzer():RN_Analyzer("NeutAnalyzer","NeutAnalyzer")
+  NeutPSDAnalyzer::NeutPSDAnalyzer():RN_Analyzer("NeutPSDAnalyzer","NeutPSDAnalyzer")
   {
   }
   
 
 
-  bool NeutAnalyzer::Begin(){
+  bool NeutPSDAnalyzer::Begin(){
 
     if(!fgRootFile){
       std::cout<<"output file has not been created"<<std::endl;
@@ -163,7 +163,7 @@ namespace psd{
     return 1;
     
   }
-  void NeutAnalyzer::Reset(){
+  void NeutPSDAnalyzer::Reset(){
     for(unsigned int i=0;i<NEUTNUM;i++){
       neutcheck[i]=0;
       neut_sansgamma[i]=0;
@@ -182,7 +182,7 @@ namespace psd{
   }
   
 
-  bool NeutAnalyzer::Process(){ 
+  bool NeutPSDAnalyzer::Process(){ 
  
     
     neutcheck[0] = (n0_neuts && n0_neuts->IsInside(neut[0].PSD(),neut[0].QLong()));
@@ -297,10 +297,13 @@ namespace psd{
     return 1; 
   }
 
-  bool NeutAnalyzer::ProcessFill(){
+  bool NeutPSDAnalyzer::ProcessFill(){
     
     h_ndetMult->Fill(Narray.fMult);  
-    
+    if(rawneut_orcheck){
+      h_ndetMult_ngated->Fill(Narray.fMult);
+    }
+
     for(unsigned int i=0;i<NEUTNUM;i++){
       if(i>=neut.size())
 	break;
@@ -308,8 +311,7 @@ namespace psd{
       hPSDq_n[i]->Fill(neut[i].QLong(),neut[i].QShort());    
     
     hQvT_n[i]->Fill(neut[i].TRel(),neut[i].QLong());
-    if(rawneut_orcheck){
-      h_ndetMult_ngated->Fill(Narray.fMult);
+    if(rawneutcheck[i]){
       hQvT_ngated[i]->Fill(neut[i].TRel(),neut[i].QLong());
     }
     if(evtcheck[i])
@@ -320,17 +322,11 @@ namespace psd{
   }
 
   
-  bool NeutAnalyzer::Terminate(){
-    return 1;
-  }
-  
-  bool NeutAnalyzer::TerminateIfLast(){
-    fgRootFile->Write();
-    fgRootFile->Close();
+  bool NeutPSDAnalyzer::Terminate(){
     return 1;
   }
 
-  void LoadGates(const std::string& input){
+  void LoadPSDGates(const std::string& input){
     TFile in(input.c_str());    
     if(in.Get("n0_neuts") && !n0_neuts)
       n0_neuts=new TCutG(*(TCutG*)in.Get("n0_neuts"));

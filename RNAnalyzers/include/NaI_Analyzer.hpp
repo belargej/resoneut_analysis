@@ -34,7 +34,7 @@ namespace gamma_nai{
     virtual bool ProcessFill();
     
     virtual bool Terminate();
-    virtual bool TerminateIfLast();
+
 
     virtual void Clear(){};
     virtual void Reset();
@@ -44,12 +44,6 @@ namespace gamma_nai{
   
 
   };
-
-  
-  extern Double32_t nai_t;
- 
-
-
 }
 
 #endif

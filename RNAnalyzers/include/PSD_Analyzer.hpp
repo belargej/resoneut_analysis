@@ -1,9 +1,9 @@
 /***************************************************************/
-//Class: NeutAnalyzer
+//Class: NeutPSDAnalyzer
 //
 //Author:Sean Kuvin
 //
-//NeutAnalyzer is added to the analyzer list to sort neutron detector
+//NeutPSDAnalyzer is added to the analyzer list to sort neutron detector
 //parameters.  Make histograms, load cuts, and check cuts 
 //using parameters related to the neutron detector pulse shape
 // discrimination spectra.  Also, neutron timing.
@@ -19,31 +19,29 @@
 #include <vector>
 #include <new>
 #include "RN_Analyzer.hpp"
-#include "plugins/sak/sak_Gates.hpp"
 #include "RN_Root.hpp"
 
 namespace psd{
   
   
-  class NeutAnalyzer:public RN_Analyzer{
+  class NeutPSDAnalyzer:public RN_Analyzer{
   private:
     
   public:
     
-    NeutAnalyzer();
-    virtual ~NeutAnalyzer(){};
+    NeutPSDAnalyzer();
+    virtual ~NeutPSDAnalyzer(){};
     
     virtual bool Begin();
     
     virtual bool Process();
     virtual bool ProcessFill();
     virtual bool Terminate();
-    virtual bool TerminateIfLast();
     virtual void Clear(){};
     virtual void Reset();
 
 
-  ClassDef(NeutAnalyzer,0);
+  ClassDef(NeutPSDAnalyzer,0);
 
 };
   
@@ -111,7 +109,7 @@ namespace psd{
   void Require_RawGamma_ORCheck();
 
  
-  void LoadGates(const std::string&);
+  void LoadPSDGates(const std::string&);
   void ClearGates();
 
 

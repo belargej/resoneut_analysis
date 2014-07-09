@@ -22,8 +22,6 @@ namespace neut_tof{
 
   TH1D *hrftime_n[NEUTNUM];
   TH1D *hrftime_PSDn[NEUTNUM];
-  TH1D *hT_nALL;
-  TH1D *hT_nPSD_ALL;
   TH1D *hT_n[NEUTNUM];
   TH1D *hT_PSDn[NEUTNUM];
   TH1D *hTRelRF_PSDn[NEUTNUM];
@@ -32,8 +30,9 @@ namespace neut_tof{
   TH2D *hnT_vRF[NEUTNUM];
   TH2D *hQvT_n[NEUTNUM];
   TH1D *hrftime_nPSD;
- 
-
+  TH1D *hT_nALL;
+  TH1D *hT_nPSD_ALL;
+  TH1D *hTRelRF_nPSD;
 
   Neut_TOF_Analyzer::Neut_TOF_Analyzer():RN_Analyzer("Neut_TOF_Analyzer","Neut_TOF_Analyzer")
   {
@@ -59,6 +58,7 @@ namespace neut_tof{
     hrftime_nPSD=new TH1D("hrftime_nPSD","hrftime_nPSD",128,0,127);
     hT_nPSD_ALL=new TH1D("hT_nPSD_ALL","hT_nPSD_ALL",512,0,1024);
     hT_nALL=new TH1D("hT_nALL","hT_nALL",512,0,1024);
+    hTRelRF_nPSD=new TH1D("hTRelRF_nPSD","hTRelRF_nPSD",512,0,1024);
     for(unsigned int i=0;i<NEUTNUM;i++){
       hT_n[i]=new TH1D(Form("hT_n[%d]",i),Form("hT_n[%d]",i),512,0,1024);
       hT_PSDn[i]=new TH1D(Form("hT_PSDn[%d]",i),Form("hT_PSDn[%d]",i),512,0,1024);
@@ -88,20 +88,21 @@ namespace neut_tof{
   }
 
   bool Neut_TOF_Analyzer::ProcessFill(){
-    if(psd::rawneut_orcheck)
-      hrftime_nPSD->Fill(rftime.T_Wrapped());
+    if(psd::rawneut_orcheck){
+      hrftime_nPSD->Fill(rftime.TMod2());
+    }
     for(unsigned int i=0;i<neut.size();i++){
       
       if(neut[i].T()>0){
 	hT_n[i]->Fill(neut[i].T());
-	hrftime_n[i]->Fill(rftime.T_Wrapped());
-	hnT_vRF[i]->Fill(rftime.fT,neut[i].T());
+	hrftime_n[i]->Fill(rftime.TMod2());
+	hnT_vRF[i]->Fill(rftime.TMod2(),neut[i].T());
       }
       if(psd::rawneutcheck[i]){
 	hT_PSDn[i]->Fill(neut[i].T());
-	hTRelRF_PSDn[i]->Fill(neut[i].T()-rftime.T_Wrapped());
-	hrftime_PSDn[i]->Fill(rftime.T_Wrapped());
-	hQvrftime_n[i]->Fill(rftime.T_Wrapped(),neut[i].QLong());
+	hTRelRF_PSDn[i]->Fill(neut[i].T()-rftime.TMod2());
+	hrftime_PSDn[i]->Fill(rftime.TMod2());
+	hQvrftime_n[i]->Fill(rftime.TMod2(),neut[i].QLong());
 	hQvT_n[i]->Fill(neut[i].T(),neut[i].QLong());
       }
 
@@ -116,6 +117,7 @@ namespace neut_tof{
     for(unsigned int i=0;i<neut.size();i++){
       hT_nALL->Add(hT_n[i]);
       hT_nPSD_ALL->Add(hT_PSDn[i]);
+      hTRelRF_nPSD->Add(hTRelRF_PSDn[i]);
     }
     return 1;
   }

@@ -188,6 +188,8 @@ public:
   virtual Int_t GetEntry(Long64_t entry, Int_t getall = 0) { return fChain ? fChain->GetEntry(entry, getall) : 0; }
   virtual int GetDetectorEntry(){return 1;};
 
+  Int_t EventInfo(int i=0)const;
+
   ClassDef(RN_EventProcessor,1);
 };
 
@@ -199,7 +201,12 @@ TFile * RN_EventProcessor::fgRootFile = 0;
 TTree * RN_EventProcessor::fgDataTree = 0;
 TTree * RN_EventProcessor::fgScalerTree = 0;
 
+Int_t RN_EventProcessor::EventInfo(int i)const{ return ((i<3) ? fEvent[i] : 0);}
+  
+
 #endif
+
+
 
 
 

@@ -40,17 +40,15 @@ namespace ionchamber{
   TH2D *hCalICDEvE;  
   TH2D *hCalICPosEvE;  
   TH2D *hCalICfDEvfE;   
-  TH1D *h_IC_t;
-  TH1D *h_IC_trel_rf;
-  TH1D *hIC_Theta;
-  TH2D *hIC_EvRF;
-  TH2D *hIC_TvRF;
-  TH1D *hIC_Phi;
-  TH2D *hIC_EvTheta;
-  TH2D * h_xvy;
-  TH2D * hIC_de_v_xgride;
-  TH1D *hxgrid_mult;
-  TH1D *hygrid_mult;
+  TH1D *hICT;
+  TH1D *hICTheta;
+  TH2D *hICEvRF;
+  TH2D *hICEvT;
+  TH1D *hICPhi;
+  TH2D *hICEvTheta;
+  TH2D *hXvY;
+  TH1D *hXGridMult;
+  TH1D *hYGridMult;
 
 
   IC_Analyzer::IC_Analyzer()
@@ -78,10 +76,10 @@ namespace ionchamber{
 
     //create histograms
     fgRootFile->cd("IC/xy");
-    h_xvy= new TH2D("h_xvy","h_xvy;x_chan;y_chan",128,-128,128,128,-128,128);
-    hIC_Theta = new TH1D("h_ICTheta","h_ICTheta;Theta",180,0,179);
-    hIC_EvTheta = new TH2D("h_IC_EvTheta","h_IC_EvTheta;Theta;E",180,0,179,512,0,8191);
-    hIC_Phi = new TH1D("h_ICPhi","h_ICPhi;Phi",180,0,179);
+    hXvY= new TH2D("hXvY","hXvY;XChan;YChan",128,-128,128,128,-128,128);
+    hICTheta = new TH1D("hICTheta","hICTheta;Theta",180,0,179);
+    hICEvTheta = new TH2D("hICEvTheta","hICEvTheta;Theta;E",180,0,179,512,0,8191);
+    hICPhi = new TH1D("hICPhi","hICPhi;Phi",180,0,179);
 
     fgRootFile->cd("IC/ede/rawpar");
     hRawICDEvE=new TH2D("hRawICDEvE","IRawCDEvE; E + dE[arb];dE [arb]",1024,0,4096,1024,0,4096);
@@ -97,14 +95,13 @@ namespace ionchamber{
 
 
     fgRootFile->cd("IC/t");
-    h_IC_t = new TH1D("h_IC_t","ICt;t",1024,0,4095);
-    h_IC_trel_rf = new TH1D("h_IC_trelRF","ICtrelRF;trel_RF",1024,0,4095);
-    hIC_EvRF = new TH2D("hIC_EvRF","hIC_EvRF;RF;E",1024,0,4095,1024,0,4095);
-    hIC_TvRF = new TH2D("hIC_TvRF","hIC_TvRF;RF;T",1024,0,4095,1024,0,4095);
+    hICT = new TH1D("hICT","ICT;t",1024,0,4095);
+    hICEvT = new  TH2D("hICEvT","hICEvT;T;E",1280,0,1279,1024,0,4095);
+    hICEvRF = new TH2D("hICEvRF","hICEvRF;RF;E",1024,0,4095,1024,0,4095);
 
     fgRootFile->cd("IC/mult");    
-    hxgrid_mult = new TH1D("xgrid_mult","xgrid_mult;mult",32,0,31);
-    hygrid_mult = new TH1D("ygrid_mult","ygrid_mult;mult",32,0,31);
+    hXGridMult = new TH1D("hXGridMult","hXGridMult;mult",32,0,31);
+    hYGridMult = new TH1D("hYGridMult","hYGridMult;mult",32,0,31);
 
     return 1;
   }
@@ -156,18 +153,18 @@ namespace ionchamber{
 
 
 
-    hxgrid_mult->Fill(ic.xgrid.Mult());
-    hygrid_mult->Fill(ic.ygrid.Mult());
+    hXGridMult->Fill(ic.xgrid.Mult());
+    hYGridMult->Fill(ic.ygrid.Mult());
 
    
-    h_xvy->Fill(ic.GetHitPos().X(),ic.GetHitPos().Y());
-    hIC_Theta->Fill(ic.Theta());
-    hIC_EvTheta->Fill(ic.Theta(),ic.TotalE());
-    hIC_Phi->Fill(ic.Phi());
-    h_IC_t->Fill(ic.T());
-    h_IC_trel_rf->Fill(ic.T()-rftime.T_Wrapped());
-    hIC_EvRF->Fill(rftime.fT,ic.TotalE());
-    hIC_TvRF->Fill(rftime.fT,ic.T());
+    hXvY->Fill(ic.GetHitPos().X(),ic.GetHitPos().Y());
+    hICTheta->Fill(ic.Theta());
+    hICEvTheta->Fill(ic.Theta(),ic.TotalE());
+    hICPhi->Fill(ic.Phi());
+    hICT->Fill(ic.T());
+    hICEvRF->Fill(rftime.TRaw(),ic.TotalE());
+    hICEvT->Fill(ic.T(),ic.TotalE());
+
 
     
     

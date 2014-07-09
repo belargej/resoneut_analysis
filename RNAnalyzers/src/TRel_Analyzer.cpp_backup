@@ -3,9 +3,15 @@
 //
 //Author:Sean Kuvin
 //
-//TRel_Analyzer is added to the analyzer list
-//to look at the timing difference between different 
-//detectors
+//S2_NEUT_IC_Analyzer is added to the analyzer list just as S2_Analyzer
+//is except now we are looking at Silicon detector parameters,Ion 
+//Chamber parameters and Neutron Detector parameters.  
+//The results of sorting through
+//the S2_Analyzer,the IC_analyzer,S2_IC_Analyzer, and the NeutAnalyzer 
+//are necessary for proper function of this class. 
+//Therefore, all 4 analyzers must be 
+//added to the analyzer list and they all must be
+// added before this analyzer is added
 ********************************************************************/
 #ifndef _TREL_ANALYZER_CXX
 #define _TREL_ANALYZER_CXX
@@ -21,6 +27,18 @@ namespace coinc{
   TCutG* gCutSibIC;
   TCutG* gCutICNeut;
   TCutG* gCutNaINeut;
+  
+  TH1D *hRFnTrel;
+  TH1D *hnTrel;
+  TH1D *hnTrelraw;
+  TH1D *hRFnTrelraw;
+
+
+  TH2D *hSiEvnT;
+  TH2D *hSiEvRF;
+  TH2D *hSiEvntrel;
+  TH2D *hSiEvsibtrel;
+  TH2D *hSiEvictrel;
 
   TH2D *hntrel_v_ictrel;
   TH2D *hntrel_v_naitrel;
@@ -28,6 +46,7 @@ namespace coinc{
   TH2D *hntrel_v_sibtrel;
   TH2D *hsiatrel_v_ictrel;
   TH2D *hsibtrel_v_ictrel;
+
 
   TRel_Analyzer::TRel_Analyzer():fSiaRFTrel(0),
 				 fSibRFTrel(0),
@@ -74,9 +93,26 @@ namespace coinc{
       fgRootFile->mkdir("coinc");
     fgRootFile->cd("coinc");
     gDirectory->mkdir("TRel");
-   
- 
+    gDirectory->mkdir("cfdwalk");
+    gDirectory->mkdir("ntrel");    
+
     //create histograms
+    fgRootFile->cd("coinc/ntrel");
+     
+    hRFnTrel = new TH1D("hRFnTrel","hRFnTrel;rf.TW-nT;",2048,-1024,1023);
+    hnTrel = new TH1D("hnTrel","hnTrel;nT-rf.TW;",2048,-1024,1023);
+    hnTrelraw = new TH1D("hnTrelraw","hntrelraw;nT-rf.T;",2048,-1024,1023);
+    hRFnTrelraw = new TH1D("hRFnTrelraw","hRFnTrelraw;rf.T-nT;",2048,-1024,1023);
+
+
+    fgRootFile->cd("coinc/cfdwalk");
+    hSiEvnT = new TH2D("hSiEvnT","hSiEvnT;nT;SiE",1024,0,1023,1024,0,64);
+    hSiEvRF = new TH2D("hSiEvRF","hSiEvRF;RF;SiE",1024,0,1023,1024,0,64);
+    hSiEvntrel = new TH2D("hSiEvnTrel","hSiEvnTrel;ntrel;SiE",1024,-2048,2047,1024,0,64);
+    hSiEvsibtrel = new TH2D("hSiEvsibtrel","hSiEvsibtrel;sibtrel;SiE",1024,-2048,2047,1024,0,64);
+    hSiEvictrel =new TH2D("hSiEvnictrel","hSiEvictrel;ictrel;SiE",1024,-2048,2047,1024,0,64);
+
+
     fgRootFile->cd("coinc/TRel");
     hntrel_v_ictrel = new  TH2D("hntrel_v_ictrel","hntrel_v_ictrel;ictrel_rf;ntrel_rf",1024,-2048,2047,1024,-2048,2047);
     hntrel_v_naitrel = new  TH2D("hntrel_v_naitrel","hntrel_v_naitrel;naitrel_rf;ntrel_rf",1024,-2048,2047,1024,-2048,2047);
@@ -90,20 +126,20 @@ namespace coinc{
   }
 
   bool TRel_Analyzer::Process(){
-    //get TRel variables  the + sign comes because TWrapped already flips the sign of the delayed times.
-    fSiaRFTrel = si_array.T_A() - rftime.TMod2();
-    fSibRFTrel = si_array.T_B() - rftime.TMod2();
-    fICRFTrel = ic.T() - rftime.TMod2();
-    fNeutRFTrel = Narray.T() - rftime.TMod2();
-    fNaIRFTrel = nai_array.T() - rftime.TMod2();
-    
+    //get TRel variables  the + sign comes because T_Wrapped already flips the sign of the delayed times.
+    fSiaRFTrel = si_array.T_A() + rftime.T_Wrapped();
+    fSibRFTrel = si_array.T_B() + rftime.T_Wrapped();
+    fICRFTrel = ic.T() + rftime.T_Wrapped();
+    fNeutRFTrel = Narray.T() + rftime.T_Wrapped();
+    fNaIRFTrel = nai_array.T() + rftime.T_Wrapped();
+ 
     //check variables across the global cuts
     fCheckSiaIC = (gCutSiaIC && gCutSiaIC->IsInside(fICRFTrel,fSiaRFTrel));
     fCheckSibIC = (gCutSibIC && gCutSibIC->IsInside(fICRFTrel,fSibRFTrel));
     fCheckICNeut = (gCutICNeut && gCutICNeut->IsInside(fICRFTrel,fNeutRFTrel));
     fCheckNaINeut = (gCutNaINeut && gCutNaINeut->IsInside(fNaIRFTrel,fNeutRFTrel));
 
-    
+
     //if filter bits are set, compare with results from the cuts above
     if(fRequireSiaIC && !fCheckSiaIC){
       return 0;
@@ -121,7 +157,7 @@ namespace coinc{
     
     return 1 ; 
   }    
-  
+
   bool TRel_Analyzer::ProcessFill(){
     
     hntrel_v_ictrel->Fill(fICRFTrel,fNeutRFTrel);
@@ -130,6 +166,18 @@ namespace coinc{
     hntrel_v_sibtrel->Fill(fSibRFTrel,fNeutRFTrel);
     hsiatrel_v_ictrel->Fill(fICRFTrel,fSiaRFTrel);
     hsibtrel_v_ictrel->Fill(fICRFTrel,fSibRFTrel);
+   
+    hRFnTrel->Fill(rftime.T_Wrapped() - Narray.T());
+    hnTrel ->Fill(fNeutRFTrel);
+    hnTrelraw->Fill(Narray.T()-rftime.T());
+    hRFnTrelraw->Fill(rftime.T()-Narray.T());
+
+    hSiEvnT->Fill(Narray.T(),si_array.E_AB());
+    hSiEvRF->Fill(rftime.T_Wrapped(),si_array.E_AB());
+    hSiEvntrel->Fill(fNeutRFTrel,si_array.E_AB());
+    hSiEvsibtrel->Fill(fSibRFTrel,si_array.E_AB());
+    hSiEvictrel->Fill(fICRFTrel,si_array.E_AB());
+
   
  
     return 1;

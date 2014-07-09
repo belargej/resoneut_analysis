@@ -29,7 +29,6 @@ public:
   virtual bool ProcessFill();
   virtual void Clear(){};
   virtual bool Terminate();
-  virtual bool TerminateIfLast();
   virtual void Reset();
 
 

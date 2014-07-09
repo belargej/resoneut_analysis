@@ -218,6 +218,13 @@ namespace RNROOT{
     for(RN_NaICollectionRef it=nai.begin();it!=nai.end();it++){
       (*it).SetCalibrations(VarMap);
     }
+
+    for(RN_TriggerBitCollectionRef it=triggerbit.begin();it!=triggerbit.end();it++){
+      (*it).SetCalibrations(VarMap);
+    }
+    
+
+
   }
 }
 #endif

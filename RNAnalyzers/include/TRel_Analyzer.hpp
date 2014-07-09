@@ -1,17 +1,11 @@
 /***************************************************************
-//Class: Si_NEUT_IC_NAI_Analyzer
+//Class: TRel_Analyzer
 //
 //Author:Sean Kuvin
 //
-//Si_NEUT_IC_Analyzer is added to the analyzer list just as S2_Analyzer
-//is except now we are looking at Silicon detector parameters,Ion 
-//Chamber parameters and Neutron Detector parameters.  
-//The results of sorting through
-//the Si_Analyzer,the IC_analyzer,S2_IC_Analyzer, and the NeutAnalyzer 
-//are necessary for proper function of this class. 
-//Therefore, all 4 analyzers must be 
-//added to the analyzer list and they all must be
-// added before this analyzer is added
+//TRel_Analyzer is added to the analyzer list
+//to look at the timing difference between different 
+//detectors
 ********************************************************************/
 
 #ifndef _TREL_ANALYZER_H
