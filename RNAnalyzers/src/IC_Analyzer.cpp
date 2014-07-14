@@ -47,8 +47,12 @@ namespace ionchamber{
   TH1D *hICPhi;
   TH2D *hICEvTheta;
   TH2D *hXvY;
+  TH2D *hXvYRaw;
   TH1D *hXGridMult;
   TH1D *hYGridMult;
+  TH2D *hXMultvYMult;
+  TH1D *hICXCh0; 
+  TH1D *hICYCh0;
 
 
   IC_Analyzer::IC_Analyzer()
@@ -59,7 +63,7 @@ namespace ionchamber{
     
     if(!fgRootFile){
       std::cout<<"output file has not been created"<<std::endl;
-      ClearGates();
+      //      ClearGates();
       exit(EXIT_FAILURE);
     }
     
@@ -77,6 +81,7 @@ namespace ionchamber{
     //create histograms
     fgRootFile->cd("IC/xy");
     hXvY= new TH2D("hXvY","hXvY;XChan;YChan",128,-128,128,128,-128,128);
+    hXvYRaw= new TH2D("hXvYRaw","hXvYRaw;XChanHighestE;YChanHighestE",64,-16,47,64,-16,47);
     hICTheta = new TH1D("hICTheta","hICTheta;Theta",180,0,179);
     hICEvTheta = new TH2D("hICEvTheta","hICEvTheta;Theta;E",180,0,179,512,0,8191);
     hICPhi = new TH1D("hICPhi","hICPhi;Phi",180,0,179);
@@ -101,7 +106,10 @@ namespace ionchamber{
 
     fgRootFile->cd("IC/mult");    
     hXGridMult = new TH1D("hXGridMult","hXGridMult;mult",32,0,31);
+    hICXCh0 = new TH1D("hICXCh0","hICXCh0;XCh0",32,0,31);
+    hICYCh0 = new TH1D("hICYCh0","hICYCh0;YCh0",32,0,31);
     hYGridMult = new TH1D("hYGridMult","hYGridMult;mult",32,0,31);
+    hXMultvYMult = new TH2D("hXMultvYMult","hXMultvYGridMult;XMult;YMult",32,0,31,32,0,31);
 
     return 1;
   }
@@ -155,9 +163,13 @@ namespace ionchamber{
 
     hXGridMult->Fill(ic.xgrid.Mult());
     hYGridMult->Fill(ic.ygrid.Mult());
-
+    hXMultvYMult->Fill(ic.xgrid.Mult(),ic.ygrid.Mult());
+    hICXCh0->Fill(ic.xgrid.Ch(0));
+    hICYCh0->Fill(ic.xgrid.Ch(0));
+    
    
     hXvY->Fill(ic.GetHitPos().X(),ic.GetHitPos().Y());
+    hXvYRaw->Fill(ic.xgrid.Ch(0),ic.ygrid.Ch(0));
     hICTheta->Fill(ic.Theta());
     hICEvTheta->Fill(ic.Theta(),ic.TotalE());
     hICPhi->Fill(ic.Phi());

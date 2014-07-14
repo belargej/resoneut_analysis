@@ -8,6 +8,7 @@ using namespace RNROOT;
 
 namespace sim{
   TFile * simfile;
+  TTree * simtree;
   RN_Particle particle;
   ofstream simlog;
   std::vector<Int_t> NeutronIn;
@@ -189,6 +190,8 @@ namespace sim{
     
     hQ_proton->Fill(q_val_p);
     hQ_proton_guess->Fill(q_val_p_guess);
+
+    simtree->Fill();
     
   }
   
@@ -199,7 +202,18 @@ namespace sim{
     }
   def=1;
   simfile->cd();
- 
+  
+  simtree = new TTree("SimTree","SimTree");
+  simtree->Branch("Beam." + RNROOT::gReactionInfo.BeamName(),"TLorentzVector",&(RNROOT::gReactionInfo.fLVarray[0]));
+  simtree->Branch("Target." + RNROOT::gReactionInfo.TargetName(),"TLorentzVector",&(RNROOT::gReactionInfo.fLVarray[1]));
+  simtree->Branch("Recoil." + RNROOT::gReactionInfo.RecoilName(),"TLorentzVector",&(RNROOT::gReactionInfo.fLVarray[2]));
+  simtree->Branch("Fragment." + RNROOT::gReactionInfo.FragmentName(),"TLorentzVector",&(RNROOT::gReactionInfo.fLVarray[3]));
+  simtree->Branch("DecayProduct." + RNROOT::gReactionInfo.DecayProductName(),"TLorentzVector",&(RNROOT::gReactionInfo.fLVarray[4]));
+  simtree->Branch("HeavyDecay." + RNROOT::gReactionInfo.HeavyDecayName(),"TLorentzVector",&(RNROOT::gReactionInfo.fLVarray[5]));
+  simtree->Branch("ErProtonGuess",&q_val_p_guess);
+  simtree->Branch("ErProton",&q_val_p);
+
+  simfile->cd();
   simfile->mkdir("histograms");
 
   simfile->cd("histograms");

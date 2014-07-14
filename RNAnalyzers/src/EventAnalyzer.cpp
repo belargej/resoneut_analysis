@@ -20,6 +20,7 @@ namespace eventinfo{
   TH1I * hRunNumber;
   TH1I * hFlag; 
   TH2D * hRFvRunNumber;
+  TH2D * hRFTMod2vRunNumber;
   TH2D * hSiAEvRunNumber;
   TH2D * hSiABEvRunNumber;
 
@@ -40,6 +41,7 @@ namespace eventinfo{
     hRunNumber = new TH1I("hRunNumber","hRunNumber",4096,0,4095);
     hFlag = new TH1I("hFlag","hFlag",4,0,3);
     hRFvRunNumber = new TH2D("hRFvRunNumber","hRFvRunNumber;RunNumber;RF",1024,fRunMin,fRunMax,1024,0,4095);
+    hRFTMod2vRunNumber = new TH2D("hRFTMod2vRunNumber","hRFTMod2vRunNumber;RunNumber;RFTMod2",1024,fRunMin,fRunMax,1024,-1,126);
     hSiAEvRunNumber = new TH2D("hSiAvRunNumber","hSiAvRunNumber;RunNumber;SiAE",1024,fRunMin,fRunMax,512,0,64);
     hSiABEvRunNumber = new TH2D("hSiABvRunNumber","hSiABvRunNumber;RunNumber;SiABE",1024,fRunMin,fRunMax,512,0,64);
     
@@ -61,6 +63,7 @@ namespace eventinfo{
     hRunNumber->Fill(RNROOT::gMainAnalyzer.EventInfo(0));
     hFlag->Fill(RNROOT::gMainAnalyzer.EventInfo(1));
     hRFvRunNumber->Fill(RNROOT::gMainAnalyzer.EventInfo(0),rftime.TRaw());
+    hRFTMod2vRunNumber->Fill(RNROOT::gMainAnalyzer.EventInfo(0),rftime.TMod2());
     hSiAEvRunNumber->Fill(RNROOT::gMainAnalyzer.EventInfo(0),si_array.E_A());
     hSiABEvRunNumber->Fill(RNROOT::gMainAnalyzer.EventInfo(0),si_array.E_AB());
     

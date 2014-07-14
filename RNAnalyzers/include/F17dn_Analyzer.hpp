@@ -18,7 +18,16 @@ namespace _F17{
 
 
 class F17dn_Analyzer:public RN_Analyzer{
-private:
+protected:
+  Double32_t fErProton;
+  Double32_t fNeutTime;
+  Double32_t fNeutKE_R;
+  Double32_t fNeutKE;
+  Double32_t fHiKE;
+  Double32_t fNeutQ;
+
+
+
 
 public:  
   F17dn_Analyzer();
@@ -29,7 +38,6 @@ public:
   virtual bool ProcessFill();
   virtual void Clear(){};
   virtual bool Terminate();
-  virtual bool TerminateIfLast();
   virtual void Reset();
 
 
@@ -39,7 +47,7 @@ public:
   ClassDef(F17dn_Analyzer,0);
 };
 
-void Load_F17_dn_Gates();
+  void LoadF17AnalysisGates(const std::string&input);
 
 
 }

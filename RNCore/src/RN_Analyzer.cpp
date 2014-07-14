@@ -84,9 +84,13 @@ int RN_Analyzer::GetDetectorEntry(){
     
 
     //IonChamber Position grid hits
-    for(int k=0;k<32;k++){
+    for(int k=0;k<16;k++){
       ic.xgrid.InsertHit(ADC5[k],0,k);
       ic.ygrid.InsertHit(ADC6[k],0,k);
+    }
+    for(int k=16;k<32;k++){
+      ic.xgrid.InsertHit(ADC6[k],0,k);
+      ic.ygrid.InsertHit(ADC5[k],0,k);
     }
     
     //IonChamber E+dE hits
@@ -99,7 +103,7 @@ int RN_Analyzer::GetDetectorEntry(){
     rftime.InsertHit(TDC1[0]);
     
     //mcptime
-    //   if(TDC1[2]>0)rftime[1].InsertHit(TDC1[2]);
+    //if(TDC1[2]>0)rftime[1].InsertHit(TDC1[2]);
     
     
     triggerbit[0].SetBit(TDC1[3]); //sib detbit
