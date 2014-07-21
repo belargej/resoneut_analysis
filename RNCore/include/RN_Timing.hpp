@@ -37,10 +37,12 @@ protected:
   double fTLin;//!
   double fTShift;//!
   double fTo;//!
- 
   //data parameters 
   double fT;
-  
+
+  std::map<int,double> fTable;//!
+  Int_t fCurrentRun; //! only look up in table if there is a state change(new run)
+
 
 public:
   RN_RFTime(std::string name = "rftime");
@@ -54,7 +56,13 @@ public:
 
   void SetCalibrations(RN_VariableMap&);
   void InsertHit(const double&);
+  void InsertHit(const double&, const int&); //deposit rf hit and run number for setting the rfshift
   void Reset();
+
+  Int_t LoadTable(const std::string&);
+  void ClearTable();
+  Int_t ChangeRun(const Int_t & currentrun);
+
 
   ClassDef(RN_RFTime,2);  
 };
@@ -67,6 +75,8 @@ typedef std::vector<RN_RFTime>::iterator RN_RFCollectionRef;
 inline Double_t RN_RFTime::TRaw() const{
   return fT;
 }
+
+
 
 /***********************************************************************/
 #ifdef __RFTIME_CXX

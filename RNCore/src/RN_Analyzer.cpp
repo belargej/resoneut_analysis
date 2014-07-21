@@ -100,7 +100,7 @@ int RN_Analyzer::GetDetectorEntry(){
     //if(ADC4[14]>0)ic.fdE=ADC4[14];  //2013
     
     //rftime
-    rftime.InsertHit(TDC1[0]);
+    rftime.InsertHit(TDC1[0],fEvent[0]);
     
     //mcptime
     //if(TDC1[2]>0)rftime[1].InsertHit(TDC1[2]);

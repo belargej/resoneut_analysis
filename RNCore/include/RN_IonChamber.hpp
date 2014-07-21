@@ -48,9 +48,9 @@ class RN_IonChamber:public RN_BaseClass{
 				       fZPos(250),
 				       fYPos(0),
 				       fXPos(0),
-				       fWireDist(5),//mm
+				       fWireDist(2),//mm
 				       esegment(name+".esegment",1),
-				       desegment(name+"desegment",1),
+				       desegment(name+".desegment",1),
 				       xgrid(name+".xgrid",32),
 				       ygrid(name+".ygrid",32)
   {

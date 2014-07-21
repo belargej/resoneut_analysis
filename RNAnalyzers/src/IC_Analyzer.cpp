@@ -46,6 +46,7 @@ namespace ionchamber{
   TH2D *hICEvT;
   TH1D *hICPhi;
   TH2D *hICEvTheta;
+  TH2D *hICEAllvTheta;
   TH2D *hXvY;
   TH2D *hXvYRaw;
   TH1D *hXGridMult;
@@ -53,6 +54,15 @@ namespace ionchamber{
   TH2D *hXMultvYMult;
   TH1D *hICXCh0; 
   TH1D *hICYCh0;
+  TH1D *hICCalDE;
+  TH1D *hICCalE;
+  TH2D *hICXE1vE0;  
+  TH2D *hICYE1vE0;  
+  TH1D *hICXE0Mult1;
+  TH1D *hICYE0Mult1;
+
+
+
 
 
   IC_Analyzer::IC_Analyzer()
@@ -82,20 +92,25 @@ namespace ionchamber{
     fgRootFile->cd("IC/xy");
     hXvY= new TH2D("hXvY","hXvY;XChan;YChan",128,-128,128,128,-128,128);
     hXvYRaw= new TH2D("hXvYRaw","hXvYRaw;XChanHighestE;YChanHighestE",64,-16,47,64,-16,47);
-    hICTheta = new TH1D("hICTheta","hICTheta;Theta",180,0,179);
-    hICEvTheta = new TH2D("hICEvTheta","hICEvTheta;Theta;E",180,0,179,512,0,8191);
+    hICTheta = new TH1D("hICTheta","hICTheta;Theta",180,0,20);
+    hICEvTheta = new TH2D("hICEvTheta","hICEvTheta;Theta;E",180,0,20,512,0,128);
+    hICEAllvTheta = new TH2D("hICEAllvTheta","hICEAllvTheta;Theta;EAll",180,0,20,512,0,128);
     hICPhi = new TH1D("hICPhi","hICPhi;Phi",180,0,179);
+
+
 
     fgRootFile->cd("IC/ede/rawpar");
     hRawICDEvE=new TH2D("hRawICDEvE","IRawCDEvE; E + dE[arb];dE [arb]",1024,0,4096,1024,0,4096);
     hRawICfDEvfE=new TH2D("hRawICfDEvfE","hRawICfDEvfE;E [arb];dE [arb]",1024,0,4096,1024,0,4096);
     hRawICPosEvE=new TH2D("hRawICPosEvE","hRawICPosEvE;E + dE + dEX + dEY [arb];dEX + dEY [arb]",1024,0,4095,1024,0,8124);
 
+
     fgRootFile->cd("IC/ede/calpar");
     hCalICDEvE=new TH2D("hCalICDEvE","hCalICDEvE; E + dE[arb];dE [arb]",1024,0,4095,1024,0,1023);
     hCalICfDEvfE=new TH2D("hCalICfDEvfE","hCalICfDEvfE;E [arb];dE [arb]",1024,0,4095,1024,0,1023);
     hCalICPosEvE=new TH2D("hCalICPosEvE","hCalICPosEvE;E + dE + dEX + dEY [arb];dEX + dEY [arb]",1024,0,4095,1024,0,1023);
-
+    hICCalE = new TH1D("hICCalE","hICCalE;IC.E()",2048,0,1024);
+    hICCalDE = new TH1D("hICCalDE","hICCalDE;IC.DE()",2048,0,1024);
 
 
 
@@ -104,12 +119,22 @@ namespace ionchamber{
     hICEvT = new  TH2D("hICEvT","hICEvT;T;E",1280,0,1279,1024,0,4095);
     hICEvRF = new TH2D("hICEvRF","hICEvRF;RF;E",1024,0,4095,1024,0,4095);
 
+
     fgRootFile->cd("IC/mult");    
     hXGridMult = new TH1D("hXGridMult","hXGridMult;mult",32,0,31);
     hICXCh0 = new TH1D("hICXCh0","hICXCh0;XCh0",32,0,31);
     hICYCh0 = new TH1D("hICYCh0","hICYCh0;YCh0",32,0,31);
+    hICXE1vE0 = new TH2D("hICXE1vE0","hICXE1vE0",512,0,4095,512,0,4095);  
+    hICYE1vE0 = new TH2D("hICYE1vE0","hICYE1vE0",512,0,4095,512,0,4095);   
+    hICXE0Mult1 = new TH1D("hICXE0Mult1","hICXE0Mult1",4096,0,4095);
+    hICYE0Mult1 = new TH1D("hICYE0Mult1","hICYE0Mult1",4096,0,4095);
     hYGridMult = new TH1D("hYGridMult","hYGridMult;mult",32,0,31);
     hXMultvYMult = new TH2D("hXMultvYMult","hXMultvYGridMult;XMult;YMult",32,0,31,32,0,31);
+
+
+
+
+
 
     return 1;
   }
@@ -159,19 +184,29 @@ namespace ionchamber{
     hCalICPosEvE->Fill(ic.E() + ic.DE()+ic.SumE_X()+ic.SumE_Y(),ic.SumE_X()+ic.SumE_Y());
     
 
-
+    hICCalE->Fill(ic.E());
+    hICCalDE->Fill(ic.DE());
 
     hXGridMult->Fill(ic.xgrid.Mult());
     hYGridMult->Fill(ic.ygrid.Mult());
     hXMultvYMult->Fill(ic.xgrid.Mult(),ic.ygrid.Mult());
     hICXCh0->Fill(ic.xgrid.Ch(0));
     hICYCh0->Fill(ic.xgrid.Ch(0));
+    hICXE1vE0->Fill(ic.xgrid.ELocal(0),ic.xgrid.ELocal(1));  
+    hICYE1vE0->Fill(ic.ygrid.ELocal(0),ic.ygrid.ELocal(1));  
+    if(ic.xgrid.Mult()==1){
+      hICXE0Mult1->Fill(ic.xgrid.ELocal(0));
+    }
+    if(ic.ygrid.Mult()==1){
+      hICYE0Mult1->Fill(ic.ygrid.ELocal(0));
+    }
     
    
     hXvY->Fill(ic.GetHitPos().X(),ic.GetHitPos().Y());
     hXvYRaw->Fill(ic.xgrid.Ch(0),ic.ygrid.Ch(0));
     hICTheta->Fill(ic.Theta());
     hICEvTheta->Fill(ic.Theta(),ic.TotalE());
+    hICEAllvTheta->Fill(ic.Theta(),ic.TotalE()+ic.SumE_X()+ic.SumE_Y());
     hICPhi->Fill(ic.Phi());
     hICT->Fill(ic.T());
     hICEvRF->Fill(rftime.TRaw(),ic.TotalE());

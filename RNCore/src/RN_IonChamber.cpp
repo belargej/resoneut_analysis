@@ -43,7 +43,7 @@ Double32_t RN_IonChamber::Pos_X(){
   if(chB>0){
     ch = chA/chB;
   }
-  return (ch - 16.5); 
+  return (ch - 15.5); 
 }
 
 
@@ -58,7 +58,7 @@ Double32_t RN_IonChamber::Pos_Y(){
   if(chB>0){
     ch = chA/chB;
   }
-  return (ch - 16.5); 
+  return (ch - 15.5); 
 }                                               
 
 void RN_IonChamber::ReconstructHitPos(){

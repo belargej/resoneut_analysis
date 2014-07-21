@@ -65,7 +65,14 @@ namespace _F17{
   TH2D *hErvNeutKE_R;
   TH2D *hErvNeutKE;
   TH2D *hErvNeutQ;
+  TH2D *hICThetavSiTheta;
+  TH2D *hICPhivSiPhi;
 
+  TH2D *hErvRunNumber;
+  TH2D *hNeutRFTRelvRunNumber;  
+  TH2D *hCalICDEvERebin;  
+  TH2D *hCalICPosEvERebin;  
+  TH2D *hCalICfDEvfERebin;
 
 
   F17dn_Analyzer::F17dn_Analyzer():fErProton(0)
@@ -122,6 +129,7 @@ namespace _F17{
   gDirectory->mkdir("IonChamber");
   gDirectory->mkdir("TRel");
   gDirectory->mkdir("Neut");
+  gDirectory->mkdir("SiIC");
 
 
   fgRootFile->cd("F17dx_Analysis/Silicon");
@@ -146,12 +154,17 @@ namespace _F17{
   hEvThetaOBandProt = new TH2D("hEvThetaOBandProton","hEvThetaOBandProton",256,0,32,1024,0,64);
   hEvThetaNBandAlpha = new TH2D("hEvThetaNBandAlpha","hEvThetaNBandAlpha",256,0,32,1024,0,64);
 
+ hErvRunNumber = new TH2D("hErvRunNumber","hErvRunNumber;RunNumber;Er",1024,3000,4023,512,-1,10);
 
+ 
 
   fgRootFile->cd("F17dx_Analysis/IonChamber");
-  hICEdEProt =new TH2D("hICEdEProt","hICEdEProt; E + dE[arb];dE [arb]",1024,0,4095,1024,0,1023);
-  hICEdEAlpha =new TH2D("hICEdEAlpha","hICEdEAlpha; E + dE[arb];dE [arb]",1024,0,4095,1024,0,1023);
-  hICEdEDeuteron =new TH2D("hICEdEDeuteron","hICEdEDeuteron; E + dE[arb];dE [arb]",1024,0,4095,1024,0,1023);
+  hCalICDEvERebin=new TH2D("hCalICDEvERebin","hCalICDEvERebin; E + dE[arb];dE [arb]",1024,0,128,1024,0,128);
+  hCalICfDEvfERebin=new TH2D("hCalICfDEvfERebin","hCalICfDEvfERebin;E [arb];dE [arb]",1024,0,128,1024,0,128);
+  hCalICPosEvERebin=new TH2D("hCalICPosEvERebin","hCalICPosEvERebin;E + dE + dEX + dEY [arb];dEX + dEY [arb]",1024,0,128,1024,0,128);
+  hICEdEProt =new TH2D("hICEdEProt","hICEdEProt; E + dE[arb];dE [arb]",1024,0,128,1024,0,128);
+  hICEdEAlpha =new TH2D("hICEdEAlpha","hICEdEAlpha; E + dE[arb];dE [arb]",1024,0,128,1024,0,128);
+  hICEdEDeuteron =new TH2D("hICEdEDeuteron","hICEdEDeuteron; E + dE[arb];dE [arb]",1024,0,128,1024,0,128);
 
   fgRootFile->cd("F17dx_Analysis/TRel");
   hSibTrelvICTrelRebin = new TH2D("hSibTrelvICTrelRebin","hSibTrelvICTrelRebin",1024,-100,1434,1024,-100,1434);
@@ -160,10 +173,15 @@ namespace _F17{
   hSibTrelvICTrelRebinProtonOBand = new TH2D("hSibTrelvICTrelRebinProtonOBand","hSibTrelvICTrelRebinProtonOBand",1024,-100,1434,1024,-100,1434);
   
   fgRootFile->cd("F17dx_Analysis/Neut");
+  hNeutRFTRelvRunNumber = new TH2D("hNeutRFTRelvRunNumber","hNeutRFTrelvRunNumber;RunNumber;NeutRFTRel",1024,3000,4023,1024,0,4095);
   hErvNeutT = new TH2D ("hErvNeutT","hErvNeutT",1024,-100,410,512,-1,10);
   hErvNeutKE_R = new TH2D ("hErvNeutKE_R","hErvNeutKE_R",1024,0,1,512,-1,10);
   hErvNeutKE = new TH2D ("hErvNeutKE","hErvNeutKE",1024,0,1,512,-1,10);
   hErvNeutQ = new TH2D ("hErvNeutQ","hErvNeutQ",1024,-10,10,512,-1,10);
+
+  fgRootFile->cd("F17dx_Analysis/SiIC");
+  hICThetavSiTheta = new TH2D("hICThetavSiTheta","hICThetavSiTheta;SiTheta;ICTheta",256,0,31,128,0,15);
+  hICPhivSiPhi = new TH2D("hICPhivSiPhi","hICPhivSiPhi;SiPhi;ICPhi",360,-180,180,360,-180,180);
 
 
 
@@ -201,6 +219,16 @@ bool F17dn_Analyzer::Process(){
 }
 
 bool F17dn_Analyzer::ProcessFill(){
+  hErvRunNumber->Fill(gMainAnalyzer.EventInfo(0),fErProton);;
+  hNeutRFTRelvRunNumber->Fill(gMainAnalyzer.EventInfo(0),fNeutTime);
+
+
+  hCalICDEvERebin->Fill(ic.E()+ic.DE(),ic.DE());
+  hCalICfDEvfERebin->Fill(ic.E(),ic.DE());
+  hCalICPosEvERebin->Fill(ic.E() + ic.DE()+ic.SumE_X()+ic.SumE_Y(),ic.SumE_X()+ic.SumE_Y());
+    
+
+
   if(FBandCheck){
     hSiPIDFBand->Fill(si_array.E_AB(),si_array.E_A());
     hEvThetaFBand->Fill(si_array.Theta_B()*RadToDeg(),si_array.E_AB());
@@ -263,6 +291,11 @@ bool F17dn_Analyzer::ProcessFill(){
       hErvNeutKE->Fill(fNeutKE,fErProton);
       hErvNeutQ->Fill(fNeutQ,fErProton);
     }
+
+    hICThetavSiTheta->Fill(si_array.Theta_B()*RadToDeg(),ic.Theta());
+    hICPhivSiPhi->Fill(si_array.Phi_B()*RadToDeg(),ic.Phi());
+
+
  
   return 1;
 }
