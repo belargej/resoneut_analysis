@@ -34,7 +34,7 @@ Author: Sean A. Kuvin -2013
 
 #include "RN_Calibrator.hpp"
 #include "RN_Root.hpp"
-
+#include "sak_ReadBuffer.hpp"
 using namespace RNROOT;
 
 RN_S2Calibrator::RN_S2Calibrator(const int& corrnum,
@@ -362,7 +362,71 @@ namespace si_cal{
     elin=fitter2->GetParameter(1);
    
   }
+
+
+
+
+  void FitPulserPeaks(const std::string& detname,const std::string& module, const std::string &pulserinputs){
+    std::vector<Double32_t> pulservalues;
+    
+    std::ifstream cal;
+    std::string key;double value;
+    cal.open(pulserinputs.c_str());
+    if (!cal.is_open()){
+    std::cout << "  Could not open " << pulserinputs << std::endl;
+    return;
+    }
+    do{
+      std::vector<std::string>input;
+      sak::ReadLine(cal,input,1);
+      if (input.size()!=1){
+	std::cout<<"pulser input file has line with diff than 1 entries"<<std::endl;
+	continue;
+      }
+      value=sak::string_to_double(input[0]);
+      
+      pulservalues.push_back(value);
+      
+    }while(!cal.eof());
+    
+    TSpectrum *s = new TSpectrum();
+    for(unsigned int i=0;i<16;i++){
+      if(!gDirectory->Get(Form("h%s[%d]",module.c_str(),i))){
+	std::cout<<"histograms not found: "<<Form("h%s[%d]",module.c_str(),i)<<"\n";
+	break;
+      }
+      TF1 *fitter = new TF1(Form("fitter%d",i),"pol1",0,4096);
+      TGraph *graph = new TGraph(Form("graph%d",i));
+      TH1D* hist = (TH1D*)gDirectory->Get(Form("h%s[%d]",module.c_str(),i));
+      Int_t PeaksFound =  s->Search(hist);
+      if(pulservalues.size() < PeaksFound){
+	std::cout<<"more peaks found than pulser inputs"<<std::endl;
+	return ;
+      }
+      std::cout<<module<<"."<<i<<": \n";
+      Float_t *xpeaks = s->GetPositionX();
+      std::vector<Float_t> sortedpeaks;
+      for(unsigned int j=0;j<PeaksFound;j++){
+	sortedpeaks.push_back(xpeaks[j]);
+      }
+      std::sort(sortedpeaks.begin(),sortedpeaks.end());
+      for(unsigned int j=0;j<PeaksFound;j++){
+	graph->SetPoint(j,sortedpeaks[j],pulservalues[j]);
+	std::cout<<"peak "<<j<<" "<<sortedpeaks[j]<<"\n";      
+      }
+      graph->Fit(fitter);
+      std::cout<<detname+ ".a0["<<i<<"]"<<" "<<fitter->GetParameter(0);
+      std::cout<<detname+ ".a1["<<i<<"]"<<" "<<fitter->GetParameter(1);
+    }
+    
+    
+  }
 }
+
+
+
+
+
 
 
 

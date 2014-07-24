@@ -20,6 +20,7 @@ namespace _F17{
 class F17dn_Analyzer:public RN_Analyzer{
 protected:
   Double32_t fErProton;
+  Double32_t fErProtonReco;
   Double32_t fNeutTime;
   Double32_t fNeutKE_R;
   Double32_t fNeutKE;

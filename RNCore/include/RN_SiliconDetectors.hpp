@@ -205,19 +205,22 @@ public:
 class RN_SiArray:public RN_BaseClass{
 private:
   Int_t fNumOfSi;
+  Double32_t fP[3]; //! pol2 fit of eloss
 
-public:
   std::vector<Double32_t> fE_;
   std::vector<TVector3> fPos_;
   std::vector<Double32_t> fT_;
-  
+ 
+public:
+
   RN_SiArray(const std::string& name = "SiArray", int num = 2);
 
   void ReconstructHits(RN_S2ClusterCollection& si_c_);
   void Reset();
 
   Double32_t E_A()const {return fNumOfSi > 0 ? fE_[0] : 0;}
-  Double32_t E_AB()const {return fNumOfSi > 1 ? fE_[1] : 0;}
+  Double32_t E_B()const {return fNumOfSi > 1 ? fE_[1] : 0;}
+  Double32_t E_AB()const {return fNumOfSi > 1 ? fE_[1] + fE_[0] : 0;}
   Double32_t T_A()const {return fNumOfSi > 0 ? fT_[0] : 0;}
   Double32_t T_B()const {return fNumOfSi > 1 ? fT_[1] : 0;}
   Double32_t Theta_A()const {return fNumOfSi > 0 ? fPos_[0].Theta() : 0;}
@@ -225,7 +228,11 @@ public:
   Double32_t Phi_A()const {return fNumOfSi > 0 ? fPos_[0].Phi() : 0;}
   Double32_t Phi_B()const {return fNumOfSi > 1 ? fPos_[1].Phi() : 0;}
   Int_t NumOfSi()const {return fNumOfSi;}
- 
+  void SetCalibrations(RN_VariableMap & detvar);
+
+
+  Double32_t ERecoAB() const{return fNumOfSi > 1 ? (fE_[1] + ERecoA()) : 0;}
+  Double32_t ERecoA() const{return fNumOfSi > 1 ? ((fE_[1] * fE_[1]*fP[2]) + (fE_[1] * fP[1]) + fP[0]) : 0;}
 
   ClassDef(RN_SiArray,1);
 };

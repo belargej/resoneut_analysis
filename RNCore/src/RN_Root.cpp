@@ -13,7 +13,7 @@ namespace RNROOT{
   RN_NeutCollection neut;	     
   RN_S2Collection si_;		     
   RN_S2ClusterCollection si_cluster_;
-  RN_SiArray si_array("SiArray",SI_NUM);
+  RN_SiArray si_array("si_array",SI_NUM);
   RN_NaICollection nai;	 
   RN_RFTime rftime("rftime");
   //  RN_MCPDetector MCP("MCP");
@@ -215,6 +215,7 @@ namespace RNROOT{
     }
     rftime.SetCalibrations(VarMap);
     ic.SetCalibrations(VarMap);
+    si_array.SetCalibrations(VarMap);
     for(RN_NaICollectionRef it=nai.begin();it!=nai.end();it++){
       (*it).SetCalibrations(VarMap);
     }

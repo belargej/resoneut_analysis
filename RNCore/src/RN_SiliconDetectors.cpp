@@ -511,9 +511,19 @@ RN_SiArray::RN_SiArray(const std::string& name, int num):RN_BaseClass(name),
 							 fPos_(num,TVector3(0,0,0)),
 							 fT_(num,0)
 {
-  
+  for(unsigned int i=0;i<3;i++){
+    fP[i] = 0;
+  }
   
 }
+
+void RN_SiArray::SetCalibrations(RN_VariableMap& detvar){
+  detvar.GetParam(Form("%s.p0",GetName()),fP[0]);
+  detvar.GetParam(Form("%s.p1",GetName()),fP[1]);
+  detvar.GetParam(Form("%s.p2",GetName()),fP[2]);
+
+}
+
 
 void RN_SiArray::Reset(){
   for(int i=0;i<fNumOfSi;i++){
@@ -527,10 +537,7 @@ void RN_SiArray::Reset(){
 void RN_SiArray::ReconstructHits(RN_S2ClusterCollection& si_c_)
 {
   for(unsigned int i=0;i<si_c_.size();i++){
-    if(i>0){
-      fE_[i]=fE_[i-1];
-    }
-    fE_[i] += si_c_[i].ERaw(0); 
+    fE_[i] = si_c_[i].ERaw(0); 
     fPos_[i] = si_c_[i].fPos[0]; 
     fT_[i] = si_c_[i].TRaw(0); 
   }

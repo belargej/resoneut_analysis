@@ -134,8 +134,10 @@ namespace si_cal{
 		double &elin,
 		double &eshift);
  
- 
+  void FitPulserPeaks(const std::string& detname,const std::string& module, const std::string &pulserinputs);
+
 }
+
 
 typedef std::vector<RN_S2Calibrator> RN_S2CalCollection;
 typedef std::vector<RN_S2Calibrator>::iterator RN_S2CalCollectionRef;

@@ -75,15 +75,25 @@ namespace _F17{
   TH2D *hCalICfDEvfERebin;
 
 
+  TH2D *hEABvERecoAB;
+  TH2D *hEAvERecoA;
+  TH2D *hERecoABvThetaB;
+  TH2D *hERecoABvThetaA;
+  TH1D *hErReco;
+
+
+
+
   F17dn_Analyzer::F17dn_Analyzer():fErProton(0)
   {
-    
+    Reset();
   }
 
 
   void F17dn_Analyzer::Reset(){
     
     fErProton = 0;
+    fErProtonReco = 0;
     fNeutTime = 0;
     fNeutKE_R = 0;
     fNeutKE = 0;
@@ -130,6 +140,7 @@ namespace _F17{
   gDirectory->mkdir("TRel");
   gDirectory->mkdir("Neut");
   gDirectory->mkdir("SiIC");
+  gDirectory->mkdir("reco");
 
 
   fgRootFile->cd("F17dx_Analysis/Silicon");
@@ -184,6 +195,12 @@ namespace _F17{
   hICPhivSiPhi = new TH2D("hICPhivSiPhi","hICPhivSiPhi;SiPhi;ICPhi",360,-180,180,360,-180,180);
 
 
+  fgRootFile->cd("F17dx_Analysis/reco");
+  hEABvERecoAB = new TH2D("hEABvERecoAB","hEBvERecoAB",512,0,32,512,0,32);
+  hEAvERecoA = new TH2D("hEAvERecoA","hEAvERecoA",128,0,5,128,0,5);
+  hERecoABvThetaB = new TH2D("hERecoABvThetaB","hERecoABvThetaB",256,0,31,512,0,31);
+  hERecoABvThetaA = new TH2D("hERecoABvThetaA","hERecoABvThetaA",256,0,31,512,0,31);
+  hErReco = new TH1D("hErReco","hErReco",512,-1,10);
 
   return 1;
  
@@ -202,6 +219,7 @@ bool F17dn_Analyzer::Process(){
   
   if(si_array.E_AB(),si_array.Theta_B()){
     fErProton = gReactionInfo.DecayQValueEstimate(si_array.E_AB(),si_array.Theta_B());
+    fErProtonReco = gReactionInfo.DecayQValueEstimate(si_array.ERecoAB(),si_array.Theta_B());
   }
 
   FBandCheck = (gFBand && gFBand->IsInside(ic.TotalE(),ic.DE()));
@@ -227,6 +245,14 @@ bool F17dn_Analyzer::ProcessFill(){
   hCalICfDEvfERebin->Fill(ic.E(),ic.DE());
   hCalICPosEvERebin->Fill(ic.E() + ic.DE()+ic.SumE_X()+ic.SumE_Y(),ic.SumE_X()+ic.SumE_Y());
     
+
+
+  hEABvERecoAB->Fill(si_array.E_AB(),si_array.ERecoAB());
+  hEAvERecoA->Fill(si_array.E_A(),si_array.ERecoA());
+  hERecoABvThetaB->Fill(si_array.Theta_B()*RadToDeg(),si_array.ERecoAB());
+  hERecoABvThetaA->Fill(si_array.Theta_A()*RadToDeg(),si_array.ERecoAB());
+  hErReco->Fill(fErProtonReco);
+
 
 
   if(FBandCheck){
