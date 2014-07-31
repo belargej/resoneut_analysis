@@ -275,14 +275,10 @@ TH2D(Form("h_evtheta[%s]",si_[i].GetName()),Form("h_evtheta[%s];Theta;E",si_[i].
     
 
     for(unsigned int i=0;i<si_.size();i++){
-      for(unsigned int j=0;j<si_[i].back.Mult();j++){
-	h_si_back_a[i]->Fill(si_[i].back.E(j));
-	h_si_back[i]->Fill(si_[i].Back_E(j));
-      }
-      for(unsigned int j=0;j<si_[i].front.Mult();j++){
-	h_si_front_a[i]->Fill(si_[i].front.E(j));
-	h_si_front[i]->Fill(si_[i].Front_E(j));
-      }
+      h_si_back_a[i]->Fill(si_[i].back.E());
+      h_si_back[i]->Fill(si_[i].Back_E());
+      h_si_front_a[i]->Fill(si_[i].front.E());
+      h_si_front[i]->Fill(si_[i].Front_E());
       
       h_si_fmult[i]->Fill(si_[i].front.Mult());
       h_si_bmult[i]->Fill(si_[i].back.Mult());

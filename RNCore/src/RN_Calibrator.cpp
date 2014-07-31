@@ -63,10 +63,15 @@ void RN_S2Calibrator::PerformFit(){
   //op==1 matches all front channels to one back channel
   TF1 *fitter= new TF1("fitter","pol1",fELowLimit,fEHighLimit);
   unsigned int num=fA0.size();
+  bool option;
   for(unsigned int l=0;l<num;l++){
-    if(fCorr[l].GetN()<50){
-      std::cout<<"Not enough points for fitting this detector/channel"<<std::endl;
-      continue;
+    if(fCorr[l].GetN()<30){
+      std::cout<<"Not enough points for fitting this detector/channel (<30)\n";      
+      std::cout<<"Has:" <<fCorr[l].GetN()<<" 0-skip 1-proceed \n";      
+      std::cin>>option;
+      if(!option){
+	continue;
+      }
     }
     fCorr[l].Fit(fitter,"ROB=0.52","",fELowLimit,fEHighLimit);
     fA0[l]=fitter->GetParameter(0);
@@ -336,34 +341,6 @@ namespace si_cal{
     
 
   }
-
-
-
-  void Th228Fit(TH1D * h1,double &elin,double &eshift){
-    int npeaks=6;
-    TSpectrum *s = new TSpectrum(2*npeaks);
-    Int_t nfound = s->Search(h1,1,"new");
-    printf("Found %d candidate peaks to fitn",nfound);
-    int in;
-    std::cin>>in;
-
-    Float_t xset[6]={0};
-    Float_t *xtemp = s->GetPositionX();
-    for(unsigned int i=0;i<6;i++){
-      std::cout<<xtemp[i]<<"\n";
-      xset[i]=xtemp[i];
-  }
-    
-    Float_t yset[6]={5.42315,5.68537,6.05,6.28808,6.7783,8.78486};
-    TF1 *fitter2=new TF1("fitter2","pol1",0,4096);
-    TGraph peaks(6,xset,yset);
-    peaks.Fit(fitter2,"","",0,4096);
-    eshift=fitter2->GetParameter(0);
-    elin=fitter2->GetParameter(1);
-   
-  }
-
-
 
 
   void FitPulserPeaks(const std::string& detname,const std::string& module, const std::string &pulserinputs){

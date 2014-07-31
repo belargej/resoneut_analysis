@@ -128,12 +128,6 @@ namespace si_cal{
 		double&, 
 		double&);
     
-
-
-  void Th228Fit(TH1D * h1,
-		double &elin,
-		double &eshift);
- 
   void FitPulserPeaks(const std::string& detname,const std::string& module, const std::string &pulserinputs);
 
 }

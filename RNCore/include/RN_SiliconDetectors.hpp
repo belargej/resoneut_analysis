@@ -206,7 +206,6 @@ class RN_SiArray:public RN_BaseClass{
 private:
   Int_t fNumOfSi;
   Double32_t fP[3]; //! pol2 fit of eloss
-
   std::vector<Double32_t> fE_;
   std::vector<TVector3> fPos_;
   std::vector<Double32_t> fT_;

@@ -17,7 +17,10 @@ using global::myRnd;
 //S1FIXENABLE was needed for some data sets where the S1 Detector was incorrectly plugged in
 #define S1FIXENABLE 0
 
+//S2FIXENABLE to correct energy discrepency when front.ch = back.ch?
+#define S2FIXENABLE 0
 
+//To enable/disable randomization of the angle during cluster reconstruction
 #if 1
 #define RNDMNUM global::myRnd.Rndm()
 #else
@@ -445,7 +448,15 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
       }
 #endif
       
-      
+#if S2FIXENABLE
+      if(match_ch == cb){
+	back_e = (back_e * 1.035294118);
+      }
+      if((match_ch + 1) == cb){
+	back_e = (back_e * 1.023255814);
+      }
+
+#endif      
       
       
       fPos[fMult] = in.chVect(match_ch,cb);

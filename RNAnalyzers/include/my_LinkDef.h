@@ -5,6 +5,7 @@
 #pragma link C++ nestedclasses;
 #pragma link C++ defined_in "PSD_Analyzer.hpp";
 #pragma link C++ defined_in "Si_Analyzer.hpp";
+#pragma link C++ defined_in "SiDeadLayers.hpp";
 #pragma link C++ defined_in "IC_Analyzer.hpp";
 #pragma link C++ defined_in "TRel_Analyzer.hpp";
 #pragma link C++ defined_in "Module_Analyzer.hpp";
