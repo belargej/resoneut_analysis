@@ -205,7 +205,7 @@ public:
 class RN_SiArray:public RN_BaseClass{
 private:
   Int_t fNumOfSi;
-  Double32_t fP[3]; //! pol2 fit of eloss
+  Double32_t fP[4]; //! pol2 fit of eloss
   std::vector<Double32_t> fE_;
   std::vector<TVector3> fPos_;
   std::vector<Double32_t> fT_;
@@ -231,7 +231,7 @@ public:
 
 
   Double32_t ERecoAB() const{return fNumOfSi > 1 ? (fE_[1] + ERecoA()) : 0;}
-  Double32_t ERecoA() const{return fNumOfSi > 1 ? ((fE_[1] * fE_[1]*fP[2]) + (fE_[1] * fP[1]) + fP[0]) : 0;}
+  Double32_t ERecoA() const{return fNumOfSi > 1 ? ( (fP[3] * TMath::Power(fE_[1],3) ) + (fP[2] * TMath::Power(fE_[1],2)) + (fP[1] * fE_[1]) + fP[0]) : 0;}
 
   ClassDef(RN_SiArray,1);
 };

@@ -3,6 +3,7 @@
   gSystem->Load("libSAK.so");
   gSystem->Load("libRNanalyzers.so");
   gSystem->Load("libRNfilters.so");
+  gSystem->Load("libRNfitting.so");
 
  
 

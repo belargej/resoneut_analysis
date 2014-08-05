@@ -39,7 +39,7 @@ public:
   void LoadParams(std::string filename);
   int AddParam(std::string,double);
   void ClearParams();
-
+  void Print();
   
   ClassDef(RN_VariableMap,1);
 };

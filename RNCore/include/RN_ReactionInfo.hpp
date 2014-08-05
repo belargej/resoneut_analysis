@@ -117,6 +117,8 @@ public:
   Double32_t DecayQValueExact();
   Double32_t DecayQValueEstimate();
   Double32_t DecayQValueEstimate(const double& decay_energy, const double& decay_theta);
+  Double32_t DecayQValueIterations(const double& decay_ke, const double & decay_theta /*inradians*/,const int& iterations);
+
   Double32_t RecoilQValue(const double& dz, const double& tof, double&nKE, double&hiKE);
 
   void Reset(); //reset LorentzVectors but leave masses

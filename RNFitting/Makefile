@@ -1,10 +1,6 @@
 CXX=g++
 
-SRCFILES=PSD_Analyzer.cpp IC_Analyzer.cpp Si_Analyzer.cpp \
-	 Module_Analyzer.cpp NaI_Analyzer.cpp TRel_Analyzer.cpp \
-	 Q_ValueAnalyzer.cpp NewTree_Analyzer.cpp F17dn_Analyzer.cpp \
-	 Mg24dn_Analyzer.cpp Neut_TOF_Analyzer.cpp BeamSpot.cpp \
-	 EventAnalyzer.cpp SiDeadLayers.cpp
+SRCFILES= Th228FitIndividual.cpp
 
 ########Directories and Files###########################################################
 SRCDIR=src
@@ -29,19 +25,19 @@ LINK_DIR=${PWD}/../lib
 LFLAGS=-L${LINK_DIR} ${GLIBS} ${OPTIONS} ${DEBUG} 
 INC_DIR=-I${ROOTSYS}/include -I$(PWD)/../RNCore/include -I$(PWD)/../ -I$(HDRDIR)
 
-all: libRNanalyzers.so
+all: libRNfitting.so
 
-libRNanalyzers.so: ${OBJECTS} RNanalyzers_d.cpp 
+libRNfitting.so: ${OBJECTS} RNfitting_d.cpp 
 	 g++ -shared -o ${addprefix ../lib/,$@} $^ `root-config --ldflags --libs --cflags` ${DEBUG} $(INC_DIR) -fPIC
 #	@echo "cleaning up: \n .o files"  
 #	rm ${OBJECTS}
 	@echo "cleaning up: \n _d dictionary files"  	
-	rm RNanalyzers_d.*
+	rm RNfitting_d.*
 
 
 
-RNanalyzers_d.cpp: ${HEADERS} $(HDRDIR)/my_LinkDef.h
-	rootcint RNanalyzers_d.cpp -c $(INC_DIR) `root-config --cflags` -p $^
+RNfitting_d.cpp: ${HEADERS} $(HDRDIR)/my_LinkDef.h
+	rootcint RNfitting_d.cpp -c $(INC_DIR) `root-config --cflags` -p $^
 
 %.o: ${addprefix $(SRCDIR)/,%.cpp} ${addprefix $(HDRDIR)/,%.hpp}	
 	${CXX} ${CFLAGS} $< $(INC_DIR) -fPIC
@@ -51,16 +47,16 @@ RNanalyzers_d.cpp: ${HEADERS} $(HDRDIR)/my_LinkDef.h
 #####################################################################
 
 clean: 
-	rm ../lib/libRNanalyzers.so RNanalyzers_d.* ${OBJECTS}
+	rm ../lib/libRNfitting.so RNfitting_d.* ${OBJECTS}
 
 newdict:
-	rm RNanalyzers_d.*
+	rm RNfitting_d.*
 
 install:	
-	ln -s ${PWD}/../lib/libRNanalyzers.so ${HOME}/lib
+	ln -s ${PWD}/../lib/libRNfitting.so ${HOME}/lib
 
 uninstall:	
-	rm ${HOME}/lib/libRNanalyzers.so
+	rm ${HOME}/lib/libRNfitting.so
 
 
 help:

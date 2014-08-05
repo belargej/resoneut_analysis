@@ -65,6 +65,15 @@ int RN_VariableMap::GetParam(std::string param,double& var){
   
 }
 
+void RN_VariableMap::Print(){
+  it=vmap.begin();
+  while(it!=vmap.end()){
+    std::cout<<it->first<<" "<<it->second<<"\n";
+    it++;
+  }
+
+
+}
 
 
 int RN_VariableMap::AddParam(std::string param,double var){

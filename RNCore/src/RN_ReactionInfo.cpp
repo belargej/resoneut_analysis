@@ -167,10 +167,47 @@ Double32_t RN_ReactionInfo::DecayQValueEstimate(){
 }
 
 Double32_t RN_ReactionInfo::DecayQValueEstimate(const double& decay_ke,const double& decay_theta /*inradians*/){
-  return(decay_ke* (1 + (M_Decay_Product() / M_Heavy_Decay())) 
+ Double32_t q = (decay_ke* (1 + (M_Decay_Product() / M_Heavy_Decay())) 
 	 - (fE_fragment_est * ( 1 - (M_Fragment() / M_Heavy_Decay())))
 	 - ((2 / M_Heavy_Decay()) * TMath::Sqrt(decay_ke * M_Decay_Product() * fE_fragment_est * M_Fragment()) * cos(decay_theta)));
+
+ return q;
+
 }
+
+Double32_t RN_ReactionInfo::DecayQValueIterations(const double& decay_ke, const double & decay_theta /*inradians*/,const int& iterations){
+  Double32_t q = DecayQValueEstimate(decay_ke,decay_theta);
+  if(iterations==0){
+    return q;
+  }
+
+  double p_beam,alpha,beta;
+  double p_rec,e_rec;
+  alpha = ((1./M_Heavy_Decay()) - (1./M_Decay_Product()));
+  beta = ((1./M_Fragment()) + (1./M_Decay_Product()));
+  p_beam = sqrt(2*BeamEnergy_Est()*M_Beam());
+  
+  //  std::cout<<fE_fragment_est<<" "<<q<<"\n";
+
+  for(unsigned int i=0;i<iterations;i++){
+    p_rec = p_beam / (beta*M_Decay_Product()) + sqrt(pow((p_beam) / (beta*M_Decay_Product()),2.) + 2*(-2.2-q)/beta + pow(p_beam,2.)* alpha/ beta );
+    e_rec = pow(p_rec,2.)/(2*M_Fragment());
+    
+    q = (decay_ke* (1 + (M_Decay_Product() / M_Heavy_Decay())) 
+      - (e_rec * ( 1 - (M_Fragment() / M_Heavy_Decay())))
+	 - ((2 / M_Heavy_Decay()) * TMath::Sqrt(decay_ke * M_Decay_Product() * e_rec * M_Fragment()) * cos(decay_theta)));
+    //    std::cout<<e_rec<<" "<<q<<"\n";
+
+  }
+  return q;
+
+
+
+
+
+}
+
+
 
 
 //Calculate the Q_value given the time of flight of the recoil. 

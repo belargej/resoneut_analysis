@@ -1,6 +1,6 @@
 CXX=g++
 
-SUB_DIRS=RNCore RNAnalyzers RNBatchMode RNSimRun RNFilters plugins/sak
+SUB_DIRS=RNCore RNAnalyzers RNBatchMode RNSimRun RNFilters RNFitting plugins/sak
 
 .PHONY: ALL_SUBDIRS clean newdict
 

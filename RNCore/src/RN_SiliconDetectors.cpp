@@ -18,7 +18,7 @@ using global::myRnd;
 #define S1FIXENABLE 0
 
 //S2FIXENABLE to correct energy discrepency when front.ch = back.ch?
-#define S2FIXENABLE 0
+#define S2FIXENABLE 1
 
 //To enable/disable randomization of the angle during cluster reconstruction
 #if 1
@@ -451,9 +451,12 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
 #if S2FIXENABLE
       if(match_ch == cb){
 	back_e = (back_e * 1.035294118);
+	match_e = (match_e * 1.035294118);
       }
       if((match_ch + 1) == cb){
 	back_e = (back_e * 1.023255814);
+	match_e = (match_e * 1.023255814);
+
       }
 
 #endif      
@@ -522,7 +525,7 @@ RN_SiArray::RN_SiArray(const std::string& name, int num):RN_BaseClass(name),
 							 fPos_(num,TVector3(0,0,0)),
 							 fT_(num,0)
 {
-  for(unsigned int i=0;i<3;i++){
+  for(unsigned int i=0;i<4;i++){
     fP[i] = 0;
   }
   
@@ -532,6 +535,7 @@ void RN_SiArray::SetCalibrations(RN_VariableMap& detvar){
   detvar.GetParam(Form("%s.p0",GetName()),fP[0]);
   detvar.GetParam(Form("%s.p1",GetName()),fP[1]);
   detvar.GetParam(Form("%s.p2",GetName()),fP[2]);
+  detvar.GetParam(Form("%s.p3",GetName()),fP[3]);
 
 }
 

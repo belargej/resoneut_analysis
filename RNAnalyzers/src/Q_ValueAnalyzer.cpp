@@ -138,15 +138,15 @@ namespace physical{
 
     if(silicon::protcheck){
       Q_Value_proton->Fill(q_val_p);
-      Q_v_pTheta->Fill(q_val_p,si_array.Theta_A());   		       
+      Q_v_pTheta->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   		       
       Q_v_pE->Fill(q_val_p,si_array.E_AB());   			       
-      Q_v_pRelAngle->Fill(q_val_p,si_array.Theta_A());   		       
+      Q_v_pRelAngle->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   		       
       
       if(ionchamber::hi_check[0]){
 	Q_Value_proton_hi1->Fill(q_val_p);
-	Q_v_pTheta_proton_hi1->Fill(q_val_p,si_array.Theta_A());   	       
+	Q_v_pTheta_proton_hi1->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   	       
 	Q_v_pE_proton_hi1->Fill(q_val_p,si_array.E_AB());   	       
-	Q_v_pRelAngle_proton_hi1->Fill(q_val_p,si_array.Theta_A());   
+	Q_v_pRelAngle_proton_hi1->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   
 	
       }
       if(ionchamber::hi_check[1]){

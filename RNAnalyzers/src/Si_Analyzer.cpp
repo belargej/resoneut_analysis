@@ -58,6 +58,7 @@ namespace silicon{
   TH1D *h_si_back_a[SI_NUM];
   TH1D *h_si_front[SI_NUM];
   TH1D *h_si_front_a[SI_NUM];
+  TH1D *h_si_cluster_e[SI_NUM];
   TH1D *h_theta[SI_NUM];
   TH2D *h_evtheta_arb[SI_NUM];
   TH2D *h_evtheta[SI_NUM];
@@ -151,6 +152,7 @@ namespace silicon{
     for(unsigned int i=0;i<si_.size();i++){
       fgRootFile->cd(Form("Silicon/%s",si_[i].GetName()));
       h_si_back_a[i]=new TH1D(Form("h_%s_back_a",si_[i].GetName()),Form("%s_e_before;E",si_[i].GetName()),4096,-20,4095);
+      h_si_cluster_e[i]=new TH1D(Form("h_%s_cluster_e",si_[i].GetName()),Form("%s_e_after;E[MeV]",si_[i].GetName()),512,-1,16);
       h_si_back[i]=new TH1D(Form("h_%s_back",si_[i].GetName()),Form("%s_e_after;E[MeV]",si_[i].GetName()),512,-1,16);
       h_si_front_a[i]=new TH1D(Form("h_%s_front_a",si_[i].GetName()),Form("%s_e_before;E",si_[i].GetName()),4096,-20,4095);
       h_si_front[i]=new TH1D(Form("h_%s_front",si_[i].GetName()),Form("%s_e_after;E[MeV]",si_[i].GetName()),512,-1,16);
@@ -279,6 +281,7 @@ TH2D(Form("h_evtheta[%s]",si_[i].GetName()),Form("h_evtheta[%s];Theta;E",si_[i].
       h_si_back[i]->Fill(si_[i].Back_E());
       h_si_front_a[i]->Fill(si_[i].front.E());
       h_si_front[i]->Fill(si_[i].Front_E());
+      h_si_cluster_e[i]->Fill(si_cluster_[i].ERaw());
       
       h_si_fmult[i]->Fill(si_[i].front.Mult());
       h_si_bmult[i]->Fill(si_[i].back.Mult());
