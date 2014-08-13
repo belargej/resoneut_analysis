@@ -22,7 +22,7 @@ SAK_d.cpp: ${HEADERS} my_LinkDef.h
 	rootcint SAK_d.cpp -c $(INC_DIR) `root-config --cflags` -p $^
 
 %.o: %.cpp	
-	${CXX} ${CFLAGS} $< $(INC_DIR) -lSpectrum
+	${CXX} ${CFLAGS} $< $(INC_DIR)
 
  #####################################################################
 ###Other Functions###################################################
