@@ -204,6 +204,7 @@ int RN_NeutDetectorArray::ReconstructHits(RN_NeutCollection& in){
 
 void RN_NeutDetectorArray::Reset(){
   for(int i=0;i<fMult;i++){
+    fPos[i].SetXYZ(0,0,0);
     fQ_long[i]=0;
     fPSD[i]=0;
     fDetlist[i]=-1;

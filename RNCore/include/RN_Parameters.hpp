@@ -42,8 +42,8 @@ class RN_Parameter:public RN_BaseClass{
 protected:
 
   UInt_t fBins;//!
-  UInt_t fMin;//!
-  UInt_t fMax;//!
+  Double32_t fMin;//!
+  Double32_t fMax;//!
   Bool_t fValid;//!
 
 public:

@@ -35,7 +35,7 @@ and phi channels.
 
 class RN_BaseDetector:public RN_BaseClass{
 protected:
-  int fNumOfCh;//!
+  UInt_t fNumOfCh;//!
   int fSortedByChannel;//!
   double fLowLimit;//!
   double fHighLimit;//!
@@ -77,9 +77,9 @@ public:
   
 
   void SetELimits(const double&,const double&);
-  void Init(const double& num);
+  void Init(const int& num);
   void Reset();
-  Int_t NumOfCh()const{return fNumOfCh;}
+  UInt_t NumOfCh()const{return fNumOfCh;}
   std::string Name()const {return GetName();} 
   int InsertHit(const double&, const double&, const double&);
   void SetSortByChannel(bool val = true);

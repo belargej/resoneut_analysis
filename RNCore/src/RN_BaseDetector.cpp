@@ -48,7 +48,7 @@ void RN_BaseDetector::Reset(){
 }
 
 
-void RN_BaseDetector::Init(const double& num){
+void RN_BaseDetector::Init(const int& num){
   fNumOfCh=num;
   //  fChlist.resize(fNumOfCh,double(0));
   //fE.resize(fNumOfCh,double(0));
@@ -62,7 +62,7 @@ void RN_BaseDetector::SetELimits(const double& elow,const double& ehigh){
 }
 
 void RN_BaseDetector::SetCalibrations(RN_VariableMap& detvar){
-  for(int i=0;i<NumOfCh();i++){
+  for(unsigned int i=0;i<NumOfCh();i++){
     detvar.GetParam(Form("%s.ch[%d]",GetName(),i),fChCal[i]);
     detvar.GetParam(Form("%s.a0[%d]",GetName(),i),fA0[i]);  
     detvar.GetParam(Form("%s.a1[%d]",GetName(),i),fA1[i]);
@@ -136,7 +136,7 @@ int RN_BaseDetector::InsertHit(const double& e,const double& t,const double& ch)
   fChlist[i+1]=ch;
   fE[i+1]=e;
   fT[i+1]=t;
-  fMult += 1.;
+  fMult += 1;
 
   return (i+1);
 }

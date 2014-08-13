@@ -110,16 +110,23 @@ public:
   //get kinematic curves for plotting/matching over data
   TGraph GetCurve(int Points, const double& hi_ex_set);
   TGraph GetCurve(int Points);
-  TGraph GetSecondaryDecayCurve(int Points,const double & hi_ex_set,const double& decay_ex_set);
   TGraph GetSecondaryDecayCurve(int Points);
+  TGraph GetSecondaryDecayCurve(int Points,const double & hi_ex_set ,const double& decay_ex_set );
+  TGraph GetSecondaryHeavyDecayCurve(int Points,const double & hi_ex_set ,const double& decay_ex_set );
+  TGraph GetSecondaryThetaTheta(int Points,const double & hi_ex_set ,const double& decay_ex_set );
+  
+
 
   //Use masses to estimate qval
   Double32_t DecayQValueExact();
   Double32_t DecayQValueEstimate();
   Double32_t DecayQValueEstimate(const double& decay_energy, const double& decay_theta);
-  Double32_t DecayQValueIterations(const double& decay_ke, const double & decay_theta /*inradians*/,const int& iterations);
+  Double32_t DecayQValueIterations(const double& decay_ke, const double & decay_theta /*inradians*/,const UInt_t& iterations);
+
 
   Double32_t RecoilQValue(const double& dz, const double& tof, double&nKE, double&hiKE);
+  Double32_t RecoilQValue(const double& nKE_R, const double & theta, double & hiKE);
+
 
   void Reset(); //reset LorentzVectors but leave masses
   void Clear(); //reset both masses and LVs and isSet=0

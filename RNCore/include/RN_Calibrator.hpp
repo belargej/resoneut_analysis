@@ -65,8 +65,8 @@ public:
   std::vector<int> fPoint;
   std::vector<TGraph> fCorr;//for matching all front to one back channel
   std::string fDetName;
-  int fELowLimit;
-  int fEHighLimit;
+  Double32_t fELowLimit;
+  Double32_t fEHighLimit;
 
   void AddHit(const double & e,const double& e1, const int& ch);
   void PerformFit();
@@ -82,12 +82,12 @@ namespace si_cal{
 				    const unsigned int& matchback, 
 				    const unsigned int& DetID,
 				    RN_EventProcessor& EventProcessor = RNROOT::gMainAnalyzer,
-				    const double& xbins=2048,
-				    const double& xmin=0,
-				    const double& xmax=4095,
-				    const double& ybins=2048,
-				    const double& ymin=0,
-				    const double& ymax=4095);
+				    const int& xbins=2048,
+				    const double& xmin=0.,
+				    const double& xmax=4095.,
+				    const int& ybins=2048,
+				    const double& ymin=0.,
+				    const double& ymax=4095.);
   
   void AutoCalibrate(const unsigned int& matchfront, 
 		     const unsigned int& matchback,

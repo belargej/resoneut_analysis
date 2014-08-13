@@ -161,21 +161,23 @@ Double32_t RN_ReactionInfo::DecayQValueExact(){
 Double32_t RN_ReactionInfo::DecayQValueEstimate(){
   double d_ke=DecayProductLV().E()-DecayProductLV().M();
   double d_theta=DecayProductLV().Theta();
-  return (d_ke* (1 + (M_Decay_Product() / M_Heavy_Decay())) 
-	  - (fE_fragment_est * ( 1 - (M_Fragment() / M_Heavy_Decay())))
-	  - ((2 / M_Heavy_Decay()) * TMath::Sqrt(d_ke * M_Decay_Product() * fE_fragment_est * M_Fragment()) * cos(d_theta)));
+  return (d_ke* (1.0 + (M_Decay_Product() / M_Heavy_Decay())) 
+	  - (fE_fragment_est * ( 1.0 - (M_Fragment() / M_Heavy_Decay())))
+	  - ((2.0 / M_Heavy_Decay()) * TMath::Sqrt(d_ke * M_Decay_Product() * fE_fragment_est * M_Fragment()) * cos(d_theta)));
 }
 
 Double32_t RN_ReactionInfo::DecayQValueEstimate(const double& decay_ke,const double& decay_theta /*inradians*/){
- Double32_t q = (decay_ke* (1 + (M_Decay_Product() / M_Heavy_Decay())) 
-	 - (fE_fragment_est * ( 1 - (M_Fragment() / M_Heavy_Decay())))
-	 - ((2 / M_Heavy_Decay()) * TMath::Sqrt(decay_ke * M_Decay_Product() * fE_fragment_est * M_Fragment()) * cos(decay_theta)));
-
+  double a = (1.0 + (M_Decay_Product() / M_Heavy_Decay()));
+  double b = (1.0 - (M_Fragment() / M_Heavy_Decay()));
+  double c = (2.0 / M_Heavy_Decay());
+  double d = TMath::Sqrt(decay_ke * M_Decay_Product() * fE_fragment_est * M_Fragment());
+  double q = (decay_ke * a) - (fE_fragment_est * b ) - (c * d * TMath::Cos(decay_theta));
+  
  return q;
 
 }
 
-Double32_t RN_ReactionInfo::DecayQValueIterations(const double& decay_ke, const double & decay_theta /*inradians*/,const int& iterations){
+Double32_t RN_ReactionInfo::DecayQValueIterations(const double& decay_ke, const double & decay_theta /*inradians*/,const UInt_t& iterations){
   Double32_t q = DecayQValueEstimate(decay_ke,decay_theta);
   if(iterations==0){
     return q;
@@ -220,6 +222,16 @@ Double32_t RN_ReactionInfo::RecoilQValue(const double& deltaz/*mm*/, const doubl
   
   return (NKE+hiKE-BeamEnergy_Est()); 
 }
+
+Double32_t RN_ReactionInfo::RecoilQValue(const double& nKE_R, const double & theta /*rad*/, double & hiKE  ){
+  double M_N=M_Recoil();
+  double M1=M_Beam();
+  double M2=M_Fragment();
+  hiKE=(M1/M2)*BeamEnergy_Est()+((M_N/M2)*nKE_R)-((2/M2)*sqrt((BeamEnergy_Est()*nKE_R*M_N*M1))*TMath::Cos(theta));
+  
+  return (nKE_R+hiKE-BeamEnergy_Est()); 
+}
+
 
 TGraph RN_ReactionInfo::GetCurve(int Points){
  return GetCurve(Points,this->fhi_ex_set);
@@ -286,6 +298,75 @@ TGraph RN_ReactionInfo::GetSecondaryDecayCurve(int Points,const double & hi_ex_s
 
   return curve;
 }
+
+TGraph RN_ReactionInfo::GetSecondaryHeavyDecayCurve(int Points,const double & hi_ex_set,const double& decay_ex_set){
+  TGraph curve;
+  if(!IsSet()){
+    std::cout<<"Reaction Masses have not been set"<<std::endl;
+    return curve;
+  }
+  
+  sim::RN_SimEvent evt1(fBeamEnergy,mArray[0],mArray[1],mArray[2],mArray[3]);
+  sim::RN_SimEvent evt2(mArray[3],mArray[4],mArray[5]);
+  // Fill the points of the kinematic curve
+  int p=0;
+  while(p<Points){
+    double theta_deg = 175; // assume backward angle from inverse kinematics
+    double phi=2.*M_PI*global::myRnd.Rndm();
+    
+    TVector3 nv; nv.SetMagThetaPhi(1.,theta_deg*M_PI/180.0,phi);
+    if(!evt1.radiate_in_CM(nv,hi_ex_set))
+      continue;
+
+    theta_deg = 180* p / Points;
+    phi = 2.*M_PI*global::myRnd.Rndm();
+    TVector3 pv; pv.SetMagThetaPhi(1.,theta_deg*M_PI/180.0,phi);
+    if(!evt2.radiate_in_CM(evt1.getLVhi(),pv,fd_ex_set))
+      continue;
+
+    curve.SetPoint(p, evt2.getLVhi().Theta()*180/3.14,(double)(evt2.getLVhi().E() - evt2.getLVhi().M()));
+    p++;
+  }
+  // end for(p)    
+
+  return curve;
+}
+
+TGraph RN_ReactionInfo::GetSecondaryThetaTheta(int Points,const double & hi_ex_set,const double& decay_ex_set){
+  TGraph curve;
+  if(!IsSet()){
+    std::cout<<"Reaction Masses have not been set"<<std::endl;
+    return curve;
+  }
+  
+  sim::RN_SimEvent evt1(fBeamEnergy,mArray[0],mArray[1],mArray[2],mArray[3]);
+  sim::RN_SimEvent evt2(mArray[3],mArray[4],mArray[5]);
+  // Fill the points of the kinematic curve
+  int p=0;
+  while(p<Points){
+    double theta_deg = 175; // assume backward angle from inverse kinematics
+    double phi=2.*M_PI*global::myRnd.Rndm();
+    
+    TVector3 nv; nv.SetMagThetaPhi(1.,theta_deg*M_PI/180.0,phi);
+    if(!evt1.radiate_in_CM(nv,hi_ex_set))
+      continue;
+
+    theta_deg = 180* p / Points;
+    phi = 2.*M_PI*global::myRnd.Rndm();
+    TVector3 pv; pv.SetMagThetaPhi(1.,theta_deg*M_PI/180.0,phi);
+    if(!evt2.radiate_in_CM(evt1.getLVhi(),pv,fd_ex_set))
+      continue;
+
+    curve.SetPoint(p, evt2.getLVhi().Theta()*180/3.14,evt2.getLVrad().Theta()*180/3.14);
+    p++;
+  }
+  // end for(p)    
+
+  return curve;
+}
+
+
+
 
 
 

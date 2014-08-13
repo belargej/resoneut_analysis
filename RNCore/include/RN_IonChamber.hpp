@@ -45,7 +45,7 @@ class RN_IonChamber:public RN_BaseClass{
  public:
   RN_IonChamber(std::string name="ic"):RN_BaseClass(name,name),
 				       fHitPos(TVector3(0,0,0)),
-				       fZPos(250),
+				       fZPos(380),
 				       fYPos(0),
 				       fXPos(0),
 				       fWireDist(2),//mm

@@ -24,6 +24,7 @@ namespace ionchamber{
   TCutG* ede_hi2;
   TCutG* ede_hi3;
   TCutG* posede;
+  TCutG* pileup;
 
   int  _require_hi1(0);
   int  _require_hi2(0);
@@ -56,11 +57,23 @@ namespace ionchamber{
   TH1D *hICYCh0;
   TH1D *hICCalDE;
   TH1D *hICCalE;
+  TH1D *hICESumX;
+  TH1D *hICESumY;
   TH2D *hICXE1vE0;  
   TH2D *hICYE1vE0;  
+  TH2D *hICXCH1vCH0;  
+  TH2D *hICYCH1vCH0; 
+  TH2D *hICXE2vE0;  
+  TH2D *hICYE2vE0;  
+  TH2D *hICXE2vE1;  
+  TH2D *hICYE2vE1; 
+  TH2D *hICXCH2vCH0;  
+  TH2D *hICYCH2vCH0; 
+  TH2D *hICXCH2vCH1;  
+  TH2D *hICYCH2vCH1; 
   TH1D *hICXE0Mult1;
   TH1D *hICYE0Mult1;
-
+  TH2D *hPileupChs; 
 
 
 
@@ -93,8 +106,8 @@ namespace ionchamber{
     hXvY= new TH2D("hXvY","hXvY;XChan;YChan",128,-128,128,128,-128,128);
     hXvYRaw= new TH2D("hXvYRaw","hXvYRaw;XChanHighestE;YChanHighestE",64,-16,47,64,-16,47);
     hICTheta = new TH1D("hICTheta","hICTheta;Theta",180,0,20);
-    hICEvTheta = new TH2D("hICEvTheta","hICEvTheta;Theta;E",180,0,20,512,0,128);
-    hICEAllvTheta = new TH2D("hICEAllvTheta","hICEAllvTheta;Theta;EAll",180,0,20,512,0,128);
+    hICEvTheta = new TH2D("hICEvTheta","hICEvTheta;Theta;E",512,0,15,512,0,128);
+    hICEAllvTheta = new TH2D("hICEAllvTheta","hICEAllvTheta;Theta;EAll",512,0,15,512,0,128);
     hICPhi = new TH1D("hICPhi","hICPhi;Phi",180,0,179);
 
 
@@ -111,7 +124,8 @@ namespace ionchamber{
     hCalICPosEvE=new TH2D("hCalICPosEvE","hCalICPosEvE;E + dE + dEX + dEY [arb];dEX + dEY [arb]",1024,0,4095,1024,0,1023);
     hICCalE = new TH1D("hICCalE","hICCalE;IC.E()",2048,0,1024);
     hICCalDE = new TH1D("hICCalDE","hICCalDE;IC.DE()",2048,0,1024);
-
+    hICESumX = new TH1D("hICESumX","hICESumX;IC.ESumX()",4096,0,4095);
+    hICESumY = new TH1D("hICESumY","hICESumY;IC.ESumY()",4096,0,4095);
 
 
     fgRootFile->cd("IC/t");
@@ -126,11 +140,21 @@ namespace ionchamber{
     hICYCh0 = new TH1D("hICYCh0","hICYCh0;YCh0",32,0,31);
     hICXE1vE0 = new TH2D("hICXE1vE0","hICXE1vE0",512,0,4095,512,0,4095);  
     hICYE1vE0 = new TH2D("hICYE1vE0","hICYE1vE0",512,0,4095,512,0,4095);   
+    hICXCH1vCH0 = new TH2D("hICXCH1vCH0","hICXCH1vCH0",32,0,31,32,0,31);  
+    hICYCH1vCH0 = new TH2D("hICYCH1vCH0","hICYCH1vCH0",32,0,31,32,0,31);  
+    hICXE2vE0 = new TH2D("hICXE2vE0","hICXE2vE0",512,0,4095,512,0,4095);  
+    hICYE2vE0 = new TH2D("hICYE2vE0","hICYE2vE0",512,0,4095,512,0,4095);   
+    hICXCH2vCH0 = new TH2D("hICXCH2vCH0","hICXCH2vCH0",32,0,31,32,0,31);  
+    hICYCH2vCH0 = new TH2D("hICYCH2vCH0","hICYCH2vCH0",32,0,31,32,0,31); 
+    hICXE2vE1 = new TH2D("hICXE2vE1","hICXE2vE1",512,0,4095,512,0,4095);  
+    hICYE2vE1 = new TH2D("hICYE2vE1","hICYE2vE1",512,0,4095,512,0,4095);   
+    hICXCH2vCH1 = new TH2D("hICXCH2vCH1","hICXCH2vCH1",32,0,31,32,0,31);  
+    hICYCH2vCH1 = new TH2D("hICYCH2vCH1","hICYCH2vCH1",32,0,31,32,0,31); 
     hICXE0Mult1 = new TH1D("hICXE0Mult1","hICXE0Mult1",4096,0,4095);
     hICYE0Mult1 = new TH1D("hICYE0Mult1","hICYE0Mult1",4096,0,4095);
     hYGridMult = new TH1D("hYGridMult","hYGridMult;mult",32,0,31);
     hXMultvYMult = new TH2D("hXMultvYMult","hXMultvYGridMult;XMult;YMult",32,0,31,32,0,31);
-
+    hPileupChs = new TH2D("hPileup","hPileup",32,0,31,32,0,31);  
 
 
 
@@ -186,6 +210,8 @@ namespace ionchamber{
 
     hICCalE->Fill(ic.E());
     hICCalDE->Fill(ic.DE());
+    hICESumX->Fill(ic.SumE_X());
+    hICESumY->Fill(ic.SumE_Y());
 
     hXGridMult->Fill(ic.xgrid.Mult());
     hYGridMult->Fill(ic.ygrid.Mult());
@@ -193,14 +219,27 @@ namespace ionchamber{
     hICXCh0->Fill(ic.xgrid.Ch(0));
     hICYCh0->Fill(ic.xgrid.Ch(0));
     hICXE1vE0->Fill(ic.xgrid.ELocal(0),ic.xgrid.ELocal(1));  
-    hICYE1vE0->Fill(ic.ygrid.ELocal(0),ic.ygrid.ELocal(1));  
+    hICYE1vE0->Fill(ic.ygrid.ELocal(0),ic.ygrid.ELocal(1)); 
+    hICXE2vE0->Fill(ic.xgrid.ELocal(0),ic.xgrid.ELocal(2));  
+    hICYE2vE0->Fill(ic.ygrid.ELocal(0),ic.ygrid.ELocal(2)); 
+    hICXE2vE1->Fill(ic.xgrid.ELocal(1),ic.xgrid.ELocal(2));  
+    hICYE2vE1->Fill(ic.ygrid.ELocal(1),ic.ygrid.ELocal(2)); 
+    hICXCH1vCH0->Fill(ic.xgrid.Ch(0),ic.xgrid.Ch(1));  
+    hICYCH1vCH0->Fill(ic.ygrid.Ch(0),ic.ygrid.Ch(1));  
+    hICXCH2vCH0->Fill(ic.xgrid.Ch(0),ic.xgrid.Ch(2));  
+    hICYCH2vCH0->Fill(ic.ygrid.Ch(0),ic.ygrid.Ch(2)); 
+    hICXCH2vCH1->Fill(ic.xgrid.Ch(1),ic.xgrid.Ch(2));  
+    hICYCH2vCH1->Fill(ic.ygrid.Ch(1),ic.ygrid.Ch(2)); 
     if(ic.xgrid.Mult()==1){
       hICXE0Mult1->Fill(ic.xgrid.ELocal(0));
     }
     if(ic.ygrid.Mult()==1){
       hICYE0Mult1->Fill(ic.ygrid.ELocal(0));
     }
-    
+
+    if(pileup && pileup->IsInside(ic.ygrid.ELocal(0),ic.ygrid.ELocal(1))){
+	 hPileupChs->Fill(ic.ygrid.Ch(0),ic.ygrid.Ch(1));
+       }
    
     hXvY->Fill(ic.GetHitPos().X(),ic.GetHitPos().Y());
     hXvYRaw->Fill(ic.xgrid.Ch(0),ic.ygrid.Ch(0));
@@ -260,7 +299,9 @@ namespace ionchamber{
       ede_hi3=new TCutG(*(TCutG*)in.Get("ede_hi3"));   
     if(in.Get("posede") && !posede)
       posede=new TCutG(*(TCutG*)in.Get("posede"));   
-   
+    if(in.Get("pileup") && !pileup)
+      pileup=new TCutG(*(TCutG*)in.Get("pileup"));   
+    
   
     in.Close();
   }

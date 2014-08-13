@@ -68,8 +68,21 @@ namespace _F17{
   TH2D *hICThetavSiTheta;
   TH2D *hICPhivSiPhi;
 
+  TH2D *hNeutKE_RvTheta;
+  TH2D *hNeutTvTheta;
+
+  TH1D *hNeutT;
+  TH1D *hNeutTheta;
+  TH1D *hNeutKE_R;
+  TH1D *hNeutKE;
+  TH1D *hNeutQ;
+  TH1D *hNeutQAngle;
+  TH1D *hHiKE;
+
   TH2D *hErvRunNumber;
   TH2D *hNeutRFTRelvRunNumber;  
+  TH2D *hICERawvRunNumber;  
+
   TH2D *hCalICDEvERebin;  
   TH2D *hCalICPosEvERebin;  
   TH2D *hCalICfDEvfERebin;
@@ -99,6 +112,8 @@ namespace _F17{
     fNeutKE = 0;
     fHiKE = 0;
     fNeutQ = 0;
+    fNeutQAngle = 0;
+    fNeutTheta = 0;
 
     OBandCheck = 0;
     NBandCheck = 0; 
@@ -165,7 +180,7 @@ namespace _F17{
   hEvThetaOBandProt = new TH2D("hEvThetaOBandProton","hEvThetaOBandProton",256,0,32,1024,0,64);
   hEvThetaNBandAlpha = new TH2D("hEvThetaNBandAlpha","hEvThetaNBandAlpha",256,0,32,1024,0,64);
 
- hErvRunNumber = new TH2D("hErvRunNumber","hErvRunNumber;RunNumber;Er",1024,3000,4023,512,-1,10);
+  hErvRunNumber = new TH2D("hErvRunNumber","hErvRunNumber;RunNumber;Er",1024,3000,4023,512,-1,10);
 
  
 
@@ -185,14 +200,26 @@ namespace _F17{
   
   fgRootFile->cd("F17dx_Analysis/Neut");
   hNeutRFTRelvRunNumber = new TH2D("hNeutRFTRelvRunNumber","hNeutRFTrelvRunNumber;RunNumber;NeutRFTRel",1024,3000,4023,1024,0,4095);
-  hErvNeutT = new TH2D ("hErvNeutT","hErvNeutT",1024,-100,410,512,-1,10);
-  hErvNeutKE_R = new TH2D ("hErvNeutKE_R","hErvNeutKE_R",1024,0,1,512,-1,10);
-  hErvNeutKE = new TH2D ("hErvNeutKE","hErvNeutKE",1024,0,1,512,-1,10);
-  hErvNeutQ = new TH2D ("hErvNeutQ","hErvNeutQ",1024,-10,10,512,-1,10);
+  hErvNeutT = new TH2D ("hErvNeutT","hErvNeutT",256,-100,410,512,-1,10);
+  hErvNeutKE_R = new TH2D ("hErvNeutKE_R","hErvNeutKE_R",256,0,1,512,-1,10);
+  hErvNeutKE = new TH2D ("hErvNeutKE","hErvNeutKE",256,0,1,512,-1,10);
+  hErvNeutQ = new TH2D ("hErvNeutQ","hErvNeutQ",256,-10,10,512,-1,10);
+  hNeutT = new TH1D ("hNeutT","hNeutT",256,-100,410);
+  hNeutTheta = new TH1D ("hNeutTheta","hNeutTheta",180,0,179);
+  hNeutKE_R = new TH1D ("hNeutKE_R","hNeutKE_R",256,0,1);
+  hNeutKE = new TH1D ("hNeutKE","hNeutKE",256,0,1);
+  hNeutQ = new TH1D ("hNeutQ","hNeutQ",256,-10,10);
+  hNeutQAngle = new TH1D ("hNeutQAngle","hNeutQAngle",256,-10,10);
+  hHiKE = new TH1D ("hHiKE","hHiKE",256,-10,10);
+  hNeutKE_RvTheta = new TH2D ("hNeutKE_RvTheta","hNeutKE_RvTheta",180,0,179,256,0,1);
+  hNeutTvTheta = new TH2D ("hNeutTvTheta","hNeutTvTheta",180,0,179,256,0,128);
+
+
 
   fgRootFile->cd("F17dx_Analysis/SiIC");
   hICThetavSiTheta = new TH2D("hICThetavSiTheta","hICThetavSiTheta;SiTheta;ICTheta",256,0,31,128,0,15);
   hICPhivSiPhi = new TH2D("hICPhivSiPhi","hICPhivSiPhi;SiPhi;ICPhi",360,-180,180,360,-180,180);
+  hICERawvRunNumber = new TH2D("hICERawvRunNumber","hICERawvRunNumber;RunNumber;ICERaw",1024,3000,4023,512,0,4095);
 
 
   fgRootFile->cd("F17dx_Analysis/reco");
@@ -210,9 +237,11 @@ bool F17dn_Analyzer::Process(){
 
   for(unsigned int i=0; i<neut.size();i++){
     if(psd::rawneutcheck[i]){
-      fNeutTime = (neut[i].T() - rftime.TMod2() - 41);
+      fNeutTime = (neut[i].T() - rftime.TMod2() - 43.55); //43.55 is ansatz on t=zero
       fNeutKE_R = neut[i].nKE_R(fNeutTime);
       fNeutQ = gReactionInfo.RecoilQValue(neut[i].GetPosVect().Z(),fNeutTime,fNeutKE,fHiKE);
+      fNeutTheta = (neut[i].GetPosVect().Theta()*TMath::RadToDeg());
+      fNeutQAngle = gReactionInfo.RecoilQValue(fNeutKE_R,fNeutTheta*TMath::DegToRad(),fHiKE);
       break;
     }
   }
@@ -239,7 +268,7 @@ bool F17dn_Analyzer::Process(){
 bool F17dn_Analyzer::ProcessFill(){
   hErvRunNumber->Fill(gMainAnalyzer.EventInfo(0),fErProton);;
   hNeutRFTRelvRunNumber->Fill(gMainAnalyzer.EventInfo(0),fNeutTime);
-
+  hICERawvRunNumber->Fill(gMainAnalyzer.EventInfo(0),ic.ERaw());
 
   hCalICDEvERebin->Fill(ic.E()+ic.DE(),ic.DE());
   hCalICfDEvfERebin->Fill(ic.E(),ic.DE());
@@ -316,6 +345,15 @@ bool F17dn_Analyzer::ProcessFill(){
       hErvNeutKE_R->Fill(fNeutKE_R,fErProton);
       hErvNeutKE->Fill(fNeutKE,fErProton);
       hErvNeutQ->Fill(fNeutQ,fErProton);
+      hNeutT->Fill(fNeutTime);
+      hNeutKE_R->Fill(fNeutKE_R);
+      hNeutKE->Fill(fNeutKE);
+      hNeutQ->Fill(fNeutQ);
+      hNeutTheta->Fill(fNeutTheta);
+      hNeutKE_RvTheta->Fill(fNeutTheta,fNeutKE_R);
+      hNeutTvTheta->Fill(fNeutTheta,fNeutTime);
+      hNeutQAngle->Fill(fNeutQAngle);
+      hHiKE->Fill(fHiKE);
     }
 
     hICThetavSiTheta->Fill(si_array.Theta_B()*RadToDeg(),ic.Theta());

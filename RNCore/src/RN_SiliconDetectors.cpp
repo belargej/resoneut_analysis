@@ -389,7 +389,7 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
       i++;
     }
     else{
-      int ch=in.back.Ch(i);
+      float ch=in.back.Ch(i);
       float ecluster=in.Back_E(i);
       float tcluster=in.Back_T(i);
       
@@ -413,7 +413,7 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
       i++;
     }
     else{
-      int ch=in.front.Ch(i);
+      float ch=in.front.Ch(i);
       float ecluster=in.Front_E(i);
       float tcluster=in.Front_T(i);
       FrontClusters.InsertHit(ecluster,tcluster,ch);
@@ -450,13 +450,14 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
       
 #if S2FIXENABLE
       if(match_ch == cb){
-	back_e = (back_e * 1.035294118);
-	match_e = (match_e * 1.035294118);
+	//back_e = (back_e * 1.03529411);
+	//match_e = (match_e * 1.035294118);
+	return 0;
       }
       if((match_ch + 1) == cb){
-	back_e = (back_e * 1.023255814);
-	match_e = (match_e * 1.023255814);
-
+	//back_e = (back_e * 1.023255814);
+	//match_e = (match_e * 1.023255814);
+	return 0;
       }
 
 #endif      

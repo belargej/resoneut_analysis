@@ -108,10 +108,10 @@ namespace si_cal{
 				    const unsigned int& matchback, 
 				    const unsigned int & DetID,
 				    RN_EventProcessor& EventProcessor,
-				    const double& xbins,
+				    const int& xbins,
 				    const double& xmin,
 				    const double& xmax,
-				    const double& ybins,
+				    const int& ybins,
 				    const double& ymin, 
 				    const double& ymax){
     if (!gRootFile){
@@ -375,7 +375,7 @@ namespace si_cal{
       TF1 *fitter = new TF1(Form("fitter%d",i),"pol1",0,4096);
       TGraph *graph = new TGraph(Form("graph%d",i));
       TH1D* hist = (TH1D*)gDirectory->Get(Form("h%s[%d]",module.c_str(),i));
-      Int_t PeaksFound =  s->Search(hist);
+      UInt_t PeaksFound =  s->Search(hist);
       if(pulservalues.size() < PeaksFound){
 	std::cout<<"more peaks found than pulser inputs"<<std::endl;
 	return ;

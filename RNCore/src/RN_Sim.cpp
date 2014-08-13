@@ -234,11 +234,14 @@ namespace sim{
   Q_fit=new TF1("Q_fit","gaus",-4,4);
 
   for(unsigned int i=0;i<neut.size();i++){
-    simfile->mkdir(Form("histograms/neut%d/tof",i));
+    simfile->cd("histograms");
+    gDirectory->mkdir(Form("neut%d",i));
+    gDirectory->cd(Form("neut%d",i));
+    gDirectory->mkdir("tof");
+    gDirectory->mkdir("Q");
     simfile->cd(Form("histograms/neut%d/tof",i));
     htof_n[i]=new TH1D(Form("htof_n%d",i),Form("htof_n%d",i),512,1,128);  
     TOF_fit_n[i]=new TF1(Form("tof_fit_n%d",i),"gaus",1,128);
-    simfile->mkdir(Form("histograms/neut%d/Q",i));
     simfile->cd(Form("histograms/neut%d/Q",i));
     hQ_n[i]=new TH1D(Form("hQ_n%d",i),Form("hQ_n%d",i),512,-4,4);
     Q_fit_n[i]=new TF1(Form("Q_fit_n%d",i),"gaus",-4,4);

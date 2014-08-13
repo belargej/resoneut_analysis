@@ -24,8 +24,10 @@ protected:
   Double32_t fNeutTime;
   Double32_t fNeutKE_R;
   Double32_t fNeutKE;
+  Double32_t fNeutTheta;
   Double32_t fHiKE;
   Double32_t fNeutQ;
+  Double32_t fNeutQAngle;
 
 
 
