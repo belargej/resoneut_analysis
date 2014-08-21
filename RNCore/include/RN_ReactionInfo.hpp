@@ -37,6 +37,7 @@ protected:
   TString fNames[6];
   Double32_t fBeamEnergy;
   Double32_t fBeamELoss;
+  Double32_t fBeamSpread;
   Double32_t fhi_ex_set;
   Double32_t fd_ex_set;
   Double32_t fE_fragment_est;//for q_value calculations
@@ -79,6 +80,8 @@ public:
   inline Double32_t E_Fragment() const {return fE_fragment_est;}
   inline Double32_t Hi_Ex_Set() const {return fhi_ex_set;}
   inline Double32_t D_Ex_Set() const {return fd_ex_set;}
+  Double32_t BeamSpread() const {return fBeamSpread;}
+
 
 
   //Get Masses

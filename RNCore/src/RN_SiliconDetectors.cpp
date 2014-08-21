@@ -18,7 +18,7 @@ using global::myRnd;
 #define S1FIXENABLE 0
 
 //S2FIXENABLE to correct energy discrepency when front.ch = back.ch?
-#define S2FIXENABLE 1
+#define S2FIXENABLE 0
 
 //To enable/disable randomization of the angle during cluster reconstruction
 #if 1
@@ -205,7 +205,7 @@ Double_t RN_S2Detector::Ring_Ch(unsigned int i)const{
 */
 
 
-bool RN_S2Detector::inDet(const TVector3& v){
+bool RN_S2Detector::inDet(const TVector3& v, const TVector3& beamspot){
   //first see if it intersects the plane of the detector
   double udotnormv = (v.Unit()).Dot(normv_);
   if(udotnormv <= 0.)
@@ -224,7 +224,7 @@ bool RN_S2Detector::inDet(const TVector3& v){
   v_to_det.SetMag(vdist);
 
   //create vector from detector origin to interaction point on plane of detector
-  TVector3 ch_vect = v_to_det - posvect;
+  TVector3 ch_vect = v_to_det + beamspot - posvect;
 
   //radial component from center of detector
   double ch_vect_mag = ch_vect.Mag();
@@ -236,7 +236,7 @@ bool RN_S2Detector::inDet(const TVector3& v){
   return true;
 }
 
-bool RN_S2Detector::Vect_to_ch(const TVector3& v,double& cf,double& cb){
+bool RN_S2Detector::Vect_to_ch(const TVector3& v,double& cf,double& cb, const TVector3& beamspot){
   //first see if it intersects the plane of the detector
   double udotnormv = (v.Unit()).Dot(normv_);
   if(udotnormv <= 0.)
@@ -255,7 +255,7 @@ bool RN_S2Detector::Vect_to_ch(const TVector3& v,double& cf,double& cb){
   v_to_det.SetMag(vdist);
 
   //create vector from detector origin to interaction point on plane of detector
-  TVector3 ch_vect = v_to_det - posvect;
+  TVector3 ch_vect = v_to_det + beamspot- posvect;
 
   //radial component from center of detector
   double ch_vect_mag = ch_vect.Mag();

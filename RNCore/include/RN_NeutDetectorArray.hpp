@@ -98,9 +98,9 @@ class RN_NeutDetector:public RN_BaseDetector{
 		       double& Q_val);
 
   
-  bool inDet(const TVector3& v);
+  bool inDet(const TVector3& v , const TVector3& beamspot = TVector3(0,0,0));
   int H_hit(TLorentzVector& inLV,double step);
-  int NeutIn(TLorentzVector nLV,double& t,double& e);
+  int NeutIn(TLorentzVector nLV,double& t,double& e, const TVector3& beamspot = TVector3(0,0,0));
   int C_hit(TLorentzVector& inLV,double step);
   void Reset();
   void Build();

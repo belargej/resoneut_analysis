@@ -107,8 +107,8 @@ public:
 
   virtual TVector3 chVect(const double&cf,const double& cb) const;
   void Calcnormv();
-  bool inDet(const TVector3&);
-  bool Vect_to_ch(const TVector3&, double&, double&);
+  bool inDet(const TVector3& incident,const TVector3& beam = TVector3(0,0,0));
+  bool Vect_to_ch(const TVector3&, double&, double&, const TVector3& = TVector3(0,0,0));
   void Reset();
   void SetCalibrations(double,double,double,double); 
   Int_t IsS1()const;

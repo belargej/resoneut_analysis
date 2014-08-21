@@ -8,12 +8,13 @@ using namespace global;
 
 
 RN_ReactionInfo::RN_ReactionInfo(const std::string & name):RN_BaseClass(name),
-							      fBeamEnergy(0),
-							      fBeamELoss(0),
-							      fhi_ex_set(0),
-							      fd_ex_set(0),
-							      fE_fragment_est(0),
-							      fIsSet(0)
+							   fBeamEnergy(0),
+							   fBeamELoss(0),
+							   fBeamSpread(0),
+							   fhi_ex_set(0),
+							   fd_ex_set(0),
+							   fE_fragment_est(0),
+							   fIsSet(0)
 {
   Clear(); // initalize mArrays
 }
@@ -145,8 +146,8 @@ void RN_ReactionInfo::SetCalibrations(RN_VariableMap& detvar){
   detvar.GetParam(Form("%s.beam_eloss",GetName()),fBeamELoss);
   detvar.GetParam(Form("%s.hi_ex_set",GetName()),fhi_ex_set);
   detvar.GetParam(Form("%s.d_ex_set",GetName()),fd_ex_set);
-
-
+  detvar.GetParam(Form("%s.beam_spread",GetName()),fBeamSpread);
+  
 }
 
 Double32_t RN_ReactionInfo::DecayQValueExact(){

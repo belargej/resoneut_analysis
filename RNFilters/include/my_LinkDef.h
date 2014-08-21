@@ -7,6 +7,7 @@
 #pragma link C++ defined_in "Stage1SiliconFilterA.hpp";
 #pragma link C++ defined_in "Stage1SiliconFilterB.hpp";
 #pragma link C++ defined_in "Stage1SiliconFilterC.hpp";
+#pragma link C++ defined_in "Stage1SiliconFilterD.hpp";
 #pragma link C++ defined_in "Stage1NaINeutFilterA.hpp";
 #pragma link C++ defined_in "Stage1NaINeutFilterB.hpp";
 #pragma link C++ defined_in "Stage1ICDSFilter.hpp";
