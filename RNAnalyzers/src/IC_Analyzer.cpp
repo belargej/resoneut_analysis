@@ -103,7 +103,7 @@ namespace ionchamber{
 
     //create histograms
     fgRootFile->cd("IC/xy");
-    hXvY= new TH2D("hXvY","hXvY;XChan;YChan",128,-128,128,128,-128,128);
+    hXvY= new TH2D("hXvY","hXvY;XChan;YChan",1024,-64,62,1024,-64,62);
     hXvYRaw= new TH2D("hXvYRaw","hXvYRaw;XChanHighestE;YChanHighestE",64,-16,47,64,-16,47);
     hICTheta = new TH1D("hICTheta","hICTheta;Theta",180,0,20);
     hICEvTheta = new TH2D("hICEvTheta","hICEvTheta;Theta;E",512,0,15,512,0,128);
@@ -172,6 +172,7 @@ namespace ionchamber{
   }
 
   bool IC_Analyzer::Process(){
+
     ic.ReconstructHitPos();
     
     hi_check[0]= (ede_hi1 && ede_hi1->IsInside(ic.TotalE(),ic.DE()));

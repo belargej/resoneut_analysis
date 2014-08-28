@@ -106,6 +106,7 @@ public:
 
 
   virtual TVector3 chVect(const double&cf,const double& cb) const;
+  TVector3 ChVect2(const double& cf,const double& cb) const;
   void Calcnormv();
   bool inDet(const TVector3& incident,const TVector3& beam = TVector3(0,0,0));
   bool Vect_to_ch(const TVector3&, double&, double&, const TVector3& = TVector3(0,0,0));
@@ -178,9 +179,19 @@ public:
   void SetCalibrations(RN_VariableMap&);
   Double_t Phi(int i=0)const {return fPos[i].Phi();};
   Double_t Theta(int i=0)const {return fPos[i].Theta();};
+  Double32_t ChFront(unsigned int i = 0) const;
+  Double32_t ChBack(unsigned int i = 0) const;
   
   ClassDef(RN_S2Cluster,2);
 };
+
+inline Double32_t RN_S2Cluster::ChFront(unsigned int i) const{
+  return ((i<fMult) ? fChlist[i] : -1);
+}
+
+inline Double32_t RN_S2Cluster::ChBack(unsigned int i) const{
+  return ((i<fMult) ? fChlist_b[i] : -1);
+}
 
 
 

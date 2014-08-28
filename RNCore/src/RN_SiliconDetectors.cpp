@@ -319,6 +319,44 @@ TVector3 RN_S2Detector::chVect(const double& cf,const double& cb) const{
 }
 
 
+//ChVect2 takes out the randomization of angle in between strips
+TVector3 RN_S2Detector::ChVect2(const double& cf,const double& cb) const{
+  //First make a vector to the channel for a detector at the origin
+  double s;
+  double phi;
+
+  if((cf < static_cast<double>(front.NumOfCh())) 
+     && (cb < static_cast<double>(back.NumOfCh()))){
+    s = innerrad + (cf*ring_pitch_);
+    phi = (static_cast<double>(front.NumOfCh()) - cb) * delta_phi_;
+  }
+  else{ 
+    std::cerr << "InValid channels sent to S2DetectorPar::chVect" << std::endl;
+    exit(EXIT_FAILURE);
+  }
+  
+  TVector3 resultv;
+  resultv.SetMagThetaPhi(s,M_PI/2.,phi*M_PI/180.);
+  
+  //then calibrate the vector 
+  //add it to the detector position vector
+  if(rotv_[2]){
+    resultv.RotateZ(rotv_[2]*M_PI/180.);
+  }
+  if(rotv_[0]){
+    resultv.RotateX(rotv_[0]*M_PI/180.);
+  }
+  if(rotv_[1]){
+    resultv.RotateY(rotv_[1]*M_PI/180.);
+  }
+
+  resultv = resultv + shiftv_;
+  resultv = resultv + posv_;
+    
+  return resultv;
+}
+
+
 
 RN_S2Cluster::RN_S2Cluster(std::string name,Int_t NumOfCh):RN_BaseDetector(name,NumOfCh),
 		 efrontmatch(0),

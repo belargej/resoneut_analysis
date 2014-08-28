@@ -28,6 +28,7 @@ namespace sim{
   TH2D* hn_CMvLab;
   TH2D* hpos;
   TH2D* hpos_in;
+  TH2D* hICSpot;
   TH1D* hQ;
   TH1D* hQ_n[NEUTNUM];
   TH1D* h_nKE;
@@ -41,6 +42,9 @@ namespace sim{
   TH2D* hBeamSpot;
   TH2D* hEvThetaSiA;
   TH2D* hEvThetaSiB;
+  TH2D* hHDPhivDecayPhi;
+  TH2D* hICPhivSiPhi;
+
 
   TF1* TOF_fit_n[NEUTNUM];
   TF1* Q_fit_n[NEUTNUM];
@@ -212,6 +216,17 @@ namespace sim{
       hQ_proton_guessvpE->Fill(q_val_p_guessLV,si_cluster_[0].E());   
     }
 
+    TLorentzVector hdlv = gReactionInfo.HeavyDecayLV();
+    double hdtheta = hdlv.Theta();
+    double hdphi = hdlv.Phi();
+    double hdr = TMath::Tan(hdtheta) * 340;
+    double hdx = TMath::Cos(hdphi)*hdr + beamspot.X();
+    double hdy = TMath::Sin(hdphi)*hdr + beamspot.Y();
+    double icphi = TMath::ATan2(hdy,hdx) * TMath::RadToDeg();
+
+    hICSpot->Fill(hdx,hdy);
+    hHDPhivDecayPhi->Fill(gReactionInfo.DecayProductLV().Phi()*TMath::RadToDeg(),hdphi*TMath::RadToDeg());
+    hICPhivSiPhi->Fill(si_cluster_[0].Phi()*TMath::RadToDeg(),icphi);
     hBeamSpot->Fill(beamspot.X(),beamspot.Y());
     simtree->Fill();
     
@@ -254,7 +269,10 @@ namespace sim{
   hEvThetaSiA=new TH2D("hEvThetaSiA","hEvThetaSiA",512,0,45,512,0,30);
   hEvThetaSiB=new TH2D("hEvThetaSiB","hEvThetaSiB",512,0,45,512,0,30);
   hT_v_theta=new TH2D("hT_v_theta","hT_v_theta",180,0,179,512,1,128);
-  hBeamSpot = new TH2D("hBeamSpot","hBeamSpot",64,-15.5,15.5,64,-15.5,15.5);
+  hBeamSpot = new TH2D("hBeamSpot","hBeamSpot",128,-15.5,15.5,64,-15.5,15.5);
+  hICSpot = new TH2D("hICSpot","hICSpot",64,-30,30,64,-30,30);
+  hHDPhivDecayPhi = new TH2D("hHDPhivDecayPhi","hHDPhivDecayPhi",512,-180,180,512,-180,180);
+  hICPhivSiPhi = new TH2D("hICPhivSiPhi","hICPhivSiPhi",512,-180,180,512,-180,180);
   hpos=new TH2D("hpos","hpos",64,-256,256,64,-256,256);
   hpos_in=new TH2D("hpos_in","hpos_in",64,-256,256,64,-256,256);  
   hE_n=new TH2D("hE_n","hE_n",17,0,16,512,0,5);
@@ -323,6 +341,9 @@ namespace sim{
       }
     }
 
+    
+
+
     return 0;
   }
   
@@ -341,6 +362,7 @@ namespace sim{
     beamspot.SetXYZ(xrand,yrand,0);
     
     double decayke=global::myRnd.Gaus(gReactionInfo.DecayProductLV().E()-gReactionInfo.DecayProductLV().M(),SILICONRESOLUTION);
+
 
 
     for(unsigned int i=0;i<neut.size();i++){

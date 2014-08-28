@@ -41,14 +41,17 @@ class RN_IonChamber:public RN_BaseClass{
   Double32_t fYPos;//!
   Double32_t fXPos;//!
   Double32_t fWireDist;//!
-
+  TVector3 fRotv;//!
+  TVector3 fShiftv;//!
  public:
   RN_IonChamber(std::string name="ic"):RN_BaseClass(name,name),
 				       fHitPos(TVector3(0,0,0)),
-				       fZPos(380),
+				       fZPos(340),
 				       fYPos(0),
 				       fXPos(0),
-				       fWireDist(2),//mm
+				       fWireDist(3),//mm
+				       fRotv(TVector3(0,0,0)),
+				       fShiftv(TVector3(0,0,0)),
 				       esegment(name+".esegment",1),
 				       desegment(name+".desegment",1),
 				       xgrid(name+".xgrid",32),
@@ -69,6 +72,8 @@ class RN_IonChamber:public RN_BaseClass{
   Double32_t SumE_Y() const;//sum all wires ygrid section
   Double32_t Pos_X();
   Double32_t Pos_Y();
+  Double32_t PosXAdj();
+  Double32_t PosYAdj();
   void ReconstructHitPos();
   TVector3 GetHitPos() const {return fHitPos;}
   Double32_t Theta() const {return fHitPos.Theta() * 180 / TMath::Pi();}
@@ -83,7 +88,7 @@ class RN_IonChamber:public RN_BaseClass{
   Double32_t T() const ;
   Double32_t TRaw() const ;
  
-  ClassDef(RN_IonChamber,1);
+  ClassDef(RN_IonChamber,2);
   
 };
 inline Double32_t RN_IonChamber::ERaw()const {return esegment.ERaw();}
