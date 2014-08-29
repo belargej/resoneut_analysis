@@ -39,12 +39,28 @@ void RN_EventProcessor::InitRootFile(TString rootfilename)
    // Init() will be called many times when running on PROOF
    // (once per file to be processed)
 
+  fChain=new TChain("DataTree");
+  fChain->Add(rootfilename);
+  if(TotEntries()<=0){
+    std::cout<<"Initial Root File not found \n Press 1 to continue, 0 to Exit ROOT \n";
+    int option = -1;
+    while(option<0 || option >1){
+      std::cin>>option;
+    }
+    if (option==0){
+      exit(EXIT_FAILURE);
+    }
+    if (option==1){
+      return ;
+    }
+  }
+    
+  
+
   if(!RNROOT::RN_RootSet)
     RNROOT::Initialize();
   
-  fChain=new TChain("DataTree");
-  fChain->Add(rootfilename);
-  
+ 
   if(fChain->GetBranch("Event"))
     fChain->SetBranchAddress("Event",&fEvent, &b_Event);
   else
@@ -359,7 +375,7 @@ int RN_EventProcessor::Convert2Root(std::vector<std::string>&run_number,std::str
     fEvtFile.open(name.c_str(),std::ios::binary);      
     if (!fEvtFile.is_open()){
       std::cout << "  Could not open " << name << std::endl;
-      exit(EXIT_FAILURE);
+      return 1;
     }
     else 
       std::cout << "  Converting " << name << " ..." << std::endl;
@@ -407,7 +423,7 @@ int RN_EventProcessor::Convert2Root(const std::string& name,std::string output_f
   fEvtFile.open(name.c_str(),std::ios::binary);      
   if (!fEvtFile.is_open()){
     std::cout << "  Could not open " << name << std::endl;
-    exit(EXIT_FAILURE);
+    return 0;
   }
   else 
     std::cout << "  Converting " << name << " ..." << std::endl;

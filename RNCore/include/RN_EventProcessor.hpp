@@ -166,7 +166,8 @@ protected:
   virtual bool Process(){return 1;};
   virtual bool ProcessFill(){return 1;};
   virtual bool Terminate(){return 1;};
-  
+  void SetRootOutputFileAndTree(const std::string& filename,const std::string& treename);  
+
 public:
   TBranch * b_Event;
   RN_EventProcessor(const std::string&a="",const std::string&b="");
@@ -182,8 +183,7 @@ public:
   void AddTree(TString a){fChain->Add(a);}
   virtual void InitRootFile(TString file);
   void SetRootOutputFile(const std::string & filename);
-  void SetRootOutputFileAndTree(const std::string& filename,const std::string& treename);
-  void WriteOut();
+    void WriteOut();
   
   Long64_t TotEntries() const{return fChain->GetEntries();} 
   virtual Int_t GetEntry(Long64_t entry, Int_t getall = 0) { return fChain ? fChain->GetEntry(entry, getall) : 0; }
