@@ -1,0 +1,220 @@
+Reaction :19Ne(2H,n)20Na
+Decay :x20Na->1H+19Ne
+
+Beam Energy: 89.1
+Beam E_loss(thickness): 2
+Excitation Energy: 2.65
+Number of Neutron Detectors: 16
+Total Entries: 100000
+
+All Detectors: 
+NeutronsDetected/NeutronsIn: 5291 / 14465
+Q_Value: -2.77767
+ Q_Value Resolution: 0.124984
+TOF_Value: 44.9721
+ TOF_Value Resolution: 3.09322
+
+***************************************************************
+si_a
+x,y,z: 0 0 70
+Theta Range8.93512 - 26.5785
+Protons&Neutron Coincidence / Protons In: 4577 / 86454
+
+***************************************************************
+si_b
+x,y,z: 0 0 82
+Theta Range7.64428 - 23.1259
+Protons&Neutron Coincidence / Protons In: 4770 / 90053
+
+***************************************************************
+neut0
+Thickness: 25.4
+Threshold: 0.1
+ArrayPos: 1
+
+NeutronsDetected/NeutronsIn: 241 / 585
+Individual Efficiency: 0.411966
+Q_Value: -2.80937
+ Q_Value Resolution: 0.118832
+TOF_Value: 45.7314
+ TOF_Value Resolution: 2.75088
+***************************************************************
+neut1
+Thickness: 12.7
+Threshold: 0.1
+ArrayPos: 2
+
+NeutronsDetected/NeutronsIn: 199 / 631
+Individual Efficiency: 0.315372
+Q_Value: -2.78892
+ Q_Value Resolution: 0.0887247
+TOF_Value: 45.3175
+ TOF_Value Resolution: 2.32416
+***************************************************************
+neut2
+Thickness: 12.7
+Threshold: 0.1
+ArrayPos: 3
+
+NeutronsDetected/NeutronsIn: 232 / 743
+Individual Efficiency: 0.312248
+Q_Value: -2.7807
+ Q_Value Resolution: 0.105895
+TOF_Value: 45.1394
+ TOF_Value Resolution: 2.59333
+***************************************************************
+neut3
+Thickness: 25.4
+Threshold: 0.1
+ArrayPos: 4
+
+NeutronsDetected/NeutronsIn: 444 / 1220
+Individual Efficiency: 0.363934
+Q_Value: -2.75569
+ Q_Value Resolution: 0.125479
+TOF_Value: 44.3791
+ TOF_Value Resolution: 2.46602
+***************************************************************
+neut4
+Thickness: 25.4
+Threshold: 0.1
+ArrayPos: 5
+
+NeutronsDetected/NeutronsIn: 466 / 1243
+Individual Efficiency: 0.374899
+Q_Value: -2.76155
+ Q_Value Resolution: 0.12081
+TOF_Value: 44.5381
+ TOF_Value Resolution: 2.61886
+***************************************************************
+neut5
+Thickness: 25.4
+Threshold: 0.1
+ArrayPos: 6
+
+NeutronsDetected/NeutronsIn: 269 / 695
+Individual Efficiency: 0.38705
+Q_Value: -2.79371
+ Q_Value Resolution: 0.107333
+TOF_Value: 45.345
+ TOF_Value Resolution: 2.77823
+***************************************************************
+neut6
+Thickness: 25.4
+Threshold: 0.1
+ArrayPos: 7
+
+NeutronsDetected/NeutronsIn: 228 / 627
+Individual Efficiency: 0.363636
+Q_Value: -2.80179
+ Q_Value Resolution: 0.120682
+TOF_Value: 45.5917
+ TOF_Value Resolution: 2.88667
+***************************************************************
+neut7
+Thickness: 25.4
+Threshold: 0.1
+ArrayPos: 8
+
+NeutronsDetected/NeutronsIn: 561 / 1506
+Individual Efficiency: 0.37251
+Q_Value: -2.75668
+ Q_Value Resolution: 0.11475
+TOF_Value: 44.5037
+ TOF_Value Resolution: 2.75879
+***************************************************************
+neut8
+Thickness: 12.7
+Threshold: 0.1
+ArrayPos: 9
+
+NeutronsDetected/NeutronsIn: 365 / 1374
+Individual Efficiency: 0.265648
+Q_Value: -2.74066
+ Q_Value Resolution: 0.0917364
+TOF_Value: 44.128
+ TOF_Value Resolution: 2.1829
+***************************************************************
+neut9
+Thickness: 25.4
+Threshold: 0.1
+ArrayPos: 10
+
+NeutronsDetected/NeutronsIn: 283 / 659
+Individual Efficiency: 0.429439
+Q_Value: -2.79981
+ Q_Value Resolution: 0.118395
+TOF_Value: 45.6245
+ TOF_Value Resolution: 3.08833
+***************************************************************
+neut10
+Thickness: 25.4
+Threshold: 0.1
+ArrayPos: 11
+
+NeutronsDetected/NeutronsIn: 306 / 745
+Individual Efficiency: 0.410738
+Q_Value: -2.79357
+ Q_Value Resolution: 0.129815
+TOF_Value: 45.4339
+ TOF_Value Resolution: 3.19002
+***************************************************************
+neut11
+Thickness: 25.4
+Threshold: 0.1
+ArrayPos: 12
+
+NeutronsDetected/NeutronsIn: 477 / 1299
+Individual Efficiency: 0.367206
+Q_Value: -2.76502
+ Q_Value Resolution: 0.124186
+TOF_Value: 44.4558
+ TOF_Value Resolution: 3.34226
+***************************************************************
+neut12
+Thickness: 25.4
+Threshold: 0.1
+ArrayPos: 13
+
+NeutronsDetected/NeutronsIn: 450 / 1241
+Individual Efficiency: 0.362611
+Q_Value: -2.76276
+ Q_Value Resolution: 0.124532
+TOF_Value: 44.6121
+ TOF_Value Resolution: 3.06613
+***************************************************************
+neut13
+Thickness: 25.4
+Threshold: 0.1
+ArrayPos: 14
+
+NeutronsDetected/NeutronsIn: 280 / 687
+Individual Efficiency: 0.407569
+Q_Value: -2.78639
+ Q_Value Resolution: 0.111088
+TOF_Value: 45.2073
+ TOF_Value Resolution: 2.73753
+***************************************************************
+neut14
+Thickness: 25.4
+Threshold: 0.1
+ArrayPos: 15
+
+NeutronsDetected/NeutronsIn: 230 / 590
+Individual Efficiency: 0.389831
+Q_Value: -2.79575
+ Q_Value Resolution: 0.0901866
+TOF_Value: 45.3607
+ TOF_Value Resolution: 2.51082
+***************************************************************
+neut15
+Thickness: 25.4
+Threshold: 0.1
+ArrayPos: 16
+
+NeutronsDetected/NeutronsIn: 260 / 620
+Individual Efficiency: 0.419355
+Q_Value: -2.79942
+ Q_Value Resolution: 0.111518
+TOF_Value: 45.6265
+ TOF_Value Resolution: 2.72356

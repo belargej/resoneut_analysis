@@ -1,0 +1,29 @@
+/***************************************************************/
+//Class: 20Na_Neut
+//
+//Author:Joe Belarge
+//
+// See PSD_Analyzer.  I am renaming and reorganizing things so
+// they make more sense to me, and it will help me learn to 
+// make analyzers.
+//
+//NeutPSDAnalyzer is added to the analyzer list to sort neutron detector
+//parameters.  Make histograms, load cuts, and check cuts 
+//using parameters related to the neutron detector pulse shape
+// discrimination spectra.  Also, neutron timing.
+/********************************************************************/
+#ifndef _20NA_NEUT_CXX
+#define _20NA_NEUT_CXX
+
+#include "20Na_Neut.hpp"
+#include "RN_Root.hpp"
+using namespace RNROOT;
+
+namespace Neut20Na{
+
+
+
+
+}
+
+#endif

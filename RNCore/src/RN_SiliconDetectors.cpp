@@ -18,7 +18,7 @@ using global::myRnd;
 #define S1FIXENABLE 0
 
 //S2FIXENABLE to correct energy discrepency when front.ch = back.ch?
-#define S2FIXENABLE 1
+#define S2FIXENABLE 0
 
 //To enable/disable randomization of the angle during cluster reconstruction
 #if 1

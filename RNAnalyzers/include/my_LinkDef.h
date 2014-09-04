@@ -17,7 +17,8 @@
 #pragma link C++ defined_in "Neut_TOF_Analyzer.hpp";
 #pragma link C++ defined_in "BeamSpot.hpp";
 #pragma link C++ defined_in "EventAnalyzer.hpp";
-
+#pragma link C++ defined_in "NamedTree_Analyzer.hpp";
+#pragma link C++ defined_in "20Na_Neut.hpp";
 
 
 

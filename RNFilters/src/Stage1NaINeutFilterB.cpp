@@ -54,9 +54,24 @@ namespace RNfilters{
     if(triggerbit[0].Check()){
       return 0;
     }
+    
+    bool NaI = false;
 
+    for(int i =0;i<NAI_NUM;i++){
+      if(nai[i].fT[0]>0 && nai[i].fT[1]>0){
+	NaI = true;
+	return 1;
+      }
+    }
 
-    return 1;
+    /*if(NaI == true){
+      for(int j = 0;j<NEUTNUM){
+	if(neut[j].)
+	  return 1;
+      }
+    }*/
+
+    return 0;
   }
   bool Stage1NaINeutFilterB::ProcessFill(){
      

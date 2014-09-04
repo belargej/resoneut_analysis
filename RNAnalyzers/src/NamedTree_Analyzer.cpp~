@@ -1,0 +1,76 @@
+/***********************************************************/
+//Class: NamedTree_Analyzer
+//
+//Author:Joe Belarge
+//
+// NamedTree_Analyzer class is to be inserted in the analyzer
+// list for producing a next level tree in your root file. 
+// It will be made of data that has been sorted out of the
+// ADC,QDC,TDC format and into the SiA,SiB,Neut0... format.
+// It can be added as another tree to a root file, and it will
+// have a base structure similar to the NewTree_Analyzer class,
+// so that a new set of analyzers can be designed to be used
+// on this tree, and can then be used as wished.
+/***********************************************************/
+
+#ifndef _NAMEDTREEANALYZER_CXX
+#define _NAMEDTREEANALYZER_CXX
+
+#include "NamedTree_Analyzer.hpp"
+#include "RN_Root.hpp"
+#include "Si_Analyzer.hpp"
+
+
+NamedTree_Analyzer::NamedTree_Analyzer()
+{
+
+}
+
+bool NamedTree_Analyzer::Begin(){
+  
+  // If no new root file has been declared to be written, exit.
+  if(!fgRootFile){
+    std::cout << "> Root output file has not been created." << std::endl;
+    exit(EXIT_FAILURE);
+  }
+  
+  // Otherwise, proceed:
+  fgRootFile->cd();
+  fNamedTree = new TTree("NamedTree","NamedTree");
+
+  // Add branches here:
+  //  fNamedTree->Branch();
+  
+  std::cout << "> This is the NamedTree_Analyzer at work." << std::endl;
+  std::cout << "> The Begin() portion of this is complete." << std::endl;
+
+  return 1;
+}
+
+bool NamedTree_Analyzer::Process(){
+  std::cout << "> The s2_A energy : " << si_array.E_A() << std::endl;
+  std::cout << "> The s2_B energy : " << si_array.E_B() << std::endl;
+  std::cout << "> The Sum energy  : " << si_array.E_AB() << std::endl;
+  return 1;
+}
+
+bool NamedTree_Analyzer::ProcessFill(){
+  //fNamedTree->Fill();
+  return 1;
+}
+
+void NamedTree_Analyzer::Reset(){
+
+}
+
+bool NamedTree_Analyzer::TerminateIfLast(){
+  fgRootFile->Write();
+  fgRootFile->Close();
+  return 1;
+}
+
+bool NamedTree_Analyzer::Terminate(){
+  return 1;
+}
+
+#endif

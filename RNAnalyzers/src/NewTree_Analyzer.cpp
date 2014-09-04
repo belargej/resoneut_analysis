@@ -21,6 +21,7 @@
 #include "RN_Root.hpp"
 #include "Si_Analyzer.hpp"
 
+
 NewTree_Analyzer::NewTree_Analyzer()
 {
 
@@ -32,12 +33,16 @@ bool NewTree_Analyzer::Begin(){
     std::cout<<"output file has not been created"<<std::endl;
     exit(EXIT_FAILURE);
   }
-  fgRootFile->cd();
+  fgRootFile->cd(); 
   fNewTree = new TTree("DataTree","DataTree");
 
-  //this fEvent, since fEvent is not a static global member of RN_EventProcessors, we must set this newtree branch to the fEvent which belongs to this RN_Analyzer and then, in Process(),retrieve the Event info from the MainAnalyzer.
+  // this fEvent, since fEvent is not a static global member of RN_EventProcessors,
+  // we must set this newtree branch to the fEvent which belongs to this RN_Analyzer
+  // and then, in Process(),retrieve the Event info from the MainAnalyzer.
   fNewTree->Branch("Event",&this->fEvent,"RunNum/I:flag/I:ScalerIDX/I");
 
+
+  // This gets the branches from the original root file, and adds them to this tree.
   RNROOT::gParameter_stack.AddBranches(fNewTree);
   RNROOT::gModule_stack.AddBranches(fNewTree);
 
@@ -49,6 +54,7 @@ bool NewTree_Analyzer::Process(){
   this->fEvent[i] = RNROOT::gMainAnalyzer.EventInfo(i);
 
   }
+  
   return 1;
 }
 

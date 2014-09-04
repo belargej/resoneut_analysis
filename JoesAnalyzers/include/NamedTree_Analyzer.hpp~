@@ -1,0 +1,50 @@
+/***********************************************************/
+//Class: NamedTree_Analyzer
+//
+//Author:Joe Belarge
+//
+// NamedTree_Analyzer class is to be inserted in the analyzer
+// list for producing a next level tree in your root file. 
+// It will be made of data that has been sorted out of the
+// ADC,QDC,TDC format and into the SiA,SiB,Neut0... format.
+// It can be added as another tree to a root file, and it will
+// have a base structure similar to the NewTree_Analyzer class,
+// so that a new set of analyzers can be designed to be used
+// on this tree, and can then be used as wished.
+/***********************************************************/
+
+#ifndef _NAMEDTREEANALYZER_H
+#define _NAMEDTREEANALYZER_H
+#include <TH2.h>
+#include <cstdlib>
+#include <string>
+#include <new>
+#include "RN_Analyzer.hpp"
+#include "TTree.h"
+
+
+class NamedTree_Analyzer:public RN_Analyzer{
+private:
+  TTree *fNamedTree;
+public:  
+  NamedTree_Analyzer();
+  virtual ~NamedTree_Analyzer(){};
+
+  virtual bool Begin();
+  virtual bool Process();
+  virtual bool ProcessFill();
+  virtual void Clear(){};
+  virtual bool Terminate();
+  virtual bool TerminateIfLast();
+  virtual void Reset()()();
+
+
+
+
+
+  ClassDef(NamedTree_Analyzer,0);
+};
+
+
+
+#endif

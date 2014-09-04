@@ -104,13 +104,16 @@ void RN_EventProcessor::WriteOut(){
   }
 }
 
-
+// This is the loop that the gMainAnalyzer goes through.
 void RN_EventProcessor::Loop(Long64_t start, Long64_t evnum){
+
+  // If there is no chain of data, exit.
   if(!fChain){
     std::cout<<"fChain not initialized, no root files added to Analyzer\n";
     return;  	
   }
   
+  // cout the total number of entries in the chain, and set the start point.
   std::cout<<"Total Entries in Chain: "<<TotEntries()<<std::endl;
   Long64_t totentries= TotEntries();    
   if (start!=0&&evnum!=0)
@@ -118,7 +121,14 @@ void RN_EventProcessor::Loop(Long64_t start, Long64_t evnum){
       totentries=start+evnum;
 
   
+  // Begin => This just returns 1.
   Begin();
+
+  // What does this mean. 
+  //   So, the gAnalyzer_stack is an object of class "RN_Analyzer_Stack"
+  //   This class is defined in "RN_Analyzer.cpp" file, while the instance 
+  //   gAnalyzer_stack is defined in the "RN_Root.cpp" file.  The "Begin" function
+  //   in this class creates a TIter class which has the fRNStack as its collection.
   RNROOT::gAnalyzer_stack.Begin();
   
   for (Long64_t i=start;i<totentries;i++){
