@@ -1,0 +1,37 @@
+#ifndef _CHECKALPHACAL_H
+#define _CHECKALPHACAL_H
+#include <TH2.h>
+#include <cstdlib>
+#include <string>
+#include <new> 
+#include "RN_Analyzer.hpp"
+#include "RN_Root.hpp"
+
+namespace CheckAlphaCal{
+
+  class CheckAlphaCal:public RN_Analyzer{
+  private:
+
+  public:
+    CheckAlphaCal();
+    virtual ~CheckAlphaCal();
+
+    virtual bool Begin();
+    virtual bool Process();
+    virtual bool ProcessFill();
+    virtual bool Terminate();
+    virtual bool TerminateIfLast();
+    virtual void Clear();
+    virtual void Reset();
+
+
+
+    ClassDef(CheckAlphaCal,0);
+  };
+  void LoadGates();
+  void ClearGates();
+
+}
+
+
+#endif

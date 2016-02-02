@@ -6,6 +6,9 @@
 using namespace global;
 using namespace RNROOT;
 
+#define PROTONTHRESHOLD 4.5 //MeV
+#define SILICONRESOLUTION 0.1 //MeV
+
 namespace sim{
   TFile * simfile;
   TTree * simtree;
@@ -25,12 +28,24 @@ namespace sim{
   TH2D* hn_CMvLab;
   TH2D* hpos;
   TH2D* hpos_in;
+  TH2D* hICSpot;
   TH1D* hQ;
   TH1D* hQ_n[NEUTNUM];
   TH1D* h_nKE;
   TH1D* h_hiKE;
   TH1D* hQ_proton;
-  TH1D* hQ_proton_guess;
+  TH1D* hQ_proton_guessLV;
+  TH1D* hQ_proton_guessSiA;
+  TH1D* hQ_proton_guessSiB;
+  TH2D* hQ_proton_guessvpE;
+  TH2D* hQ_proton_guessSiBvpE;
+  TH2D* hBeamSpot;
+  TH2D* hEvThetaSiA;
+  TH2D* hEvThetaSiB;
+  TH2D* hHDPhivDecayPhi;
+  TH2D* hICPhivSiPhi;
+
+
   TF1* TOF_fit_n[NEUTNUM];
   TF1* Q_fit_n[NEUTNUM];
   TF1* Q_fit;
@@ -40,8 +55,8 @@ namespace sim{
   double n_cm;
   double n_tof;
   double fNe,fNt;
-  double q_val_p(0);
-  double q_val_p_guess(0);
+  TVector3 beamspot(0,0,0);
+
 
   Long64_t totevents;
 
@@ -183,14 +198,36 @@ namespace sim{
       cref++;
   }
 
-    q_val_p = gReactionInfo.DecayQValueExact();
+    double q_val_p = gReactionInfo.DecayQValueExact();
     
-    q_val_p_guess = gReactionInfo.DecayQValueEstimate();
-
-    
+    double q_val_p_guessLV = gReactionInfo.DecayQValueEstimate();
+  
     hQ_proton->Fill(q_val_p);
-    hQ_proton_guess->Fill(q_val_p_guess);
+    hQ_proton_guessLV->Fill(q_val_p_guessLV);
+   
+    if(si_cluster_[0].E()>0&& si_cluster_[1].E()>0){
+      double q_val_p_guessSiA = gReactionInfo.DecayQValueEstimate(si_cluster_[0].E(),si_cluster_[0].Theta());
+      double q_val_p_guessSiB = gReactionInfo.DecayQValueEstimate(si_cluster_[1].E(),si_cluster_[1].Theta());
+      hEvThetaSiA->Fill(si_cluster_[0].Theta()*TMath::RadToDeg(),si_cluster_[0].E());
+      hEvThetaSiB->Fill(si_cluster_[1].Theta()*TMath::RadToDeg(),si_cluster_[1].E());
+      hQ_proton_guessSiA->Fill(q_val_p_guessSiA);
+      hQ_proton_guessSiB->Fill(q_val_p_guessSiB);   
+      hQ_proton_guessSiBvpE->Fill(q_val_p_guessSiB,si_cluster_[0].E());   
+      hQ_proton_guessvpE->Fill(q_val_p_guessLV,si_cluster_[0].E());   
+    }
 
+    TLorentzVector hdlv = gReactionInfo.HeavyDecayLV();
+    double hdtheta = hdlv.Theta();
+    double hdphi = hdlv.Phi();
+    double hdr = TMath::Tan(hdtheta) * 340;
+    double hdx = TMath::Cos(hdphi)*hdr + beamspot.X();
+    double hdy = TMath::Sin(hdphi)*hdr + beamspot.Y();
+    double icphi = TMath::ATan2(hdy,hdx) * TMath::RadToDeg();
+
+    hICSpot->Fill(hdx,hdy);
+    hHDPhivDecayPhi->Fill(gReactionInfo.DecayProductLV().Phi()*TMath::RadToDeg(),hdphi*TMath::RadToDeg());
+    hICPhivSiPhi->Fill(si_cluster_[0].Phi()*TMath::RadToDeg(),icphi);
+    hBeamSpot->Fill(beamspot.X(),beamspot.Y());
     simtree->Fill();
     
   }
@@ -204,14 +241,14 @@ namespace sim{
   simfile->cd();
   
   simtree = new TTree("SimTree","SimTree");
-  simtree->Branch("Beam." + RNROOT::gReactionInfo.BeamName(),"TLorentzVector",&(RNROOT::gReactionInfo.fLVarray[0]));
-  simtree->Branch("Target." + RNROOT::gReactionInfo.TargetName(),"TLorentzVector",&(RNROOT::gReactionInfo.fLVarray[1]));
-  simtree->Branch("Recoil." + RNROOT::gReactionInfo.RecoilName(),"TLorentzVector",&(RNROOT::gReactionInfo.fLVarray[2]));
-  simtree->Branch("Fragment." + RNROOT::gReactionInfo.FragmentName(),"TLorentzVector",&(RNROOT::gReactionInfo.fLVarray[3]));
-  simtree->Branch("DecayProduct." + RNROOT::gReactionInfo.DecayProductName(),"TLorentzVector",&(RNROOT::gReactionInfo.fLVarray[4]));
-  simtree->Branch("HeavyDecay." + RNROOT::gReactionInfo.HeavyDecayName(),"TLorentzVector",&(RNROOT::gReactionInfo.fLVarray[5]));
-  simtree->Branch("ErProtonGuess",&q_val_p_guess);
-  simtree->Branch("ErProton",&q_val_p);
+  simtree->Branch("B." + RNROOT::gReactionInfo.BeamName(),"TLorentzVector",&(RNROOT::gReactionInfo.fLVarray[0]));
+  simtree->Branch("T." + RNROOT::gReactionInfo.TargetName(),"TLorentzVector",&(RNROOT::gReactionInfo.fLVarray[1]));
+  simtree->Branch("R." + RNROOT::gReactionInfo.RecoilName(),"TLorentzVector",&(RNROOT::gReactionInfo.fLVarray[2]));
+  simtree->Branch("F." + RNROOT::gReactionInfo.FragmentName(),"TLorentzVector",&(RNROOT::gReactionInfo.fLVarray[3]));
+  simtree->Branch("D." + RNROOT::gReactionInfo.DecayProductName(),"TLorentzVector",&(RNROOT::gReactionInfo.fLVarray[4]));
+  simtree->Branch("H." + RNROOT::gReactionInfo.HeavyDecayName(),"TLorentzVector",&(RNROOT::gReactionInfo.fLVarray[5]));
+
+
 
   simfile->cd();
   simfile->mkdir("histograms");
@@ -221,11 +258,21 @@ namespace sim{
   hn_CMvLab=new TH2D("hn_CMvLAB","n_CMvLAB",512,1,180,512,1,180);
   hn_tof=new TH1D("hn_tof","hn_tof",4096,1,128);
   hQ_proton=new TH1D("hQ_proton","hQ_proton;Q",512,-1,10);
-  hQ_proton_guess=new TH1D("hQ_proton_guess","hQ_proton_guess;Q",512,-1,10);
+  hQ_proton_guessLV=new TH1D("hQ_proton_guessLV","hQ_proton_guessLV;Q",512,-1,10);  
+  hQ_proton_guessSiA=new TH1D("hQ_proton_guessSiA","hQ_proton_guessSiA;Q",512,-1,10);
+  hQ_proton_guessSiB=new TH1D("hQ_proton_guessSiB","hQ_proton_guessSiB;Q",512,-1,10);
+  hQ_proton_guessvpE=new TH2D("hQ_proton_guessvpE","hQ_proton_guessvpE;Q",512,-1,10,512,0,31);
+  hQ_proton_guessSiBvpE=new TH2D("hQ_proton_guessSiBvpE","hQ_proton_guessSiBvpE;Q",512,-1,10,512,0,31);
   h_nKE=new TH1D("h_nKE","h_nKE",1024,0,1);
   h_hiKE=new TH1D("h_hiKE","h_hiKE",1024,0,100);
   hE_v_theta=new TH2D("hE_v_theta","hE_v_theta",180,0,179,512,0,20);
+  hEvThetaSiA=new TH2D("hEvThetaSiA","hEvThetaSiA",512,0,45,512,0,30);
+  hEvThetaSiB=new TH2D("hEvThetaSiB","hEvThetaSiB",512,0,45,512,0,30);
   hT_v_theta=new TH2D("hT_v_theta","hT_v_theta",180,0,179,512,1,128);
+  hBeamSpot = new TH2D("hBeamSpot","hBeamSpot",128,-15.5,15.5,64,-15.5,15.5);
+  hICSpot = new TH2D("hICSpot","hICSpot",64,-30,30,64,-30,30);
+  hHDPhivDecayPhi = new TH2D("hHDPhivDecayPhi","hHDPhivDecayPhi",512,-180,180,512,-180,180);
+  hICPhivSiPhi = new TH2D("hICPhivSiPhi","hICPhivSiPhi",512,-180,180,512,-180,180);
   hpos=new TH2D("hpos","hpos",64,-256,256,64,-256,256);
   hpos_in=new TH2D("hpos_in","hpos_in",64,-256,256,64,-256,256);  
   hE_n=new TH2D("hE_n","hE_n",17,0,16,512,0,5);
@@ -256,6 +303,7 @@ namespace sim{
   void RN_Sim::Loop(Long64_t evnum,std::string options){
     initHists();
     SetCalibrations();
+
     Long64_t evcount=0;
     while(evcount<evnum){
       if(GenerateEvents(evcount,options)){
@@ -293,27 +341,37 @@ namespace sim{
       }
     }
 
+    
+
+
     return 0;
   }
   
   
   int RN_Sim::GenerateEvents(Long64_t evnum,std::string options=""){
-    for(unsigned int i=0;i<neut.size();i++){
-      neut[i].Reset();
-    }
-    for(unsigned int i=0;i<si_.size();i++){
-      si_[i].Reset();
-    }
+    Reset();
+    //get cm angle and generate LorentzVectors for sim events(stored in gReaction Info)
+    n_cm = gReactionInfo.GenerateSimEvent(); 
 
-    n_cm = gReactionInfo.GenerateSimEvent();
-   
+    double phirand = 2*TMath::Pi()*myRnd.Rndm();
+    double radiusrand = TMath::Sqrt(myRnd.Rndm()) * (gReactionInfo.BeamSpread() / 2);
+    double xrand = TMath::Cos(phirand) * radiusrand;
+    double yrand = TMath::Sin(phirand) * radiusrand;
+    TVector3 nv = gReactionInfo.RecoilLV().Vect();
+    TVector3 pv = gReactionInfo.DecayProductLV().Vect();
+    beamspot.SetXYZ(xrand,yrand,0);
+    
+    double decayke=global::myRnd.Gaus(gReactionInfo.DecayProductLV().E()-gReactionInfo.DecayProductLV().M(),SILICONRESOLUTION);
+
+
+
     for(unsigned int i=0;i<neut.size();i++){
-      if(neut[i].inDet(gReactionInfo.RecoilLV().Vect())){
+      if(neut[i].inDet(nv,beamspot)){
 	NeutronIn[i]++;
-	if(neut[i].NeutIn(gReactionInfo.RecoilLV(),n_tof,E_deposited)){
+	if(neut[i].NeutIn(gReactionInfo.RecoilLV(),n_tof,E_deposited,beamspot)){
 	  NeutronDetected[i]++;
 	  for(unsigned int s=0;s<si_.size();s++){
-	    if(si_[s].inDet(gReactionInfo.DecayProductLV().Vect())){
+	    if(si_[s].inDet(pv,beamspot) && decayke > PROTONTHRESHOLD ){
 	      ProtonIn_NeutDet[s]++;
 	    }
 	  }
@@ -322,12 +380,17 @@ namespace sim{
     }
     
     for(unsigned int s=0;s<si_.size();s++){
-      if(si_[s].inDet(gReactionInfo.DecayProductLV().Vect())){
+      if(si_[s].inDet(pv,beamspot) && decayke > PROTONTHRESHOLD){
 	ProtonIn[s]++;
-	double e=gReactionInfo.DecayProductLV().E()-gReactionInfo.DecayProductLV().M();
-	double t=0;
-	si_[s].front.InsertHit(e,t,0);
+	double chf=0;
+	double chb=0;
+	
+	si_[s].Vect_to_ch(pv,chf,chb,beamspot);
+	si_[s].front.InsertHit(decayke,0,chf);
+	si_[s].back.InsertHit(decayke,0,chb);
       }
+      
+      si_cluster_[s].ReconstructClusters(si_[s]);
     }
     
     
@@ -339,8 +402,9 @@ namespace sim{
   void RN_Sim::Reset(){
     E_deposited=0;
     n_tof=0;
-    q_val_p=0;
-    q_val_p_guess = 0;
+
+    gReactionInfo.Reset();
+    beamspot.SetXYZ(0,0,0);
     
     particle.Reset();
 
@@ -349,6 +413,9 @@ namespace sim{
     }
     
     for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
+      (*it).Reset(); 
+    }
+    for(RN_S2ClusterCollectionRef it=si_cluster_.begin();it!=si_cluster_.end();it++){
       (*it).Reset(); 
     }
  
@@ -361,7 +428,7 @@ namespace sim{
     hQ->Fit(Q_fit,"","",-4,4);
     hn_tof->Fit(TOF_fit,"","",1,128);
     simlog<<"Reaction :"<<gReactionInfo.BeamName()<<"("<<gReactionInfo.TargetName()<<","<<gReactionInfo.RecoilName()<<")"<<gReactionInfo.FragmentName()<<"\n";
-    simlog<<"Decay :x"<<gReactionInfo.FragmentName()<<"->"<<gReactionInfo.DecayProductName() << "+" << gReactionInfo.HeavyDecayName()<<"\n\n";
+    simlog<<"Decay :"<<gReactionInfo.FragmentName()<<"->"<<gReactionInfo.DecayProductName() << "+" << gReactionInfo.HeavyDecayName()<<"\n\n";
       
       simlog<<"Beam Energy: "<<gReactionInfo.BeamEnergy()<<"\n";
       simlog<<"Beam E_loss(thickness): "<<gReactionInfo.BeamELoss()<<"\n";

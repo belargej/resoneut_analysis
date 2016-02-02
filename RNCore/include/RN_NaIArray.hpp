@@ -85,13 +85,20 @@ public:
   inline Double32_t T2()   const{ return fT[1]>0 ? (fT[1] * tlin[1] + tshift[1]):0; }
 
   //T(int i) is deprecated.  still included so that some analyzers won't crash
-  inline Double32_t T(int i=0)   const{
+  inline Double32_t T(int i=0)   const
+  {
+    /* if (T1())
+      return(T1());
+    else if (T2())
+      return(T2());
+    else return -5000;
+    */
     if ((T1()>=T2() || !T1()) && T2())
       return T2();
     else if ((T1()<T2() || !T2()) && T1())
       return T1();
     else 
-      return 0;
+      return -5000;
     
   }
   inline Double32_t E1()   const{ return fE[0]>0 ? (fE[0] * elin[0] + eshift[0]):0; }
@@ -123,9 +130,15 @@ class RN_NaIArray:public RN_BaseDetector{
   Double32_t tfirst;
   Int_t t_mult;
   Int_t detfirst; 
+  Double32_t efirst;
+  //Double32_t ESum;
+  
  public:
   
+  
+  //Double32_t fESum;
   std::vector<Double32_t> fPosition;
+  //Double32_t fDetNumber;
 
   RN_NaIArray(){}
   RN_NaIArray(std::string name, int num = 20):  RN_BaseDetector(name,num),
@@ -135,7 +148,9 @@ class RN_NaIArray:public RN_BaseDetector{
 						tshift(0),	
 						tfirst(4096),
 						t_mult(0),
-						fPosition(20,(double)0.)
+						efirst(-1),
+						fPosition(20,(double)0.)//,
+						//fDetNumber(-1)
   {
   } 
   void Reset();
@@ -143,11 +158,17 @@ class RN_NaIArray:public RN_BaseDetector{
   void SetCalibrations(RN_VariableMap& detvar);
   int FindTFirst(const double& t);
   int FindTFirst(const double& t,const int& det);
+  int FindTFirst(const double& t,const int& det, const double& e);
   inline Double32_t TFirst() const{return tfirst;};
+  inline Double32_t EFirst() const{return efirst;};
   inline Int_t DetFirst() const{return detfirst;};
   inline Double32_t TMult() const{return t_mult;};
   void ReconstructHits(const RN_NaICollection&in);
   int InsertHit(const Double32_t&,const Double32_t&,const Double32_t&,const Int_t&);
+
+  //inline Double32_t GetESum() const{ return ESum;};
+
+  //Double32_t NaIDetNumber(unsigned int i=0)
 
   inline Double32_t Phi(int i=0)const{return 0;} ;
 

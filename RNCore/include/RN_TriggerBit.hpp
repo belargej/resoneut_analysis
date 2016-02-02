@@ -36,8 +36,8 @@ private:
 public:
   RN_TriggerBit(){}
   RN_TriggerBit(std::string name):RN_BaseClass(name,name),
-				  bitmin(0),
-				  bitmax(4095),
+				  bitmin(2490),
+				  bitmax(2509),
 				  fBit(-1)
     
     
@@ -50,7 +50,9 @@ public:
   void Reset();
   int Check();
   void SetCalibrations(RN_VariableMap& detvar);
-  
+  Double32_t GetBitMax(){return bitmax;}
+  Double32_t GetBitMin(){return bitmin;}
+
 
   ClassDef(RN_TriggerBit,1);
 

@@ -31,6 +31,11 @@
 
 #include "RN_VariableMap.hpp"
 
+namespace rfperiod{
+  const static double RFPERIOD(82.474227);
+  Double_t RFModulus(double t);
+
+}
 
 class RN_RFTime:public RN_BaseClass{
 protected:
@@ -53,6 +58,7 @@ public:
   Double_t TWrapped()const;
   Double_t TMod()const;
   Double_t TMod2()const;
+  Double32_t TRel(double time) const;
 
   void SetCalibrations(RN_VariableMap&);
   void InsertHit(const double&);
@@ -81,9 +87,23 @@ inline Double_t RN_RFTime::TRaw() const{
 /***********************************************************************/
 #ifdef __RFTIME_CXX
 
+namespace rfperiod{
+  //for situations where we want to wrap around a subtracted spectrum such as (neut.T()- rf.T()).Modulus
+  //instead of just wrapping the rf spectrum
+  Double32_t RFModulus(double t){
+    return (t>0 ? fmod(t,RFPERIOD) : 0);
+  }
+
+}
+
 //for calibrating the time into ns
 Double_t RN_RFTime::T() const{
   return ( fT > 0 ? ( ( fT * fTLin ) + fTShift ) : 0 );
+}
+
+//for getting time relative to the rf 
+Double32_t RN_RFTime::TRel(double time) const{
+  return ( fT>0 ? rfperiod::RFModulus(time - TMod2()): 0 );
 }
 
 //TMod returns the modulus, offset.  This offset is provided
@@ -92,9 +112,9 @@ Double_t RN_RFTime::T() const{
 Double_t RN_RFTime::TMod() const{
   double time=T();
   if(fT>0 && fTo){
-    time = fmod((time - fTo),82.417);
+    time = fmod((time - fTo),82.474227);
     if (time < 0)
-      time+=82.417;
+      time+=82.474227;
   }
   return time;
 }
@@ -102,13 +122,13 @@ Double_t RN_RFTime::TMod() const{
 //TMod2 returns the modulus of fT after calibrating into ns
 //82.417ns is the time difference between 2 beam bunches
 Double_t RN_RFTime::TMod2() const{
-  return ((fT>0) ? fmod(T(),82.417) : 0);
+  return ((fT>0) ? fmod(T(),82.474227) : 0);
 }
 
 //TWrapped just flips the correlation in Time so that it reads from left to right instead of right to left.
 
 Double_t RN_RFTime::TWrapped() const{
-  return (fT>0 ? (82.417-TMod()) : 0);  
+  return (fT>0 ? (82.474227-TMod()) : 0);  
 }
 
 

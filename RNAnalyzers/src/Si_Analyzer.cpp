@@ -53,7 +53,7 @@ namespace silicon{
   TH2D *h_ringsA_v_ringsB;
   TH2D *h_segmentsA_v_segmentsB;
   TH2D *hThetaA_vThetaB; 
-  TH2D *hPhiA_vPhiB;  
+  TH2D *hPhiA_vPhiB; 
   TH1D *h_si_back[SI_NUM];
   TH1D *h_si_back_a[SI_NUM];
   TH1D *h_si_front[SI_NUM];
@@ -63,6 +63,7 @@ namespace silicon{
   TH2D *h_evtheta_arb[SI_NUM];
   TH2D *h_evtheta[SI_NUM];
   TH2D *h_evtheta_protgated[SI_NUM];
+  TH2D *h_evtheta_protgated_hi1[SI_NUM];
   TH2D *h_evtheta_neutgated[SI_NUM];
   TH2D *h_si_x_y[SI_NUM];
   TH2D *h_si_x_y_prot[SI_NUM];
@@ -87,7 +88,16 @@ namespace silicon{
   TH2D* rfvtrel_prot_si[SI_NUM];  
   TH1D* h_t[SI_NUM];
 
-
+  // JAB
+  TH2D* SiAT_vs_SiBT;
+  TH1D* SiAT[16];
+  TH1D* SiBT[16];
+  TH1D* RF_SiTime;
+  //TH1D* RF_Time[SI_NUM];
+  //TH2D* RFvsSiEnergy[SI_NUM];
+  //TH1D* RF_Time_ProtCut[SI_NUM];
+  //TH2D* RFvsSiEnergy_ProtCut[SI_NUM];
+  
   
   Si_Analyzer::Si_Analyzer()
   {
@@ -135,6 +145,10 @@ namespace silicon{
 
     fgRootFile->cd("Silicon");
     if(si_.size()>1){
+      
+      // JAB
+      SiAT_vs_SiBT = new TH2D("SiAT_vs_SiBT","Si A Time vs Si B Time",800,400,800,800,400,800);
+      RF_SiTime = new TH1D("RF_SiTIme","RF - SiTime",600,-200,100);
       h_ringsA_v_ringsB=new TH2D("h_ringsA_v_ringsB","h_ringsA_v_ringsB;sia_rings;sib_rings",17,0,16,17,0,16);
       h_segmentsA_v_segmentsB = new TH2D("h_segmentsA_v_segmentsB","h_segmentsA_v_segmentsB;sia_segments;sib_segments",17,0,16,17,0,16);    
       hThetaA_vThetaB = new TH2D("hThetaA_vThetaB","hThetaA_vThetaB;ThetaB;ThetaA",180,0,44,180,0,44); 
@@ -176,19 +190,34 @@ namespace silicon{
       h_evtheta[i]=new 
 TH2D(Form("h_evtheta[%s]",si_[i].GetName()),Form("h_evtheta[%s];Theta;E",si_[i].GetName()),256,0,42,128,0,32);
       h_evtheta_protgated[i]=new TH2D(Form("h_evtheta_prot[%s]",si_[i].GetName()),Form("h_evtheta_prot[%s];Theta;E",si_[i].GetName()),256,0,42,128,0,32);
+      h_evtheta_protgated_hi1[i]=new TH2D(Form("h_evtheta_prot_hi1[%s]",si_[i].GetName()),Form("h_evtheta_prot_hi1[%s];Theta;E",si_[i].GetName()),256,0,42,128,0,32);
       h_si_x_y[i]=new TH2D(Form("h_si_x_y[%s]",si_[i].GetName()),Form("h_si_x_y[%s];X;Y",si_[i].GetName()),512,-100,100,512,-100,100);
       h_si_x_y_prot[i]=new TH2D(Form("h_si_x_y_prot[%s]",si_[i].GetName()),Form("h_si_x_y_prot[%s];X;Y",si_[i].GetName()),512,-100,100,512,-100,100);
 
       fgRootFile->cd(Form("Silicon/%s/Timing",si_[i].GetName()));
-      h_t[i]=new TH1D(Form("h_%s_t",si_[i].GetName()),Form("%s_t;time",si_[i].GetName()),1024,0,4096);
+      h_t[i]=new TH1D(Form("h_%s_t",si_[i].GetName()),Form("%s_t;time",si_[i].GetName()),4096,0,4096);
       hsi_EvT[i]=new TH2D(Form("h%s_evt",si_[i].GetName()),Form("h%s_evt;T;E",si_[i].GetName()),1024,0,4095,512,0,4095);    
     
-    fgRootFile->cd(Form("Silicon/%s/Timing/rftime",si_[i].GetName()));
-    rfvt_si[i] = new TH2D(Form("rfvt_%s",si_[i].GetName()),Form("rfvt_%s;rftime;s1_t",si_[i].GetName()),1024,256,2304,1024,0,4096);;	  
-    rfvtrel_si[i] =new TH2D(Form("rfvtrel_%s",si_[i].GetName()),Form("rfvtrel_%s;rftime;trelRF",si_[i].GetName()),1024,256,2304,1024,0,4096);  	
-    rfvt_prot_si_[i]=new TH2D(Form("rfvt_prot_%s",si_[i].GetName()),Form("rfvt_prot_%s;rftime;s1_t",si_[i].GetName()),1024,256,2304,1024,0,4096); 
-    rfvtrel_prot_si[i]=new TH2D(Form("rfvtrel_prot_%s",si_[i].GetName()),Form("rfvtrel_prot_%s;rftime;trelRF",si_[i].GetName()),1024,256,2304,1024,0,4096);  
+      fgRootFile->cd(Form("Silicon/%s/Timing/rftime",si_[i].GetName()));
+      rfvt_si[i] = new TH2D(Form("rfvt_%s",si_[i].GetName()),Form("rfvt_%s;rftime;s1_t",si_[i].GetName()),1024,256,2304,1024,0,4096);;	  
+      rfvtrel_si[i] =new TH2D(Form("rfvtrel_%s",si_[i].GetName()),Form("rfvtrel_%s;rftime;trelRF",si_[i].GetName()),1024,256,2304,1024,0,4096);  	
+      rfvt_prot_si_[i]=new TH2D(Form("rfvt_prot_%s",si_[i].GetName()),Form("rfvt_prot_%s;rftime;s1_t",si_[i].GetName()),1024,256,2304,1024,0,4096); 
+      rfvtrel_prot_si[i]=new TH2D(Form("rfvtrel_prot_%s",si_[i].GetName()),Form("rfvtrel_prot_%s;rftime;trelRF",si_[i].GetName()),1024,256,2304,1024,0,4096);  
+
+      //RF_Time[i] = new TH1D(Form("RF_Time_Det_%d",i),Form("RF Time Det %s ",si_[i].GetName()),4096,0,4096);
+      //RFvsSiEnergy[i] = new TH2D(Form("RF_vs_SiEnergy_Det_%d",i),Form("RF Time vs Total Si Energy Det %s ",si_[i].GetName()),1000,0,15,4096,0,4096);
+      //RF_Time_ProtCut[i] = new TH1D(Form("RF_Time_ProtCut_Det_%d",i),Form("RF Time Det Prot Cut %s ",si_[i].GetName()),4096,0,4096);
+      //RFvsSiEnergy_ProtCut[i] = new TH2D(Form("RF_vs_SiEnergy_ProtCut_Det_%d",i),Form("RF Time vs Total Si Energy Prot Cut Det %s ",si_[i].GetName()),1000,0,15,4096,0,4096);
     }
+
+    //JAB
+    fgRootFile->cd(Form("Silicon/%s/Timing",si_[0].GetName()));
+    for(unsigned int i = 0; i<16;i++)
+      SiAT[i] = new TH1D(Form("SiAT_%d",i),Form("Si A Time Channel %d",i),4096,0,4096);
+    
+    fgRootFile->cd(Form("Silicon/%s/Timing",si_[1].GetName()));
+    for(unsigned int i = 0; i<16;i++)
+      SiBT[i] = new TH1D(Form("SiBT_%d",i),Form("Si B Time Channel %d",i),4096,0,4096);
     return 1;
   }  
   
@@ -201,8 +230,11 @@ TH2D(Form("h_evtheta[%s]",si_[i].GetName()),Form("h_evtheta[%s];Theta;E",si_[i].
       protcheck=silicon::prots1->IsInside(si_array.E_AB(),si_array.E_A());
     
     //prots2 gates on a front hit in si_a and si_b
+    //if(silicon::prots2)
+    //prot2check=silicon::prots2->IsInside(si_[0].front.E()+si_[1].front.E(),si_[0].front.E());
+
     if(silicon::prots2)
-      prot2check=silicon::prots2->IsInside(si_[0].front.E()+si_[1].front.E(),si_[0].front.E());
+      prot2check=silicon::prots2->IsInside(si_array.E_AB(),si_array.E_A());
     
     if(silicon::alphas)
       alphacheck=silicon::alphas->IsInside(si_array.E_AB(),si_array.E_A());
@@ -263,6 +295,29 @@ TH2D(Form("h_evtheta[%s]",si_[i].GetName()),Form("h_evtheta[%s];Theta;E",si_[i].
     
     if(si_.size()>1){
       Prot_E_Arb= si_[0].front.E() + si_[1].front.E();
+      
+      // JAB
+      SiAT_vs_SiBT->Fill(si_array.T_A(),si_array.T_B());
+      
+      if(si_array.T_A()!=0 && si_array.T_B()==0){
+	RF_SiTime->Fill(rftime.T()-si_array.T_A());
+      }
+      else if(si_array.T_A()==0 && si_array.T_B()!=0){
+	RF_SiTime->Fill(rftime.T()-si_array.T_B());
+	
+      }
+      else{	 
+	RF_SiTime->Fill(rftime.T()-si_array.T_B());   
+	
+      }
+      
+
+      if(si_array.T_A()!=0)
+	SiAT[int(si_[0].back.Ch())]->Fill(si_array.T_A());
+      if(si_array.T_B()!=0)
+	SiBT[int(si_[1].back.Ch())]->Fill(si_array.T_B());
+      // End JAB
+
       h_ringsA_v_ringsB->Fill(si_[0].front.Ch(),si_[1].front.Ch());
       h_segmentsA_v_segmentsB->Fill(si_[0].back.Ch(),si_[1].back.Ch());
       hThetaA_vThetaB->Fill(si_array.Theta_A()*RadToDeg(),si_array.Theta_B()*RadToDeg());
@@ -305,12 +360,17 @@ TH2D(Form("h_evtheta[%s]",si_[i].GetName()),Form("h_evtheta[%s];Theta;E",si_[i].
       hsi_EvT[i]->Fill(si_[i].back.T(),si_[i].back.E());    
       rfvt_si[i]->Fill(rftime.TRaw(),si_[i].Back_T(0));
       rfvtrel_si[i]->Fill(rftime.TRaw(),si_[i].Back_T(0)); 
+
+      //RF_Time[i]->Fill(rftime.TRaw());
+      //RFvsSiEnergy[i]->Fill(si_array.E_AB(),rftime.TRaw());
       
      if(protcheck){
 	h_evtheta_protgated[i]->Fill(si_cluster_[i].Theta()*180/TMath::Pi(),si_array.E_AB());
 	h_si_x_y_prot[i]->Fill(si_cluster_[i].fPos[0].X(),si_cluster_[i].fPos[0].Y());
 	rfvt_prot_si_[i]->Fill(rftime.TRaw(),si_[i].Back_T(0));
 	rfvtrel_prot_si[i]->Fill(rftime.TRaw(),rftime.TRaw() - si_[i].Back_T(0));
+	//RF_Time_ProtCut[i]->Fill(rftime.TRaw());
+	//RFvsSiEnergy_ProtCut[i]->Fill(si_array.E_AB(),rftime.TRaw());
      }
     }
     

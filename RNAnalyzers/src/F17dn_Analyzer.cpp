@@ -82,6 +82,7 @@ namespace _F17{
   TH2D *hErvRunNumber;
   TH2D *hNeutRFTRelvRunNumber;  
   TH2D *hICERawvRunNumber;  
+  TH2D *hICECalvRunNumber;  
 
   TH2D *hCalICDEvERebin;  
   TH2D *hCalICPosEvERebin;  
@@ -191,6 +192,9 @@ namespace _F17{
   hICEdEProt =new TH2D("hICEdEProt","hICEdEProt; E + dE[arb];dE [arb]",1024,0,128,1024,0,128);
   hICEdEAlpha =new TH2D("hICEdEAlpha","hICEdEAlpha; E + dE[arb];dE [arb]",1024,0,128,1024,0,128);
   hICEdEDeuteron =new TH2D("hICEdEDeuteron","hICEdEDeuteron; E + dE[arb];dE [arb]",1024,0,128,1024,0,128);
+  hICERawvRunNumber = new TH2D("hICERawvRunNumber","hICERawvRunNumber;RunNumber;ICERaw",1024,3000,4023,512,0,4095);
+  hICECalvRunNumber = new TH2D("hICECalvRunNumber","hICECalvRunNumber;RunNumber;ICECal",1024,3000,4023,512,0,255);
+
 
   fgRootFile->cd("F17dx_Analysis/TRel");
   hSibTrelvICTrelRebin = new TH2D("hSibTrelvICTrelRebin","hSibTrelvICTrelRebin",1024,-100,1434,1024,-100,1434);
@@ -219,7 +223,7 @@ namespace _F17{
   fgRootFile->cd("F17dx_Analysis/SiIC");
   hICThetavSiTheta = new TH2D("hICThetavSiTheta","hICThetavSiTheta;SiTheta;ICTheta",256,0,31,128,0,15);
   hICPhivSiPhi = new TH2D("hICPhivSiPhi","hICPhivSiPhi;SiPhi;ICPhi",360,-180,180,360,-180,180);
-  hICERawvRunNumber = new TH2D("hICERawvRunNumber","hICERawvRunNumber;RunNumber;ICERaw",1024,3000,4023,512,0,4095);
+
 
 
   fgRootFile->cd("F17dx_Analysis/reco");
@@ -269,6 +273,7 @@ bool F17dn_Analyzer::ProcessFill(){
   hErvRunNumber->Fill(gMainAnalyzer.EventInfo(0),fErProton);;
   hNeutRFTRelvRunNumber->Fill(gMainAnalyzer.EventInfo(0),fNeutTime);
   hICERawvRunNumber->Fill(gMainAnalyzer.EventInfo(0),ic.ERaw());
+  hICECalvRunNumber->Fill(gMainAnalyzer.EventInfo(0),ic.E());
 
   hCalICDEvERebin->Fill(ic.E()+ic.DE(),ic.DE());
   hCalICfDEvfERebin->Fill(ic.E(),ic.DE());

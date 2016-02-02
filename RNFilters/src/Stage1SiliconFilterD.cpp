@@ -42,7 +42,7 @@ namespace RNfilters{
     //require multiplicity in both detectors
     if(si_[0].front.Mult() == 0 || si_[1].front.Mult()==0){
       return 0;
-    } 
+      } 
     
     //require an IC timing
     if(!(ic.T()>0)){

@@ -1,0 +1,81 @@
+/***********************************************************/
+//Class: ICTimeFilter
+//
+//Author:Belarge
+//
+// Filter events that to not have a nonzero IC time.
+///***********************************************************/
+
+#ifndef _ICTimeFilter_CXX
+#define _ICTimeFilter_CXX
+
+#include "ICTimeFilter.hpp"
+#include "RN_Root.hpp"
+
+using namespace RNROOT;
+using namespace TMath;
+
+namespace RNfilters{
+  
+
+  ICTimeFilter::ICTimeFilter():LowValue(0),
+			       HighValue(4096),
+			       UseGate(0)
+  {
+    
+  }
+  
+  void ICTimeFilter::Reset(){
+  
+  }
+
+  
+  bool ICTimeFilter::Begin(){   
+  
+    return 1;
+  }  
+  
+  
+
+  bool ICTimeFilter::Process(){
+    
+    if(UseGate){
+      if(ic.T()>LowValue && ic.T()<HighValue)
+	return 1;
+      else
+	return 0;
+    }
+    else{
+      if(!(ic.T()>0)){
+	return 0;
+      }
+      
+      return 1;
+    }
+  }
+  bool ICTimeFilter::ProcessFill(){
+     
+    return 1;
+    
+  }
+
+
+  bool ICTimeFilter::Terminate(){
+    return 1;
+  }
+
+  void ICTimeFilter::Clear(){
+    
+  }
+
+  void ICTimeFilter::SetWindow(int Low, int High){
+    UseGate = true;
+    LowValue = Low;
+    HighValue = High;
+  }
+  
+  
+}
+
+
+#endif

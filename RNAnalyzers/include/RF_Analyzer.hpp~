@@ -1,0 +1,66 @@
+/***********************************************************
+//Class: Analyzer_Template
+//
+//Author:Sean Kuvin
+//
+***********************************************************/
+
+#ifndef _RFANALYZER_H
+#define _RFANALYZER_H
+#include <TH2.h>
+#include <cstdlib>
+#include <string>
+#include <new>
+#include "RN_Analyzer.hpp"
+
+
+namespace RF_analyzer{
+
+
+  class RF_Analyzer:public RN_Analyzer{
+  private:
+
+  public:  
+    RF_Analyzer();
+    virtual ~RF_Analyzer(){};
+
+    virtual bool Begin();
+    virtual bool Process();
+    virtual bool ProcessFill();
+    virtual void Clear();
+    virtual bool Terminate();
+    virtual bool TerminateIfLast();
+    virtual void Reset();
+
+
+
+
+
+    ClassDef(RF_Analyzer,0);
+  };
+
+  
+  extern TCutG* ede_hi1;
+  extern TCutG* ede_hi2;
+  extern TCutG* ede_hi3;
+  extern TCutG* prots1;
+  extern int hi_check[3];
+  void RequireHI1(int i=1);
+  void RequireHI2(int i=1);
+  void RequireHI3(int i=1);
+  
+  // Specific to the 19Ne(d,n)20Na* experiment.
+  // Should be modified to be used more generally.
+  extern TCutG* Ne19;
+  extern TCutG* F19_HE_CS;
+  extern TCutG* F19_LE_CS;
+  void RequireProton(int i=1);
+  void RequireNe19(int i = 1);
+  void RequireF19_HE_CS(int i=1);
+  void RequireF19_LE_CS(int i=1);
+  
+  void LoadGates(const std::string &input);
+  void ClearGates();  
+}
+
+#endif

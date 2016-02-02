@@ -39,19 +39,20 @@ int RN_Analyzer::GetDetectorEntry(){
     //Neutron Detector position channel hits
     //insert here
     
+    //std::cout << "In GetDetectorEntry() " << std::endl;
+
     //Silicon Hits
     for(int j=0;j<16;j++){
     //si_a de front
-      si_[0].front.InsertHit(ADC3[j+16],0,j);
+      si_[0].front.InsertHit(ADC3[j+16],0,j,fEvent[0]);
       //si_b e front
-      si_[1].front.InsertHit(ADC2[j+16],0,j);
+      si_[1].front.InsertHit(ADC2[j+16],0,j,fEvent[0]);
       //si_a de back
-      si_[0].back.InsertHit(ADC3[j],TDC2[j+16],j);
+      si_[0].back.InsertHit(ADC3[j],TDC2[j+16],j,fEvent[0]);
       //si_b e back
-      si_[1].back.InsertHit(ADC2[j],TDC2[j],j);
+      si_[1].back.InsertHit(ADC2[j],TDC2[j],j,fEvent[0]);
 
     }
-
     
 
     //NaI E and T hits
@@ -70,7 +71,7 @@ int RN_Analyzer::GetDetectorEntry(){
       if(j<4){
 	if(TDC4[k]>0)nai[j+16].fT[0]=TDC4[k];
 	if(TDC4[k+1]>0)nai[j+16].fT[1]=TDC4[k+1];
-    }
+      }
       
       k+=2;
     }
@@ -88,6 +89,8 @@ int RN_Analyzer::GetDetectorEntry(){
     for(int k=0;k<16;k++){
       ic.xgrid.InsertHit(ADC5[k],0,k);
       ic.ygrid.InsertHit(ADC6[k],0,k);
+      //std::cout << "XGrid Chan : " << k << " RawE : " << ADC5[k] << std::endl;
+      //std::cout << "YGrid Chan : " << k << " RawE : " << ADC6[k] << std::endl;
     }
     for(int k=16;k<32;k++){
       ic.xgrid.InsertHit(ADC6[k],0,k);
@@ -109,17 +112,19 @@ int RN_Analyzer::GetDetectorEntry(){
     
     triggerbit[0].SetBit(TDC1[3]); //sib detbit
     triggerbit[1].SetBit(TDC1[4]); //icds detbit
-    
+    triggerbit[2].SetBit(TDC1[5]); //sia detbit
 
     //recontruct clusters for all silicon detectors in S2Collection
     unsigned int cref=0;
+    //std::cout << " Before Cluster Recon ========================================" << std::endl;
     for(RN_S2CollectionRef it=si_.begin();it!=si_.end();it++){
       if(cref<si_cluster_.size())
       si_cluster_[cref].ReconstructClusters(*it);
       cref++;
       
     }
-    
+    // std::cout << " After Cluster Recon  ========================================" << std::endl;
+
     //reconstruct neutron detector hits for all neutron detectors 
     //in NeutCollection
     Narray.ReconstructHits(neut);

@@ -37,6 +37,7 @@ protected:
   TString fNames[6];
   Double32_t fBeamEnergy;
   Double32_t fBeamELoss;
+  Double32_t fBeamSpread;
   Double32_t fhi_ex_set;
   Double32_t fd_ex_set;
   Double32_t fE_fragment_est;//for q_value calculations
@@ -79,6 +80,8 @@ public:
   inline Double32_t E_Fragment() const {return fE_fragment_est;}
   inline Double32_t Hi_Ex_Set() const {return fhi_ex_set;}
   inline Double32_t D_Ex_Set() const {return fd_ex_set;}
+  Double32_t BeamSpread() const {return fBeamSpread;}
+
 
 
   //Get Masses
@@ -122,8 +125,16 @@ public:
   Double32_t DecayQValueEstimate();
   Double32_t DecayQValueEstimate(const double& decay_energy, const double& decay_theta);
   Double32_t DecayQValueIterations(const double& decay_ke, const double & decay_theta /*inradians*/,const UInt_t& iterations);
-
-
+  Double32_t DecayQValueIterations_RecEn(const double& decay_ke, const double & decay_theta /*inradians*/,const UInt_t& iterations);
+  //JAB
+  Double32_t IntHeavyQVal(const double& LightKE, const double& HeavyKE, const double& LightTheta, const double& LightPhi, const double& HeavyTheta, const double& HeavyPhi);
+  Double32_t IntHeavyKinEn(const double& LightKE, const double& HeavyKE, const double& LightTheta, const double& LightPhi, const double& HeavyTheta, const double& HeavyPhi); 
+  Double32_t IntHeavyTheta(const double& LightKE, const double& HeavyKE, const double& LightTheta, const double& LightPhi, const double& HeavyTheta, const double& HeavyPhi);
+ 
+  Double32_t NeutronEn(const double& LightKE, const double& HeavyKE, const double& LightTheta, const double& LightPhi, const double& HeavyTheta, const double& HeavyPhi);
+  Double32_t NeutronAngle(const double& LightKE, const double& HeavyKE, const double& LightTheta, const double& LightPhi, const double& HeavyTheta, const double& HeavyPhi);
+  Double32_t NeutronAngleCM(const double& LightKE, const double& HeavyKE, const double& LightTheta, const double& LightPhi, const double& HeavyTheta, const double& HeavyPhi);
+  Double32_t ProtonAngleCM(const double& LightKE, const double& HeavyKE, const double& LightTheta, const double& LightPhi, const double& HeavyTheta, const double& HeavyPhi);
   Double32_t RecoilQValue(const double& dz, const double& tof, double&nKE, double&hiKE);
   Double32_t RecoilQValue(const double& nKE_R, const double & theta, double & hiKE);
 

@@ -1,0 +1,26 @@
+fOutput		sim19Ne_tree__11-12-14.root sim19Ne.log
+fDWBA		dwbal0.dat
+fEvents		100000
+fReaction	19Ne 2H n 20Na 1H 19Ne
+
+
+fParam		ReactionInfo.beam_e	87.0
+fParam		ReactionInfo.beam_eloss	2
+fParam		ReactionInfo.hi_ex_set	2.65
+fParam		ReactionInfo.E_fragment	83
+fParam		all.radius	34
+fParam		neut0.thickness	25.4
+fParam		neut1.thickness	12.7
+fParam		neut2.thickness	12.7
+fParam		neut3.thickness	25.4
+fParam		neut4.thickness	25.4
+fParam		neut5.thickness	25.4
+fParam		neut6.thickness	25.4
+fParam		neut7.thickness	25.4
+fParam		neut8.thickness	12.7
+fParam		neut9.thickness	25.4
+fParam		all.threshold	0.1
+fParam		neutarray.zpos	-228.7
+fParam		si_a.zpos	75
+fParam		si_b.zpos	91
+		 

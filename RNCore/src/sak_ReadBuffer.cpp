@@ -6,14 +6,14 @@
 
 namespace sak{
   
-  const char* ReadLine(std::ifstream& a,std::vector<std::string>& b,const unsigned int& ent){
+  const char* ReadLine(std::ifstream& a,std::vector<std::string>& b,const unsigned int& ent, int debug){
     std::string c;
     std::getline(a,c);
     std::istringstream d(c);
     std::copy(std::istream_iterator<std::string>(d),
 	      std::istream_iterator<std::string>(),
 	      std::back_inserter<std::vector<std::string> >(b));
-    if(ent!=0 && b.size()!=ent){
+    if(ent!=0 && b.size()!=ent && (debug == kDEBUG)){
       std::cout<<"invalid number of entries at pos: "<<a.tellg()<<std::endl;
       b.clear();
       return "";//act accordingly

@@ -22,6 +22,9 @@ namespace physical{
   class Q_ValueAnalyzer:public RN_Analyzer{
   private:
     int fSiAngle; //which detector to use for silicon angle
+    int QValIterations;
+    bool UseInvMass;
+    double Q0;
     
   public:  
     Q_ValueAnalyzer();
@@ -35,8 +38,9 @@ namespace physical{
     virtual bool TerminateIfLast();
     virtual void Reset();
     void SetSiliconAngle(const int& index);
-
+    void SetQValIterations(const int& Iter) { QValIterations = Iter; std::cout << " QVal Its : " << QValIterations << std::endl;};
     ClassDef(Q_ValueAnalyzer,0);
+    void SetInvMass(const double& Q0_){UseInvMass=1;Q0=Q0_;};
   };
   
     extern Double32_t q_val_p;

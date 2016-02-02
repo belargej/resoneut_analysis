@@ -1,7 +1,6 @@
 CXX=g++
 EXE=RN_SimRun
 
-
 OPTIONS=-lMinuit -lSpectrum
 
 

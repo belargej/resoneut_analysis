@@ -1,0 +1,6 @@
+set term postscript eps color enhanced
+set output "3Plus3_2p849_Mirror_vs_SM.eps"
+set logscale y
+plot 'dn_2.849_mirror' u 1:2 title "2.849MeV as 3^+_3 Mirror",\
+     'dn_2.849.dat' u 1:2 title "2.849MeV as 3^+_4 SM",\
+     'dn_2.645.dat' u 1:2 title "2.645MeV as 3^+_3 SM"

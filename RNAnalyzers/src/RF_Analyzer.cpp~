@@ -1,0 +1,304 @@
+/****************************************************
+//Class: RF_Analyzer
+//
+//Author: Belarge
+//
+// Use to perform RF Analysis.
+//
+**************************************************/
+
+#ifndef _RF_ANALYZER_CXX
+#define _RF_ANALYZER_CXX
+
+#include "RF_Analyzer.hpp"
+#include "RN_Root.hpp"
+
+#include "Si_Analyzer.hpp"
+#include "IC_Analyzer.hpp"
+
+//using namespace RNROOT;
+namespace RF_analyzer{
+  
+  TCutG* RF_Cut1;
+  TCutG* RF_Cut2;
+  TCutG* RF_Cut3;
+  
+  int _require_rf1(0);
+  int _require_rf2(0);
+  int _require_rf3(0);
+
+  int rf_check[3];
+
+  //============
+  // Histograms:
+  TH1D* RF_Time;
+  TH2D* RFvsSiEnergy;  
+  TH2D* RFvsICdE;  
+  TH1D* RF_Time_ProtCut;
+  TH2D* RFvsSiEnergy_ProtCut;
+  TH2D* RFvsICdE_ProtCut;
+  
+  TH1D* RF_Time_HI1Cut;
+  TH2D* RFvsSiEnergy_HI1Cut;  
+  TH2D* RFvsICdE_HI1Cut;  
+  TH1D* RF_Time_HI1Cut_ProtCut;
+  TH2D* RFvsSiEnergy_HI1Cut_ProtCut;
+  TH2D* RFvsICdE_HI1Cut_ProtCut;
+
+  TH1D* RF_Time_19NeCut;
+  TH2D* RFvsSiEnergy_19NeCut;  
+  TH2D* RFvsICdE_19NeCut;  
+  TH1D* RF_Time_19NeCut_ProtCut;
+  TH2D* RFvsSiEnergy_19NeCut_ProtCut;
+  TH2D* RFvsICdE_19NeCut_ProtCut;
+
+  TH1D* RF_Time_19F_HE_CS;
+  TH2D* RFvsSiEnergy_19F_HE_CS;
+  TH2D* RFvsICdE_19F_HE_CS;
+  TH1D* RF_Time_19F_HE_CS_ProtCut;
+  TH2D* RFvsSiEnergy_19F_HE_CS_ProtCut;
+  TH2D* RFvsICdE_19F_HE_CS_ProtCut;
+
+  TH1D* RF_Time_19F_LE_CS;
+  TH2D* RFvsSiEnergy_19F_LE_CS;
+  TH2D* RFvsICdE_19F_LE_CS;
+  TH1D* RF_Time_19F_LE_CS_ProtCut;
+  TH2D* RFvsSiEnergy_19F_LE_CS_ProtCut;
+  TH2D* RFvsICdE_19F_LE_CS_ProtCut;
+
+  RF_Analyzer::RF_Analyzer()
+  {
+  
+  }
+
+
+  void RF_Analyzer::Reset(){ 
+    for(int i =0; i < 3; i++){
+      rf_check[i] = 0;
+    }
+    
+  }
+
+  bool RF_Analyzer::Begin(){
+
+    if(!fgRootFile){
+      std::cout<<"output file has not been created"<<std::endl;
+      Clear();
+      exit(EXIT_FAILURE);
+    }
+
+    fgRootFile->mkdir("RF_Analysis");
+    fgRootFile->cd("RF_Analysis");
+    gDirectory->mkdir("NoHeavyGates");
+    gDirectory->mkdir("Heavy1Gate");
+    gDirectory->mkdir("Ne19BeamGate");
+    gDirectory->mkdir("F19HECS_BeamGate");
+    gDirectory->mkdir("F19LECS_BeamGate");
+
+    gDirectory->cd("NoHeavyGates"); 
+    gDirectory->mkdir("ProtGate"); 
+    RF_Time = new TH1D("RF_Time","RF Time",4096,-4096,4096);
+    RFvsSiEnergy = new TH2D("RF_vs_SiEnergy","RF Time vs Total Si Energy",1000,0,15,4096,-4096,4096);
+    RFvsICdE = new TH2D("RF_vs_ICdE","RF Time vs IC dE",1000,0,15,4096,-4096,4096);
+    gDirectory->cd("ProtGate");
+    RF_Time_ProtCut = new TH1D("RF_Time_ProtCut","RF Time:ProtonCut",4096,-4096,4096);
+    RFvsSiEnergy_ProtCut = new TH2D("RF_vs_SiEnergy_ProtCut","RF Time vs Total Si Energy:ProtonCut",1000,0,15,4096,-4096,4096);
+    RFvsICdE_ProtCut = new TH2D("RF_vs_ICdE_ProtCut","RF Time vs ICdE:ProtonCut",1000,0,15,4096,-4096,4096);
+
+    fgRootFile->cd("RF_Analysis");
+    gDirectory->cd("Heavy1Gate");
+    gDirectory->mkdir("ProtGate");
+    RF_Time_HI1Cut = new TH1D("RF_Time_HI1Cut","RF Time:Heavy1 Cut",4096,-4096,4096);
+    RFvsSiEnergy_HI1Cut = new TH2D("RF_vs_SiEnergy_ProtCut","RF Time vs Total Si Energy:Heavy1 Cut",1000,0,15,4096,-4096,4096);
+    RFvsICdE_HI1Cut = new TH2D("RF_vs_ICdE_ProtCut","RF Time vs ICdE:Heavy1 Cut",1000,0,15,4096,-4096,4096);
+    gDirectory->cd("ProtGate");
+    RF_Time_HI1Cut_ProtCut = new TH1D("RF_Time_HI1Cut_ProtCut","RF Time:Heavy1 Cut_ProtCut",4096,-4096,4096);
+    RFvsSiEnergy_HI1Cut_ProtCut = new TH2D("RF_vs_SiEnergy_HI1Cut_ProtCut","RF Time vs Total Si Energy:Heavy1 Cut_ProtCut",1000,0,15,4096,-4096,4096);
+    RFvsICdE_HI1Cut_ProtCut = new TH2D("RF_vs_ICdE_HI1Cut_ProtCut","RF Time vs ICdE:Heavy1 Cut_ProtCut",1000,0,15,4096,-4096,4096);
+
+    fgRootFile->cd("RF_Analysis");
+    gDirectory->cd("Ne19BeamGate"); 
+    gDirectory->mkdir("ProtGate");
+    RF_Time_19NeCut = new TH1D("RF_Time_19NeCut","RF Time:19Ne Beam Cut",4096,-4096,4096);
+    RFvsSiEnergy_19NeCut = new TH2D("RF_vs_SiEnergy_19NeCut","RF Time vs Total Si Energy:19Ne Beam Cut",1000,0,15,4096,-4096,4096);   
+    RFvsICdE_19NeCut = new TH2D("RF_vs_ICdE_19NeCut","RF Time vs ICdE:19Ne Beam Cut",1000,0,15,4096,-4096,4096);   
+    gDirectory->cd("ProtGate");
+    RF_Time_19NeCut_ProtCut = new TH1D("RF_Time_19NeCut_ProtCut","RF Time:19Ne Beam Cut_ProtCut",4096,-4096,4096);
+    RFvsSiEnergy_19NeCut_ProtCut = new TH2D("RF_vs_SiEnergy_19NeCut_ProtCut","RF Time vs Total Si Energy:19Ne Beam Cut_ProtCut",1000,0,15,4096,-4096,4096);
+    RFvsICdE_19NeCut_ProtCut = new TH2D("RF_vs_ICdE_19NeCut_ProtCut","RF Time vs ICdE:19Ne Beam Cut_ProtCut",1000,0,15,4096,-4096,4096);
+    
+    fgRootFile->cd("RF_Analysis");
+    gDirectory->cd("F19HECS_BeamGate");
+    gDirectory->mkdir("ProtGate");
+    RF_Time_19F_HE_CS = new TH1D("RF_Time_19F_HE_CS","RF Time:19F HE BeamCut",4096,-4096,4096);
+    RFvsSiEnergy_19F_HE_CS = new TH2D("RF_vs_SiEnergy_19F_HE_CSCut","RF Time vs Total Si Energy:19F HE BeamCut",1000,0,15,4096,-4096,4096);    
+    RFvsICdE_19F_HE_CS = new TH2D("RF_vs_ICdE_19F_HE_CSCut","RF Time vs ICdE:19F HE BeamCut",1000,0,15,4096,-4096,4096);    
+    gDirectory->cd("ProtGate");
+    RF_Time_19F_HE_CS_ProtCut = new TH1D("RF_Time_19F_HE_CS_ProtCut","RF Time:19F HE BeamCut",4096,-4096,4096);
+    RFvsSiEnergy_19F_HE_CS_ProtCut = new TH2D("RF_vs_SiEnergy_19F_HE_CS_ProtCut","RF Time vs Total Si Energy:19F HE BeamCut",1000,0,15,4096,-4096,4096);
+    RFvsICdE_19F_HE_CS_ProtCut = new TH2D("RF_vs_ICdE_19F_HE_CS_ProtCut","RF Time vs ICdE:19F HE BeamCut",1000,0,15,4096,-4096,4096);
+    
+    fgRootFile->cd("RF_Analysis");
+    gDirectory->cd("F19LECS_BeamGate");
+    gDirectory->mkdir("ProtGate");
+    RF_Time_19F_LE_CS = new TH1D("RF_Time_19F_LE_CS","RF Time:19F LE BeamCut",4096,-4096,4096);
+    RFvsSiEnergy_19F_LE_CS = new TH2D("RF_vs_SiEnergy_19F_LE_CS","RF Time vs Total Si Energy:19F LE BeamCut",1000,0,15,4096,-4096,4096);    
+    RFvsICdE_19F_LE_CS = new TH2D("RF_vs_ICdE_19F_LE_CS","RF Time vs ICdE:19F LE BeamCut",1000,0,15,4096,-4096,4096);    
+    gDirectory->cd("ProtGate");
+    RF_Time_19F_LE_CS_ProtCut = new TH1D("RF_Time_19F_LE_CS_ProtCut","RF Time:19F LE BeamCut",4096,-4096,4096);
+    RFvsSiEnergy_19F_LE_CS_ProtCut = new TH2D("RF_vs_SiEnergy_19F_LE_CS_Protcut","RF Time vs Total Si Energy:19F LE BeamCut",1000,0,15,4096,-4096,4096);
+    RFvsICdE_19F_LE_CS_ProtCut = new TH2D("RF_vs_ICdE_19F_LE_CS_Protcut","RF Time vs ICdE:19F LE BeamCut",1000,0,15,4096,-4096,4096);
+    
+    
+    return 1;
+ 
+  }
+
+  bool RF_Analyzer::Process(){
+    
+    rf_check[0] = (RF_Cut1 && RF_Cut1->IsInside(RNROOT::si_array.E_AB(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw()));
+    rf_check[1] = (RF_Cut2 && RF_Cut2->IsInside(RNROOT::si_array.E_AB(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw()));
+    rf_check[2] = (RF_Cut3 && RF_Cut3->IsInside(RNROOT::si_array.E_AB(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw()));
+
+    if(_require_rf1 && !rf_check[0])
+      return 0;
+    if(_require_rf2 && !rf_check[1])
+      return 0;
+    if(_require_rf3 && !rf_check[2])
+      return 0;
+    
+    
+    return 1;
+  }
+
+  bool RF_Analyzer::ProcessFill(){
+    
+    RF_Time->Fill(RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+    RFvsSiEnergy->Fill(RNROOT::si_array.E_AB(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());   
+    RFvsICdE->Fill(RNROOT::ic.DERaw(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+
+    if(silicon::protcheck){
+      RF_Time_ProtCut->Fill(RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+      RFvsSiEnergy_ProtCut->Fill(RNROOT::si_array.E_AB(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw()); 
+      RFvsICdE_ProtCut->Fill(RNROOT::ic.DERaw(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw();
+
+      if(ionchamber::hi_check[0]){
+	RF_Time_HI1Cut_ProtCut->Fill(RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+	RFvsSiEnergy_HI1Cut_ProtCut->Fill(RNROOT::si_array.E_AB(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+	RFvsICdE_HI1Cut_ProtCut->Fill(RNROOT::ic.DERaw(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+      }
+
+      if(ionchamber::hi_check[1]){
+	//nothing here yet
+      }
+
+      if(ionchamber::hi_check[2]){
+	//nothing here yet
+      }
+      
+      if(ionchamber::Ne19Check){
+	RF_Time_19NeCut_ProtCut->Fill(RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+	RFvsSiEnergy_19NeCut_ProtCut->Fill(RNROOT::si_array.E_AB(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+	RFvsICdE_19NeCut_ProtCut->Fill(RNROOT::ic.DERaw(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+      }
+
+      if(ionchamber::F19HECSCheck){
+	RF_Time_19F_HE_CS_ProtCut->Fill(RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+	RFvsSiEnergy_19F_HE_CS_ProtCut->Fill(RNROOT::si_array.E_AB(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+	RFvsICdE_19F_HE_CS_ProtCut->Fill(RNROOT::ic.DERaw(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+      }
+
+      if(ionchamber::F19LECSCheck){
+	RF_Time_19F_LE_CS_ProtCut->Fill(RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+	RFvsSiEnergy_19F_LE_CS_ProtCut->Fill(RNROOT::si_array.E_AB(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+	RFvsICdE_19F_LE_CS_ProtCut->Fill(RNROOT::ic.DERaw(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+      }
+
+    }
+    if(ionchamber::hi_check[0]){
+      RF_Time_HI1Cut->Fill(RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+      RFvsSiEnergy_HI1Cut->Fill(RNROOT::si_array.E_AB(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw()); 
+      RFvsICdE_HI1Cut->Fill(RNROOT::ic.DERaw(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+    }
+
+    if(ionchamber::hi_check[1]){
+      //nothing here yet
+    }
+    
+    if(ionchamber::hi_check[2]){
+      //nothing here yet
+    }
+
+    if(ionchamber::Ne19Check){
+      RF_Time_19NeCut->Fill(RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+      RFvsSiEnergy_19NeCut->Fill(RNROOT::si_array.E_AB(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());  
+      RFvsICdE_19NeCut->Fill(RNROOT::ic.DERaw(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+    }
+    
+    if(ionchamber::F19HECSCheck){
+      RF_Time_19F_HE_CS->Fill(RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+      RFvsSiEnergy_19F_HE_CS->Fill(RNROOT::si_array.E_AB(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+      RFvsICdE_19F_HE_CS->Fill(RNROOT::ic.DERaw(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+    }
+
+    if(ionchamber::F19LECSCheck){
+      RF_Time_19F_LE_CS->Fill(RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+      RFvsSiEnergy_19F_LE_CS->Fill(RNROOT::si_array.E_AB(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+      RFvsICdE_19F_LE_CS->Fill(RNROOT::ic.DERaw(),RNROOT::si_[1].Back_T(0)-RNROOT::rftime.TRaw());
+    }
+
+    return 1;
+  }
+  
+
+
+  bool RF_Analyzer::Terminate(){
+
+    return 1;
+  
+  }
+
+  bool RF_Analyzer::TerminateIfLast(){
+    fgRootFile->Write();
+    fgRootFile->Close();
+    return 1;
+  
+  }
+
+  void RF_Analyzer::Clear(){
+
+  }
+  
+  void RequireRF1(){
+    _require_rf1= 1;
+  }
+
+  void RequireRF2(){
+    _require_rf2= 1;
+  }
+  
+  void RequireRF3(){
+    _require_rf3= 1;
+  }
+  void LoadGates(const std::string &input){
+    TFile in(input.c_str());  
+    std::cout << "file loaded" << std::endl;
+    if(in.Get("RF_Cut1") && !RF_Cut1)
+      RF_Cut1=new TCutG(*(TCutG*)in.Get("RF_Cut1"));
+    if(in.Get("RF_Cut2") && !RF_Cut2)
+      RF_Cut2=new TCutG(*(TCutG*)in.Get("RF_Cut2"));
+    if(in.Get("RF_Cut3") && !RF_Cut3)
+      RF_Cut3=new TCutG(*(TCutG*)in.Get("RF_Cut3"));
+    in.Close();
+    std::cout << " All Gates loaded " << std::endl;
+    
+
+  }
+
+  void ClearGates(){
+    
+
+  }
+}
+
+#endif

@@ -37,7 +37,8 @@ namespace RNROOT{
 
 
 namespace global{
-  TRandom3 myRnd;
+  TRandom3 myRnd(0);
+  //TRandom3 myRnd;
 }
 
 ////////////////////////////////////////////////////
@@ -118,6 +119,7 @@ namespace RNROOT{
     
     triggerbit.push_back(RN_TriggerBit("sibBit"));
     triggerbit.push_back(RN_TriggerBit("icdsBit"));
+    triggerbit.push_back(RN_TriggerBit("siaBit"));
 
 
     //neutron detectors - name - pos grid channel num - slot num
@@ -135,6 +137,7 @@ namespace RNROOT{
   
   void LoadVariableFile(const std::string& f){
     gVariableMap.LoadParams(f);
+    std::cout << "> Loading File " << f << std::endl;
   }
  
   void SetRootOutputFile(const std::string& filename){
@@ -224,6 +227,7 @@ namespace RNROOT{
       (*it).SetCalibrations(VarMap);
     }
     
+    nai_array.SetCalibrations(VarMap);
 
 
   }

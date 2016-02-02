@@ -92,6 +92,8 @@ public:
   
   TVector3 GetPosVect()const{return posv_ + shiftv_ ;}
   void SetPosVect(TVector3 posv){posv_=posv;}
+  void SetPosVectX(Double32_t xpos){posv_.SetX(xpos);}
+  void SetPosVectY(Double32_t ypos){posv_.SetY(ypos);}
   void SetShiftVect(TVector3 shiftv){shiftv_=shiftv;}
   void SetRotVect(TVector3 rotv){rotv_=rotv;}
   Double_t Front_E(unsigned int i=0)const;
@@ -106,9 +108,10 @@ public:
 
 
   virtual TVector3 chVect(const double&cf,const double& cb) const;
+  TVector3 ChVect2(const double& cf,const double& cb) const;
   void Calcnormv();
-  bool inDet(const TVector3&);
-  bool Vect_to_ch(const TVector3&, double&, double&);
+  bool inDet(const TVector3& incident,const TVector3& beam = TVector3(0,0,0));
+  bool Vect_to_ch(const TVector3&, double&, double&, const TVector3& = TVector3(0,0,0));
   void Reset();
   void SetCalibrations(double,double,double,double); 
   Int_t IsS1()const;
@@ -178,9 +181,19 @@ public:
   void SetCalibrations(RN_VariableMap&);
   Double_t Phi(int i=0)const {return fPos[i].Phi();};
   Double_t Theta(int i=0)const {return fPos[i].Theta();};
+  Double32_t ChFront(unsigned int i = 0) const;
+  Double32_t ChBack(unsigned int i = 0) const;
   
   ClassDef(RN_S2Cluster,2);
 };
+
+inline Double32_t RN_S2Cluster::ChFront(unsigned int i) const{
+  return ((i<fMult) ? fChlist[i] : -1);
+}
+
+inline Double32_t RN_S2Cluster::ChBack(unsigned int i) const{
+  return ((i<fMult) ? fChlist_b[i] : -1);
+}
 
 
 
@@ -209,6 +222,7 @@ private:
   std::vector<Double32_t> fE_;
   std::vector<TVector3> fPos_;
   std::vector<Double32_t> fT_;
+  
  
 public:
 
@@ -226,6 +240,7 @@ public:
   Double32_t Theta_B()const {return fNumOfSi > 1 ? fPos_[1].Theta() : 0;}
   Double32_t Phi_A()const {return fNumOfSi > 0 ? fPos_[0].Phi() : 0;}
   Double32_t Phi_B()const {return fNumOfSi > 1 ? fPos_[1].Phi() : 0;}
+  
   Int_t NumOfSi()const {return fNumOfSi;}
   void SetCalibrations(RN_VariableMap & detvar);
 

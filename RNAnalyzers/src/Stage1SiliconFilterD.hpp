@@ -1,5 +1,5 @@
 /***********************************************************/
-//Class: Stage1SiliconFilterD
+//Class: Stage1NaINeutFilterA
 //
 //Author:Sean Kuvin
 //
@@ -21,12 +21,12 @@ namespace RNfilters{
 
 
 
-  class Stage1SiliconFilterD:public RN_Analyzer{
+  class Stage1NaINeutFilterA:public RN_Analyzer{
   private:    
   public:
     
-    Stage1SiliconFilterD();
-    virtual ~Stage1SiliconFilterD(){};
+    Stage1NaINeutFilterA();
+    virtual ~Stage1NaINeutFilterA(){};
     
     
     virtual bool Begin();
@@ -37,7 +37,7 @@ namespace RNfilters{
     virtual void Reset();
     
     
-    ClassDef(Stage1SiliconFilterD,0);
+    ClassDef(Stage1NaINeutFilterA,0);
   };
   
 }

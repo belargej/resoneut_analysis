@@ -1,0 +1,175 @@
+/***********************************************************/
+//Class: RFTimeFilter
+//
+//Author:Belarge
+//
+// Filter events that to not have a nonzero IC time.
+///***********************************************************/
+
+#ifndef _RFTimeFilter_CXX
+#define _RFTimeFilter_CXX
+
+#include "RFTimeFilter.hpp"
+#include "RN_Root.hpp"
+
+using namespace RNROOT;
+using namespace TMath;
+
+namespace RNfilters{
+  
+
+  RFTimeFilter::RFTimeFilter():LowValue1(0),			      
+			       HighValue1(4096), 
+			       LowValue2(0),
+			       HighValue2(4096),
+			       LowValue3(0),			      
+			       HighValue3(4096), 
+			       LowValue4(0),
+			       HighValue4(4096),
+			       UseRawValue(0),
+			       UseSiSubtract(0)
+  {
+    
+  }
+  
+  void RFTimeFilter::Reset(){
+  
+  }
+
+  
+  bool RFTimeFilter::Begin(){   
+  
+    std::cout<<" UseRawValue : " << UseRawValue << std::endl;
+    std::cout<<" UseSiSubtract : " << UseSiSubtract << std::endl;
+
+    return 1;
+    
+  }  
+  
+  
+
+  bool RFTimeFilter::Process(){
+    
+    if(UseRawValue){
+      if(rftime.TRaw()>LowValue1 && rftime.TRaw()<HighValue1)
+	return 1;
+      
+      if(rftime.TRaw()>LowValue2 && rftime.TRaw()<HighValue2)
+	return 1;
+
+      return 0;
+      
+    }
+    
+    if(UseSiSubtract){
+
+      if(si_array.T_A()!=0 && si_array.T_B()==0){
+	if((rftime.T()-si_array.T_A())>LowValue1 && (rftime.T()-si_array.T_A())<HighValue1)
+	  return 1;
+	
+	if((rftime.T()-si_array.T_A())>LowValue2 && (rftime.T()-si_array.T_A())<HighValue2)
+	  return 1;
+
+	if((rftime.T()-si_array.T_A())>LowValue3 && (rftime.T()-si_array.T_A())<HighValue3)
+	  return 1;
+	
+	if((rftime.T()-si_array.T_A())>LowValue4 && (rftime.T()-si_array.T_A())<HighValue4)
+	  return 1;
+      }
+      else if(si_array.T_A()==0 && si_array.T_B()!=0){
+	if((rftime.T()-si_array.T_B())>LowValue1 && (rftime.T()-si_array.T_B())<HighValue1)
+	  return 1;
+	
+	if((rftime.T()-si_array.T_B())>LowValue2 && (rftime.T()-si_array.T_B())<HighValue2)
+	  return 1;
+
+	if((rftime.T()-si_array.T_B())>LowValue3 && (rftime.T()-si_array.T_B())<HighValue3)
+	  return 1;
+	
+	if((rftime.T()-si_array.T_B())>LowValue4 && (rftime.T()-si_array.T_B())<HighValue4)
+	  return 1;
+      } 
+      else{
+	if((rftime.T()-si_array.T_B())>LowValue1 && (rftime.T()-si_array.T_B())<HighValue1)
+	  return 1;
+	
+	if((rftime.T()-si_array.T_B())>LowValue2 && (rftime.T()-si_array.T_B())<HighValue2)
+	  return 1;	 
+
+	if((rftime.T()-si_array.T_B())>LowValue3 && (rftime.T()-si_array.T_B())<HighValue3)
+	  return 1;
+	
+	if((rftime.T()-si_array.T_B())>LowValue4 && (rftime.T()-si_array.T_B())<HighValue4)
+	  return 1;
+      }
+
+      
+      return 0;
+    }
+
+    
+    //std::cout<<" UseRawValue : " << UseRawValue << std::endl;
+    //std::cout<<" UseSiSubtract : " << UseSiSubtract << std::endl;
+   
+    return 1;
+  }
+  bool RFTimeFilter::ProcessFill(){
+     
+    return 1;
+    
+  }
+
+
+  bool RFTimeFilter::Terminate(){
+    return 1;
+  }
+
+  void RFTimeFilter::Clear(){
+    
+  }
+  
+  void RFTimeFilter::SetWindow(int Low, int High){
+    LowValue1 = Low;
+    LowValue2 = Low;
+    HighValue1 = High;
+    HighValue2 = High;
+  }  
+
+  void RFTimeFilter::SetWindow(int Low1, int High1, int Low2, int High2){
+    LowValue1 = Low1;
+    LowValue2 = Low2;
+    HighValue1 = High1;
+    HighValue2 = High2;
+  }
+
+  void RFTimeFilter::SetWindow(int Low1, int High1, int Low2, int High2, int Low3, int High3){
+    LowValue1 = Low1;
+    LowValue2 = Low2;
+    LowValue3 = Low3;
+    HighValue1 = High1;
+    HighValue2 = High2;
+    HighValue3 = High3;
+  }
+
+  void RFTimeFilter::SetWindow(int Low1, int High1, int Low2, int High2, int Low3, int High3, int Low4, int High4){
+    LowValue1 = Low1;
+    LowValue2 = Low2;
+    LowValue3 = Low3;
+    LowValue4 = Low4;
+    HighValue1 = High1;
+    HighValue2 = High2;
+    HighValue3 = High3;
+    HighValue4 = High4;
+  }
+
+
+  void RFTimeFilter::SetUseRaw(bool UseRaw)
+  {
+    UseRawValue = UseRaw;
+  }
+
+  
+}
+
+
+#endif

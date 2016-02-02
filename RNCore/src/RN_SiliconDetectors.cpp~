@@ -18,7 +18,7 @@ using global::myRnd;
 #define S1FIXENABLE 0
 
 //S2FIXENABLE to correct energy discrepency when front.ch = back.ch?
-#define S2FIXENABLE 1
+#define S2FIXENABLE 0
 
 //To enable/disable randomization of the angle during cluster reconstruction
 #if 1
@@ -85,20 +85,24 @@ void RN_S2Detector::SetCalibrations(RN_VariableMap& detvar){
   detvar.GetParam(Form("%s.eshift",GetName()),fEShift);
   detvar.GetParam(Form("%s.tlin",GetName()),fTLin);
   detvar.GetParam(Form("%s.tshift",GetName()),fTShift);
+  //std::cout << "Name  : "<< GetName() <<"fELin : " << fELin << std::endl;
   double tempx=0,tempy=0,tempz=0;
   detvar.GetParam(Form("%s.xpos",GetName()),tempx);
   detvar.GetParam(Form("%s.ypos",GetName()),tempy);
   detvar.GetParam(Form("%s.zpos",GetName()),tempz);
+  std::cout << "Name  : "<< GetName() << "(x,y,z) pos: (" << tempx << "," << tempy << "," << tempz << ")" << std::endl;
   SetPosVect(TVector3(tempx,tempy,tempz));
   tempx=0,tempy=0,tempz=0;
   detvar.GetParam(Form("%s.shiftx",GetName()),tempx);
   detvar.GetParam(Form("%s.shifty",GetName()),tempy);
   detvar.GetParam(Form("%s.shiftz",GetName()),tempz);
+  //std::cout << "Name  : "<< GetName() << "(x,y,z) shift: (" << tempx << "," << tempy << "," << tempz << ")" << std::endl;
   SetShiftVect(TVector3(tempx,tempy,tempz));
   tempx=0,tempy=0,tempz=0;
   detvar.GetParam(Form("%s.rotx",GetName()),tempx);
   detvar.GetParam(Form("%s.roty",GetName()),tempy);
   detvar.GetParam(Form("%s.rotz",GetName()),tempz);
+  //  std::cout << "Name  : "<< GetName() << "(x,y,z) rot: (" << tempx << "," << tempy << "," << tempz << ")" << std::endl;
   SetRotVect(TVector3(tempx,tempy,tempz));
   
   Calcnormv();
@@ -205,7 +209,7 @@ Double_t RN_S2Detector::Ring_Ch(unsigned int i)const{
 */
 
 
-bool RN_S2Detector::inDet(const TVector3& v){
+bool RN_S2Detector::inDet(const TVector3& v, const TVector3& beamspot){
   //first see if it intersects the plane of the detector
   double udotnormv = (v.Unit()).Dot(normv_);
   if(udotnormv <= 0.)
@@ -224,7 +228,7 @@ bool RN_S2Detector::inDet(const TVector3& v){
   v_to_det.SetMag(vdist);
 
   //create vector from detector origin to interaction point on plane of detector
-  TVector3 ch_vect = v_to_det - posvect;
+  TVector3 ch_vect = v_to_det + beamspot - posvect;
 
   //radial component from center of detector
   double ch_vect_mag = ch_vect.Mag();
@@ -236,7 +240,7 @@ bool RN_S2Detector::inDet(const TVector3& v){
   return true;
 }
 
-bool RN_S2Detector::Vect_to_ch(const TVector3& v,double& cf,double& cb){
+bool RN_S2Detector::Vect_to_ch(const TVector3& v,double& cf,double& cb, const TVector3& beamspot){
   //first see if it intersects the plane of the detector
   double udotnormv = (v.Unit()).Dot(normv_);
   if(udotnormv <= 0.)
@@ -255,7 +259,7 @@ bool RN_S2Detector::Vect_to_ch(const TVector3& v,double& cf,double& cb){
   v_to_det.SetMag(vdist);
 
   //create vector from detector origin to interaction point on plane of detector
-  TVector3 ch_vect = v_to_det - posvect;
+  TVector3 ch_vect = v_to_det + beamspot- posvect;
 
   //radial component from center of detector
   double ch_vect_mag = ch_vect.Mag();
@@ -283,12 +287,26 @@ bool RN_S2Detector::Vect_to_ch(const TVector3& v,double& cf,double& cb){
 
 TVector3 RN_S2Detector::chVect(const double& cf,const double& cb) const{
   //First make a vector to the channel for a detector at the origin
+  
+  //=========================
+  // Declare these variables:
   double s;
   double phi;
 
+  //==============================================================
+  // If the front and back channels are less than the total number 
+  // of channels go in here:
   if((cf < static_cast<double>(front.NumOfCh())) 
      && (cb < static_cast<double>(back.NumOfCh()))){
+
+    // s is the radius from the beam axis to the spot where
+    // the particle hit.
     s = innerrad + (cf + (double)RNDMNUM)*ring_pitch_;
+    
+    // phi is the angle.  It is calculated by taking the 
+    // number of front channels (16) subtracting th back
+    // channel and then a random number, then multiplying by
+    // the amount of phi per section.
     phi = (static_cast<double>(front.NumOfCh()) - cb 
 	   - (double)RNDMNUM) * delta_phi_;
   }
@@ -297,6 +315,57 @@ TVector3 RN_S2Detector::chVect(const double& cf,const double& cb) const{
     exit(EXIT_FAILURE);
   }
 
+  TVector3 resultv;
+  
+  // Set the magnitude, theta, and phi of the vector.
+  // here the magnitude is s, theta is pi/2, and phi is from 
+  // above.  
+  //
+  // Why take theta to be 90 degrees initially?
+  resultv.SetMagThetaPhi(s,M_PI/2.,phi*M_PI/180.);
+  
+  //std::cout << "> Hit Vector Stuff ------" << std::endl;
+  //std::cout << "> Before XYZ : (" << resultv.X() << ","<< resultv.Y() << ","<< resultv.Z() << ")" << std::endl;
+  
+  //then calibrate the vector 
+  //add it to the detector position vector
+  if(rotv_[2]){
+    resultv.RotateZ(rotv_[2]*M_PI/180.);
+  }
+  if(rotv_[0]){
+    resultv.RotateX(rotv_[0]*M_PI/180.);
+  }
+  if(rotv_[1]){
+    resultv.RotateY(rotv_[1]*M_PI/180.);
+  }
+
+  //std::cout << "> Aft Rot XYZ : (" << resultv.X() << ","<< resultv.Y() << ","<< resultv.Z() << ")" << std::endl;
+  
+  resultv = resultv + shiftv_;
+  //std::cout << "> Aft shift XYZ : (" << resultv.X() << ","<< resultv.Y() << ","<< resultv.Z() << ")" << std::endl;
+
+  resultv = resultv + posv_;
+  //std::cout << "> Aft pos XYZ : (" << resultv.X() << ","<< resultv.Y() << ","<< resultv.Z() << ")" << std::endl;
+  return resultv;
+}
+
+
+//ChVect2 takes out the randomization of angle in between strips
+TVector3 RN_S2Detector::ChVect2(const double& cf,const double& cb) const{
+  //First make a vector to the channel for a detector at the origin
+  double s;
+  double phi;
+
+  if((cf < static_cast<double>(front.NumOfCh())) 
+     && (cb < static_cast<double>(back.NumOfCh()))){
+    s = innerrad + (cf*ring_pitch_);
+    phi = (static_cast<double>(front.NumOfCh()) - cb) * delta_phi_;
+  }
+  else{ 
+    std::cerr << "InValid channels sent to S2DetectorPar::chVect" << std::endl;
+    exit(EXIT_FAILURE);
+  }
+  
   TVector3 resultv;
   resultv.SetMagThetaPhi(s,M_PI/2.,phi*M_PI/180.);
   
@@ -365,8 +434,20 @@ void RN_S2Cluster::SetCalibrations(RN_VariableMap& detvar){
 }
 
 int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
+
+  // Create these temporary things:
   RNTempList FrontClusters(in.front.NumOfCh()), BackClusters(in.back.NumOfCh());
+  
+  /*std::cout << "--------- In Reconstruct Clusters ---------- " << std::endl;
+
+  std::cout << "> Back Mult  : " << in.back.Mult() << std::endl;
+  std::cout << "> Front Mult : " << in.front.Mult() << std::endl;
+  */
+  // If  you have no hits get out of here:
   if(!in.back.Mult()) return 0;
+
+  //========================
+  // Declare some variables:
   unsigned int i,front_match;
   unsigned int frontstatus=0;
   unsigned int backstatus=0;
@@ -375,27 +456,77 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
 
   // first add-back neighboring hits
   // in the back
+
+  //std::cout << "--- Checking Back Status ---" << std::endl;
+  
+  //===================================
+  // Loop over the number of back hits:
   for (i=0;i<in.back.Mult();i++){
+
+    //**************************************************************
+    // It is not clear to me what this back channel backstatus does.
+    /*std::cout << "------------------------" << std::endl;
+    std::cout << "> Back Before  : " << backstatus << std::endl;
+    std::cout << "> Back Channel : " << in.back.Ch(i) << std::endl;*/
+    //Set the back status based on the channel.
     backstatus |= (((unsigned int)in.back.Ch(i)));
+    //    std::cout << "> Back After  : " << backstatus << std::endl;
+
+
+
+    // the energy back total equals the sum here.  Note, in.Back_E calls
+    // back in.back.E(i)*RN_S2Detector.fELin + RN_S2Detector.fEShift
+    // and in.back.E(i) = in.back.ELocal(i)*in.back.fELin + in.back.fEShift
+    // and in.back.ELocal(i) = in.back.EOffset(i)*in.back.fA1[in.back.fchlist(i)] + in.back.fA0[in.back.fchlist(i)]
+    // and in.back.EOffset(i) = in.back.fE[i] + in.back.fQOffset[in.back.fchlist(i)]
+
+    //=======================================================
+    // NOTE --> This "ebacktotal" does not appear to be used.
+    //    std::cout << "> Back En Before Add : " << ebacktotal << std::endl;
     ebacktotal = ebacktotal+in.Back_E(i);
+    //std::cout << "> Back En After Add : " << ebacktotal << std::endl;
+
+    //=======================================================================
+    // If addback_back && other stuff.  "addback_back" is a variable that is
+    // set in your parameters file.  As of now, It is not set for me, and
+    // therfore this part is not being used for my analysis right now
+    // - JAB 9/26/14 19Ne(d,n)20Na
     if (addback_back&&
 	(i+1<in.back.Mult())&&(in.back.Ch(i+1)==in.back.Ch(i)+1)){
+
+      // however, if this "addback_back" == 1 then we go in here if
+      // we also have good multiplicity, and the back channels are 
+      // adjacent.
+
+      //===============================================================
+      // In this case the ecluster is the sum of the two back energies:
       float ecluster=in.Back_E(i)+in.Back_E(i+1);
+
+      //=====================================================
+      // average the time, and average the channel...strange:
       float tcluster=(in.Back_T(i+1)+in.Back_T(i))/2.0;
       float chnew=(in.back.Ch(i+1)+in.back.Ch(i))/2.0;
       //float chnew = in.back.Ch(i);
+
+      // insert this hit into the cluster.
       BackClusters.InsertHit(ecluster,tcluster,chnew);
       // we analyzed the i+1 hit along with the i, so 
       i++;
     }
     else{
+
+      // If we do not have "addback_back" turned on, or we do not have
+      // adjacent hits, then go in here and act accordingly.
       float ch=in.back.Ch(i);
       float ecluster=in.Back_E(i);
       float tcluster=in.Back_T(i);
       
       BackClusters.InsertHit(ecluster,tcluster,ch);
     }
-  }
+  }// end loop over back multiplicity.
+  
+  //===============================
+  // Now do the same for the front:
   //in the front
   for (i=0;i<in.front.Mult();i++){
     efronttotal = efronttotal+in.Front_E(i);
@@ -418,18 +549,79 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
       float tcluster=in.Front_T(i);
       FrontClusters.InsertHit(ecluster,tcluster,ch);
     }
-  }
+  } // end loop over front multiplicity.
+
+
+  //==================================
+  //Set these variables equal to zero.
   front_match=0;i=0;
   efrontmatch=0.;ebackmatch=0.;
+
+
+  // Output the values for the detectors:
+  /*
+  std::cout << " --- Start --------------------------------------" << std::endl;
+  std::cout << " Det " << in.Name() << " Back ------------------" << std::endl;
+  for(int i_Test = 0; i_Test<BackClusters.mult; i_Test++){
+    std::cout << " Back Channel : " << BackClusters.chlist[i_Test] << " & Energy : " << BackClusters.elist[i_Test] << std::endl;
+    
+  }
+  std::cout << " Det " << in.Name() << " Front ------------------" << std::endl;
+  for(int i_Test = 0; i_Test<FrontClusters.mult; i_Test++){
+    std::cout << " Front Channel : " << FrontClusters.chlist[i_Test] << " & Energy : " << FrontClusters.elist[i_Test] << std::endl;
+    
+  }
+  */
+
+  //========================================================
   // Front and Backclusters are sorted by energy, high first
   while ((i<BackClusters.mult)&&(front_match<FrontClusters.mult)){
+
+    /*std::cout << " -- In the front back matching section --" << std::endl;
+    std::cout << "> Front En : " << FrontClusters.elist[front_match] << std::endl;
+    std::cout << "> Back En  : " << BackClusters.elist[i] << std::endl;
+    */
+
+    //============================================================
+    // Get the difference between front and back energy, with the
+    // highest energy events first.
     float eps = FrontClusters.elist[front_match]-BackClusters.elist[i];
+    
+    //std::cout << "> En Diff  : " << eps << std::endl;
+
+    //================================================================
+    // Calculate delta, this is the match_epsilon +match_delta*Energy.
+    // the "match_epsilon" and "match_delta" are set in the config 
+    // and calibration file.  
     float delta = match_epsilon+match_delta*BackClusters.elist[i];
+
+    //std::cout << "> Delta    : " << delta << std::endl;
+    
+
+    //=====================
+    // Get the back energy:
     float back_e=BackClusters.elist[i];
+
+    //std::cout << "> Back En  : " << back_e << std::endl;
+    
+    //===============================================================
+    // If the back energy is greater than the "match_maxene" which is
+    // initilized to 4096 (the number of channels in the det) and set
+    // manually in the config/calibration file.  OR if the value of
+    // the difference between the front and the back is less than
+    // or equal to the calculated delta, then go in here.
     if (back_e>match_maxene || (fabs(eps)<=delta)){
       // we have a match
+
+      //std::cout << "> We are in the match if statement" << std::endl;
+      
+      //================================================
+      // Set the "match_e" and "match_ch" from the FRONT.
       float match_e= FrontClusters.elist[front_match];
       float match_ch= FrontClusters.chlist[front_match];
+
+      //======================================================
+      // get the back channel, and get the time from the BACK.
       float cb=BackClusters.chlist[i];
       float back_t=BackClusters.tlist[i];
 
@@ -462,10 +654,18 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
 
 #endif      
       
-      
+      // Get the position.  The position is obtained via this
+      // chVect() function.  The inputs of this are the front
+      // channel (match_ch) and the back channel (cb).
+      /*  std::cout << "> About to set position ** " << std::endl;
+      std::cout << "> Front Channel : " << match_ch << std::endl;
+      std::cout << "> Back Channel  : " << cb << std::endl;*/
       fPos[fMult] = in.chVect(match_ch,cb);
       fChlist[fMult]=match_ch;
       fChlist_b[fMult]=cb;
+
+      //===================================================
+      // If you want the energy from the back, get it here:
       if (match_enefromback){
 	fE[fMult]=back_e;
 	fT[fMult]=back_t;
@@ -474,7 +674,8 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
 	fE[fMult]=match_e;
 	fT[fMult]=back_t;
 
-      }// end if "match_enefromback"
+      }// end else "match_enefromback"
+      // Increase the multiplicity 
       (fMult)++;
       {	
 	// sum up matched energies front and back
@@ -502,6 +703,12 @@ int RN_S2Cluster::ReconstructClusters(RN_S2Detector& in){
     front_match++;
     i++;
   }
+  /*
+  std::cout << " Energy Used      : " << fE[0] << std::endl;
+  std::cout << " Back Chan Used  : " << fChlist_b[0] << std::endl;
+  std::cout << " Front Chan Used : " << fChlist[0] << std::endl;
+  std::cout << " --- end ----------------------------------------" << std::endl;
+  */
   frontmatchstat=frontstatus;
   backmatchstat=backstatus;
   return(0);
@@ -555,11 +762,10 @@ void RN_SiArray::ReconstructHits(RN_S2ClusterCollection& si_c_)
   for(unsigned int i=0;i<si_c_.size();i++){
     fE_[i] = si_c_[i].ERaw(0); 
     fPos_[i] = si_c_[i].fPos[0]; 
-    fT_[i] = si_c_[i].TRaw(0); 
+    fT_[i] = si_c_[i].TRaw(0);
   }
   
 }
-
 
 
 /////////////////////////////////////////////////////////////////

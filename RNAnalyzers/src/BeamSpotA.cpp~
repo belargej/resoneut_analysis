@@ -1,0 +1,150 @@
+/********************************************************************
+//Class: ReconstructBeamSpotA
+//
+//Author:Sean Kuvin
+//Original Date: 8/28/2014
+//
+//Simple method A for reconstructing the beamspot using 
+//the IonChamber hit position.  The only ansatz to be made
+//here is a scale factor to account for dispersion from the
+//target position to ionchamber.
+//In your script, use (for ex:)
+//
+//> beamspotA::ReconstructBeamSpotA beamanalyzerA;
+//> beamanalyzerA.SetDispersionScaleFactor(0.3);
+//> gAnalyzer_stack.Add(&beamanalyzerA)
+//make sure your config file has the appropriate detector distances
+//and calibrations (silicon and IC)
+*******************************************************************/
+#ifndef _RECOBEAMSPOTA_CXX
+#define _RECOBEAMSPOTA_CXX
+
+#include "RN_Root.hpp"
+#include "TVector3.h"
+#include "BeamSpotA.hpp"
+
+using namespace RNROOT;
+
+namespace beamspotA{
+
+  TH2D* hBeamSpot;
+  TH2D* hEvSiAAngle;
+  TH2D* hEvSiBAngle;
+  TH2D* hICPhivBeamPhi;
+
+  TH1D * hErCorrected;
+  TH2D * hErCorrectedvProtonE;
+  TH2D * hErCorrectedvSiPhi;
+  TH2D * hErCorrectedvICPhi;
+  TH2D * hErCorrectedvICTheta;
+  TH2D * hICThetavICX;
+  TH2D * hICThetavICR;
+
+    
+  ReconstructBeamSpotA::ReconstructBeamSpotA():  fBeamSpot(0,0,0),
+						 fSiAVector(0,0,0),
+						 fSiBVector(0,0,0),
+						 fSiAAngle(0),
+						 fSiBAngle(0),
+						 fErProton(0), 
+						 fDispersion(0.3)
+  {
+    
+  }
+  
+  void ReconstructBeamSpotA::SetDispersionScaleFactor(double factor){
+    fDispersion = factor;
+  }
+  
+  void ReconstructBeamSpotA::Reset(){
+
+    fBeamSpot.SetXYZ(0,0,0);
+    fSiAVector.SetXYZ(0,0,0);
+    fSiBVector.SetXYZ(0,0,0);
+    fSiBAngle = 0;
+    fSiAAngle = 0;
+    fErProton = 0;    
+    
+  }
+
+
+bool ReconstructBeamSpotA::Begin(){
+
+  if(!fgRootFile){
+    std::cout<<"output file has not been created"<<std::endl;
+    Clear();
+    exit(EXIT_FAILURE);
+  }
+  
+  fgRootFile->mkdir("BeamSpotA");
+  fgRootFile->cd("BeamSpotA");
+
+  hBeamSpot = new TH2D ("hBeamSpot","hBeamSpot;X;Y",256,-128,127,256,-128,127);
+  hEvSiAAngle = new TH2D ("hEvSiAangle","hEvSiAangle",256,0,42,128,0,32);
+  hEvSiBAngle = new TH2D ("hEvSiBangle","hEvSiBangle",256,0,42,128,0,32);
+  hICPhivBeamPhi = new TH2D ("hICPhivBeamPhi","hICPhivBeamPhi",721,-180,180,721,-180,180);
+  hErCorrected = new TH1D("hErProtonCorrected","hErProtonCorrected",275,-1,10);
+  hErCorrectedvProtonE = new TH2D ("hErCorrectedvProtE","hErCorrectedvProtE",275,-1,10,512,0,32);
+  hErCorrectedvSiPhi = new TH2D ("hErCorrectedvSiPhi","hErCorrectedvSiPhi",512,-1,10,180,-180,180);
+  hErCorrectedvICPhi = new TH2D ("hErCorrectedvICPhi","hErCorrectedvICPhi",275,-1,10,180,-180,180);
+  hErCorrectedvICTheta = new TH2D ("hErCorrectedvICTheta","hErCorrectedvICTheta",275,-1,10,256,-1,14);
+  hICThetavICX = new TH2D ("hICThetavICX","hICThetavICX",512,-1,14,256,-62,64);
+  hICThetavICR = new TH2D ("hICThetavICR","hICThetavICR",512,-1,14,256,0,63);
+ 
+  return 1;
+ 
+}
+
+  bool ReconstructBeamSpotA::Process(){
+  
+    fBeamSpot = TVector3(ic.GetHitPos().X()*fDispersion,ic.GetHitPos().Y()*fDispersion,0);
+    fSiBVector = si_cluster_[1].fPos[0] - fBeamSpot;
+    fSiAVector = si_cluster_[0].fPos[0] - fBeamSpot;  
+    fSiBAngle = TMath::RadToDeg()*fSiBVector.Theta(); 
+    fSiAAngle = TMath::RadToDeg()*fSiAVector.Theta();
+    fErProton = gReactionInfo.DecayQValueEstimate(si_array.E_AB(),fSiBAngle*TMath::DegToRad());
+    
+    return 1;
+  }
+  
+  bool ReconstructBeamSpotA::ProcessFill(){
+    if(si_cluster_[1].Mult()>0 && si_cluster_[0].Mult()>0){
+      hBeamSpot->Fill(fBeamSpot.X(),fBeamSpot.Y());
+      hICPhivBeamPhi->Fill(fBeamSpot.Phi()*TMath::RadToDeg(),ic.Phi());
+      hEvSiAAngle->Fill(fSiAAngle,si_array.E_AB());
+      hEvSiBAngle->Fill(fSiBAngle,si_array.E_AB());
+          
+      hErCorrected->Fill(fErProton);
+      hErCorrectedvProtonE->Fill(fErProton,si_array.E_AB());
+      hErCorrectedvSiPhi->Fill(fErProton,si_array.Phi_B()*TMath::RadToDeg());
+      hErCorrectedvICPhi->Fill(fErProton,ic.Phi());
+      
+      hErCorrectedvICTheta->Fill(fErProton,ic.Theta());
+      hICThetavICX->Fill(ic.Theta(),ic.GetHitPos().X());
+      hICThetavICR->Fill(ic.Theta(),ic.GetHitPos().Perp());
+      
+
+    }
+    
+    
+    
+    return 1;
+  }
+  
+
+
+  bool ReconstructBeamSpotA::Terminate(){
+    
+    return 1;
+    
+  }
+
+  
+  
+  void LoadBeamSpotAGates(){
+    
+  }
+  
+}
+
+#endif

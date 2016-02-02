@@ -26,6 +26,18 @@
 class NamedTree_Analyzer:public RN_Analyzer{
 private:
   TTree *fNamedTree;
+  TVector3 fBeamSpot;
+  TVector3 fSiAVector;
+  TVector3 fSiBVector;
+  Double32_t fSiAAngle;
+  Double32_t fSiBAngle;
+  Double32_t fErProton;
+  Double32_t fDispersion;
+
+  bool OneHitRecon;
+  bool TwoHitRecon;
+  
+  Double32_t ICOff;
 public:  
   NamedTree_Analyzer();
   virtual ~NamedTree_Analyzer(){};
@@ -37,11 +49,19 @@ public:
   virtual bool Terminate();
   virtual bool TerminateIfLast();
   virtual void Reset();
+  void SetDispersionScaleFactor(double factor);
+  void TwoHitReconOn(){TwoHitRecon = true;};
+  void SetICOffset(double Off){ICOff=Off;};
+
 
   // Branch Variables:
   Double32_t Energy_A;
   Double32_t Energy_B;
   Double32_t Energy_AB;
+  Double32_t RawEnergyF_A;
+  Double32_t RawEnergyF_B;
+  Double32_t RawEnergyB_A;
+  Double32_t RawEnergyB_B;
   Double32_t A_X;
   Double32_t A_Y;
   Double32_t B_X;
@@ -50,7 +70,14 @@ public:
   Double32_t FrontChan_B;
   Double32_t BackChan_A;
   Double32_t BackChan_B;
+  Double32_t Si_Time_A;
+  Double32_t Si_Time_B;
   Double32_t TotEn_IC;
+  Double32_t ICEn_Cal;
+  Double32_t ICEn_Cal_InDet;
+  Double32_t ICdE_Cal;
+  Double32_t ICE_Cal;
+  Double32_t ICETot_WalkBack;
   Double32_t dE_IC;
   Double32_t IC_X;
   Double32_t IC_Y;
@@ -58,8 +85,40 @@ public:
   Double32_t IC_Y_Raw;
   Double32_t ThetaLab_A;
   Double32_t ThetaLab_B;
+  Double32_t PhiLab_A;
+  Double32_t PhiLab_B;
+  Double32_t ICTheta;
+  Double32_t ICPhi;
   Double32_t QVal_Theta_A;
   Double32_t QVal_Theta_B;
+  Double32_t QVal_NoIt;
+  Double32_t RecEn_Iter;
+  Double32_t ICEn_CenterOfTarget;
+
+  Double32_t NaIEnergy;
+  Double32_t NaIPos;
+  Double32_t NaIDet;
+  Double32_t NaITime;
+  Double32_t NaIMult;
+  Double32_t NaIEnergy_First;
+  Double32_t NaIDet_First;
+  Double32_t NaITime_First;
+  Double32_t NaIEn_Sum;
+  Double32_t NaI_Ang;
+  Double32_t NaIEn_DC;
+  
+
+  Double32_t QVal_InvMass;
+  Double32_t QVal_Neut;
+  Double32_t RecoilKinEn;
+  Double32_t RecoilTheta;
+  Double32_t NeutronEn;
+  Double32_t NeutronTheta;
+  Double32_t NeutronThetaCM;
+  Double32_t ProtonThetaCM;
+
+  Double32_t SpotCorr_QVal_ThA;
+  Double32_t SpotCorr_ThA;
   
   Double32_t NeutLong_0;
   Double32_t NeutLong_1;
@@ -81,6 +140,7 @@ public:
   Double32_t NeutShort_7;
   Double32_t NeutShort_8;
   Double32_t NeutShort_9;
+  Double32_t RunNumber;
   
 
   Int_t ZeroCounter;

@@ -25,7 +25,10 @@ namespace neut_tof{
   
   class Neut_TOF_Analyzer:public RN_Analyzer{
   private:
-    
+    // JAB
+    int NeutTOF_LL;
+    int NeutTOF_UL;
+    bool RequireNTG;
   public:
     
     Neut_TOF_Analyzer();
@@ -40,6 +43,10 @@ namespace neut_tof{
     virtual void Clear(){};
     virtual void Reset();
 
+    // JAB
+    void SetNeutronTimeGate(const int& LowerLimit,const int& UpperLimit);
+    void RequireNeutTimeGate(){RequireNTG = true;};
+    
 
   ClassDef(Neut_TOF_Analyzer,0);
 

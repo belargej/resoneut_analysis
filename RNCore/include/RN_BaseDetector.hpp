@@ -51,6 +51,12 @@ protected:
   Double_t fTLin;
   Double_t fTShift;
 
+  // JAB
+  Int_t fCurrentRunBD; //! only look up in table if there is a state change(new run)
+  std::map<int,std::string> fTableBD;//!
+  std::string ConfigFile;
+
+
   //parameters
   UInt_t fMult;
   std::vector<Double32_t>fChlist;//[fMult]
@@ -82,9 +88,15 @@ public:
   UInt_t NumOfCh()const{return fNumOfCh;}
   std::string Name()const {return GetName();} 
   int InsertHit(const double&, const double&, const double&);
+  int InsertHit(const double&, const double&, const double&,const int&);
   void SetSortByChannel(bool val = true);
   virtual void SetCalibrations(RN_VariableMap& detvar);
   virtual void Print();
+
+  // JAB
+  Int_t LoadTable(const std::string&);
+  void ClearTable();
+  Int_t ChangeRun(const Int_t & currentrun);
 
   ClassDef(RN_BaseDetector,1);
 };
@@ -95,7 +107,12 @@ inline Double32_t RN_BaseDetector::ERaw(unsigned int i) const{
   return ((i<fMult) ? fE[i] : 0);
 }
 inline Double32_t RN_BaseDetector::TRaw(unsigned int i) const{
-  return ((i<fMult) ? fT[i] : 0);
+  //if(!(i<fMult)){
+  //std::cout << " In TRaw ------------ " << std::endl;
+  //std::cout << "  i    : " << i << std::endl;
+  //std::cout << " fMult : " << fMult << std::endl;
+    //}
+  return ((i<fMult) ? fT[i] : -100);
 }
 inline Double32_t RN_BaseDetector::ChRaw(unsigned int i) const{
   return ((i<fMult) ? fChlist[i] : -1);

@@ -2,7 +2,12 @@ CXX=g++
 
 SRCFILES=Stage1SiliconFilterA.cpp Stage1NaINeutFilterA.cpp \
 	 Stage1SiliconFilterB.cpp Stage1NaINeutFilterB.cpp \
-	 Stage1SiliconFilterC.cpp Stage1ICDSFilter.cpp	Stage1SiliconFilterD.cpp
+	 Stage1SiliconFilterC.cpp Stage1ICDSFilter.cpp \
+         Stage1SiliconFilterD.cpp ICTimeFilter.cpp \
+	 RFTimeFilter.cpp SiAngleFilter.cpp \
+	 SiHitFilter.cpp NaITimeFilter.cpp ICRawEDEFilter.cpp \
+	 ICCalEDEFilter.cpp NaIEnFilter.cpp SiChanFilter.cpp \
+	 Stage1ICDSFilter.cpp
 
 ########Directories and Files###########################################################
 SRCDIR=src

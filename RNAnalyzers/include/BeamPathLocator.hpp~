@@ -1,0 +1,48 @@
+/***********************************************************
+//Class: BeamPathLocator
+//
+//Author: Joe Belarge
+//
+***********************************************************/
+
+#ifndef _BEAMPATHLOCATOR_H
+#define _BEAMPATHLOCATOR_H
+#include <TH2.h>
+#include <cstdlib>
+#include <string>
+#include <new>
+#include "RN_Analyzer.hpp"
+
+
+//namespace template{
+
+
+class BeamPathLocator:public RN_Analyzer{
+private:
+
+public:  
+  BeamPathLocator();
+  virtual ~BeamPathLocator(){};
+
+  virtual bool Begin();
+  virtual bool Process();
+  virtual bool ProcessFill();
+  virtual void Clear(){};
+  virtual bool Terminate();
+  virtual bool TerminateIfLast();
+  virtual void Reset()()();
+
+
+
+
+
+  ClassDef(BeamPathLocator,0);
+};
+//declare global parameters as extern
+
+
+//void LoadTemplateGates();
+
+
+
+#endif

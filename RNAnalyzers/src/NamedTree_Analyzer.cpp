@@ -19,13 +19,24 @@
 #include "NamedTree_Analyzer.hpp"
 #include "RN_Root.hpp"
 #include "Si_Analyzer.hpp"
+#include "PSD_Analyzer.hpp"
+#include "TVector3.h"
 
 
-NamedTree_Analyzer::NamedTree_Analyzer()
+NamedTree_Analyzer::NamedTree_Analyzer():fSiAAngle(0),
+					 fSiBAngle(0),
+					 fErProton(0),
+					 fDispersion(0),
+					 OneHitRecon(1),
+					 TwoHitRecon(0),
+					 ICOff(0)
 {
 
 }
 
+void NamedTree_Analyzer::SetDispersionScaleFactor(double factor){
+  fDispersion = factor;
+}
 bool NamedTree_Analyzer::Begin(){
   
   // If no new root file has been declared to be written, exit.
@@ -36,17 +47,56 @@ bool NamedTree_Analyzer::Begin(){
 
   Energy_A = -100.0;
   Energy_B = -100.0;
+  RawEnergyF_A = -100.0;
+  RawEnergyF_B = -100.0;
+  RawEnergyB_A = -100.0;
+  RawEnergyB_B = -100.0;
   Energy_AB = -100.0;
   FrontChan_A = -100.0;
   FrontChan_B = -100.0;
   BackChan_A = -100.0;
   BackChan_B = -100.0;
+  Si_Time_A = -100.0;
+  Si_Time_B = -100.0;
   TotEn_IC = -100.0;
+  ICEn_Cal = -100.0;
+  ICEn_Cal_InDet = -100.0;
+  ICdE_Cal = -100.0;
+  ICE_Cal = -100.0;
+  ICETot_WalkBack = -100;
   dE_IC = -100.0;
   ThetaLab_A = -100.0;
   ThetaLab_B = -100.0;
+  PhiLab_A = -100.0;
+  PhiLab_B = -100.0;
+  ICTheta = -100.0;
+  ICPhi = -100.0;
   QVal_Theta_A = -100.0;
   QVal_Theta_B = -100.0;
+  QVal_NoIt = -100.0;
+  RecEn_Iter = -100.0;
+  ICEn_CenterOfTarget = -100.0;
+  NaIEnergy = -100;
+  NaIPos = -100;
+  NaIDet = -1;
+  NaITime = -1;
+  NaIEnergy_First = -100;
+  NaIEn_Sum = 0;
+  NaI_Ang = -1;
+  NaIEn_DC = -1;
+  NaITime_First = -1;
+  NaIDet_First = -1;
+  NaIMult = -1.0;
+  QVal_InvMass = -1.0;
+  QVal_Neut = -10.0;
+  RecoilKinEn = -100.0;
+  RecoilTheta = -10.0;
+  NeutronEn = -10.0;
+  NeutronTheta = -10.0;
+  NeutronThetaCM = -10.0;
+  ProtonThetaCM = -10.0;
+  SpotCorr_QVal_ThA = -100.0;
+  SpotCorr_ThA = -100.0;
   NeutLong_0= -100;
   NeutLong_1= -100;
   NeutLong_2= -100;
@@ -67,6 +117,7 @@ bool NamedTree_Analyzer::Begin(){
   NeutShort_7= -100;
   NeutShort_8= -100;
   NeutShort_9= -100;
+  RunNumber = -1;
   
   // Otherwise, proceed:
   fgRootFile->cd();
@@ -75,6 +126,10 @@ bool NamedTree_Analyzer::Begin(){
   // Add branches here:
   fNamedTree->Branch("Energy_A",&Energy_A,"Energy_A/D");
   fNamedTree->Branch("Energy_B",&Energy_B,"Energy_B/D");
+  fNamedTree->Branch("RawEnergyF_A",&RawEnergyF_A,"RawEnergyF_A/D");
+  fNamedTree->Branch("RawEnergyF_B",&RawEnergyF_B,"RawEnergyF_B/D");
+  fNamedTree->Branch("RawEnergyB_A",&RawEnergyB_A,"RawEnergyB_A/D");
+  fNamedTree->Branch("RawEnergyB_B",&RawEnergyB_B,"RawEnergyB_B/D");
   fNamedTree->Branch("Energy_AB",&Energy_AB,"Energy_AB/D");
   fNamedTree->Branch("A_X",&A_X,"A_X/D");
   fNamedTree->Branch("A_Y",&A_Y,"A_Y/D");
@@ -84,7 +139,14 @@ bool NamedTree_Analyzer::Begin(){
   fNamedTree->Branch("FrontChan_B_",&FrontChan_B,"FrontChan_B/D");
   fNamedTree->Branch("BackChan_A",&BackChan_A,"BackChan_A/D");
   fNamedTree->Branch("BackChan_B",&BackChan_B,"BackChan_B/D");
+  fNamedTree->Branch("Si_Time_A",&Si_Time_A,"Si_Time_A/D");
+  fNamedTree->Branch("Si_Time_B",&Si_Time_B,"Si_Time_B/D");
   fNamedTree->Branch("TotEn_IC",&TotEn_IC,"TotEn_IC/D");
+  fNamedTree->Branch("ICEn_Cal",&ICEn_Cal,"ICEn_Cal/D");
+  fNamedTree->Branch("ICEn_Cal_InDet",&ICEn_Cal_InDet,"ICEn_Cal_InDet/D");
+  fNamedTree->Branch("ICdE_Cal",&ICdE_Cal,"ICdE_Cal/D");
+  fNamedTree->Branch("ICE_Cal",&ICE_Cal,"ICE_Cal/D");
+  fNamedTree->Branch("ICETot_WalkBack",&ICETot_WalkBack,"ICETote_WalkBack/D");
   fNamedTree->Branch("dE_IC",&dE_IC,"dE_IC/D");
   fNamedTree->Branch("IC_X_Raw",&IC_X_Raw,"IC_X_Raw/D");
   fNamedTree->Branch("IC_Y_Raw",&IC_Y_Raw,"IC_Y_Raw/D");
@@ -92,8 +154,36 @@ bool NamedTree_Analyzer::Begin(){
   fNamedTree->Branch("IC_Y",&IC_Y,"IC_Y/D");
   fNamedTree->Branch("ThetaLab_A",&ThetaLab_A,"ThetaLab_A/D");
   fNamedTree->Branch("ThetaLab_B",&ThetaLab_B,"ThetaLab_B/D");
+  fNamedTree->Branch("PhiLab_A",&PhiLab_A,"PhiLab_A/D");
+  fNamedTree->Branch("PhiLab_B",&PhiLab_B,"PhiLab_B/D");
+  fNamedTree->Branch("ICTheta",&ICTheta,"ICTheta/D");
+  fNamedTree->Branch("ICPhi",&ICPhi,"ICPhi/D");
   fNamedTree->Branch("QVal_Theta_A",&QVal_Theta_A,"QVal_Theta_A/D");
   fNamedTree->Branch("QVal_Theta_B",&QVal_Theta_B,"QVal_Theta_B/D");
+  fNamedTree->Branch("QVal_NoIt",&QVal_NoIt,"QVal_NoIt/D");
+  fNamedTree->Branch("RecEn_Iter",&RecEn_Iter,"RecEn_Iter/D");
+  fNamedTree->Branch("ICEn_CenterOfTarget",&ICEn_CenterOfTarget,"ICEn_CenterOfTarget/D");
+  fNamedTree->Branch("NaIEnergy",&NaIEnergy,"NaIEnergy/D");
+  fNamedTree->Branch("NaIEn_Sum",&NaIEn_Sum,"NaIEn_Sum/D");
+  fNamedTree->Branch("NaI_Ang",&NaI_Ang,"NaI_Ang/D");
+  fNamedTree->Branch("NaIEn_DC",&NaIEn_DC,"NaIEn_DC/D");
+  fNamedTree->Branch("NaIPos",&NaIPos,"NaIPos/D");
+  fNamedTree->Branch("NaIDet",&NaIDet,"NaIDet/D");
+  fNamedTree->Branch("NaITime",&NaITime,"NaITime/D");
+  fNamedTree->Branch("NaIEnergy_First",&NaIEnergy_First,"NaIEnergy_First/D");
+  fNamedTree->Branch("NaIDet_First",&NaIDet_First,"NaIDet_First/D");
+  fNamedTree->Branch("NaITime_First",&NaITime_First,"NaITime_First/D");
+  fNamedTree->Branch("NaIMult",&NaIMult,"NaIMult/D");
+  fNamedTree->Branch("QVal_InvMass",&QVal_InvMass,"QVal_InvMass/D");
+  fNamedTree->Branch("QVal_Neut",&QVal_Neut,"QVal_Neut/D");
+  fNamedTree->Branch("RecoilKinEn",&RecoilKinEn,"RecoilKinEn/D");
+  fNamedTree->Branch("RecoilTheta",&RecoilTheta,"RecoilTheta/D");
+  fNamedTree->Branch("NeutronEn",&NeutronEn,"NeutronEn/D");
+  fNamedTree->Branch("NeutronTheta",&NeutronTheta,"NeutronTheta/D");
+  fNamedTree->Branch("NeutronThetaCM",&NeutronThetaCM,"NeutronThetaCM/D");
+  fNamedTree->Branch("ProtonThetaCM",&ProtonThetaCM,"ProtonThetaCM/D");
+  fNamedTree->Branch("SpotCorr_QVal_ThA",&SpotCorr_QVal_ThA,"SpotCorr_QVal_ThA/D");
+  fNamedTree->Branch("SpotCorr_ThA",&SpotCorr_ThA,"SpotCorr_ThA/D");
   fNamedTree->Branch("NeutLong_0",&NeutLong_0,"NeutLong_0/D");
   fNamedTree->Branch("NeutLong_1",&NeutLong_1,"NeutLong_1/D");
   fNamedTree->Branch("NeutLong_2",&NeutLong_2,"NeutLong_2/D");
@@ -114,6 +204,7 @@ bool NamedTree_Analyzer::Begin(){
   fNamedTree->Branch("NeutShort_7",&NeutShort_7,"NeutShort_7/D");
   fNamedTree->Branch("NeutShort_8",&NeutShort_8,"NeutShort_8/D");
   fNamedTree->Branch("NeutShort_9",&NeutShort_9,"NeutShort_9/D");
+  fNamedTree->Branch("RunNumber",&RunNumber,"RunNumber/D");
   
 
   ZeroCounter = 0;
@@ -132,29 +223,78 @@ bool NamedTree_Analyzer::Process(){
   std::cout << "> s2_A fr Channel  : " << RNROOT::si_[0].front.Ch(0) << std::endl;
   std::cout << "> The s2_B energy  : " << RNROOT::si_array.E_B() << std::endl;
   std::cout << "> The Sum energy   : " << RNROOT::si_array.E_AB() << std::endl;*/
-  Energy_A = RNROOT::si_array.E_A();
-  Energy_B = RNROOT::si_array.E_B();
-  Energy_AB = RNROOT::si_array.E_AB();
-  A_X = RNROOT::si_cluster_[0].fPos[0].X();
-  A_Y = RNROOT::si_cluster_[0].fPos[0].Y();
-  B_X = RNROOT::si_cluster_[1].fPos[0].X();
-  B_Y = RNROOT::si_cluster_[1].fPos[0].Y();
-  FrontChan_A = RNROOT::si_[0].front.Ch(0);
-  FrontChan_B = RNROOT::si_[1].front.Ch(0);
-  BackChan_A = RNROOT::si_[0].back.Ch(0);
-  BackChan_B = RNROOT::si_[1].back.Ch(0);
-  TotEn_IC = RNROOT::ic.ERaw() + RNROOT::ic.DERaw();
-  dE_IC = RNROOT:: ic.DERaw();
-  IC_X = RNROOT::ic.GetHitPos().X();
-  IC_Y = RNROOT::ic.GetHitPos().Y();
-  IC_X_Raw = RNROOT::ic.xgrid.Ch(0);
-  IC_Y_Raw = RNROOT::ic.ygrid.Ch(0);
-  ThetaLab_A = RNROOT::si_array.Theta_A();
-  ThetaLab_B = RNROOT::si_array.Theta_B();
-  if(RNROOT::si_array.E_AB()>0 && RNROOT::si_array.Theta_A()!=0)
-    QVal_Theta_A = RNROOT::gReactionInfo.DecayQValueEstimate(RNROOT::si_array.E_AB(),RNROOT::si_array.Theta_A());
-  if(RNROOT::si_array.E_AB()>0 && RNROOT::si_array.Theta_B()!=0)
-    QVal_Theta_B = RNROOT::gReactionInfo.DecayQValueEstimate(RNROOT::si_array.E_AB(),RNROOT::si_array.Theta_B());
+  //  std::cout << "Right before new stuff 1" << std::endl;
+
+  if(OneHitRecon)
+    RNROOT::ic.ReconstructHitPos();
+  else if(TwoHitRecon)
+    RNROOT::ic.ReconstructTwoPosHitPos();
+  else{
+    std::cout << "> ERROR -- Reconstructing IC Pos Wrong " << std::endl;
+  }
+
+  Energy_A = RNROOT::si_array.E_A();  //std::cout << "Right before new stuff 2" << std::endl;
+  Energy_B = RNROOT::si_array.E_B();  //std::cout << "Right before new stuff 3" << std::endl;
+  RawEnergyF_A = RNROOT::si_[0].front.ERaw(0);
+  RawEnergyF_B = RNROOT::si_[1].front.ERaw(0);
+  RawEnergyB_A = RNROOT::si_[0].back.ERaw(0);
+  RawEnergyB_B = RNROOT::si_[1].back.ERaw(0);
+  Energy_AB = RNROOT::si_array.E_AB(); //std::cout << "Energy AB 1 : " << Energy_AB <<  std::endl;
+  A_X = RNROOT::si_cluster_[0].fPos[0].X(); // std::cout << "Right before new stuff 5" << std::endl;
+  A_Y = RNROOT::si_cluster_[0].fPos[0].Y();  //std::cout << "Right before new stuff 6" << std::endl;
+  B_X = RNROOT::si_cluster_[1].fPos[0].X();  //std::cout << "Right before new stuff 7" << std::endl;
+  B_Y = RNROOT::si_cluster_[1].fPos[0].Y();  //std::cout << "Right before new stuff 8" << std::endl;
+  FrontChan_A = RNROOT::si_[0].front.Ch(0);  //std::cout << "Right before new stuff 9" << std::endl;
+  FrontChan_B = RNROOT::si_[1].front.Ch(0);  //std::cout << "Right before new stuff 10" << std::endl;
+  BackChan_A = RNROOT::si_[0].back.Ch(0);  //std::cout << "Right before new stuff 11" << std::endl;
+  BackChan_B = RNROOT::si_[1].back.Ch(0);  //std::cout << "Right before new stuff 12" << std::endl;
+  Si_Time_A = RNROOT::si_array.T_A();
+  Si_Time_B = RNROOT::si_array.T_B();
+  TotEn_IC = RNROOT::ic.ERaw() + RNROOT::ic.DERaw();  //std::cout << "Right before new stuff 13" << std::endl;
+  dE_IC = RNROOT:: ic.DERaw();  //std::cout << "Right before new stuff 14" << std::endl;
+  IC_X = RNROOT::ic.GetHitPos().X();  //std::cout << "Right before new stuff 15" << std::endl;
+  IC_Y = RNROOT::ic.GetHitPos().Y();  //std::cout << "Right before new stuff 16" << std::endl;
+  //IC_X_Raw = RNROOT::ic.xgrid.Ch(0); // std::cout << "Right before new stuff 17" << std::endl;
+  //IC_Y_Raw = RNROOT::ic.ygrid.Ch(0);  //std::cout << "Right before new stuff 18" << std::endl;
+  ThetaLab_A = RNROOT::si_array.Theta_A();  //std::cout << "Right before new stuff 19" << std::endl;
+  ThetaLab_B = RNROOT::si_array.Theta_B();  //std::cout << "Right before new stuff 20" << std::endl;
+  PhiLab_A = RNROOT::si_array.Phi_A();
+  PhiLab_B = RNROOT::si_array.Phi_B();
+  ICTheta = RNROOT::ic.Theta();
+  ICPhi = RNROOT::ic.Phi();
+  //std::cout << " ------ " << std::endl;
+  if(RNROOT::si_array.E_AB()>0 && RNROOT::si_array.Theta_A()!=0){
+    QVal_Theta_A = RNROOT::gReactionInfo.DecayQValueIterations(RNROOT::si_array.E_AB(),RNROOT::si_array.Theta_A(),5);
+    //std::cout << " Si Theta 1 : " << RNROOT::si_array.Theta_A() <<  std::endl;
+    RecEn_Iter = RNROOT::gReactionInfo.DecayQValueIterations_RecEn(RNROOT::si_array.E_AB(),RNROOT::si_array.Theta_A(),5);
+  }
+  if(RNROOT::si_array.E_AB()>0 && RNROOT::si_array.Theta_B()!=0){
+    QVal_Theta_B = RNROOT::gReactionInfo.DecayQValueIterations(RNROOT::si_array.E_AB(),RNROOT::si_array.Theta_B(),5);
+    //std::cout << "Energy AB 3 : " << RNROOT::si_array.E_AB() <<  std::endl;
+    
+  }
+  //std::cout << "Right before new stuff " << std::endl;
+
+  if(RNROOT::si_array.E_AB()>0 && RNROOT::si_array.Theta_A()!=0){
+    QVal_NoIt = RNROOT::gReactionInfo.DecayQValueEstimate(RNROOT::si_array.E_AB(),RNROOT::si_array.Theta_A());
+    //std::cout << "Energy AB 4 : " << RNROOT::si_array.E_AB() <<  std::endl;
+
+
+  }
+
+  // CALCULATE THE NEUTRON QVALUE HERE ------------------------
+  for(unsigned int i=0;i<RNROOT::neut.size();i++){
+    //if(psd::rawneutcheck[i] /*&& psd::evtcheck[i]*/){
+    if(RNROOT::neut[i].QLong()>0 && RNROOT::neut[i].QShort()>0){
+      double nTheta = RNROOT::neut[i].GetPosVect().Theta();  
+      double fNeutTime = RNROOT::rftime.TRel(RNROOT::neut[i].T());// + (neut[i].GetPosVect().Mag()/300);
+      double fNeutEnergy = RNROOT::neut[i].nKE_R(fNeutTime);
+      double hiKE = 0.0;
+      double fNeutQ = RNROOT::gReactionInfo.RecoilQValue(fNeutEnergy,nTheta,hiKE);
+      QVal_Neut = fNeutQ;
+      //break; // when finding valid neutron
+    }
+  }
 
 
   NeutLong_0 = RNROOT::neut[0].QLong();
@@ -177,25 +317,232 @@ bool NamedTree_Analyzer::Process(){
   NeutShort_8 = RNROOT::neut[8].QShort();
   NeutLong_9 = RNROOT::neut[9].QLong();
   NeutShort_9 = RNROOT::neut[9].QShort();
+
+  RunNumber = RNROOT::gMainAnalyzer.EventInfo(0);
+
+  NaIEnergy = RNROOT::nai_array.E();
+  NaIDet = RNROOT::nai_array.ChRaw();
+  NaIPos = RNROOT::nai_array.fPosition[0];
+  //NaITime = RNROOT::nai_array.TRaw();
+  //std::cout << " NaI TRaw ============================" << std::endl;
+  NaITime = RNROOT::nai_array.TRaw();
+  NaIMult = RNROOT::nai_array.Mult();
+  for(int i = 0; i < NaIMult;i++){
+    NaIEn_Sum = RNROOT::nai_array.E(i)+NaIEn_Sum;
+  }
+
+  NaIEnergy = 0.518761*NaIEnergy+4.93711;
+
+  NaI_Ang = TMath::ATan(25.0/TMath::Abs(NaIPos));
+  Double32_t BETA = 0.0982195;
+  Double32_t GAMMA = 1.004859;
+
+  NaIEn_DC = GAMMA*(1.0-BETA*TMath::Cos(NaI_Ang))*NaIEnergy;
+
+  //std::cout << "  Mult : " << NaIMult << std::endl;
+  //std::cout << "  Time : " << NaITime << std::endl;
   
+
+  NaIEnergy_First = RNROOT::nai_array.EFirst();
+  NaIDet_First = RNROOT::nai_array.DetFirst();
+  NaITime_First = RNROOT::nai_array.TFirst();
+
+  // std::cout << "Right before new stuff " << std::endl;
+  //std::cout << ">IC-XPos : " << RNROOT::ic.GetHitPos().X() << std::endl;
+  fBeamSpot = TVector3(RNROOT::ic.GetHitPos().X()*fDispersion,RNROOT::ic.GetHitPos().Y()*fDispersion,0);
+  fSiBVector = RNROOT::si_cluster_[1].fPos[0] - fBeamSpot;
+  fSiAVector = RNROOT::si_cluster_[0].fPos[0] - fBeamSpot;  
+  fSiBAngle = TMath::RadToDeg()*fSiBVector.Theta(); 
+  fSiAAngle = TMath::RadToDeg()*fSiAVector.Theta();
+  fErProton = RNROOT::gReactionInfo.DecayQValueEstimate(RNROOT::si_array.E_AB(),fSiAAngle*TMath::DegToRad());
+
+  SpotCorr_QVal_ThA = fErProton;
+  SpotCorr_ThA = fSiAAngle;
+
+  
+
+  //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.0232919+11.874677;// Before Target Thickness
+  //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.0238226+8.41369;// Including Target Thickness 89 MeV Beam
+  //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.0235203+8.02406;// Including Target Thickness 88 MeV Beam
+  //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.0231295+7.87542;// Including Target Thickness 87 MeV Beam
+  //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.0229233+7.19823;// Including Target Thickness 86 MeV Beam
+  //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.0226135+6.78817;// Including Target Thickness 85 MeV Beam
+  //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02228872+6.39426;// Including Target Thickness 84 MeV Beam
+  //ICEn = 44.00970409*TMath::Power(TMath::E(),0.0106606504*ICEn);// Including Target Thickness 87 MeV Beam
+  //ICEn = ICEn+2.0;
+  
+  //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02861111176+10.66750766;// Including Target Thickness 100 MeV Beam Poly Fit
+  //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02818894754+9.473799994;// Including Target Thickness 98 MeV Beam Poly Fit
+  //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02775543391+8.288014919;// Including Target Thickness 96 MeV Beam Poly Fit
+  //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.0306375159+2.384362376;// Including Target Thickness 94 MeV Beam Poly Fit
+  //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02685000935+5.947732291;// Including Target Thickness 92 MeV Beam Poly Fit
+  //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02636726014+4.802948936;// Including Target Thickness 90 MeV Beam Poly Fit
+  //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02569348+2.962222;// Including Target Thickness 87 MeV Beam Poly Fit
+  //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02485998842+1.407845946;// Including Target Thickness 84 MeV Beam Poly Fit
+  //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.002497065691+1.618425389;// Including Target Thickness 84.4 MeV Beam Poly Fit
+  //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02507482106+1.841874012;// Including Target Thickness 84.8 MeV Beam Poly Fit
+  //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.025126987+1.953030427;// Including Target Thickness 85 MeV Beam Poly Fit
+  //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02523036074+2.177138549;// Including Target Thickness 85.4 MeV Beam Poly Fit
+  //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02378059053-0.7911268205;// Including Target Thickness 80 MeV Beam Poly Fit
+  //ICEn = 0.001358*(ICEn*ICEn)+0.67*ICEn+38.419;
+
+  // This is a new way to get the calibrated IC Energy.  It was made using energy loss from SRIM, not LISE++.
+  double ICCal_Slope = 0.0003096126*RNROOT::gReactionInfo.BeamEnergy() - 0.0012604565;
+  double ICCal_YInt = 0.4312070068*RNROOT::gReactionInfo.BeamEnergy() - 34.2441043178;
+  double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*ICCal_Slope + ICCal_YInt;
+  ICEn_Cal_InDet = ICEn;
+  ICEn = 37.9626+0.487485*ICEn+0.00558721*ICEn*ICEn-0.0000278791*ICEn*ICEn*ICEn;
+
+  // Before Dead Layer in IC:
+  //double ICdE_Slope = -0.0015309804*RNROOT::gReactionInfo.BeamEnergy() +0.1635618874;
+  //double ICE_Slope = 0.00027403*RNROOT::gReactionInfo.BeamEnergy()+0.0009151785;
+  //double ICdE_YInt = 0.6536113206*RNROOT::gReactionInfo.BeamEnergy() - 57.2455656141;
+  //double ICE_YInt = 0.8399175701*RNROOT::gReactionInfo.BeamEnergy()-70.6054506779;
+
+  // With Dead Layer in IC:
+  
+  
+  // The code in this bracket is from BEFORE 5-15-15
+     
+  double ICdE_Slope =10.4863-0.355946*RNROOT::gReactionInfo.BeamEnergy()+0.00405645*RNROOT::gReactionInfo.BeamEnergy()*RNROOT::gReactionInfo.BeamEnergy() -0.0000154599*RNROOT::gReactionInfo.BeamEnergy()*RNROOT::gReactionInfo.BeamEnergy()*RNROOT::gReactionInfo.BeamEnergy();
+  double ICE_Slope = 0.0002726055*RNROOT::gReactionInfo.BeamEnergy()+0.0013019566;
+  double ICdE_YInt = -5578.33+190.604*RNROOT::gReactionInfo.BeamEnergy()-2.17764*RNROOT::gReactionInfo.BeamEnergy()*RNROOT::gReactionInfo.BeamEnergy()+0.0083112*RNROOT::gReactionInfo.BeamEnergy()*RNROOT::gReactionInfo.BeamEnergy()*RNROOT::gReactionInfo.BeamEnergy();
+  double ICE_YInt = 0.9807798426*RNROOT::gReactionInfo.BeamEnergy()-91.8223789622;
+  
+  ICE_Cal = ICE_Slope*RNROOT::ic.ERaw() + ICE_YInt;
+  ICdE_Cal = ICdE_Slope*RNROOT::ic.DERaw() + ICdE_YInt;
+  
+  
+  if(RNROOT::gReactionInfo.BeamEnergy() == 87){
+    ICE_Cal = ICE_Cal*0.8772473543+3.0434624096;
+    ICdE_Cal = ICdE_Cal*(-0.1095852788)+20.0411288657;
+  }
+  else if(RNROOT::gReactionInfo.BeamEnergy() == 86){
+    ICE_Cal = ICE_Cal*0.873816775+2.9341073339;
+    ICdE_Cal = ICdE_Cal*(-0.1357200107)+20.7850583489;
+  }
+  else if(RNROOT::gReactionInfo.BeamEnergy() == 85){
+    ICE_Cal = ICE_Cal*0.8686628428+2.8692537093;
+    ICdE_Cal = ICdE_Cal*(-0.14951558)+21.3184892904;
+  }
+  else if(RNROOT::gReactionInfo.BeamEnergy() == 84){
+    ICE_Cal = ICE_Cal*0.8696506708+2.580454009;
+    ICdE_Cal = ICdE_Cal*(-0.0656073808)+20.0467811379;
+  }
+  else{
+    double ICdE_Slope2 = 0.0199651506*RNROOT::gReactionInfo.BeamEnergy() -1.8486099081;
+    double ICdE_YInt2 = -0.6386802124*RNROOT::gReactionInfo.BeamEnergy()+75.6413904304;
+    double ICE_Slope2 = 0.0027943983*RNROOT::gReactionInfo.BeamEnergy() +0.6334233586;
+    double ICE_YInt2 = 0.1453878826*RNROOT::gReactionInfo.BeamEnergy() -9.5738446003;
+    
+    ICE_Cal = ICE_Cal*ICE_Slope2 + ICE_YInt2;
+    ICdE_Cal = ICdE_Cal*ICdE_Slope2 + ICdE_YInt2;
+  
+    
+  }
+  
+  
+  /*
+  // Added 5-15-15 :
+  // We know the beam energies now, so this should allow for a 
+  // more precise ic energy calibration.
+  
+  double ICdE_Slope = 0.0375002245;
+  double ICE_Slope = 0.0268030924;
+  double ICdE_YInt = -2.7164290423;
+  double ICE_YInt = -10.7492233418;
+  
+  ICE_Cal = ICE_Slope*RNROOT::ic.ERaw() + ICE_YInt;
+  ICdE_Cal = ICdE_Slope*RNROOT::ic.DERaw() + ICdE_YInt;
+  */
+  //std::cout << " Beam En : " << RNROOT::gReactionInfo.BeamEnergy()<< std::endl;
+
+  ICETot_WalkBack = 44.2449+0.596535*(ICE_Cal+ICdE_Cal)+0.00243403*(ICE_Cal+ICdE_Cal)*(ICE_Cal+ICdE_Cal)-0.0000059661*(ICE_Cal+ICdE_Cal)*(ICE_Cal+ICdE_Cal)*(ICE_Cal+ICdE_Cal);
+
+  // 84 MeV Beam
+  //ICE_Cal = ICE_Cal*0.9889344455 + 0.4094039461;
+  //ICdE_Cal = ICdE_Cal*0.9548431516 + 0.7720105264;
+
+  // 85 MeV Beam
+  //ICE_Cal = ICE_Cal*0.9887377433 + 0.4595643435;
+  //ICdE_Cal = ICdE_Cal*0.9261273567 + 1.2262789222; 
+
+  // 86 MeV Beam
+  //ICE_Cal = ICE_Cal*0.9859767498 + 0.5751825484;
+  //ICdE_Cal = ICdE_Cal*0.9281387085 + 1.1865708251;
+  
+  // For using the DE as a dead layer, before the before xgrid dead layer was used.
+  //ICETot_WalkBack = 55.2216+0.408139*ICE_Cal +0.00638365*ICE_Cal*ICE_Cal -0.0000396155*ICE_Cal*ICE_Cal*ICE_Cal;
+  
+  // for using the E calibration +  dE Calibration before xgrid dead layer was used.
+  //ICETot_WalkBack = 37.9626+0.487485*(ICE_Cal+ICdE_Cal)+0.00558721*(ICE_Cal+ICdE_Cal)*(ICE_Cal+ICdE_Cal)-0.0000278791*(ICE_Cal+ICdE_Cal)*(ICE_Cal+ICdE_Cal)*(ICE_Cal+ICdE_Cal);
+
+
+
+  //std::cout << " Before WB : " << ICETot_WalkBack << std::endl;
+  
+  //std::cout << " IC Before Offset : "<< ICETot_WalkBack  << std::endl;
+  ICETot_WalkBack = ICETot_WalkBack+ICOff;
+  //std::cout << " IC After OFfset : " << ICETot_WalkBack << std::endl;
+  
+  
+
+  ICEn = ICETot_WalkBack + ICETot_WalkBack*(-0.015135494) +3.1439395068;
+  //std::cout << " After WB : " << ICEn << std::endl;
+  //ICEn_CenterOfTarget = ICEn;
+  //ICEn = ICEn+1.5;
+
+  ICEn_CenterOfTarget = ICEn;
+  // std::cout << " En : " << ICETot_WalkBack << std::endl;
+  //std::cout << " In : " << ICEn << std::endl;
+  if(RNROOT::si_array.E_AB()>0 && RNROOT::si_array.Theta_A()!=0){
+    if(ICEn>0 && RNROOT::ic.Theta()!=0)
+      {
+	double ICTheta_Radians = 0.0, ICPhi_Radians = 0.0;
+	
+	/*std::cout << " IC Angle Summary ----------" << std::endl;
+	std::cout << "  Theta : " << RNROOT::ic.Theta() << std::endl;
+	std::cout << "  Phi   : " << RNROOT::ic.Phi() << std::endl;
+	*/
+	ICTheta_Radians = RNROOT::ic.Theta()*TMath::DegToRad();
+	ICPhi_Radians = RNROOT::ic.Phi()*TMath::DegToRad();
+	/*
+	std::cout << "  Theta : " << ICTheta_Radians << std::endl;
+	std::cout << "  Phi   : " << ICPhi_Radians << std::endl;
+	*/
+
+	//std::cout << " SI Theta 2 : " << RNROOT::si_array.Theta_A() << std::endl;
+	
+	QVal_InvMass = RNROOT::gReactionInfo.IntHeavyQVal(RNROOT::si_array.E_AB(),ICEn,RNROOT::si_array.Theta_A(),RNROOT::si_array.Phi_A(),ICTheta_Radians,ICPhi_Radians);
+      }
+  }
+  //std::cout << "Energy AB 5 : " << RNROOT::si_array.E_AB() <<  std::endl;
+  RecoilKinEn = RNROOT::gReactionInfo.IntHeavyKinEn(RNROOT::si_array.E_AB(),ICEn,RNROOT::si_array.Theta_A(),RNROOT::si_array.Phi_A(),RNROOT::ic.Theta()*TMath::DegToRad(),RNROOT::ic.Phi()*TMath::DegToRad());
+  RecoilTheta = RNROOT::gReactionInfo.IntHeavyTheta(RNROOT::si_array.E_AB(),ICEn,RNROOT::si_array.Theta_A(),RNROOT::si_array.Phi_A(),RNROOT::ic.Theta()*TMath::DegToRad(),RNROOT::ic.Phi()*TMath::DegToRad());
+  
+
+  NeutronEn = RNROOT::gReactionInfo.NeutronEn(RNROOT::si_array.E_AB(),ICEn,RNROOT::si_array.Theta_A(),RNROOT::si_array.Phi_A(),RNROOT::ic.Theta()*TMath::DegToRad(),RNROOT::ic.Phi()*TMath::DegToRad());
+  NeutronTheta = RNROOT::gReactionInfo.NeutronAngle(RNROOT::si_array.E_AB(),ICEn,RNROOT::si_array.Theta_A(),RNROOT::si_array.Phi_A(),RNROOT::ic.Theta()*TMath::DegToRad(),RNROOT::ic.Phi()*TMath::DegToRad());
+  NeutronThetaCM= RNROOT::gReactionInfo.NeutronAngleCM(RNROOT::si_array.E_AB(),ICEn,RNROOT::si_array.Theta_A(),RNROOT::si_array.Phi_A(),RNROOT::ic.Theta()*TMath::DegToRad(),RNROOT::ic.Phi()*TMath::DegToRad());
+  ProtonThetaCM= RNROOT::gReactionInfo.ProtonAngleCM(RNROOT::si_array.E_AB(),ICEn,RNROOT::si_array.Theta_A(),RNROOT::si_array.Phi_A(),RNROOT::ic.Theta()*TMath::DegToRad(),RNROOT::ic.Phi()*TMath::DegToRad());
   return 1;
 }
 
 bool NamedTree_Analyzer::ProcessFill(){
-  if(RNROOT::si_[0].front.Mult() == 0 || RNROOT::si_[1].front.Mult()==0){
+  /*if(RNROOT::si_[0].front.Mult() == 0 || RNROOT::si_[1].front.Mult()==0){
     ZeroCounter++;
     return 0;
-  } 
-
-  if(!(RNROOT::ic.T()>0)){
+    } 
+    
+    if(!(RNROOT::ic.T()>0)){
     return 0;
-  }
-
- 
-  if(RNROOT::si_.size()>1){
+    }
+  */
+  
+  //if(RNROOT::si_.size()>1){
     fNamedTree->Fill();
     FillCounter++;
-  }
+    //}
   return 1;
   
 }
@@ -208,12 +555,49 @@ void NamedTree_Analyzer::Reset(){
   FrontChan_B = -100.0;
   BackChan_A = -100.0;
   BackChan_B = -100.0;
+  Si_Time_A = -100.0;
+  Si_Time_B = -100.0;
   TotEn_IC = -100.0;
+  ICEn_Cal = -100.0;
+  ICEn_Cal_InDet = -100.0;
+  ICdE_Cal = -100.0;
+  ICE_Cal = -100.0;
+  ICETot_WalkBack = -100;
   dE_IC = -100.0;
   ThetaLab_A = -100.0;
   ThetaLab_B = -100.0;
+  PhiLab_A = -100.0;
+  PhiLab_B = -100.0;
+  ICTheta = -100.0;
+  ICPhi = -100.0;
   QVal_Theta_A = -100.0;
   QVal_Theta_B = -100.0;
+  QVal_NoIt = -100.0;
+  RecEn_Iter = -100.0;
+  ICEn_CenterOfTarget = -100.0;
+
+  NaIEnergy = -100;
+  NaIPos = -100;
+  NaIDet = -1;
+  NaITime = -1;
+  NaIMult = -1.0;
+  NaIEnergy_First = -100;
+  NaITime_First = -1;
+  NaIDet_First = -1;
+  NaIEn_Sum = 0;
+  NaI_Ang = -1;
+  NaIEn_DC = -1;
+
+  QVal_InvMass = -1.0;
+  QVal_Neut = -10.0;
+  RecoilKinEn = -100.0;
+  RecoilTheta = -10.0;
+  NeutronEn = -10.0;
+  NeutronTheta = -10.0;
+  NeutronThetaCM = -10.0;
+  ProtonThetaCM = -10.0;
+  SpotCorr_QVal_ThA = -100.0;
+  SpotCorr_ThA = -100.0;
   NeutLong_0= -100;
   NeutLong_1= -100;
   NeutLong_2= -100;
@@ -234,6 +618,7 @@ void NamedTree_Analyzer::Reset(){
   NeutShort_7= -100;
   NeutShort_8= -100;
   NeutShort_9= -100;
+  RunNumber = -1;
 }
 
 bool NamedTree_Analyzer::TerminateIfLast(){

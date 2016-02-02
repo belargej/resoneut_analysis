@@ -55,21 +55,30 @@ namespace RNfilters{
       return 0;
     }
     
+    // Might have to suppress sia trigger bit!!
+    if(triggerbit[2].Check()){
+      std::cout << " You are in the Si A TB!" << std::endl;
+      std::cout << " Bit Min : " << triggerbit[2].GetBitMin() << std::endl;
+      std::cout << " Bit Max : " << triggerbit[2].GetBitMax() << std::endl;
+
+      return 0;
+    }
+
     bool NaI = false;
 
     for(int i =0;i<NAI_NUM;i++){
       if(nai[i].fT[0]>0 && nai[i].fT[1]>0){
 	NaI = true;
-	return 1;
+	//return 1;
       }
     }
 
-    /*if(NaI == true){
-      for(int j = 0;j<NEUTNUM){
-	if(neut[j].)
+    if(NaI == true){
+      for(int j = 0;j<NEUTNUM; j++){
+	if(neut[j].TRaw()>0)
 	  return 1;
       }
-    }*/
+    }
 
     return 0;
   }

@@ -1,0 +1,4 @@
+QVal_Theta_A = RNROOT::gReactionInfo.DecayQValueIterations(RNROOT::si_array.E_AB(),RNROOT::si_array.Theta_A(),5);
+
+
+QVal_InvMass = RNROOT::gReactionInfo.IntHeavyQVal(RNROOT::si_array.E_AB(),ICEn,RNROOT::si_array.Theta_A(),RNROOT::si_array.Phi_A(),RNROOT::ic.Theta()*TMath::DegToRad(),RNROOT::ic.Phi()*TMath::DegToRad());

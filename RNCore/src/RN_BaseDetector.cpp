@@ -2,6 +2,8 @@
 #define __BaseDetector__CXX
 
 #include "RN_BaseDetector.hpp"
+#include "sak_ReadBuffer.hpp"
+#include "RN_Root.hpp"
 #include <cstdlib>
 #include <iostream>
 ClassImp(RN_BaseDetector);
@@ -21,7 +23,8 @@ RN_BaseDetector::RN_BaseDetector(std::string name, int num):RN_BaseClass(name,na
 							    fELin(1),
 							    fEShift(0),
 							    fTLin(1),
-							    fTShift(0),
+							    fTShift(0), 
+							    fCurrentRunBD(0),
 							    fMult(0),
 							    fChlist(num,double(0)),
 							    fE(num,double(-1)),
@@ -70,6 +73,9 @@ void RN_BaseDetector::SetCalibrations(RN_VariableMap& detvar){
     detvar.GetParam(Form("%s.t1[%d]",GetName(),i),fT1[i]);
     detvar.GetParam(Form("%s.q_offset[%d]",GetName(),i),fQOffset[i]); 
     detvar.GetParam(Form("%s.t_offset[%d]",GetName(),i),fTOffset[i]);  
+    //std::cout << "Name : " << GetName() << ".q_offset[" << i << "] : " << fQOffset[i] << std::endl;
+    //std::cout << "Name : " << GetName() << ".a0[" << i << "] : " << fA0[i] << std::endl;
+    //std::cout << "Name : " << GetName() << ".a1[" << i << "] : " << fA1[i] << std::endl;
   } 
   detvar.GetParam(Form("%s.elowlimit",GetName()),fLowLimit);
   detvar.GetParam(Form("%s.ehighlimit",GetName()),fHighLimit);
@@ -78,6 +84,7 @@ void RN_BaseDetector::SetCalibrations(RN_VariableMap& detvar){
   detvar.GetParam(Form("%s.eshift",GetName()),fEShift);
   detvar.GetParam(Form("%s.tlin",GetName()),fTLin);
   detvar.GetParam(Form("%s.tshift",GetName()),fTShift);
+  //  std::cout << "Name : " << GetName() << ".elin : " << fELin << std::endl;
 
 }
 
@@ -139,6 +146,77 @@ int RN_BaseDetector::InsertHit(const double& e,const double& t,const double& ch)
   fMult += 1;
 
   return (i+1);
+}
+
+// JAB ------------------------------------------------------------------------------------------
+
+int RN_BaseDetector::InsertHit(const double& e,const double& t,const double& ch, const int&run){
+  int IH_Holder = 0;
+  
+  ChangeRun(run);
+  IH_Holder = InsertHit(e,t,ch);
+
+  
+  return IH_Holder;
+}
+
+Int_t RN_BaseDetector::ChangeRun(const Int_t & currentrun){
+  //std::cout << "> Current Run : " << currentrun << std::endl;
+  //std::cout << "> Ref Run     : " << fCurrentRunBD << std::endl;
+  if(currentrun == fCurrentRunBD){
+    return 0; //no change in state
+  }
+  else{
+    //std::cout << " In Else in ChangeRun " << std::endl;
+    fCurrentRunBD = currentrun;
+    std::map<int,std::string>::iterator it;
+    it = fTableBD.find(fCurrentRunBD);
+    //std::cout << " Iterator First : " << it->first << std::endl;
+    //std::cout << " Iterator Second : " << it->second << std::endl;
+    //std::cout << " Current Run : " << fCurrentRunBD << std::endl;
+    //std::cout << " File : " << fTableBD[fCurrentRunBD] << std::endl;
+    if(it!=fTableBD.end()){
+      ConfigFile =fTableBD[fCurrentRunBD];// it->second;
+      RNROOT::gVariableMap.ClearParams();
+      RNROOT::LoadVariableFile(ConfigFile.c_str());
+      RNROOT::SetCalibrations();
+      std::cout << "> Changing file to " << ConfigFile << std::endl;
+    } 
+  }
+  return 1;
+}
+
+Int_t RN_BaseDetector::LoadTable(const std::string &filename){
+  
+  std::ifstream cal;
+  int key;std::string value;
+  cal.open(filename.c_str());
+  if (!cal.is_open()){
+    std::cout << "  Could not open " << filename << std::endl;
+    return 0;
+  }
+  do{ 
+    std::vector<std::string>input;
+    sak::ReadLine(cal,input,2);
+    if (input.size()!=2){
+      std::cout<<"Si Config Config file has line with diff than 2 entries"<<std::endl;
+      continue;
+    }
+    key=sak::string_to_int(input[0]);
+    value=input[1];//sak::string_to_double(input[1]);
+    
+    //std::cout << "> In the LoadTable Function for BaseDetector" << std::endl;
+    //std::cout << "> Loading For Run Number : " << key << std:: endl;
+    //std::cout << "> The Config File        : " << value << std::endl;
+    
+    fTableBD.insert(std::pair<int,std::string>(key,value));
+  }while(!cal.eof());
+
+  return 1;
+}
+
+void RN_BaseDetector::ClearTable(){
+  fTableBD.clear();
 }
 
 #endif

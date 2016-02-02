@@ -1,0 +1,4 @@
+set term postscript eps color enhanced
+set output "1Plus2_2p645_Mirror.eps"
+set logscale y
+plot 'dn_2.645_mirror' u 1:2 title "2.645MeV as 1^+_2"

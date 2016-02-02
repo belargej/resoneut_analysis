@@ -1,0 +1,80 @@
+/***********************************************************
+//Class: Check_Alpha_Calibration
+//
+//Author: Joe Belarge
+//
+// This class will both perform your two step alpha 
+// calibration, and make plots so you can determine if you 
+// have a good calibration, if you just want to check.
+// 
+// To perform the actual calibration use the following 
+// functions:
+//   To perform the local channel to channel calibration 
+//   use the LocalEnergyCal_On() function to turn this 
+//   option on.  This will take raw energy (just from the
+//   ADC) and align it to a reference channel ( 0 by default)
+//   which can be set by the SetReferenceChannel(int) funct.
+//
+//   To perform the final energy calibration (to MeV) use
+//   the FinalEnergyCal_On() function.  This will take a 
+//   sum histogram of all front or back channels and 
+//   calibrate it to MeV.
+//
+// These will output the calibration parameters to a file
+// named 'AlphaFit_Params.out'.  You should copy these
+// values and place them in your own file.  You SHOULD NOT
+// use the generated file as your final calibration file.
+//
+//
+***********************************************************/
+
+#ifndef _CHECK_ALPHA_CALIBRATION_H
+#define _CHECK_ALPHA_CALIBRATION_H
+#include <TH2.h>
+#include <cstdlib>
+#include <string>
+#include <new>
+#include "RN_Analyzer.hpp"
+
+
+namespace Check_Alpha_Cal{
+
+
+class Check_Alpha_Calibration:public RN_Analyzer{
+private:
+  bool FinEnCal;
+  bool LocEnCal;
+  int RefChan;
+public:  
+  Check_Alpha_Calibration();
+  virtual ~Check_Alpha_Calibration(){};
+
+  virtual bool Begin();
+  virtual bool Process();
+  virtual bool ProcessFill();
+  virtual void Clear(){};
+  virtual bool Terminate();
+  virtual bool TerminateIfLast();
+  virtual void Reset();
+
+  void FinalEnergyCal_On(){FinEnCal = true;};
+  void FinalEnergyCal_Off(){FinEnCal = false;};
+  void LocalEnergyCal_On(){LocEnCal = true;};
+  void LocalEnergyCal_Off(){LocEnCal = false;};
+  void SetReferenceChannel(int Ref){RefChan = Ref;};
+  
+
+
+
+
+
+  ClassDef(Check_Alpha_Calibration,0);
+};
+//declare global parameters as extern
+
+
+void LoadTemplateGates();
+}
+
+
+#endif

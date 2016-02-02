@@ -15,20 +15,624 @@
 
 #include "Si_Analyzer.hpp"
 #include "IC_Analyzer.hpp"
+#include "RF_Analyzer.hpp"
+#include "PSD_Analyzer.hpp"
 
 using namespace RNROOT;
 
 namespace physical{
 
-  TH1D *Q_Value;
-  TH1D *Q_Value_proton;
-  TH1D *Q_Value_protontheta;
-  TH1D *Q_Value_protontheta_hi1;
-  TH1D *Q_Value_proton_hi1;
-  TH1D *Q_Value_proton_hi2;
+  //====================
+  // Declare Histograms:
 
+  //----------------
+  // No Gate Histos:
+  TH1D *Q_Value;
+  // FB Stuff
+  TH1D *Q_Value_FBNot;
+  TH1D *Q_Value_Theta8_20_FBNot;
+  TH1D *Q_Value_Theta8_19_FBNot;
+  TH1D *Q_Value_Theta8_18_FBNot;
+  TH1D *Q_Value_Theta8_17_FBNot;
+  TH1D *Q_Value_Theta8_16_FBNot;
+  TH1D *Q_Value_Theta8_15_FBNot;
+
+  TH1D *Q_Value_FB_Plus1Not;
+  TH1D *Q_Value_Theta8_20_FB_Plus1Not;
+  TH1D *Q_Value_Theta8_19_FB_Plus1Not;
+  TH1D *Q_Value_Theta8_18_FB_Plus1Not;
+  TH1D *Q_Value_Theta8_17_FB_Plus1Not;
+  TH1D *Q_Value_Theta8_16_FB_Plus1Not;
+  TH1D *Q_Value_Theta8_15_FB_Plus1Not;
+
+  TH1D *Q_Value_FB_and_FBPlus1_Not;
+  TH1D *Q_Value_Theta8_20_FB_and_FBPlus1_Not;
+  TH1D *Q_Value_Theta8_19_FB_and_FBPlus1_Not;
+  TH1D *Q_Value_Theta8_18_FB_and_FBPlus1_Not;
+  TH1D *Q_Value_Theta8_17_FB_and_FBPlus1_Not;
+  TH1D *Q_Value_Theta8_16_FB_and_FBPlus1_Not;
+  TH1D *Q_Value_Theta8_15_FB_and_FBPlus1_Not;
+  // Theta Scan
+  TH1D *Q_Value_ThetaFull;
+  TH1D *Q_Value_Theta8_20;
+  TH1D *Q_Value_Theta8_19;
+  TH1D *Q_Value_Theta8_18;
+  TH1D *Q_Value_Theta8_17;
+  TH1D *Q_Value_Theta8_16;
+  TH1D *Q_Value_Theta8_15;
   //Q v Parameters
   TH2D *Q_v_Phi;	
+  TH2D *Q_v_cosTheta;
+  TH2D *Q_v_EcosTheta;
+  TH2D *Q_v_Theta;		       
+  TH2D *Q_v_E;			       
+  TH2D *Q_v_RelAngle;		       
+	       				       	       
+
+
+  //---------------------
+  // Proton1 Gate Histos:
+  TH1D *Q_Value_proton;
+  // FB Stuff
+  TH1D *Q_Value_FBNot_proton;
+  TH1D *Q_Value_Theta8_20_FBNot_proton;
+  TH1D *Q_Value_Theta8_19_FBNot_proton;
+  TH1D *Q_Value_Theta8_18_FBNot_proton;
+  TH1D *Q_Value_Theta8_17_FBNot_proton;
+  TH1D *Q_Value_Theta8_16_FBNot_proton;
+  TH1D *Q_Value_Theta8_15_FBNot_proton;
+
+  TH1D *Q_Value_FB_Plus1Not_proton;
+  TH1D *Q_Value_Theta8_20_FB_Plus1Not_proton;
+  TH1D *Q_Value_Theta8_19_FB_Plus1Not_proton;
+  TH1D *Q_Value_Theta8_18_FB_Plus1Not_proton;
+  TH1D *Q_Value_Theta8_17_FB_Plus1Not_proton;
+  TH1D *Q_Value_Theta8_16_FB_Plus1Not_proton;
+  TH1D *Q_Value_Theta8_15_FB_Plus1Not_proton;
+
+  TH1D *Q_Value_FB_and_FBPlus1_Not_proton;
+  TH1D *Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton;
+  TH1D *Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton;
+  TH1D *Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton;
+  TH1D *Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton;
+  TH1D *Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton;
+  TH1D *Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton;
+  // Theta Scan
+  TH1D *Q_Value_ThetaFull_proton;
+  TH1D *Q_Value_Theta8_20_proton;
+  TH1D *Q_Value_Theta8_19_proton;
+  TH1D *Q_Value_Theta8_18_proton;
+  TH1D *Q_Value_Theta8_17_proton;
+  TH1D *Q_Value_Theta8_16_proton;
+  TH1D *Q_Value_Theta8_15_proton;
+  //Q v Parameters
+  TH2D *Q_v_Phi_proton;	
+  TH2D *Q_v_cosTheta_proton;
+  TH2D *Q_v_EcosTheta_proton;
+  TH2D *Q_v_Theta_proton;		       
+  TH2D *Q_v_E_proton;			       
+  TH2D *Q_v_RelAngle_proton;	
+
+
+  //---------------------
+  // Proton2 Gate Histos:
+  TH1D *Q_Value_proton2;
+  // FB Stuff
+  TH1D *Q_Value_FBNot_proton2;
+  TH1D *Q_Value_Theta8_20_FBNot_proton2;
+  TH1D *Q_Value_Theta8_19_FBNot_proton2;
+  TH1D *Q_Value_Theta8_18_FBNot_proton2;
+  TH1D *Q_Value_Theta8_17_FBNot_proton2;
+  TH1D *Q_Value_Theta8_16_FBNot_proton2;
+  TH1D *Q_Value_Theta8_15_FBNot_proton2;
+
+  TH1D *Q_Value_FB_Plus1Not_proton2;
+  TH1D *Q_Value_Theta8_20_FB_Plus1Not_proton2;
+  TH1D *Q_Value_Theta8_19_FB_Plus1Not_proton2;
+  TH1D *Q_Value_Theta8_18_FB_Plus1Not_proton2;
+  TH1D *Q_Value_Theta8_17_FB_Plus1Not_proton2;
+  TH1D *Q_Value_Theta8_16_FB_Plus1Not_proton2;
+  TH1D *Q_Value_Theta8_15_FB_Plus1Not_proton2;
+
+  TH1D *Q_Value_FB_and_FBPlus1_Not_proton2;
+  TH1D *Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton2;
+  TH1D *Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton2;
+  TH1D *Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton2;
+  TH1D *Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton2;
+  TH1D *Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton2;
+  TH1D *Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton2;
+  // Theta Scan
+  TH1D *Q_Value_ThetaFull_proton2;
+  TH1D *Q_Value_Theta8_20_proton2;
+  TH1D *Q_Value_Theta8_19_proton2;
+  TH1D *Q_Value_Theta8_18_proton2;
+  TH1D *Q_Value_Theta8_17_proton2;
+  TH1D *Q_Value_Theta8_16_proton2;
+  TH1D *Q_Value_Theta8_15_proton2;
+  //Q v Parameters
+  TH2D *Q_v_Phi_proton2;	
+  TH2D *Q_v_cosTheta_proton2;
+  TH2D *Q_v_EcosTheta_proton2;
+  TH2D *Q_v_Theta_proton2;		       
+  TH2D *Q_v_E_proton2;			       
+  TH2D *Q_v_RelAngle_proton2;
+
+  //------------------------
+  // HeavyIon 1 Gate Histos:
+  TH1D *Q_Value_hi1;
+  // FB Stuff
+  TH1D *Q_Value_FBNot_hi1;
+  TH1D *Q_Value_Theta8_20_FBNot_hi1;
+  TH1D *Q_Value_Theta8_19_FBNot_hi1;
+  TH1D *Q_Value_Theta8_18_FBNot_hi1;
+  TH1D *Q_Value_Theta8_17_FBNot_hi1;
+  TH1D *Q_Value_Theta8_16_FBNot_hi1;
+  TH1D *Q_Value_Theta8_15_FBNot_hi1;
+
+  TH1D *Q_Value_FB_Plus1Not_hi1;
+  TH1D *Q_Value_Theta8_20_FB_Plus1Not_hi1;
+  TH1D *Q_Value_Theta8_19_FB_Plus1Not_hi1;
+  TH1D *Q_Value_Theta8_18_FB_Plus1Not_hi1;
+  TH1D *Q_Value_Theta8_17_FB_Plus1Not_hi1;
+  TH1D *Q_Value_Theta8_16_FB_Plus1Not_hi1;
+  TH1D *Q_Value_Theta8_15_FB_Plus1Not_hi1;
+
+  TH1D *Q_Value_FB_and_FBPlus1_Not_hi1;
+  TH1D *Q_Value_Theta8_20_FB_and_FBPlus1_Not_hi1;
+  TH1D *Q_Value_Theta8_19_FB_and_FBPlus1_Not_hi1;
+  TH1D *Q_Value_Theta8_18_FB_and_FBPlus1_Not_hi1;
+  TH1D *Q_Value_Theta8_17_FB_and_FBPlus1_Not_hi1;
+  TH1D *Q_Value_Theta8_16_FB_and_FBPlus1_Not_hi1;
+  TH1D *Q_Value_Theta8_15_FB_and_FBPlus1_Not_hi1;
+  // Theta Scan
+  TH1D *Q_Value_ThetaFull_hi1;
+  TH1D *Q_Value_Theta8_20_hi1;
+  TH1D *Q_Value_Theta8_19_hi1;
+  TH1D *Q_Value_Theta8_18_hi1;
+  TH1D *Q_Value_Theta8_17_hi1;
+  TH1D *Q_Value_Theta8_16_hi1;
+  TH1D *Q_Value_Theta8_15_hi1;
+  //Q v Parameters
+  TH2D *Q_v_Phi_hi1;	
+  TH2D *Q_v_cosTheta_hi1;
+  TH2D *Q_v_EcosTheta_hi1;
+  TH2D *Q_v_Theta_hi1;		       
+  TH2D *Q_v_E_hi1;			       
+  TH2D *Q_v_RelAngle_hi1;	
+
+  //------------------
+  // RF 1 Gate Histos:
+  TH1D *Q_Value_RF1;
+  // FB Stuff
+  TH1D *Q_Value_FBNot_RF1;
+  TH1D *Q_Value_Theta8_20_FBNot_RF1;
+  TH1D *Q_Value_Theta8_19_FBNot_RF1;
+  TH1D *Q_Value_Theta8_18_FBNot_RF1;
+  TH1D *Q_Value_Theta8_17_FBNot_RF1;
+  TH1D *Q_Value_Theta8_16_FBNot_RF1;
+  TH1D *Q_Value_Theta8_15_FBNot_RF1;
+
+  TH1D *Q_Value_FB_Plus1Not_RF1;
+  TH1D *Q_Value_Theta8_20_FB_Plus1Not_RF1;
+  TH1D *Q_Value_Theta8_19_FB_Plus1Not_RF1;
+  TH1D *Q_Value_Theta8_18_FB_Plus1Not_RF1;
+  TH1D *Q_Value_Theta8_17_FB_Plus1Not_RF1;
+  TH1D *Q_Value_Theta8_16_FB_Plus1Not_RF1;
+  TH1D *Q_Value_Theta8_15_FB_Plus1Not_RF1;
+
+  TH1D *Q_Value_FB_and_FBPlus1_Not_RF1;
+  TH1D *Q_Value_Theta8_20_FB_and_FBPlus1_Not_RF1;
+  TH1D *Q_Value_Theta8_19_FB_and_FBPlus1_Not_RF1;
+  TH1D *Q_Value_Theta8_18_FB_and_FBPlus1_Not_RF1;
+  TH1D *Q_Value_Theta8_17_FB_and_FBPlus1_Not_RF1;
+  TH1D *Q_Value_Theta8_16_FB_and_FBPlus1_Not_RF1;
+  TH1D *Q_Value_Theta8_15_FB_and_FBPlus1_Not_RF1;
+  // Theta Scan
+  TH1D *Q_Value_ThetaFull_RF1;
+  TH1D *Q_Value_Theta8_20_RF1;
+  TH1D *Q_Value_Theta8_19_RF1;
+  TH1D *Q_Value_Theta8_18_RF1;
+  TH1D *Q_Value_Theta8_17_RF1;
+  TH1D *Q_Value_Theta8_16_RF1;
+  TH1D *Q_Value_Theta8_15_RF1;
+  //Q v Parameters
+  TH2D *Q_v_Phi_RF1;	
+  TH2D *Q_v_cosTheta_RF1;
+  TH2D *Q_v_EcosTheta_RF1;
+  TH2D *Q_v_Theta_RF1;		       
+  TH2D *Q_v_E_RF1;			       
+  TH2D *Q_v_RelAngle_RF1;
+
+
+  //------------------------------
+  // proton1 and HI 1 Gate Histos:
+  TH1D *Q_Value_proton_hi1;
+  
+  TH2D *Q_Value_vs_ICEnergy;
+  TH2D *Q_Value_vs_ICEnergyCal;
+  TH2D *Q_Value_vs_ICEnergyCal_plus_pEnergy;
+  
+  // FB Stuff
+  TH1D *Q_Value_FBNot_proton_hi1;
+  TH1D *Q_Value_Theta8_20_FBNot_proton_hi1;
+  TH1D *Q_Value_Theta8_19_FBNot_proton_hi1;
+  TH1D *Q_Value_Theta8_18_FBNot_proton_hi1;
+  TH1D *Q_Value_Theta8_17_FBNot_proton_hi1;
+  TH1D *Q_Value_Theta8_16_FBNot_proton_hi1;
+  TH1D *Q_Value_Theta8_15_FBNot_proton_hi1;
+
+  TH1D *Q_Value_FB_Plus1Not_proton_hi1;
+  TH1D *Q_Value_Theta8_20_FB_Plus1Not_proton_hi1;
+  TH1D *Q_Value_Theta8_19_FB_Plus1Not_proton_hi1;
+  TH1D *Q_Value_Theta8_18_FB_Plus1Not_proton_hi1;
+  TH1D *Q_Value_Theta8_17_FB_Plus1Not_proton_hi1;
+  TH1D *Q_Value_Theta8_16_FB_Plus1Not_proton_hi1;
+  TH1D *Q_Value_Theta8_15_FB_Plus1Not_proton_hi1;
+
+  TH1D *Q_Value_FB_and_FBPlus1_Not_proton_hi1;
+  TH1D *Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton_hi1;
+  TH1D *Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton_hi1;
+  TH1D *Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton_hi1;
+  TH1D *Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton_hi1;
+  TH1D *Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton_hi1;
+  TH1D *Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton_hi1;
+  // Theta Scan
+  TH1D *Q_Value_ThetaFull_proton_hi1;
+  TH1D *Q_Value_Theta8_20_proton_hi1;
+  TH1D *Q_Value_Theta8_19_proton_hi1;
+  TH1D *Q_Value_Theta8_18_proton_hi1;
+  TH1D *Q_Value_Theta8_17_proton_hi1;
+  TH1D *Q_Value_Theta8_16_proton_hi1;
+  TH1D *Q_Value_Theta8_15_proton_hi1;
+  //Q v Parameters
+  TH2D *Q_v_Phi_proton_hi1;	
+  TH2D *Q_v_cosTheta_proton_hi1;
+  TH2D *Q_v_EcosTheta_proton_hi1;
+  TH2D *Q_v_Theta_proton_hi1;		       
+  TH2D *Q_v_E_proton_hi1;			       
+  TH2D *Q_v_RelAngle_proton_hi1;
+
+  //------------------------------
+  // proton1 and RF1 Gate Histos:
+  TH1D *Q_Value_proton_RF1;
+  // FB Stuff
+  TH1D *Q_Value_FBNot_proton_RF1;
+  TH1D *Q_Value_Theta8_20_FBNot_proton_RF1;
+  TH1D *Q_Value_Theta8_19_FBNot_proton_RF1;
+  TH1D *Q_Value_Theta8_18_FBNot_proton_RF1;
+  TH1D *Q_Value_Theta8_17_FBNot_proton_RF1;
+  TH1D *Q_Value_Theta8_16_FBNot_proton_RF1;
+  TH1D *Q_Value_Theta8_15_FBNot_proton_RF1;
+
+  TH1D *Q_Value_FB_Plus1Not_proton_RF1;
+  TH1D *Q_Value_Theta8_20_FB_Plus1Not_proton_RF1;
+  TH1D *Q_Value_Theta8_19_FB_Plus1Not_proton_RF1;
+  TH1D *Q_Value_Theta8_18_FB_Plus1Not_proton_RF1;
+  TH1D *Q_Value_Theta8_17_FB_Plus1Not_proton_RF1;
+  TH1D *Q_Value_Theta8_16_FB_Plus1Not_proton_RF1;
+  TH1D *Q_Value_Theta8_15_FB_Plus1Not_proton_RF1;
+
+  TH1D *Q_Value_FB_and_FBPlus1_Not_proton_RF1;
+  TH1D *Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton_RF1;
+  TH1D *Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton_RF1;
+  TH1D *Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton_RF1;
+  TH1D *Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton_RF1;
+  TH1D *Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton_RF1;
+  TH1D *Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton_RF1;
+  // Theta Scan
+  TH1D *Q_Value_ThetaFull_proton_RF1;
+  TH1D *Q_Value_Theta8_20_proton_RF1;
+  TH1D *Q_Value_Theta8_19_proton_RF1;
+  TH1D *Q_Value_Theta8_18_proton_RF1;
+  TH1D *Q_Value_Theta8_17_proton_RF1;
+  TH1D *Q_Value_Theta8_16_proton_RF1;
+  TH1D *Q_Value_Theta8_15_proton_RF1;
+  //Q v Parameters
+  TH2D *Q_v_Phi_proton_RF1;	
+  TH2D *Q_v_cosTheta_proton_RF1;
+  TH2D *Q_v_EcosTheta_proton_RF1;
+  TH2D *Q_v_Theta_proton_RF1;		       
+  TH2D *Q_v_E_proton_RF1;			       
+  TH2D *Q_v_RelAngle_proton_RF1;
+
+  //------------------------------
+  // proton2 and HI 1 Gate Histos:
+  TH1D *Q_Value_proton2_hi1;
+  // FB Stuff
+  TH1D *Q_Value_FBNot_proton2_hi1;
+  TH1D *Q_Value_Theta8_20_FBNot_proton2_hi1;
+  TH1D *Q_Value_Theta8_19_FBNot_proton2_hi1;
+  TH1D *Q_Value_Theta8_18_FBNot_proton2_hi1;
+  TH1D *Q_Value_Theta8_17_FBNot_proton2_hi1;
+  TH1D *Q_Value_Theta8_16_FBNot_proton2_hi1;
+  TH1D *Q_Value_Theta8_15_FBNot_proton2_hi1;
+
+  TH1D *Q_Value_FB_Plus1Not_proton2_hi1;
+  TH1D *Q_Value_Theta8_20_FB_Plus1Not_proton2_hi1;
+  TH1D *Q_Value_Theta8_19_FB_Plus1Not_proton2_hi1;
+  TH1D *Q_Value_Theta8_18_FB_Plus1Not_proton2_hi1;
+  TH1D *Q_Value_Theta8_17_FB_Plus1Not_proton2_hi1;
+  TH1D *Q_Value_Theta8_16_FB_Plus1Not_proton2_hi1;
+  TH1D *Q_Value_Theta8_15_FB_Plus1Not_proton2_hi1;
+
+  TH1D *Q_Value_FB_and_FBPlus1_Not_proton2_hi1;
+  TH1D *Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton2_hi1;
+  TH1D *Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton2_hi1;
+  TH1D *Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton2_hi1;
+  TH1D *Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton2_hi1;
+  TH1D *Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton2_hi1;
+  TH1D *Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton2_hi1;
+  // Theta Scan
+  TH1D *Q_Value_ThetaFull_proton2_hi1;
+  TH1D *Q_Value_Theta8_20_proton2_hi1;
+  TH1D *Q_Value_Theta8_19_proton2_hi1;
+  TH1D *Q_Value_Theta8_18_proton2_hi1;
+  TH1D *Q_Value_Theta8_17_proton2_hi1;
+  TH1D *Q_Value_Theta8_16_proton2_hi1;
+  TH1D *Q_Value_Theta8_15_proton2_hi1;
+  //Q v Parameters
+  TH2D *Q_v_Phi_proton2_hi1;	
+  TH2D *Q_v_cosTheta_proton2_hi1;
+  TH2D *Q_v_EcosTheta_proton2_hi1;
+  TH2D *Q_v_Theta_proton2_hi1;		       
+  TH2D *Q_v_E_proton2_hi1;			       
+  TH2D *Q_v_RelAngle_proton2_hi1;
+
+
+  //------------------------------
+  // proton2 and RF1 Gate Histos:
+  TH1D *Q_Value_proton2_RF1;
+  // FB Stuff
+  TH1D *Q_Value_FBNot_proton2_RF1;
+  TH1D *Q_Value_Theta8_20_FBNot_proton2_RF1;
+  TH1D *Q_Value_Theta8_19_FBNot_proton2_RF1;
+  TH1D *Q_Value_Theta8_18_FBNot_proton2_RF1;
+  TH1D *Q_Value_Theta8_17_FBNot_proton2_RF1;
+  TH1D *Q_Value_Theta8_16_FBNot_proton2_RF1;
+  TH1D *Q_Value_Theta8_15_FBNot_proton2_RF1;
+
+  TH1D *Q_Value_FB_Plus1Not_proton2_RF1;
+  TH1D *Q_Value_Theta8_20_FB_Plus1Not_proton2_RF1;
+  TH1D *Q_Value_Theta8_19_FB_Plus1Not_proton2_RF1;
+  TH1D *Q_Value_Theta8_18_FB_Plus1Not_proton2_RF1;
+  TH1D *Q_Value_Theta8_17_FB_Plus1Not_proton2_RF1;
+  TH1D *Q_Value_Theta8_16_FB_Plus1Not_proton2_RF1;
+  TH1D *Q_Value_Theta8_15_FB_Plus1Not_proton2_RF1;
+
+  TH1D *Q_Value_FB_and_FBPlus1_Not_proton2_RF1;
+  TH1D *Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton2_RF1;
+  TH1D *Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton2_RF1;
+  TH1D *Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton2_RF1;
+  TH1D *Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton2_RF1;
+  TH1D *Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton2_RF1;
+  TH1D *Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton2_RF1;
+  // Theta Scan
+  TH1D *Q_Value_ThetaFull_proton2_RF1;
+  TH1D *Q_Value_Theta8_20_proton2_RF1;
+  TH1D *Q_Value_Theta8_19_proton2_RF1;
+  TH1D *Q_Value_Theta8_18_proton2_RF1;
+  TH1D *Q_Value_Theta8_17_proton2_RF1;
+  TH1D *Q_Value_Theta8_16_proton2_RF1;
+  TH1D *Q_Value_Theta8_15_proton2_RF1;
+  //Q v Parameters
+  TH2D *Q_v_Phi_proton2_RF1;	
+  TH2D *Q_v_cosTheta_proton2_RF1;
+  TH2D *Q_v_EcosTheta_proton2_RF1;
+  TH2D *Q_v_Theta_proton2_RF1;		       
+  TH2D *Q_v_E_proton2_RF1;			       
+  TH2D *Q_v_RelAngle_proton2_RF1;
+
+
+  //------------------------------
+  // RF and HI 1 Gate Histos:
+  TH1D *Q_Value_RF1_hi1;
+  // FB Stuff
+  TH1D *Q_Value_FBNot_RF1_hi1;
+  TH1D *Q_Value_Theta8_20_FBNot_RF1_hi1;
+  TH1D *Q_Value_Theta8_19_FBNot_RF1_hi1;
+  TH1D *Q_Value_Theta8_18_FBNot_RF1_hi1;
+  TH1D *Q_Value_Theta8_17_FBNot_RF1_hi1;
+  TH1D *Q_Value_Theta8_16_FBNot_RF1_hi1;
+  TH1D *Q_Value_Theta8_15_FBNot_RF1_hi1;
+
+  TH1D *Q_Value_FB_Plus1Not_RF1_hi1;
+  TH1D *Q_Value_Theta8_20_FB_Plus1Not_RF1_hi1;
+  TH1D *Q_Value_Theta8_19_FB_Plus1Not_RF1_hi1;
+  TH1D *Q_Value_Theta8_18_FB_Plus1Not_RF1_hi1;
+  TH1D *Q_Value_Theta8_17_FB_Plus1Not_RF1_hi1;
+  TH1D *Q_Value_Theta8_16_FB_Plus1Not_RF1_hi1;
+  TH1D *Q_Value_Theta8_15_FB_Plus1Not_RF1_hi1;
+
+  TH1D *Q_Value_FB_and_FBPlus1_Not_RF1_hi1;
+  TH1D *Q_Value_Theta8_20_FB_and_FBPlus1_Not_RF1_hi1;
+  TH1D *Q_Value_Theta8_19_FB_and_FBPlus1_Not_RF1_hi1;
+  TH1D *Q_Value_Theta8_18_FB_and_FBPlus1_Not_RF1_hi1;
+  TH1D *Q_Value_Theta8_17_FB_and_FBPlus1_Not_RF1_hi1;
+  TH1D *Q_Value_Theta8_16_FB_and_FBPlus1_Not_RF1_hi1;
+  TH1D *Q_Value_Theta8_15_FB_and_FBPlus1_Not_RF1_hi1;
+  // Theta Scan
+  TH1D *Q_Value_ThetaFull_RF1_hi1;
+  TH1D *Q_Value_Theta8_20_RF1_hi1;
+  TH1D *Q_Value_Theta8_19_RF1_hi1;
+  TH1D *Q_Value_Theta8_18_RF1_hi1;
+  TH1D *Q_Value_Theta8_17_RF1_hi1;
+  TH1D *Q_Value_Theta8_16_RF1_hi1;
+  TH1D *Q_Value_Theta8_15_RF1_hi1;
+  //Q v Parameters
+  TH2D *Q_v_Phi_RF1_hi1;	
+  TH2D *Q_v_cosTheta_RF1_hi1;
+  TH2D *Q_v_EcosTheta_RF1_hi1;
+  TH2D *Q_v_Theta_RF1_hi1;		       
+  TH2D *Q_v_E_RF1_hi1;			       
+  TH2D *Q_v_RelAngle_RF1_hi1;
+
+
+  //------------------------------
+  // Proton1 and RF and HI 1 Gate Histos:
+  TH1D *Q_Value_RF1_hi1_proton;
+  // FB Stuff
+  TH1D *Q_Value_FBNot_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_20_FBNot_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_19_FBNot_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_18_FBNot_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_17_FBNot_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_16_FBNot_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_15_FBNot_RF1_hi1_proton;
+
+  TH1D *Q_Value_FB_Plus1Not_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_20_FB_Plus1Not_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_19_FB_Plus1Not_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_18_FB_Plus1Not_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_17_FB_Plus1Not_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_16_FB_Plus1Not_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_15_FB_Plus1Not_RF1_hi1_proton;
+
+  TH1D *Q_Value_FB_and_FBPlus1_Not_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_20_FB_and_FBPlus1_Not_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_19_FB_and_FBPlus1_Not_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_18_FB_and_FBPlus1_Not_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_17_FB_and_FBPlus1_Not_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_16_FB_and_FBPlus1_Not_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_15_FB_and_FBPlus1_Not_RF1_hi1_proton;
+  // Theta Scan
+  TH1D *Q_Value_ThetaFull_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_20_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_19_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_18_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_17_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_16_RF1_hi1_proton;
+  TH1D *Q_Value_Theta8_15_RF1_hi1_proton;
+  //Q v Parameters
+  TH2D *Q_v_Phi_RF1_hi1_proton;	
+  TH2D *Q_v_cosTheta_RF1_hi1_proton;
+  TH2D *Q_v_EcosTheta_RF1_hi1_proton;
+  TH2D *Q_v_Theta_RF1_hi1_proton;		       
+  TH2D *Q_v_E_RF1_hi1_proton;			       
+  TH2D *Q_v_RelAngle_RF1_hi1_proton;
+
+
+  //------------------------------
+  // Proton2 and RF and HI 1 Gate Histos:
+  TH1D *Q_Value_RF1_hi1_proton2;
+  // FB Stuff
+  TH1D *Q_Value_FBNot_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_20_FBNot_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_19_FBNot_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_18_FBNot_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_17_FBNot_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_16_FBNot_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_15_FBNot_RF1_hi1_proton2;
+
+  TH1D *Q_Value_FB_Plus1Not_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_20_FB_Plus1Not_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_19_FB_Plus1Not_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_18_FB_Plus1Not_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_17_FB_Plus1Not_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_16_FB_Plus1Not_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_15_FB_Plus1Not_RF1_hi1_proton2;
+
+  TH1D *Q_Value_FB_and_FBPlus1_Not_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_20_FB_and_FBPlus1_Not_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_19_FB_and_FBPlus1_Not_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_18_FB_and_FBPlus1_Not_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_17_FB_and_FBPlus1_Not_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_16_FB_and_FBPlus1_Not_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_15_FB_and_FBPlus1_Not_RF1_hi1_proton2;
+  // Theta Scan
+  TH1D *Q_Value_ThetaFull_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_20_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_19_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_18_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_17_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_16_RF1_hi1_proton2;
+  TH1D *Q_Value_Theta8_15_RF1_hi1_proton2;
+  //Q v Parameters
+  TH2D *Q_v_Phi_RF1_hi1_proton2;	
+  TH2D *Q_v_cosTheta_RF1_hi1_proton2;
+  TH2D *Q_v_EcosTheta_RF1_hi1_proton2;
+  TH2D *Q_v_Theta_RF1_hi1_proton2;		       
+  TH2D *Q_v_E_RF1_hi1_proton2;			       
+  TH2D *Q_v_RelAngle_RF1_hi1_proton2;
+
+
+  // TIMING:
+  TH1D *Neut_RF_Time_Sum;
+  TH1D *Neut_Si_Time_SumA;
+  TH1D *Neut_Si_Time_SumB;
+  TH1D *Neut_Si_Time_AorB;
+  TH1D *Neut_PSD_All_Sum;
+  TH1D *Neut_RF_Time_Sum_QC1;
+  TH1D *Neut_Si_Time_SumA_QC1;
+  TH1D *Neut_Si_Time_SumB_QC1;
+  TH1D *Neut_PSD_All_Sum_QC1;
+  TH1D *Neut_RF_Time_Sum_QC2;
+  TH1D *Neut_Si_Time_SumA_QC2;
+  TH1D *Neut_Si_Time_SumB_QC2;
+  TH1D *Neut_PSD_All_Sum_QC2;
+  TH1D *Neut_RF_Time_Sum_QC3;
+  TH1D *Neut_Si_Time_SumA_QC3;
+  TH1D *Neut_Si_Time_SumB_QC3;
+  TH1D *Neut_PSD_All_Sum_QC3;
+  TH1D *Neut_RF_Time_Sum_QC4;
+  TH1D *Neut_Si_Time_SumA_QC4;
+  TH1D *Neut_Si_Time_SumB_QC4;
+  TH1D *Neut_PSD_All_Sum_QC4;
+
+  TH1D *QVal_N_RF_All;
+  TH1D *QVal_N_RF_95to105;
+  TH1D *QVal_N_RF_105to115;
+  TH1D *QVal_N_RF_115to130;
+  TH1D *QVal_N_RF_Rest;
+  
+  TH2D *NeutRF_vs_QVal;
+  TH2D *NeutSiAorB_vs_QVal;
+
+  /*
+  // From Before this massive histo expansion
+  TH1D *Q_Value_FBNot;
+  TH1D *Q_Value_Theta8_20_FBNot;
+  TH1D *Q_Value_Theta8_19_FBNot;
+  TH1D *Q_Value_Theta8_18_FBNot;
+  TH1D *Q_Value_Theta8_17_FBNot;
+  TH1D *Q_Value_Theta8_16_FBNot;
+  TH1D *Q_Value_Theta8_15_FBNot;
+
+  TH1D *Q_Value_FB_Plus1Not;
+  TH1D *Q_Value_Theta8_20_FB_Plus1Not;
+  TH1D *Q_Value_Theta8_19_FB_Plus1Not;
+  TH1D *Q_Value_Theta8_18_FB_Plus1Not;
+  TH1D *Q_Value_Theta8_17_FB_Plus1Not;
+  TH1D *Q_Value_Theta8_16_FB_Plus1Not;
+  TH1D *Q_Value_Theta8_15_FB_Plus1Not;
+
+  TH1D *Q_Value_FB_and_FBPlus1_Not;
+  TH1D *Q_Value_Theta8_20_FB_and_FBPlus1_Not;
+  TH1D *Q_Value_Theta8_19_FB_and_FBPlus1_Not;
+  TH1D *Q_Value_Theta8_18_FB_and_FBPlus1_Not;
+  TH1D *Q_Value_Theta8_17_FB_and_FBPlus1_Not;
+  TH1D *Q_Value_Theta8_16_FB_and_FBPlus1_Not;
+  TH1D *Q_Value_Theta8_15_FB_and_FBPlus1_Not;
+
+  TH1D *Q_Value_ThetaFull;
+  TH1D *Q_Value_Theta8_20;
+  TH1D *Q_Value_Theta8_19;
+  TH1D *Q_Value_Theta8_18;
+  TH1D *Q_Value_Theta8_17;
+  TH1D *Q_Value_Theta8_16;
+  TH1D *Q_Value_Theta8_15;
+  TH1D *Q_Val_RF2;
+  TH1D *Q_Val_RF3;
+
+  */   
+  //TH1D *Q_Value_hi2;
+  //TH1D *Q_Value_proton_hi2;
+  //TH1D *Q_Value_proton2_hi2;
+  //TH1D *Q_Value_rf_hi2;
+  //TH1D *Q_Value_proton_hi2_rf;
+  //TH1D *Q_Value_proton2_hi2_rf;
+
+  //Q v Parameters
+  /*TH2D *Q_v_Phi;	
   TH2D *Q_v_cosTheta;
   TH2D *Q_v_EcosTheta;
   TH2D *Q_v_pTheta;		       
@@ -38,12 +642,19 @@ namespace physical{
   TH2D *Q_v_pTheta_proton_hi1;	       
   TH2D *Q_v_pE_proton_hi1;	       
   TH2D *Q_v_pRelAngle_proton_hi1;       
-	       				       	       
+  */   
+  /*TH2D *Q_v_pTheta_proton_hi1;	       
+  TH2D *Q_v_pE_proton_hi1;	       
+  TH2D *Q_v_pRelAngle_proton_hi1;     
+  */ 				       	       
   Double32_t q_val_p;
   Double32_t q_val_n;
 
 
-  Q_ValueAnalyzer::Q_ValueAnalyzer():fSiAngle(0)
+  Q_ValueAnalyzer::Q_ValueAnalyzer():fSiAngle(0),
+				     QValIterations(0),
+				     UseInvMass(0),
+				     Q0(0)
   {
   
   }
@@ -65,33 +676,790 @@ namespace physical{
     if(!gReactionInfo.E_Fragment())
       std::cout<<"Heavy Ion energy ansatz for Q value reconstruction needed"<<std::endl;
 
-    //create directory structure
+    //===========================
+    //create directory structure:
     fgRootFile->mkdir("physical");
     fgRootFile->cd("physical");
-    gDirectory->mkdir("Q");
+    gDirectory->mkdir("NoGates");
+    gDirectory->mkdir("Proton1Gates");
+    gDirectory->mkdir("Proton2Gates");
+    gDirectory->mkdir("HIGates");
+    gDirectory->mkdir("RFGates");
+    gDirectory->mkdir("P1+HI_Gates");
+    gDirectory->mkdir("P1+RF_Gates");
+    gDirectory->mkdir("P2+HI_Gates");
+    gDirectory->mkdir("P2+RF_Gates");
+    gDirectory->mkdir("HI+RF_Gates");
+    gDirectory->mkdir("P1+HI+RF_Gates");
+    gDirectory->mkdir("P2+HI+RF_Gates");
+    
+    fgRootFile->cd("physical/NoGates");
     gDirectory->mkdir("QvParameters");
+    gDirectory->mkdir("Q_DecreasingAngularCoverage");
+    gDirectory->mkdir("Q_FrontBackStuff"); 
+
+    fgRootFile->cd("physical/Proton1Gates");
+    gDirectory->mkdir("QvParameters");
+    gDirectory->mkdir("Q_DecreasingAngularCoverage");
+    gDirectory->mkdir("Q_FrontBackStuff");
+
+    fgRootFile->cd("physical/Proton2Gates");
+    gDirectory->mkdir("QvParameters");
+    gDirectory->mkdir("Q_DecreasingAngularCoverage");
+    gDirectory->mkdir("Q_FrontBackStuff");
+
+    fgRootFile->cd("physical/HIGates");
+    gDirectory->mkdir("QvParameters");
+    gDirectory->mkdir("Q_DecreasingAngularCoverage");
+    gDirectory->mkdir("Q_FrontBackStuff");
+
+    fgRootFile->cd("physical/RFGates");
+    gDirectory->mkdir("QvParameters");
+    gDirectory->mkdir("Q_DecreasingAngularCoverage");
+    gDirectory->mkdir("Q_FrontBackStuff");
+
+    fgRootFile->cd("physical/P1+HI_Gates");
+    gDirectory->mkdir("Timing");
+    gDirectory->mkdir("QvParameters");
+    gDirectory->mkdir("Q_DecreasingAngularCoverage");
+    gDirectory->mkdir("Q_FrontBackStuff");
+    gDirectory->cd("Timing");
+    gDirectory->mkdir("QVal_GatedOnNeutTime");
+
+    fgRootFile->cd("physical/P1+RF_Gates");
+    gDirectory->mkdir("QvParameters");
+    gDirectory->mkdir("Q_DecreasingAngularCoverage");
+    gDirectory->mkdir("Q_FrontBackStuff");
+
+    fgRootFile->cd("physical/P2+HI_Gates");
+    gDirectory->mkdir("QvParameters");
+    gDirectory->mkdir("Q_DecreasingAngularCoverage");
+    gDirectory->mkdir("Q_FrontBackStuff");
+
+    fgRootFile->cd("physical/P2+RF_Gates");
+    gDirectory->mkdir("QvParameters");
+    gDirectory->mkdir("Q_DecreasingAngularCoverage");
+    gDirectory->mkdir("Q_FrontBackStuff");
+
+    fgRootFile->cd("physical/HI+RF_Gates");
+    gDirectory->mkdir("QvParameters");
+    gDirectory->mkdir("Q_DecreasingAngularCoverage");
+    gDirectory->mkdir("Q_FrontBackStuff");
+
+    fgRootFile->cd("physical/P1+HI+RF_Gates");
+    gDirectory->mkdir("QvParameters");
+    gDirectory->mkdir("Q_DecreasingAngularCoverage");
+    gDirectory->mkdir("Q_FrontBackStuff");
+
+    fgRootFile->cd("physical/P2+HI+RF_Gates");
+    gDirectory->mkdir("QvParameters");
+    gDirectory->mkdir("Q_DecreasingAngularCoverage");
+    gDirectory->mkdir("Q_FrontBackStuff");
+     
+    // end create directory structure:
+    //=================================
+
+
+    //===================
+    // Create Histograms:
+
+    //--------
+    // Timing:
+   
+     
+
+
+    //----------
+    // No Gates:
+    fgRootFile->cd("physical/NoGates");
+    Q_Value=new TH1D("Q_val","Q Value;Q_value",275,-1,10);
+
+    fgRootFile->cd("physical/NoGates/QvParameters");
+    Q_v_Phi=new TH2D("Q_v_Phi","Q_v_Phi;Q;Phi",275,-1,10,180,-180,180);
+    Q_v_cosTheta=new TH2D("Q_v_cosTheta","Q_v_cosTheta;Q;cosTheta",275,-1,10,256,0.5,1);
+    Q_v_EcosTheta=new TH2D("Q_v_EcosTheta","Q_v_EcosTheta;Q;EcosTheta",275,-1,10,512,0,20);
+    Q_v_Theta=new TH2D("Q_v_Theta","Q_v_Theta;Q;Theta",275,-1,10,180,0,179);
+    Q_v_E=new TH2D("Q_v_E","Q_v_E;Q;E",275,-1,10,512,0,32);
+    Q_v_RelAngle=new TH2D("Q_v_RelAngle","Q_v_RelAngle;Q;RelAngle",275,-1,10,180,0,179);
+    
+    fgRootFile->cd("physical/NoGates/Q_DecreasingAngularCoverage");
+    Q_Value_ThetaFull = new TH1D("Q_Value_ThetaFull","Q Value All Angles",275,-1,10);
+    Q_Value_Theta8_20 = new TH1D("Q_Value_Theta8_20","Q Value Angles 8-20",275,-1,10);
+    Q_Value_Theta8_19 = new TH1D("Q_Value_Theta8_19","Q Value Angles 8-19",275,-1,10);
+    Q_Value_Theta8_18 = new TH1D("Q_Value_Theta8_18","Q Value Angles 8-18",275,-1,10);
+    Q_Value_Theta8_17 = new TH1D("Q_Value_Theta8_17","Q Value Angles 8-17",275,-1,10);
+    Q_Value_Theta8_16 = new TH1D("Q_Value_Theta8_16","Q Value Angles 8-16",275,-1,10);
+    Q_Value_Theta8_15 = new TH1D("Q_Value_Theta8_15","Q Value Angles 8-15",275,-1,10);
+
+    fgRootFile->cd("physical/NoGates/Q_FrontBackStuff");
+    Q_Value_FBNot = new TH1D("Q_Value_FBNot","Q Value Without Back=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FBNot = new TH1D("Q_Value_Theta8_20_FBNot","Q Val Without Back=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FBNot = new TH1D("Q_Value_Theta8_19_FBNot","Q Val Without Back=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FBNot = new TH1D("Q_Value_Theta8_18_FBNot","Q Val Without Back=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FBNot = new TH1D("Q_Value_Theta8_17_FBNot","Q Val Without Back=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FBNot = new TH1D("Q_Value_Theta8_16_FBNot","Q Val Without Back=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FBNot = new TH1D("Q_Value_Theta8_15_FBNot","Q Val Without Back=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_Plus1Not = new TH1D("Q_Value_FB_Plus1Not","Q Value Without Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_Plus1Not = new TH1D("Q_Value_Theta8_20_FB_Plus1Not","Q Val Without Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_Plus1Not = new TH1D("Q_Value_Theta8_19_FB_Plus1Not","Q Val Without Back+1=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_Plus1Not = new TH1D("Q_Value_Theta8_18_FB_Plus1Not","Q Val Without Back+1=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_Plus1Not = new TH1D("Q_Value_Theta8_17_FB_Plus1Not","Q Val Without Back+1=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_Plus1Not = new TH1D("Q_Value_Theta8_16_FB_Plus1Not","Q Val Without Back+1=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_Plus1Not = new TH1D("Q_Value_Theta8_15_FB_Plus1Not","Q Val Without Back+1=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_and_FBPlus1_Not = new TH1D("Q_Value_FB_and_FBPlus1_Not","Q Value Without Back=Front or Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_and_FBPlus1_Not = new TH1D("Q_Value_Theta8_20_FB_and_FBPlus1_Not","Q Val Without Back=Front and Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_and_FBPlus1_Not = new TH1D("Q_Value_Theta8_19_FB_and_FBPlus1_Not","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_and_FBPlus1_Not = new TH1D("Q_Value_Theta8_18_FB_and_FBPlus1_Not","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_and_FBPlus1_Not = new TH1D("Q_Value_Theta8_17_FB_and_FBPlus1_Not","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_and_FBPlus1_Not = new TH1D("Q_Value_Theta8_16_FB_and_FBPlus1_Not","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_and_FBPlus1_Not = new TH1D("Q_Value_Theta8_15_FB_and_FBPlus1_Not","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-15",275,-1,10);
+
+
+    //---------------
+    // Proton1 Gates:
+    fgRootFile->cd("physical/Proton1Gates");
+    Q_Value_proton=new TH1D("Q_val_proton","Q Value;Q_value",275,-1,10);
+
+    fgRootFile->cd("physical/Proton1Gates/QvParameters");
+    Q_v_Phi_proton=new TH2D("Q_v_Phi_proton","Q_v_Phi;Q;Phi",275,-1,10,180,-180,180);
+    Q_v_cosTheta_proton=new TH2D("Q_v_cosTheta_proton","Q_v_cosTheta;Q;cosTheta",275,-1,10,256,0.5,1);
+    Q_v_EcosTheta_proton=new TH2D("Q_v_EcosTheta_proton","Q_v_EcosTheta;Q;EcosTheta",275,-1,10,512,0,20);
+    Q_v_Theta_proton=new TH2D("Q_v_Theta_proton","Q_v_Theta;Q;Theta",275,-1,10,180,0,179);
+    Q_v_E_proton=new TH2D("Q_v_E_proton","Q_v_E;Q;E",275,-1,10,512,0,32);
+    Q_v_RelAngle_proton=new TH2D("Q_v_RelAngle_proton","Q_v_RelAngle;Q;RelAngle",275,-1,10,180,0,179);
+    
+    fgRootFile->cd("physical/Proton1Gates/Q_DecreasingAngularCoverage");
+    Q_Value_ThetaFull_proton = new TH1D("Q_Value_ThetaFull_proton","Q Value All Angles",275,-1,10);
+    Q_Value_Theta8_20_proton = new TH1D("Q_Value_Theta8_20_proton","Q Value Angles 8-20",275,-1,10);
+    Q_Value_Theta8_19_proton = new TH1D("Q_Value_Theta8_19_proton","Q Value Angles 8-19",275,-1,10);
+    Q_Value_Theta8_18_proton = new TH1D("Q_Value_Theta8_18_proton","Q Value Angles 8-18",275,-1,10);
+    Q_Value_Theta8_17_proton = new TH1D("Q_Value_Theta8_17_proton","Q Value Angles 8-17",275,-1,10);
+    Q_Value_Theta8_16_proton = new TH1D("Q_Value_Theta8_16_proton","Q Value Angles 8-16",275,-1,10);
+    Q_Value_Theta8_15_proton = new TH1D("Q_Value_Theta8_15_proton","Q Value Angles 8-15",275,-1,10);
+
+    fgRootFile->cd("physical/Proton1Gates/Q_FrontBackStuff");
+    Q_Value_FBNot_proton = new TH1D("Q_Value_FBNot_proton","Q Value Without Back=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FBNot_proton = new TH1D("Q_Value_Theta8_20_FBNot_proton","Q Val Without Back=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FBNot_proton = new TH1D("Q_Value_Theta8_19_FBNot_proton","Q Val Without Back=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FBNot_proton = new TH1D("Q_Value_Theta8_18_FBNot_proton","Q Val Without Back=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FBNot_proton = new TH1D("Q_Value_Theta8_17_FBNot_proton","Q Val Without Back=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FBNot_proton = new TH1D("Q_Value_Theta8_16_FBNot_proton","Q Val Without Back=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FBNot_proton = new TH1D("Q_Value_Theta8_15_FBNot_proton","Q Val Without Back=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_Plus1Not_proton = new TH1D("Q_Value_FB_Plus1Not_proton","Q Value Without Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_Plus1Not_proton = new TH1D("Q_Value_Theta8_20_FB_Plus1Not_proton","Q Val Without Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_Plus1Not_proton = new TH1D("Q_Value_Theta8_19_FB_Plus1Not_proton","Q Val Without Back+1=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_Plus1Not_proton = new TH1D("Q_Value_Theta8_18_FB_Plus1Not_proton","Q Val Without Back+1=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_Plus1Not_proton = new TH1D("Q_Value_Theta8_17_FB_Plus1Not_proton","Q Val Without Back+1=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_Plus1Not_proton = new TH1D("Q_Value_Theta8_16_FB_Plus1Not_proton","Q Val Without Back+1=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_Plus1Not_proton = new TH1D("Q_Value_Theta8_15_FB_Plus1Not_proton","Q Val Without Back+1=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_and_FBPlus1_Not_proton = new TH1D("Q_Value_FB_and_FBPlus1_Not_proton","Q Value Without Back=Front or Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton = new TH1D("Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton","Q Val Without Back=Front and Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton = new TH1D("Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton = new TH1D("Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton = new TH1D("Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton = new TH1D("Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton = new TH1D("Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-15",275,-1,10);
+
+
+
+    //---------------
+    // Proton2 Gates:
+    fgRootFile->cd("physical/Proton2Gates");
+    Q_Value_proton2=new TH1D("Q_val_proton2","Q Value;Q_value",275,-1,10);
+
+    fgRootFile->cd("physical/Proton2Gates/QvParameters");
+    Q_v_Phi_proton2=new TH2D("Q_v_Phi_proton2","Q_v_Phi;Q;Phi",275,-1,10,180,-180,180);
+    Q_v_cosTheta_proton2=new TH2D("Q_v_cosTheta_proton2","Q_v_cosTheta;Q;cosTheta",275,-1,10,256,0.5,1);
+    Q_v_EcosTheta_proton2=new TH2D("Q_v_EcosTheta_proton2","Q_v_EcosTheta;Q;EcosTheta",275,-1,10,512,0,20);
+    Q_v_Theta_proton2=new TH2D("Q_v_Theta_proton2","Q_v_Theta;Q;Theta",275,-1,10,180,0,179);
+    Q_v_E_proton2=new TH2D("Q_v_E_proton2","Q_v_E;Q;E",275,-1,10,512,0,32);
+    Q_v_RelAngle_proton2=new TH2D("Q_v_RelAngle_proton2","Q_v_RelAngle;Q;RelAngle",275,-1,10,180,0,179);
+    
+    fgRootFile->cd("physical/Proton2Gates/Q_DecreasingAngularCoverage");
+    Q_Value_ThetaFull_proton2 = new TH1D("Q_Value_ThetaFull_proton2","Q Value All Angles",275,-1,10);
+    Q_Value_Theta8_20_proton2 = new TH1D("Q_Value_Theta8_20_proton2","Q Value Angles 8-20",275,-1,10);
+    Q_Value_Theta8_19_proton2 = new TH1D("Q_Value_Theta8_19_proton2","Q Value Angles 8-19",275,-1,10);
+    Q_Value_Theta8_18_proton2 = new TH1D("Q_Value_Theta8_18_proton2","Q Value Angles 8-18",275,-1,10);
+    Q_Value_Theta8_17_proton2 = new TH1D("Q_Value_Theta8_17_proton2","Q Value Angles 8-17",275,-1,10);
+    Q_Value_Theta8_16_proton2 = new TH1D("Q_Value_Theta8_16_proton2","Q Value Angles 8-16",275,-1,10);
+    Q_Value_Theta8_15_proton2 = new TH1D("Q_Value_Theta8_15_proton2","Q Value Angles 8-15",275,-1,10);
+
+    fgRootFile->cd("physical/Proton2Gates/Q_FrontBackStuff");
+    Q_Value_FBNot_proton2 = new TH1D("Q_Value_FBNot_proton2","Q Value Without Back=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FBNot_proton2 = new TH1D("Q_Value_Theta8_20_FBNot_proton2","Q Val Without Back=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FBNot_proton2 = new TH1D("Q_Value_Theta8_19_FBNot_proton2","Q Val Without Back=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FBNot_proton2 = new TH1D("Q_Value_Theta8_18_FBNot_proton2","Q Val Without Back=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FBNot_proton2 = new TH1D("Q_Value_Theta8_17_FBNot_proton2","Q Val Without Back=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FBNot_proton2 = new TH1D("Q_Value_Theta8_16_FBNot_proton2","Q Val Without Back=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FBNot_proton2 = new TH1D("Q_Value_Theta8_15_FBNot_proton2","Q Val Without Back=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_Plus1Not_proton2 = new TH1D("Q_Value_FB_Plus1Not_proton2","Q Value Without Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_Plus1Not_proton2 = new TH1D("Q_Value_Theta8_20_FB_Plus1Not_proton2","Q Val Without Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_Plus1Not_proton2 = new TH1D("Q_Value_Theta8_19_FB_Plus1Not_proton2","Q Val Without Back+1=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_Plus1Not_proton2 = new TH1D("Q_Value_Theta8_18_FB_Plus1Not_proton2","Q Val Without Back+1=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_Plus1Not_proton2 = new TH1D("Q_Value_Theta8_17_FB_Plus1Not_proton2","Q Val Without Back+1=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_Plus1Not_proton2 = new TH1D("Q_Value_Theta8_16_FB_Plus1Not_proton2","Q Val Without Back+1=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_Plus1Not_proton2 = new TH1D("Q_Value_Theta8_15_FB_Plus1Not_proton2","Q Val Without Back+1=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_and_FBPlus1_Not_proton2 = new TH1D("Q_Value_FB_and_FBPlus1_Not_proton2","Q Value Without Back=Front or Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton2 = new TH1D("Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton2","Q Val Without Back=Front and Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton2 = new TH1D("Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton2","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton2 = new TH1D("Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton2","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton2 = new TH1D("Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton2","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton2 = new TH1D("Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton2","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton2 = new TH1D("Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton2","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-15",275,-1,10);
+
+    //-------------------
+    // Heavy Ion 1 Gates:
+    fgRootFile->cd("physical/HIGates");
+    Q_Value_hi1=new TH1D("Q_val_hi1","Q Value;Q_value",275,-1,10);
+
+    fgRootFile->cd("physical/HIGates/QvParameters");
+    Q_v_Phi_hi1=new TH2D("Q_v_Phi_hi1","Q_v_Phi;Q;Phi",275,-1,10,180,-180,180);
+    Q_v_cosTheta_hi1=new TH2D("Q_v_cosTheta_hi1","Q_v_cosTheta;Q;cosTheta",275,-1,10,256,0.5,1);
+    Q_v_EcosTheta_hi1=new TH2D("Q_v_EcosTheta_hi1","Q_v_EcosTheta;Q;EcosTheta",275,-1,10,512,0,20);
+    Q_v_Theta_hi1=new TH2D("Q_v_Theta_hi1","Q_v_Theta;Q;Theta",275,-1,10,180,0,179);
+    Q_v_E_hi1=new TH2D("Q_v_E_hi1","Q_v_E;Q;E",275,-1,10,512,0,32);
+    Q_v_RelAngle_hi1=new TH2D("Q_v_RelAngle_hi1","Q_v_RelAngle;Q;RelAngle",275,-1,10,180,0,179);
+    
+    fgRootFile->cd("physical/HIGates/Q_DecreasingAngularCoverage");
+    Q_Value_ThetaFull_hi1 = new TH1D("Q_Value_ThetaFull_hi1","Q Value All Angles",275,-1,10);
+    Q_Value_Theta8_20_hi1 = new TH1D("Q_Value_Theta8_20_hi1","Q Value Angles 8-20",275,-1,10);
+    Q_Value_Theta8_19_hi1 = new TH1D("Q_Value_Theta8_19_hi1","Q Value Angles 8-19",275,-1,10);
+    Q_Value_Theta8_18_hi1 = new TH1D("Q_Value_Theta8_18_hi1","Q Value Angles 8-18",275,-1,10);
+    Q_Value_Theta8_17_hi1 = new TH1D("Q_Value_Theta8_17_hi1","Q Value Angles 8-17",275,-1,10);
+    Q_Value_Theta8_16_hi1 = new TH1D("Q_Value_Theta8_16_hi1","Q Value Angles 8-16",275,-1,10);
+    Q_Value_Theta8_15_hi1 = new TH1D("Q_Value_Theta8_15_hi1","Q Value Angles 8-15",275,-1,10);
+
+    fgRootFile->cd("physical/HIGates/Q_FrontBackStuff");
+    Q_Value_FBNot_hi1 = new TH1D("Q_Value_FBNot_hi1","Q Value Without Back=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FBNot_hi1 = new TH1D("Q_Value_Theta8_20_FBNot_hi1","Q Val Without Back=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FBNot_hi1 = new TH1D("Q_Value_Theta8_19_FBNot_hi1","Q Val Without Back=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FBNot_hi1 = new TH1D("Q_Value_Theta8_18_FBNot_hi1","Q Val Without Back=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FBNot_hi1 = new TH1D("Q_Value_Theta8_17_FBNot_hi1","Q Val Without Back=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FBNot_hi1 = new TH1D("Q_Value_Theta8_16_FBNot_hi1","Q Val Without Back=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FBNot_hi1 = new TH1D("Q_Value_Theta8_15_FBNot_hi1","Q Val Without Back=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_Plus1Not_hi1 = new TH1D("Q_Value_FB_Plus1Not_hi1","Q Value Without Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_Plus1Not_hi1 = new TH1D("Q_Value_Theta8_20_FB_Plus1Not_hi1","Q Val Without Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_Plus1Not_hi1 = new TH1D("Q_Value_Theta8_19_FB_Plus1Not_hi1","Q Val Without Back+1=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_Plus1Not_hi1 = new TH1D("Q_Value_Theta8_18_FB_Plus1Not_hi1","Q Val Without Back+1=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_Plus1Not_hi1 = new TH1D("Q_Value_Theta8_17_FB_Plus1Not_hi1","Q Val Without Back+1=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_Plus1Not_hi1 = new TH1D("Q_Value_Theta8_16_FB_Plus1Not_hi1","Q Val Without Back+1=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_Plus1Not_hi1 = new TH1D("Q_Value_Theta8_15_FB_Plus1Not_hi1","Q Val Without Back+1=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_and_FBPlus1_Not_hi1 = new TH1D("Q_Value_FB_and_FBPlus1_Not_hi1","Q Value Without Back=Front or Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_and_FBPlus1_Not_hi1 = new TH1D("Q_Value_Theta8_20_FB_and_FBPlus1_Not_hi1","Q Val Without Back=Front and Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_and_FBPlus1_Not_hi1 = new TH1D("Q_Value_Theta8_19_FB_and_FBPlus1_Not_hi1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_and_FBPlus1_Not_hi1 = new TH1D("Q_Value_Theta8_18_FB_and_FBPlus1_Not_hi1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_and_FBPlus1_Not_hi1 = new TH1D("Q_Value_Theta8_17_FB_and_FBPlus1_Not_hi1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_and_FBPlus1_Not_hi1 = new TH1D("Q_Value_Theta8_16_FB_and_FBPlus1_Not_hi1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_and_FBPlus1_Not_hi1 = new TH1D("Q_Value_Theta8_15_FB_and_FBPlus1_Not_hi1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-15",275,-1,10);
+
+
+
+    //----------
+    // RF Gates:
+    fgRootFile->cd("physical/RFGates");
+    Q_Value_RF1=new TH1D("Q_val_RF1","Q Value;Q_value",275,-1,10);
+
+    fgRootFile->cd("physical/RFGates/QvParameters");
+    Q_v_Phi_RF1=new TH2D("Q_v_Phi_RF1","Q_v_Phi;Q;Phi",275,-1,10,180,-180,180);
+    Q_v_cosTheta_RF1=new TH2D("Q_v_cosTheta_RF1","Q_v_cosTheta;Q;cosTheta",275,-1,10,256,0.5,1);
+    Q_v_EcosTheta_RF1=new TH2D("Q_v_EcosTheta_RF1","Q_v_EcosTheta;Q;EcosTheta",275,-1,10,512,0,20);
+    Q_v_Theta_RF1=new TH2D("Q_v_Theta_RF1","Q_v_Theta;Q;Theta",275,-1,10,180,0,179);
+    Q_v_E_RF1=new TH2D("Q_v_E_RF1","Q_v_E;Q;E",275,-1,10,512,0,32);
+    Q_v_RelAngle_RF1=new TH2D("Q_v_RelAngle_RF1","Q_v_RelAngle;Q;RelAngle",275,-1,10,180,0,179);
+    
+    fgRootFile->cd("physical/RFGates/Q_DecreasingAngularCoverage");
+    Q_Value_ThetaFull_RF1 = new TH1D("Q_Value_ThetaFull_RF1","Q Value All Angles",275,-1,10);
+    Q_Value_Theta8_20_RF1 = new TH1D("Q_Value_Theta8_20_RF1","Q Value Angles 8-20",275,-1,10);
+    Q_Value_Theta8_19_RF1 = new TH1D("Q_Value_Theta8_19_RF1","Q Value Angles 8-19",275,-1,10);
+    Q_Value_Theta8_18_RF1 = new TH1D("Q_Value_Theta8_18_RF1","Q Value Angles 8-18",275,-1,10);
+    Q_Value_Theta8_17_RF1 = new TH1D("Q_Value_Theta8_17_RF1","Q Value Angles 8-17",275,-1,10);
+    Q_Value_Theta8_16_RF1 = new TH1D("Q_Value_Theta8_16_RF1","Q Value Angles 8-16",275,-1,10);
+    Q_Value_Theta8_15_RF1 = new TH1D("Q_Value_Theta8_15_RF1","Q Value Angles 8-15",275,-1,10);
+
+    fgRootFile->cd("physical/RFGates/Q_FrontBackStuff");
+    Q_Value_FBNot_RF1 = new TH1D("Q_Value_FBNot_RF1","Q Value Without Back=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FBNot_RF1 = new TH1D("Q_Value_Theta8_20_FBNot_RF1","Q Val Without Back=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FBNot_RF1 = new TH1D("Q_Value_Theta8_19_FBNot_RF1","Q Val Without Back=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FBNot_RF1 = new TH1D("Q_Value_Theta8_18_FBNot_RF1","Q Val Without Back=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FBNot_RF1 = new TH1D("Q_Value_Theta8_17_FBNot_RF1","Q Val Without Back=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FBNot_RF1 = new TH1D("Q_Value_Theta8_16_FBNot_RF1","Q Val Without Back=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FBNot_RF1 = new TH1D("Q_Value_Theta8_15_FBNot_RF1","Q Val Without Back=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_Plus1Not_RF1 = new TH1D("Q_Value_FB_Plus1Not_RF1","Q Value Without Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_Plus1Not_RF1 = new TH1D("Q_Value_Theta8_20_FB_Plus1Not_RF1","Q Val Without Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_Plus1Not_RF1 = new TH1D("Q_Value_Theta8_19_FB_Plus1Not_RF1","Q Val Without Back+1=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_Plus1Not_RF1 = new TH1D("Q_Value_Theta8_18_FB_Plus1Not_RF1","Q Val Without Back+1=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_Plus1Not_RF1 = new TH1D("Q_Value_Theta8_17_FB_Plus1Not_RF1","Q Val Without Back+1=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_Plus1Not_RF1 = new TH1D("Q_Value_Theta8_16_FB_Plus1Not_RF1","Q Val Without Back+1=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_Plus1Not_RF1 = new TH1D("Q_Value_Theta8_15_FB_Plus1Not_RF1","Q Val Without Back+1=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_and_FBPlus1_Not_RF1 = new TH1D("Q_Value_FB_and_FBPlus1_Not_RF1","Q Value Without Back=Front or Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_and_FBPlus1_Not_RF1 = new TH1D("Q_Value_Theta8_20_FB_and_FBPlus1_Not_RF1","Q Val Without Back=Front and Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_and_FBPlus1_Not_RF1 = new TH1D("Q_Value_Theta8_19_FB_and_FBPlus1_Not_RF1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_and_FBPlus1_Not_RF1 = new TH1D("Q_Value_Theta8_18_FB_and_FBPlus1_Not_RF1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_and_FBPlus1_Not_RF1 = new TH1D("Q_Value_Theta8_17_FB_and_FBPlus1_Not_RF1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_and_FBPlus1_Not_RF1 = new TH1D("Q_Value_Theta8_16_FB_and_FBPlus1_Not_RF1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_and_FBPlus1_Not_RF1 = new TH1D("Q_Value_Theta8_15_FB_and_FBPlus1_Not_RF1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-15",275,-1,10);
+
+
+    //----------
+    // P1+HI Gates:
+    fgRootFile->cd("physical/P1+HI_Gates");
+    Q_Value_proton_hi1=new TH1D("Q_val_proton_hi1","Q Value;Q_value",275,-1,10);
+    Q_Value_vs_ICEnergy = new TH2D("Q_val_vs_ICEn"," QValue Vs IC Energy",275,-1,10,1024,0,4096);
+    Q_Value_vs_ICEnergyCal = new TH2D("Q_val_vs_ICEnCal"," QValue Vs Cal IC Energy",275,-1,10,1024,30,120);
+    Q_Value_vs_ICEnergyCal_plus_pEnergy = new TH2D("Q_val_vs_ICEnCalPluspEn"," QValue Vs Cal IC Energy plus proton energy",275,-1,10,1024,30,120);
+
+    fgRootFile->cd("physical/P1+HI_Gates/Timing");
+    Neut_RF_Time_Sum = new TH1D("Neut_RF_Time_Sum","Neut_RF_Time_Sum",512,0,1024);
+    Neut_Si_Time_SumA = new TH1D("Neut_Si_Time_SumA","Neut_Si_Time_SumA",512,-1024,1024);
+    Neut_Si_Time_SumB = new TH1D("Neut_Si_Time_SumB","Neut_Si_Time_SumB",512,-1024,1024);
+    Neut_Si_Time_AorB = new TH1D("Neut_Si_Time_AorB","Neut_Si_Time_AorB",512,-1024,1024);
+    Neut_PSD_All_Sum = new TH1D("Neut_PSD_All_Sum","Neut_PSD_All_Sum",512,0,1024);
+    Neut_RF_Time_Sum_QC1 = new TH1D("Neut_RF_Time_Sum_QC1","Neut_RF_Time_Sum_QC1",512,0,1024);
+    Neut_Si_Time_SumA_QC1 = new TH1D("Neut_Si_Time_SumA_QC1","Neut_Si_Time_SumA_QC1",512,-1024,1024);
+    Neut_Si_Time_SumB_QC1 = new TH1D("Neut_Si_Time_SumB_QC1","Neut_Si_Time_SumB_QC1",512,-1024,1024);
+    Neut_PSD_All_Sum_QC1 = new TH1D("Neut_PSD_All_Sum_QC1","Neut_PSD_All_Sum_QC1",512,0,1024);
+    Neut_RF_Time_Sum_QC2 = new TH1D("Neut_RF_Time_Sum_QC2","Neut_RF_Time_Sum_QC2",512,0,1024);
+    Neut_Si_Time_SumA_QC2 = new TH1D("Neut_Si_Time_SumA_QC2","Neut_Si_Time_SumA_QC2",512,-1024,1024);
+    Neut_Si_Time_SumB_QC2 = new TH1D("Neut_Si_Time_SumB_QC2","Neut_Si_Time_SumB_QC2",512,-1024,1024);
+    Neut_PSD_All_Sum_QC2 = new TH1D("Neut_PSD_All_Sum_QC2","Neut_PSD_All_Sum_QC2",512,0,1024);
+    Neut_RF_Time_Sum_QC3 = new TH1D("Neut_RF_Time_Sum_QC3","Neut_RF_Time_Sum_QC3",512,0,1024);
+    Neut_Si_Time_SumA_QC3 = new TH1D("Neut_Si_Time_SumA_QC3","Neut_Si_Time_SumA_QC3",512,-1024,1024);
+    Neut_Si_Time_SumB_QC3 = new TH1D("Neut_Si_Time_SumB_QC3","Neut_Si_Time_SumB_QC3",512,-1024,1024);
+    Neut_PSD_All_Sum_QC3 = new TH1D("Neut_PSD_All_Sum_QC3","Neut_PSD_All_Sum_QC3",512,0,1024);
+    Neut_RF_Time_Sum_QC4 = new TH1D("Neut_RF_Time_Sum_QC4","Neut_RF_Time_Sum_QC4",512,0,1024);
+    Neut_Si_Time_SumA_QC4 = new TH1D("Neut_Si_Time_SumA_QC4","Neut_Si_Time_SumA_QC4",512,-1024,1024);
+    Neut_Si_Time_SumB_QC4 = new TH1D("Neut_Si_Time_SumB_QC4","Neut_Si_Time_SumB_QC4",512,-1024,1024);
+    Neut_PSD_All_Sum_QC4 = new TH1D("Neut_PSD_All_Sum_QC4","Neut_PSD_All_Sum_QC4",512,0,1024);
+    NeutRF_vs_QVal = new TH2D("NeutRF_vs_QVal","Neutron TOF vs QValue",275,-1,10,512,0,1024);
+    NeutSiAorB_vs_QVal = new TH2D("NeutSiAorB_vs_QVal","Neutron TOF using SiA or SiB time vs QValue",275,-1,10,1024,-1024,1024);
+
+    fgRootFile->cd("physical/P1+HI_Gates/Timing/QVal_GatedOnNeutTime");
+    QVal_N_RF_All = new TH1D("QVal_N_RF_All","QVal Gated On Nt-RFt All",275,-1,10);
+    QVal_N_RF_95to105 = new TH1D("QVal_N_RF_95to105","QVal Gated On Nt-RFt 95->105",275,-1,10);
+    QVal_N_RF_105to115 = new TH1D("QVal_N_RF_105to115","QVal Gated On Nt-RFt 105->115",275,-1,10);
+    QVal_N_RF_115to130 = new TH1D("QVal_N_RF_115to130","QVal Gated On Nt-RFt 115->130",275,-1,10);
+    QVal_N_RF_Rest = new TH1D("QVal_N_RF_Rest","QVal Gated On Nt-RFt Rest",275,-1,10);
+    
+
+    fgRootFile->cd("physical/P1+HI_Gates/QvParameters");
+    Q_v_Phi_proton_hi1=new TH2D("Q_v_Phi_proton_hi1","Q_v_Phi;Q;Phi",275,-1,10,180,-180,180);
+    Q_v_cosTheta_proton_hi1=new TH2D("Q_v_cosTheta_proton_hi1","Q_v_cosTheta;Q;cosTheta",275,-1,10,256,0.5,1);
+    Q_v_EcosTheta_proton_hi1=new TH2D("Q_v_EcosTheta_proton_hi1","Q_v_EcosTheta;Q;EcosTheta",275,-1,10,512,0,20);
+    Q_v_Theta_proton_hi1=new TH2D("Q_v_Theta_proton_hi1","Q_v_Theta;Q;Theta",275,-1,10,180,0,179);
+    Q_v_E_proton_hi1=new TH2D("Q_v_E_proton_hi1","Q_v_E;Q;E",275,-1,10,512,0,32);
+    Q_v_RelAngle_proton_hi1=new TH2D("Q_v_RelAngle_proton_hi1","Q_v_RelAngle;Q;RelAngle",275,-1,10,180,0,179);
+    
+    fgRootFile->cd("physical/P1+HI_Gates/Q_DecreasingAngularCoverage");
+    Q_Value_ThetaFull_proton_hi1 = new TH1D("Q_Value_ThetaFull_proton_hi1","Q Value All Angles",275,-1,10);
+    Q_Value_Theta8_20_proton_hi1 = new TH1D("Q_Value_Theta8_20_proton_hi1","Q Value Angles 8-20",275,-1,10);
+    Q_Value_Theta8_19_proton_hi1 = new TH1D("Q_Value_Theta8_19_proton_hi1","Q Value Angles 8-19",275,-1,10);
+    Q_Value_Theta8_18_proton_hi1 = new TH1D("Q_Value_Theta8_18_proton_hi1","Q Value Angles 8-18",275,-1,10);
+    Q_Value_Theta8_17_proton_hi1 = new TH1D("Q_Value_Theta8_17_proton_hi1","Q Value Angles 8-17",275,-1,10);
+    Q_Value_Theta8_16_proton_hi1 = new TH1D("Q_Value_Theta8_16_proton_hi1","Q Value Angles 8-16",275,-1,10);
+    Q_Value_Theta8_15_proton_hi1 = new TH1D("Q_Value_Theta8_15_proton_hi1","Q Value Angles 8-15",275,-1,10);
+
+    fgRootFile->cd("physical/P1+HI_Gates/Q_FrontBackStuff");
+    Q_Value_FBNot_proton_hi1 = new TH1D("Q_Value_FBNot_proton_hi1","Q Value Without Back=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FBNot_proton_hi1 = new TH1D("Q_Value_Theta8_20_FBNot_proton_hi1","Q Val Without Back=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FBNot_proton_hi1 = new TH1D("Q_Value_Theta8_19_FBNot_proton_hi1","Q Val Without Back=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FBNot_proton_hi1 = new TH1D("Q_Value_Theta8_18_FBNot_proton_hi1","Q Val Without Back=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FBNot_proton_hi1 = new TH1D("Q_Value_Theta8_17_FBNot_proton_hi1","Q Val Without Back=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FBNot_proton_hi1 = new TH1D("Q_Value_Theta8_16_FBNot_proton_hi1","Q Val Without Back=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FBNot_proton_hi1 = new TH1D("Q_Value_Theta8_15_FBNot_proton_hi1","Q Val Without Back=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_Plus1Not_proton_hi1 = new TH1D("Q_Value_FB_Plus1Not_proton_hi1","Q Value Without Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_Plus1Not_proton_hi1 = new TH1D("Q_Value_Theta8_20_FB_Plus1Not_proton_hi1","Q Val Without Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_Plus1Not_proton_hi1 = new TH1D("Q_Value_Theta8_19_FB_Plus1Not_proton_hi1","Q Val Without Back+1=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_Plus1Not_proton_hi1 = new TH1D("Q_Value_Theta8_18_FB_Plus1Not_proton_hi1","Q Val Without Back+1=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_Plus1Not_proton_hi1 = new TH1D("Q_Value_Theta8_17_FB_Plus1Not_proton_hi1","Q Val Without Back+1=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_Plus1Not_proton_hi1 = new TH1D("Q_Value_Theta8_16_FB_Plus1Not_proton_hi1","Q Val Without Back+1=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_Plus1Not_proton_hi1 = new TH1D("Q_Value_Theta8_15_FB_Plus1Not_proton_hi1","Q Val Without Back+1=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_and_FBPlus1_Not_proton_hi1 = new TH1D("Q_Value_FB_and_FBPlus1_Not_proton_hi1","Q Value Without Back=Front or Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton_hi1 = new TH1D("Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton_hi1","Q Val Without Back=Front and Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton_hi1 = new TH1D("Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton_hi1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton_hi1 = new TH1D("Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton_hi1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton_hi1 = new TH1D("Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton_hi1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton_hi1 = new TH1D("Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton_hi1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton_hi1 = new TH1D("Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton_hi1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-15",275,-1,10);
+
+
+
+
+    //----------
+    // P1+RF Gates:
+    fgRootFile->cd("physical/P1+RF_Gates");
+    Q_Value_proton_RF1=new TH1D("Q_val_proton_RF1","Q Value;Q_value",275,-1,10);
+
+    fgRootFile->cd("physical/P1+RF_Gates/QvParameters");
+    Q_v_Phi_proton_RF1=new TH2D("Q_v_Phi_proton_RF1","Q_v_Phi;Q;Phi",275,-1,10,180,-180,180);
+    Q_v_cosTheta_proton_RF1=new TH2D("Q_v_cosTheta_proton_RF1","Q_v_cosTheta;Q;cosTheta",275,-1,10,256,0.5,1);
+    Q_v_EcosTheta_proton_RF1=new TH2D("Q_v_EcosTheta_proton_RF1","Q_v_EcosTheta;Q;EcosTheta",275,-1,10,512,0,20);
+    Q_v_Theta_proton_RF1=new TH2D("Q_v_Theta_proton_RF1","Q_v_Theta;Q;Theta",275,-1,10,180,0,179);
+    Q_v_E_proton_RF1=new TH2D("Q_v_E_proton_RF1","Q_v_E;Q;E",275,-1,10,512,0,32);
+    Q_v_RelAngle_proton_RF1=new TH2D("Q_v_RelAngle_proton_RF1","Q_v_RelAngle;Q;RelAngle",275,-1,10,180,0,179);
+    
+    fgRootFile->cd("physical/P1+RF_Gates/Q_DecreasingAngularCoverage");
+    Q_Value_ThetaFull_proton_RF1 = new TH1D("Q_Value_ThetaFull_proton_RF1","Q Value All Angles",275,-1,10);
+    Q_Value_Theta8_20_proton_RF1 = new TH1D("Q_Value_Theta8_20_proton_RF1","Q Value Angles 8-20",275,-1,10);
+    Q_Value_Theta8_19_proton_RF1 = new TH1D("Q_Value_Theta8_19_proton_RF1","Q Value Angles 8-19",275,-1,10);
+    Q_Value_Theta8_18_proton_RF1 = new TH1D("Q_Value_Theta8_18_proton_RF1","Q Value Angles 8-18",275,-1,10);
+    Q_Value_Theta8_17_proton_RF1 = new TH1D("Q_Value_Theta8_17_proton_RF1","Q Value Angles 8-17",275,-1,10);
+    Q_Value_Theta8_16_proton_RF1 = new TH1D("Q_Value_Theta8_16_proton_RF1","Q Value Angles 8-16",275,-1,10);
+    Q_Value_Theta8_15_proton_RF1 = new TH1D("Q_Value_Theta8_15_proton_RF1","Q Value Angles 8-15",275,-1,10);
+
+    fgRootFile->cd("physical/P1+RF_Gates/Q_FrontBackStuff");
+    Q_Value_FBNot_proton_RF1 = new TH1D("Q_Value_FBNot_proton_RF1","Q Value Without Back=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FBNot_proton_RF1 = new TH1D("Q_Value_Theta8_20_FBNot_proton_RF1","Q Val Without Back=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FBNot_proton_RF1 = new TH1D("Q_Value_Theta8_19_FBNot_proton_RF1","Q Val Without Back=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FBNot_proton_RF1 = new TH1D("Q_Value_Theta8_18_FBNot_proton_RF1","Q Val Without Back=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FBNot_proton_RF1 = new TH1D("Q_Value_Theta8_17_FBNot_proton_RF1","Q Val Without Back=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FBNot_proton_RF1 = new TH1D("Q_Value_Theta8_16_FBNot_proton_RF1","Q Val Without Back=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FBNot_proton_RF1 = new TH1D("Q_Value_Theta8_15_FBNot_proton_RF1","Q Val Without Back=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_Plus1Not_proton_RF1 = new TH1D("Q_Value_FB_Plus1Not_proton_RF1","Q Value Without Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_Plus1Not_proton_RF1 = new TH1D("Q_Value_Theta8_20_FB_Plus1Not_proton_RF1","Q Val Without Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_Plus1Not_proton_RF1 = new TH1D("Q_Value_Theta8_19_FB_Plus1Not_proton_RF1","Q Val Without Back+1=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_Plus1Not_proton_RF1 = new TH1D("Q_Value_Theta8_18_FB_Plus1Not_proton_RF1","Q Val Without Back+1=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_Plus1Not_proton_RF1 = new TH1D("Q_Value_Theta8_17_FB_Plus1Not_proton_RF1","Q Val Without Back+1=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_Plus1Not_proton_RF1 = new TH1D("Q_Value_Theta8_16_FB_Plus1Not_proton_RF1","Q Val Without Back+1=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_Plus1Not_proton_RF1 = new TH1D("Q_Value_Theta8_15_FB_Plus1Not_proton_RF1","Q Val Without Back+1=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_and_FBPlus1_Not_proton_RF1 = new TH1D("Q_Value_FB_and_FBPlus1_Not_proton_RF1","Q Value Without Back=Front or Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton_RF1 = new TH1D("Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton_RF1","Q Val Without Back=Front and Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton_RF1 = new TH1D("Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton_RF1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton_RF1 = new TH1D("Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton_RF1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton_RF1 = new TH1D("Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton_RF1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton_RF1 = new TH1D("Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton_RF1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton_RF1 = new TH1D("Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton_RF1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-15",275,-1,10);
+
+
+
+    //----------
+    // P2+HI Gates:
+    fgRootFile->cd("physical/P2+HI_Gates");
+    Q_Value_proton2_hi1=new TH1D("Q_val_proton2_hi1","Q Value;Q_value",275,-1,10);
+
+    fgRootFile->cd("physical/P2+HI_Gates/QvParameters");
+    Q_v_Phi_proton2_hi1=new TH2D("Q_v_Phi_proton2_hi1","Q_v_Phi;Q;Phi",275,-1,10,180,-180,180);
+    Q_v_cosTheta_proton2_hi1=new TH2D("Q_v_cosTheta_proton2_hi1","Q_v_cosTheta;Q;cosTheta",275,-1,10,256,0.5,1);
+    Q_v_EcosTheta_proton2_hi1=new TH2D("Q_v_EcosTheta_proton2_hi1","Q_v_EcosTheta;Q;EcosTheta",275,-1,10,512,0,20);
+    Q_v_Theta_proton2_hi1=new TH2D("Q_v_Theta_proton2_hi1","Q_v_Theta;Q;Theta",275,-1,10,180,0,179);
+    Q_v_E_proton2_hi1=new TH2D("Q_v_E_proton2_hi1","Q_v_E;Q;E",275,-1,10,512,0,32);
+    Q_v_RelAngle_proton2_hi1=new TH2D("Q_v_RelAngle_proton2_hi1","Q_v_RelAngle;Q;RelAngle",275,-1,10,180,0,179);
+    
+    fgRootFile->cd("physical/P2+HI_Gates/Q_DecreasingAngularCoverage");
+    Q_Value_ThetaFull_proton2_hi1 = new TH1D("Q_Value_ThetaFull_proton2_hi1","Q Value All Angles",275,-1,10);
+    Q_Value_Theta8_20_proton2_hi1 = new TH1D("Q_Value_Theta8_20_proton2_hi1","Q Value Angles 8-20",275,-1,10);
+    Q_Value_Theta8_19_proton2_hi1 = new TH1D("Q_Value_Theta8_19_proton2_hi1","Q Value Angles 8-19",275,-1,10);
+    Q_Value_Theta8_18_proton2_hi1 = new TH1D("Q_Value_Theta8_18_proton2_hi1","Q Value Angles 8-18",275,-1,10);
+    Q_Value_Theta8_17_proton2_hi1 = new TH1D("Q_Value_Theta8_17_proton2_hi1","Q Value Angles 8-17",275,-1,10);
+    Q_Value_Theta8_16_proton2_hi1 = new TH1D("Q_Value_Theta8_16_proton2_hi1","Q Value Angles 8-16",275,-1,10);
+    Q_Value_Theta8_15_proton2_hi1 = new TH1D("Q_Value_Theta8_15_proton2_hi1","Q Value Angles 8-15",275,-1,10);
+
+    fgRootFile->cd("physical/P2+HI_Gates/Q_FrontBackStuff");
+    Q_Value_FBNot_proton2_hi1 = new TH1D("Q_Value_FBNot_proton2_hi1","Q Value Without Back=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FBNot_proton2_hi1 = new TH1D("Q_Value_Theta8_20_FBNot_proton2_hi1","Q Val Without Back=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FBNot_proton2_hi1 = new TH1D("Q_Value_Theta8_19_FBNot_proton2_hi1","Q Val Without Back=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FBNot_proton2_hi1 = new TH1D("Q_Value_Theta8_18_FBNot_proton2_hi1","Q Val Without Back=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FBNot_proton2_hi1 = new TH1D("Q_Value_Theta8_17_FBNot_proton2_hi1","Q Val Without Back=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FBNot_proton2_hi1 = new TH1D("Q_Value_Theta8_16_FBNot_proton2_hi1","Q Val Without Back=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FBNot_proton2_hi1 = new TH1D("Q_Value_Theta8_15_FBNot_proton2_hi1","Q Val Without Back=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_Plus1Not_proton2_hi1 = new TH1D("Q_Value_FB_Plus1Not_proton2_hi1","Q Value Without Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_Plus1Not_proton2_hi1 = new TH1D("Q_Value_Theta8_20_FB_Plus1Not_proton2_hi1","Q Val Without Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_Plus1Not_proton2_hi1 = new TH1D("Q_Value_Theta8_19_FB_Plus1Not_proton2_hi1","Q Val Without Back+1=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_Plus1Not_proton2_hi1 = new TH1D("Q_Value_Theta8_18_FB_Plus1Not_proton2_hi1","Q Val Without Back+1=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_Plus1Not_proton2_hi1 = new TH1D("Q_Value_Theta8_17_FB_Plus1Not_proton2_hi1","Q Val Without Back+1=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_Plus1Not_proton2_hi1 = new TH1D("Q_Value_Theta8_16_FB_Plus1Not_proton2_hi1","Q Val Without Back+1=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_Plus1Not_proton2_hi1 = new TH1D("Q_Value_Theta8_15_FB_Plus1Not_proton2_hi1","Q Val Without Back+1=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_and_FBPlus1_Not_proton2_hi1 = new TH1D("Q_Value_FB_and_FBPlus1_Not_proton2_hi1","Q Value Without Back=Front or Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton2_hi1 = new TH1D("Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton2_hi1","Q Val Without Back=Front and Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton2_hi1 = new TH1D("Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton2_hi1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton2_hi1 = new TH1D("Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton2_hi1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton2_hi1 = new TH1D("Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton2_hi1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton2_hi1 = new TH1D("Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton2_hi1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton2_hi1 = new TH1D("Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton2_hi1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-15",275,-1,10);
+
+
+
+
+    //----------
+    // P2+RF Gates:
+    fgRootFile->cd("physical/P2+RF_Gates");
+    Q_Value_proton2_RF1=new TH1D("Q_val_proton2_RF1","Q Value;Q_value",275,-1,10);
+
+    fgRootFile->cd("physical/P2+RF_Gates/QvParameters");
+    Q_v_Phi_proton2_RF1=new TH2D("Q_v_Phi_proton2_RF1","Q_v_Phi;Q;Phi",275,-1,10,180,-180,180);
+    Q_v_cosTheta_proton2_RF1=new TH2D("Q_v_cosTheta_proton2_RF1","Q_v_cosTheta;Q;cosTheta",275,-1,10,256,0.5,1);
+    Q_v_EcosTheta_proton2_RF1=new TH2D("Q_v_EcosTheta_proton2_RF1","Q_v_EcosTheta;Q;EcosTheta",275,-1,10,512,0,20);
+    Q_v_Theta_proton2_RF1=new TH2D("Q_v_Theta_proton2_RF1","Q_v_Theta;Q;Theta",275,-1,10,180,0,179);
+    Q_v_E_proton2_RF1=new TH2D("Q_v_E_proton2_RF1","Q_v_E;Q;E",275,-1,10,512,0,32);
+    Q_v_RelAngle_proton2_RF1=new TH2D("Q_v_RelAngle_proton2_RF1","Q_v_RelAngle;Q;RelAngle",275,-1,10,180,0,179);
+    
+    fgRootFile->cd("physical/P2+RF_Gates/Q_DecreasingAngularCoverage");
+    Q_Value_ThetaFull_proton2_RF1 = new TH1D("Q_Value_ThetaFull_proton2_RF1","Q Value All Angles",275,-1,10);
+    Q_Value_Theta8_20_proton2_RF1 = new TH1D("Q_Value_Theta8_20_proton2_RF1","Q Value Angles 8-20",275,-1,10);
+    Q_Value_Theta8_19_proton2_RF1 = new TH1D("Q_Value_Theta8_19_proton2_RF1","Q Value Angles 8-19",275,-1,10);
+    Q_Value_Theta8_18_proton2_RF1 = new TH1D("Q_Value_Theta8_18_proton2_RF1","Q Value Angles 8-18",275,-1,10);
+    Q_Value_Theta8_17_proton2_RF1 = new TH1D("Q_Value_Theta8_17_proton2_RF1","Q Value Angles 8-17",275,-1,10);
+    Q_Value_Theta8_16_proton2_RF1 = new TH1D("Q_Value_Theta8_16_proton2_RF1","Q Value Angles 8-16",275,-1,10);
+    Q_Value_Theta8_15_proton2_RF1 = new TH1D("Q_Value_Theta8_15_proton2_RF1","Q Value Angles 8-15",275,-1,10);
+
+    fgRootFile->cd("physical/P2+RF_Gates/Q_FrontBackStuff");
+    Q_Value_FBNot_proton2_RF1 = new TH1D("Q_Value_FBNot_proton2_RF1","Q Value Without Back=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FBNot_proton2_RF1 = new TH1D("Q_Value_Theta8_20_FBNot_proton2_RF1","Q Val Without Back=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FBNot_proton2_RF1 = new TH1D("Q_Value_Theta8_19_FBNot_proton2_RF1","Q Val Without Back=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FBNot_proton2_RF1 = new TH1D("Q_Value_Theta8_18_FBNot_proton2_RF1","Q Val Without Back=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FBNot_proton2_RF1 = new TH1D("Q_Value_Theta8_17_FBNot_proton2_RF1","Q Val Without Back=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FBNot_proton2_RF1 = new TH1D("Q_Value_Theta8_16_FBNot_proton2_RF1","Q Val Without Back=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FBNot_proton2_RF1 = new TH1D("Q_Value_Theta8_15_FBNot_proton2_RF1","Q Val Without Back=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_Plus1Not_proton2_RF1 = new TH1D("Q_Value_FB_Plus1Not_proton2_RF1","Q Value Without Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_Plus1Not_proton2_RF1 = new TH1D("Q_Value_Theta8_20_FB_Plus1Not_proton2_RF1","Q Val Without Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_Plus1Not_proton2_RF1 = new TH1D("Q_Value_Theta8_19_FB_Plus1Not_proton2_RF1","Q Val Without Back+1=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_Plus1Not_proton2_RF1 = new TH1D("Q_Value_Theta8_18_FB_Plus1Not_proton2_RF1","Q Val Without Back+1=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_Plus1Not_proton2_RF1 = new TH1D("Q_Value_Theta8_17_FB_Plus1Not_proton2_RF1","Q Val Without Back+1=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_Plus1Not_proton2_RF1 = new TH1D("Q_Value_Theta8_16_FB_Plus1Not_proton2_RF1","Q Val Without Back+1=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_Plus1Not_proton2_RF1 = new TH1D("Q_Value_Theta8_15_FB_Plus1Not_proton2_RF1","Q Val Without Back+1=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_and_FBPlus1_Not_proton2_RF1 = new TH1D("Q_Value_FB_and_FBPlus1_Not_proton2_RF1","Q Value Without Back=Front or Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton2_RF1 = new TH1D("Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton2_RF1","Q Val Without Back=Front and Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton2_RF1 = new TH1D("Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton2_RF1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton2_RF1 = new TH1D("Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton2_RF1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton2_RF1 = new TH1D("Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton2_RF1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton2_RF1 = new TH1D("Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton2_RF1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton2_RF1 = new TH1D("Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton2_RF1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-15",275,-1,10);
+
+
+
+
+    //----------
+    // HI1+RF Gates:
+    fgRootFile->cd("physical/HI+RF_Gates");
+    Q_Value_RF1_hi1=new TH1D("Q_val_RF1_hi1","Q Value;Q_value",275,-1,10);
+
+    fgRootFile->cd("physical/HI+RF_Gates/QvParameters");
+    Q_v_Phi_RF1_hi1=new TH2D("Q_v_Phi_RF1_hi1","Q_v_Phi;Q;Phi",275,-1,10,180,-180,180);
+    Q_v_cosTheta_RF1_hi1=new TH2D("Q_v_cosTheta_RF1_hi1","Q_v_cosTheta;Q;cosTheta",275,-1,10,256,0.5,1);
+    Q_v_EcosTheta_RF1_hi1=new TH2D("Q_v_EcosTheta_RF1_hi1","Q_v_EcosTheta;Q;EcosTheta",275,-1,10,512,0,20);
+    Q_v_Theta_RF1_hi1=new TH2D("Q_v_Theta_RF1_hi1","Q_v_Theta;Q;Theta",275,-1,10,180,0,179);
+    Q_v_E_RF1_hi1=new TH2D("Q_v_E_RF1_hi1","Q_v_E;Q;E",275,-1,10,512,0,32);
+    Q_v_RelAngle_RF1_hi1=new TH2D("Q_v_RelAngle_RF1_hi1","Q_v_RelAngle;Q;RelAngle",275,-1,10,180,0,179);
+    
+    fgRootFile->cd("physical/HI+RF_Gates/Q_DecreasingAngularCoverage");
+    Q_Value_ThetaFull_RF1_hi1 = new TH1D("Q_Value_ThetaFull_RF1_hi1","Q Value All Angles",275,-1,10);
+    Q_Value_Theta8_20_RF1_hi1 = new TH1D("Q_Value_Theta8_20_RF1_hi1","Q Value Angles 8-20",275,-1,10);
+    Q_Value_Theta8_19_RF1_hi1 = new TH1D("Q_Value_Theta8_19_RF1_hi1","Q Value Angles 8-19",275,-1,10);
+    Q_Value_Theta8_18_RF1_hi1 = new TH1D("Q_Value_Theta8_18_RF1_hi1","Q Value Angles 8-18",275,-1,10);
+    Q_Value_Theta8_17_RF1_hi1 = new TH1D("Q_Value_Theta8_17_RF1_hi1","Q Value Angles 8-17",275,-1,10);
+    Q_Value_Theta8_16_RF1_hi1 = new TH1D("Q_Value_Theta8_16_RF1_hi1","Q Value Angles 8-16",275,-1,10);
+    Q_Value_Theta8_15_RF1_hi1 = new TH1D("Q_Value_Theta8_15_RF1_hi1","Q Value Angles 8-15",275,-1,10);
+
+    fgRootFile->cd("physical/HI+RF_Gates/Q_FrontBackStuff");
+    Q_Value_FBNot_RF1_hi1 = new TH1D("Q_Value_FBNot_RF1_hi1","Q Value Without Back=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FBNot_RF1_hi1 = new TH1D("Q_Value_Theta8_20_FBNot_RF1_hi1","Q Val Without Back=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FBNot_RF1_hi1 = new TH1D("Q_Value_Theta8_19_FBNot_RF1_hi1","Q Val Without Back=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FBNot_RF1_hi1 = new TH1D("Q_Value_Theta8_18_FBNot_RF1_hi1","Q Val Without Back=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FBNot_RF1_hi1 = new TH1D("Q_Value_Theta8_17_FBNot_RF1_hi1","Q Val Without Back=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FBNot_RF1_hi1 = new TH1D("Q_Value_Theta8_16_FBNot_RF1_hi1","Q Val Without Back=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FBNot_RF1_hi1 = new TH1D("Q_Value_Theta8_15_FBNot_RF1_hi1","Q Val Without Back=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_Plus1Not_RF1_hi1 = new TH1D("Q_Value_FB_Plus1Not_RF1_hi1","Q Value Without Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_Plus1Not_RF1_hi1 = new TH1D("Q_Value_Theta8_20_FB_Plus1Not_RF1_hi1","Q Val Without Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_Plus1Not_RF1_hi1 = new TH1D("Q_Value_Theta8_19_FB_Plus1Not_RF1_hi1","Q Val Without Back+1=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_Plus1Not_RF1_hi1 = new TH1D("Q_Value_Theta8_18_FB_Plus1Not_RF1_hi1","Q Val Without Back+1=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_Plus1Not_RF1_hi1 = new TH1D("Q_Value_Theta8_17_FB_Plus1Not_RF1_hi1","Q Val Without Back+1=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_Plus1Not_RF1_hi1 = new TH1D("Q_Value_Theta8_16_FB_Plus1Not_RF1_hi1","Q Val Without Back+1=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_Plus1Not_RF1_hi1 = new TH1D("Q_Value_Theta8_15_FB_Plus1Not_RF1_hi1","Q Val Without Back+1=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_and_FBPlus1_Not_RF1_hi1 = new TH1D("Q_Value_FB_and_FBPlus1_Not_RF1_hi1","Q Value Without Back=Front or Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_and_FBPlus1_Not_RF1_hi1 = new TH1D("Q_Value_Theta8_20_FB_and_FBPlus1_Not_RF1_hi1","Q Val Without Back=Front and Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_and_FBPlus1_Not_RF1_hi1 = new TH1D("Q_Value_Theta8_19_FB_and_FBPlus1_Not_RF1_hi1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_and_FBPlus1_Not_RF1_hi1 = new TH1D("Q_Value_Theta8_18_FB_and_FBPlus1_Not_RF1_hi1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_and_FBPlus1_Not_RF1_hi1 = new TH1D("Q_Value_Theta8_17_FB_and_FBPlus1_Not_RF1_hi1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_and_FBPlus1_Not_RF1_hi1 = new TH1D("Q_Value_Theta8_16_FB_and_FBPlus1_Not_RF1_hi1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_and_FBPlus1_Not_RF1_hi1 = new TH1D("Q_Value_Theta8_15_FB_and_FBPlus1_Not_RF1_hi1","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-15",275,-1,10);
+
+
+    //----------
+    // P1+HI1+RF Gates:
+    fgRootFile->cd("physical/P1+HI+RF_Gates");
+    Q_Value_RF1_hi1_proton=new TH1D("Q_val_RF1_hi1_proton","Q Value;Q_value",275,-1,10);
+
+    fgRootFile->cd("physical/P1+HI+RF_Gates/QvParameters");
+    Q_v_Phi_RF1_hi1_proton=new TH2D("Q_v_Phi_RF1_hi1_proton","Q_v_Phi;Q;Phi",275,-1,10,180,-180,180);
+    Q_v_cosTheta_RF1_hi1_proton=new TH2D("Q_v_cosTheta_RF1_hi1_proton","Q_v_cosTheta;Q;cosTheta",275,-1,10,256,0.5,1);
+    Q_v_EcosTheta_RF1_hi1_proton=new TH2D("Q_v_EcosTheta_RF1_hi1_proton","Q_v_EcosTheta;Q;EcosTheta",275,-1,10,512,0,20);
+    Q_v_Theta_RF1_hi1_proton=new TH2D("Q_v_Theta_RF1_hi1_proton","Q_v_Theta;Q;Theta",275,-1,10,180,0,179);
+    Q_v_E_RF1_hi1_proton=new TH2D("Q_v_E_RF1_hi1_proton","Q_v_E;Q;E",275,-1,10,512,0,32);
+    Q_v_RelAngle_RF1_hi1_proton=new TH2D("Q_v_RelAngle_RF1_hi1_proton","Q_v_RelAngle;Q;RelAngle",275,-1,10,180,0,179);
+    
+    fgRootFile->cd("physical/P1+HI+RF_Gates/Q_DecreasingAngularCoverage");
+    Q_Value_ThetaFull_RF1_hi1_proton = new TH1D("Q_Value_ThetaFull_RF1_hi1_proton","Q Value All Angles",275,-1,10);
+    Q_Value_Theta8_20_RF1_hi1_proton = new TH1D("Q_Value_Theta8_20_RF1_hi1_proton","Q Value Angles 8-20",275,-1,10);
+    Q_Value_Theta8_19_RF1_hi1_proton = new TH1D("Q_Value_Theta8_19_RF1_hi1_proton","Q Value Angles 8-19",275,-1,10);
+    Q_Value_Theta8_18_RF1_hi1_proton = new TH1D("Q_Value_Theta8_18_RF1_hi1_proton","Q Value Angles 8-18",275,-1,10);
+    Q_Value_Theta8_17_RF1_hi1_proton = new TH1D("Q_Value_Theta8_17_RF1_hi1_proton","Q Value Angles 8-17",275,-1,10);
+    Q_Value_Theta8_16_RF1_hi1_proton = new TH1D("Q_Value_Theta8_16_RF1_hi1_proton","Q Value Angles 8-16",275,-1,10);
+    Q_Value_Theta8_15_RF1_hi1_proton = new TH1D("Q_Value_Theta8_15_RF1_hi1_proton","Q Value Angles 8-15",275,-1,10);
+
+    fgRootFile->cd("physical/P1+HI+RF_Gates/Q_FrontBackStuff");
+    Q_Value_FBNot_RF1_hi1_proton = new TH1D("Q_Value_FBNot_RF1_hi1_proton","Q Value Without Back=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FBNot_RF1_hi1_proton = new TH1D("Q_Value_Theta8_20_FBNot_RF1_hi1_proton","Q Val Without Back=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FBNot_RF1_hi1_proton = new TH1D("Q_Value_Theta8_19_FBNot_RF1_hi1_proton","Q Val Without Back=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FBNot_RF1_hi1_proton = new TH1D("Q_Value_Theta8_18_FBNot_RF1_hi1_proton","Q Val Without Back=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FBNot_RF1_hi1_proton = new TH1D("Q_Value_Theta8_17_FBNot_RF1_hi1_proton","Q Val Without Back=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FBNot_RF1_hi1_proton = new TH1D("Q_Value_Theta8_16_FBNot_RF1_hi1_proton","Q Val Without Back=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FBNot_RF1_hi1_proton = new TH1D("Q_Value_Theta8_15_FBNot_RF1_hi1_proton","Q Val Without Back=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_Plus1Not_RF1_hi1_proton = new TH1D("Q_Value_FB_Plus1Not_RF1_hi1_proton","Q Value Without Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_Plus1Not_RF1_hi1_proton = new TH1D("Q_Value_Theta8_20_FB_Plus1Not_RF1_hi1_proton","Q Val Without Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_Plus1Not_RF1_hi1_proton = new TH1D("Q_Value_Theta8_19_FB_Plus1Not_RF1_hi1_proton","Q Val Without Back+1=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_Plus1Not_RF1_hi1_proton = new TH1D("Q_Value_Theta8_18_FB_Plus1Not_RF1_hi1_proton","Q Val Without Back+1=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_Plus1Not_RF1_hi1_proton = new TH1D("Q_Value_Theta8_17_FB_Plus1Not_RF1_hi1_proton","Q Val Without Back+1=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_Plus1Not_RF1_hi1_proton = new TH1D("Q_Value_Theta8_16_FB_Plus1Not_RF1_hi1_proton","Q Val Without Back+1=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_Plus1Not_RF1_hi1_proton = new TH1D("Q_Value_Theta8_15_FB_Plus1Not_RF1_hi1_proton","Q Val Without Back+1=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_and_FBPlus1_Not_RF1_hi1_proton = new TH1D("Q_Value_FB_and_FBPlus1_Not_RF1_hi1_proton","Q Value Without Back=Front or Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_and_FBPlus1_Not_RF1_hi1_proton = new TH1D("Q_Value_Theta8_20_FB_and_FBPlus1_Not_RF1_hi1_proton","Q Val Without Back=Front and Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_and_FBPlus1_Not_RF1_hi1_proton = new TH1D("Q_Value_Theta8_19_FB_and_FBPlus1_Not_RF1_hi1_proton","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_and_FBPlus1_Not_RF1_hi1_proton = new TH1D("Q_Value_Theta8_18_FB_and_FBPlus1_Not_RF1_hi1_proton","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_and_FBPlus1_Not_RF1_hi1_proton = new TH1D("Q_Value_Theta8_17_FB_and_FBPlus1_Not_RF1_hi1_proton","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_and_FBPlus1_Not_RF1_hi1_proton = new TH1D("Q_Value_Theta8_16_FB_and_FBPlus1_Not_RF1_hi1_proton","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_and_FBPlus1_Not_RF1_hi1_proton = new TH1D("Q_Value_Theta8_15_FB_and_FBPlus1_Not_RF1_hi1_proton","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-15",275,-1,10);
+
+
+    //----------
+    // P2+HI1+RF Gates:
+    fgRootFile->cd("physical/P2+HI+RF_Gates");
+    Q_Value_RF1_hi1_proton2=new TH1D("Q_val_RF1_hi1_proton2","Q Value;Q_value",275,-1,10);
+
+    fgRootFile->cd("physical/P2+HI+RF_Gates/QvParameters");
+    Q_v_Phi_RF1_hi1_proton2=new TH2D("Q_v_Phi_RF1_hi1_proton2","Q_v_Phi;Q;Phi",275,-1,10,180,-180,180);
+    Q_v_cosTheta_RF1_hi1_proton2=new TH2D("Q_v_cosTheta_RF1_hi1_proton2","Q_v_cosTheta;Q;cosTheta",275,-1,10,256,0.5,1);
+    Q_v_EcosTheta_RF1_hi1_proton2=new TH2D("Q_v_EcosTheta_RF1_hi1_proton2","Q_v_EcosTheta;Q;EcosTheta",275,-1,10,512,0,20);
+    Q_v_Theta_RF1_hi1_proton2=new TH2D("Q_v_Theta_RF1_hi1_proton2","Q_v_Theta;Q;Theta",275,-1,10,180,0,179);
+    Q_v_E_RF1_hi1_proton2=new TH2D("Q_v_E_RF1_hi1_proton2","Q_v_E;Q;E",275,-1,10,512,0,32);
+    Q_v_RelAngle_RF1_hi1_proton2=new TH2D("Q_v_RelAngle_RF1_hi1_proton2","Q_v_RelAngle;Q;RelAngle",275,-1,10,180,0,179);
+    
+    fgRootFile->cd("physical/P2+HI+RF_Gates/Q_DecreasingAngularCoverage");
+    Q_Value_ThetaFull_RF1_hi1_proton2 = new TH1D("Q_Value_ThetaFull_RF1_hi1_proton2","Q Value All Angles",275,-1,10);
+    Q_Value_Theta8_20_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_20_RF1_hi1_proton2","Q Value Angles 8-20",275,-1,10);
+    Q_Value_Theta8_19_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_19_RF1_hi1_proton2","Q Value Angles 8-19",275,-1,10);
+    Q_Value_Theta8_18_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_18_RF1_hi1_proton2","Q Value Angles 8-18",275,-1,10);
+    Q_Value_Theta8_17_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_17_RF1_hi1_proton2","Q Value Angles 8-17",275,-1,10);
+    Q_Value_Theta8_16_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_16_RF1_hi1_proton2","Q Value Angles 8-16",275,-1,10);
+    Q_Value_Theta8_15_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_15_RF1_hi1_proton2","Q Value Angles 8-15",275,-1,10);
+
+    fgRootFile->cd("physical/P2+HI+RF_Gates/Q_FrontBackStuff");
+    Q_Value_FBNot_RF1_hi1_proton2 = new TH1D("Q_Value_FBNot_RF1_hi1_proton2","Q Value Without Back=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FBNot_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_20_FBNot_RF1_hi1_proton2","Q Val Without Back=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FBNot_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_19_FBNot_RF1_hi1_proton2","Q Val Without Back=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FBNot_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_18_FBNot_RF1_hi1_proton2","Q Val Without Back=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FBNot_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_17_FBNot_RF1_hi1_proton2","Q Val Without Back=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FBNot_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_16_FBNot_RF1_hi1_proton2","Q Val Without Back=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FBNot_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_15_FBNot_RF1_hi1_proton2","Q Val Without Back=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_Plus1Not_RF1_hi1_proton2 = new TH1D("Q_Value_FB_Plus1Not_RF1_hi1_proton2","Q Value Without Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_Plus1Not_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_20_FB_Plus1Not_RF1_hi1_proton2","Q Val Without Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_Plus1Not_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_19_FB_Plus1Not_RF1_hi1_proton2","Q Val Without Back+1=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_Plus1Not_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_18_FB_Plus1Not_RF1_hi1_proton2","Q Val Without Back+1=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_Plus1Not_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_17_FB_Plus1Not_RF1_hi1_proton2","Q Val Without Back+1=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_Plus1Not_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_16_FB_Plus1Not_RF1_hi1_proton2","Q Val Without Back+1=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_Plus1Not_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_15_FB_Plus1Not_RF1_hi1_proton2","Q Val Without Back+1=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_and_FBPlus1_Not_RF1_hi1_proton2 = new TH1D("Q_Value_FB_and_FBPlus1_Not_RF1_hi1_proton2","Q Value Without Back=Front or Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_and_FBPlus1_Not_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_20_FB_and_FBPlus1_Not_RF1_hi1_proton2","Q Val Without Back=Front and Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_and_FBPlus1_Not_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_19_FB_and_FBPlus1_Not_RF1_hi1_proton2","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_and_FBPlus1_Not_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_18_FB_and_FBPlus1_Not_RF1_hi1_proton2","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_and_FBPlus1_Not_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_17_FB_and_FBPlus1_Not_RF1_hi1_proton2","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_and_FBPlus1_Not_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_16_FB_and_FBPlus1_Not_RF1_hi1_proton2","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_and_FBPlus1_Not_RF1_hi1_proton2 = new TH1D("Q_Value_Theta8_15_FB_and_FBPlus1_Not_RF1_hi1_proton2","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-15",275,-1,10);
+
+
+
+
+
+
+
+
+    /*
+    //====================================================================================
+    // All of the old stuff:
+    fgRootFile->cd("physical/Q_DecreasingAngularCoverage");
+    Q_Value_ThetaFull = new TH1D("Q_Value_ThetaFull","Q Value All Angles",275,-1,10);
+    Q_Value_Theta8_20 = new TH1D("Q_Value_Theta8_20","Q Value Angles 8-20",275,-1,10);
+    Q_Value_Theta8_19 = new TH1D("Q_Value_Theta8_19","Q Value Angles 8-19",275,-1,10);
+    Q_Value_Theta8_18 = new TH1D("Q_Value_Theta8_18","Q Value Angles 8-18",275,-1,10);
+    Q_Value_Theta8_17 = new TH1D("Q_Value_Theta8_17","Q Value Angles 8-17",275,-1,10);
+    Q_Value_Theta8_16 = new TH1D("Q_Value_Theta8_16","Q Value Angles 8-16",275,-1,10);
+    Q_Value_Theta8_15 = new TH1D("Q_Value_Theta8_15","Q Value Angles 8-15",275,-1,10);
+    
+    fgRootFile->cd("physical/Q_FrontBackStuff");
+    Q_Value_FBNot = new TH1D("Q_Value_FBNot","Q Value Without Back=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FBNot = new TH1D("Q_Value_Theta8_20_FBNot","Q Val Without Back=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FBNot = new TH1D("Q_Value_Theta8_19_FBNot","Q Val Without Back=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FBNot = new TH1D("Q_Value_Theta8_18_FBNot","Q Val Without Back=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FBNot = new TH1D("Q_Value_Theta8_17_FBNot","Q Val Without Back=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FBNot = new TH1D("Q_Value_Theta8_16_FBNot","Q Val Without Back=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FBNot = new TH1D("Q_Value_Theta8_15_FBNot","Q Val Without Back=Front Hits : Theta = 8-15",275,-1,10);
+
+
+
+    Q_Value_FB_Plus1Not = new TH1D("Q_Value_FB_Plus1Not","Q Value Without Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_Plus1Not = new TH1D("Q_Value_Theta8_20_FB_Plus1Not","Q Val Without Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_Plus1Not = new TH1D("Q_Value_Theta8_19_FB_Plus1Not","Q Val Without Back+1=Front Hits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_Plus1Not = new TH1D("Q_Value_Theta8_18_FB_Plus1Not","Q Val Without Back+1=Front Hits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_Plus1Not = new TH1D("Q_Value_Theta8_17_FB_Plus1Not","Q Val Without Back+1=Front Hits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_Plus1Not = new TH1D("Q_Value_Theta8_16_FB_Plus1Not","Q Val Without Back+1=Front Hits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_Plus1Not = new TH1D("Q_Value_Theta8_15_FB_Plus1Not","Q Val Without Back+1=Front Hits : Theta = 8-15",275,-1,10);
+
+    Q_Value_FB_and_FBPlus1_Not = new TH1D("Q_Value_FB_and_FBPlus1_Not","Q Value Without Back=Front or Back+1=Front Hits",275,-1,10);
+    Q_Value_Theta8_20_FB_and_FBPlus1_Not = new TH1D("Q_Value_Theta8_20_FB_and_FBPlus1_Not","Q Val Without Back=Front and Back+1=Front Hits : Theta = 8-20",275,-1,10);
+    Q_Value_Theta8_19_FB_and_FBPlus1_Not = new TH1D("Q_Value_Theta8_19_FB_and_FBPlus1_Not","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-19",275,-1,10);
+    Q_Value_Theta8_18_FB_and_FBPlus1_Not = new TH1D("Q_Value_Theta8_18_FB_and_FBPlus1_Not","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-18",275,-1,10);
+    Q_Value_Theta8_17_FB_and_FBPlus1_Not = new TH1D("Q_Value_Theta8_17_FB_and_FBPlus1_Not","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-17",275,-1,10);
+    Q_Value_Theta8_16_FB_and_FBPlus1_Not = new TH1D("Q_Value_Theta8_16_FB_and_FBPlus1_Not","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-16",275,-1,10);
+    Q_Value_Theta8_15_FB_and_FBPlus1_Not = new TH1D("Q_Value_Theta8_15_FB_and_FBPlus1_Not","Q Val Without Back=Front and Back+1=FrontHits : Theta = 8-15",275,-1,10);
+
 
 
     //create histograms  
     fgRootFile->cd("physical/Q");
-    Q_Value=new TH1D("Q_val_p","Q_value_p;Q_value",512,-1,10);
-    Q_Value_proton=new TH1D("Q_val_proton","Q_value_proton;Q_value",512,-1,10);
-    Q_Value_proton_hi1=new TH1D("Q_val_proton_hi1","Q_val_proton_hi1;Q_value",512,-1,10);
-    Q_Value_proton_hi2=new TH1D("Q_val_proton_hi2","Q_val_proton_hi2;Q_value",512,-1,10);
+    Q_Value=new TH1D("Q_val_p","Q_value_p;Q_value",275,-1,10);
+    Q_Value_proton=new TH1D("Q_val_proton","Q_value_proton;Q_value",275,-1,10);
+    Q_Value_proton_hi1=new TH1D("Q_val_proton_hi1","Q_val_proton_hi1;Q_value",275,-1,10);
+    //Q_Value_proton_hi2=new TH1D("Q_val_proton_hi2","Q_val_proton_hi2;Q_value",275,-1,10);
+
+    Q_Val_RF1 = new TH1D("Q_Val_RF1","Q Value Gated On RF1",275,-1,10);
+    //Q_Val_RF2 = new TH1D("Q_Val_RF2","Q Value Gated On RF2",275,-1,10);
+    //Q_Val_RF3 = new TH1D("Q_Val_RF3","Q Value Gated On RF3",275,-1,10);
 
 
     fgRootFile->cd("physical/QvParameters");
-    Q_v_Phi=new TH2D("Q_v_Phi","Q_v_Phi;Q;Phi",512,-1,10,180,-180,180);
-    Q_v_cosTheta=new TH2D("Q_v_cosTheta","Q_v_cosTheta;Q;cosTheta",512,-1,10,256,0.5,1);
-    Q_v_EcosTheta=new TH2D("Q_v_EcosTheta","Q_v_EcosTheta;Q;EcosTheta",512,-1,10,512,0,20);
-    Q_v_pTheta=new TH2D("Q_v_pTheta","Q_v_pTheta;Q;Theta",512,-1,10,180,0,179);
-    Q_v_pE=new TH2D("Q_v_pE","Q_v_pE;Q;E",512,-1,10,512,0,32);
-    Q_v_pRelAngle=new TH2D("Q_v_pRelAngle","Q_v_pRelAngle;Q;RelAngle",512,-1,10,180,0,179);;
-    
-    Q_v_pTheta_proton_hi1=new TH2D("Q_v_pTheta_proton_hi1","Q_v_pTheta_proton_hi1;Q;Theta",512,-1,10,180,0,179);;
-    Q_v_pE_proton_hi1=new TH2D("Q_v_pE_proton_hi1","Q_v_pE_proton_hi1;Q;E",512,-1,10,512,0,32);;
-    Q_v_pRelAngle_proton_hi1=new TH2D("Q_v_pRelAngle_proton_hi1","Q_v_pRelAngle_proton_hi1;Q;RelAngle",512,-1,10,180,0,179);
-
+    Q_v_Phi=new TH2D("Q_v_Phi","Q_v_Phi;Q;Phi",275,-1,10,180,-180,180);
+    Q_v_cosTheta=new TH2D("Q_v_cosTheta","Q_v_cosTheta;Q;cosTheta",275,-1,10,256,0.5,1);
+    Q_v_EcosTheta=new TH2D("Q_v_EcosTheta","Q_v_EcosTheta;Q;EcosTheta",275,-1,10,512,0,20);
+    Q_v_Theta=new TH2D("Q_v_Theta","Q_v_Theta;Q;Theta",275,-1,10,180,0,179);
+    Q_v_E=new TH2D("Q_v_E","Q_v_E;Q;E",275,-1,10,512,0,32);
+    Q_v_RelAngle=new TH2D("Q_v_RelAngle","Q_v_RelAngle;Q;RelAngle",275,-1,10,180,0,179);
+    */
+    /* Q_v_pTheta_proton_hi1=new TH2D("Q_v_pTheta_proton_hi1","Q_v_pTheta_proton_hi1;Q;Theta",275,-1,10,180,0,179);;
+    Q_v_pE_proton_hi1=new TH2D("Q_v_pE_proton_hi1","Q_v_pE_proton_hi1;Q;E",275,-1,10,512,0,32);;
+    Q_v_pRelAngle_proton_hi1=new TH2D("Q_v_pRelAngle_proton_hi1","Q_v_pRelAngle_proton_hi1;Q;RelAngle",275,-1,10,180,0,179);
+    */
     fgRootFile->cd();
     return 1;
 
@@ -106,22 +1474,72 @@ namespace physical{
   bool Q_ValueAnalyzer::Process(){
     //gPrimaryReaction.E_fragment is ansatz from MC simulation
     Double32_t useangle(0);
+    Double32_t usephi(0);
 
     switch (fSiAngle){
     case 0:
       useangle = si_array.Theta_A();
+      usephi = si_array.Phi_A();
       break;
     case 1:
       useangle = si_array.Theta_B();
+      usephi = si_array.Phi_B();
       break;
     default:
       useangle = si_array.Theta_A();
+      usephi = si_array.Phi_A();
       break;
     }
     
     if(si_array.E_AB()>0&& useangle!=0){
     
-      q_val_p = gReactionInfo.DecayQValueEstimate(si_array.E_AB(),useangle);
+      //double ICEn = (ic.ERaw() + ic.DERaw())*0.0232919+11.874677;// Before Target Thickness
+      //double ICEn = (ic.ERaw() + ic.DERaw())*0.0238226+8.41369;// Including Target Thickness 89 MeV Beam
+      //double ICEn = (ic.ERaw() + ic.DERaw())*0.0235203+8.02406;// Including Target Thickness 88 MeV Beam
+      //double ICEn = (ic.ERaw() + ic.DERaw())*0.0231295+7.87542;// Including Target Thickness 87 MeV Beam
+      //double ICEn = (ic.ERaw() + ic.DERaw())*0.0229233+7.19823;// Including Target Thickness 86 MeV Beam
+      //double ICEn = (ic.ERaw() + ic.DERaw())*0.0226135+6.78817;// Including Target Thickness 85 MeV Beam
+      //double ICEn = (ic.ERaw() + ic.DERaw())*0.02228872+6.39426;// Including Target Thickness 84 MeV Beam
+      //ICEn = 44.00970409*TMath::Power(TMath::E(),0.0106606504*ICEn);// Including Target Thickness 87 MeV Beam
+
+      //ICEn = ICEn + 2.0;
+
+
+      //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02861111176+10.66750766;// Including Target Thickness 100 MeV Beam Poly Fit
+      //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02818894754+9.473799994;// Including Target Thickness 98 MeV Beam Poly Fit
+      //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02775543391+8.288014919;// Including Target Thickness 96 MeV Beam Poly Fit
+      //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.0306375159+2.384362376;// Including Target Thickness 94 MeV Beam Poly Fit
+      //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02685000935+5.947732291;// Including Target Thickness 92 MeV Beam Poly Fit
+      //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02636726014+4.802948936;// Including Target Thickness 90 MeV Beam Poly Fit
+      //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02569348+2.962222;// Including Target Thickness 87 MeV Beam Poly Fit
+      //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02485998842+1.407845946;// Including Target Thickness 84 MeV Beam Poly Fit
+      //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.002497065691+1.618425389;// Including Target Thickness 84.4 MeV Beam Poly Fit
+      //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02507482106+1.841874012;// Including Target Thickness 84.8 MeV Beam Poly Fit
+      //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.025126987+1.953030427;// Including Target Thickness 85 MeV Beam Poly Fit
+      //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02523036074+2.177138549;// Including Target Thickness 85.4 MeV Beam Poly Fit
+      //double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02378059053-0.7911268205;// Including Target Thickness 80 MeV Beam Poly Fit
+      //ICEn = 0.001358*(ICEn*ICEn)+0.67*ICEn+38.419;
+
+
+      // This is a new way to get the calibrated IC Energy.  It was made using energy loss from SRIM, not LISE++.
+      double ICCal_Slope = 0.0003096126*RNROOT::gReactionInfo.BeamEnergy() - 0.0012604565;
+      double ICCal_YInt = 0.4312070068*RNROOT::gReactionInfo.BeamEnergy() - 34.2441043178;
+      double ICEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*ICCal_Slope + ICCal_YInt;
+      ICEn = 37.9626+0.487485*ICEn+0.00558721*ICEn*ICEn-0.0000278791*ICEn*ICEn*ICEn;
+      
+
+      //std::cout << " IC Cal Mid   : " << ICCalEn << std::endl;
+      //ICEn = 41.87163*TMath::Power(TMath::E(),0.01108402*ICEn);// Before Target Thickness
+     
+      //q_val_p = gReactionInfo.DecayQValueEstimate(si_array.E_AB(),useangle);
+      q_val_p = gReactionInfo.DecayQValueIterations(si_array.E_AB(),useangle,QValIterations);
+      Double32_t Scrap = gReactionInfo.IntHeavyQVal(si_array.E_AB(),ICEn,useangle,usephi,ic.Theta()*TMath::DegToRad(),ic.Phi()*TMath::DegToRad());
+      //Double32_t EnScrap = gReactionInfo.IntHeavyKinEn(si_array.E_AB(),ICEn,useangle,usephi,ic.Theta()*TMath::DegToRad(),ic.Phi()*TMath::DegToRad());
+      //Double32_t ThetaScrap = gReactionInfo.IntHeavyTheta(si_array.E_AB(),ICEn,useangle,usephi,ic.Theta()*TMath::DegToRad(),ic.Phi()*TMath::DegToRad());
+      if(UseInvMass)
+	q_val_p = Scrap-Q0;
+      
+      //std::cout << " Excitation Energy : " << Scrap << std::endl;
     
     }
 
@@ -130,30 +1548,1411 @@ namespace physical{
   
   bool Q_ValueAnalyzer::ProcessFill(){
 
-    //Q_Value parameter histograms
+    //std::cout << "> Before the no gate fill section" << std::endl;
+
+    //===========================
+    // Fill no gate stuff always:
     Q_Value->Fill(q_val_p);
+    // Theta Scan
+    Q_Value_ThetaFull->Fill(q_val_p);
+    if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+      Q_Value_Theta8_20->Fill(q_val_p);
+    if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+      Q_Value_Theta8_19->Fill(q_val_p);
+    if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+      Q_Value_Theta8_18->Fill(q_val_p);
+    if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+      Q_Value_Theta8_17->Fill(q_val_p);
+    if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+      Q_Value_Theta8_16->Fill(q_val_p); 
+    if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+      Q_Value_Theta8_15->Fill(q_val_p);
+    // FB Stuff
+    if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+      if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	Q_Value_FBNot->Fill(q_val_p);
+	if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	  Q_Value_Theta8_20_FBNot->Fill(q_val_p);
+	if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	  Q_Value_Theta8_19_FBNot->Fill(q_val_p);
+	if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	  Q_Value_Theta8_18_FBNot->Fill(q_val_p);
+	if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	  Q_Value_Theta8_17_FBNot->Fill(q_val_p);
+	if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	  Q_Value_Theta8_16_FBNot->Fill(q_val_p); 
+	if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	  Q_Value_Theta8_15_FBNot->Fill(q_val_p);
+	
+      }
+    }
+    
+    if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+      if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	Q_Value_FB_Plus1Not->Fill(q_val_p);
+	if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	  Q_Value_Theta8_20_FB_Plus1Not->Fill(q_val_p);
+	if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	  Q_Value_Theta8_19_FB_Plus1Not->Fill(q_val_p);
+	if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	  Q_Value_Theta8_18_FB_Plus1Not->Fill(q_val_p);
+	if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	  Q_Value_Theta8_17_FB_Plus1Not->Fill(q_val_p);
+	if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	  Q_Value_Theta8_16_FB_Plus1Not->Fill(q_val_p); 
+	if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	  Q_Value_Theta8_15_FB_Plus1Not->Fill(q_val_p);
+	
+	
+      }
+    }
+
+    if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+      if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	  if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	    Q_Value_FB_and_FBPlus1_Not->Fill(q_val_p); 
+	    if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	      Q_Value_Theta8_20_FB_and_FBPlus1_Not->Fill(q_val_p);
+	    if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	      Q_Value_Theta8_19_FB_and_FBPlus1_Not->Fill(q_val_p);
+	    if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	      Q_Value_Theta8_18_FB_and_FBPlus1_Not->Fill(q_val_p);
+	    if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	      Q_Value_Theta8_17_FB_and_FBPlus1_Not->Fill(q_val_p);
+	    if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	      Q_Value_Theta8_16_FB_and_FBPlus1_Not->Fill(q_val_p); 
+	    if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	      Q_Value_Theta8_15_FB_and_FBPlus1_Not->Fill(q_val_p);
+	  
+
+	  }
+	}
+      }
+    }
+    // Versus stuff:
+    Q_v_Phi->Fill(q_val_p,si_cluster_[0].fPos[0].Phi()*180/TMath::Pi());
+    Q_v_cosTheta->Fill(q_val_p,cos(si_array.Theta_A()));
+    Q_v_EcosTheta->Fill(q_val_p,TMath::Sqrt(si_array.E_AB())*cos(si_array.Theta_A()));
+    Q_v_Theta->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   		       
+    Q_v_E->Fill(q_val_p,si_array.E_AB());   			       
+    Q_v_RelAngle->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   
+
+    //std::cout << "> Before the proton1 gate fill section" << std::endl;
+
+    //============
+    // Prot1 Only:
+    if(silicon::protcheck){
+      
+      //std::cout << ">   In the proton1 gate section" << std::endl;
+
+      Q_Value_proton->Fill(q_val_p);
+      // Theta Scan
+      Q_Value_ThetaFull_proton->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	Q_Value_Theta8_20_proton->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	Q_Value_Theta8_19_proton->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	Q_Value_Theta8_18_proton->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	Q_Value_Theta8_17_proton->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	Q_Value_Theta8_16_proton->Fill(q_val_p); 
+      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	Q_Value_Theta8_15_proton->Fill(q_val_p);
+      
+    
+
+      // FB Stuff
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+
+	
+	  Q_Value_FBNot_proton->Fill(q_val_p);
+	  	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FBNot_proton->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FBNot_proton->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FBNot_proton->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FBNot_proton->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FBNot_proton->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FBNot_proton->Fill(q_val_p);
+
+	}
+      }
+    
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	  Q_Value_FB_Plus1Not_proton->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FB_Plus1Not_proton->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FB_Plus1Not_proton->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FB_Plus1Not_proton->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FB_Plus1Not_proton->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FB_Plus1Not_proton->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FB_Plus1Not_proton->Fill(q_val_p);
+	
+	
+	}
+      }
+     
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	  if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	    if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	      Q_Value_FB_and_FBPlus1_Not_proton->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+		Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+		Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+		Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+		Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+		Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+		Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton->Fill(q_val_p);
+	  
+
+	    }
+	  }
+	}
+      }
+      
+      //std::cout << ">   In the proton1 gate section - after FB Stuff section 3" << std::endl;
+
+      // Versus stuff:
+      Q_v_Phi_proton->Fill(q_val_p,si_cluster_[0].fPos[0].Phi()*180/TMath::Pi());
+      Q_v_cosTheta_proton->Fill(q_val_p,cos(si_array.Theta_A()));
+      Q_v_EcosTheta_proton->Fill(q_val_p,TMath::Sqrt(si_array.E_AB())*cos(si_array.Theta_A()));
+      Q_v_Theta_proton->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   		       
+      Q_v_E_proton->Fill(q_val_p,si_array.E_AB());   			       
+      Q_v_RelAngle_proton->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());  
+
+
+    }
+
+  
+    //============
+    // Prot2 Only:
+    if(silicon::prot2check){
+      //std::cout << ">   In the proton2 gate section" << std::endl;
+      
+      Q_Value_proton2->Fill(q_val_p);
+      // Theta Scan
+      Q_Value_ThetaFull_proton2->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	Q_Value_Theta8_20_proton2->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	Q_Value_Theta8_19_proton2->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	Q_Value_Theta8_18_proton2->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	Q_Value_Theta8_17_proton2->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	Q_Value_Theta8_16_proton2->Fill(q_val_p); 
+      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	Q_Value_Theta8_15_proton2->Fill(q_val_p);
+      // FB Stuff
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	  Q_Value_FBNot_proton2->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FBNot_proton2->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FBNot_proton2->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FBNot_proton2->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FBNot_proton2->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FBNot_proton2->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FBNot_proton2->Fill(q_val_p);
+	
+	}
+      }
+    
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	  Q_Value_FB_Plus1Not_proton2->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FB_Plus1Not_proton2->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FB_Plus1Not_proton2->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FB_Plus1Not_proton2->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FB_Plus1Not_proton2->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FB_Plus1Not_proton2->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FB_Plus1Not_proton2->Fill(q_val_p);
+	
+	
+	}
+      }
+
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	  if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	    if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	      Q_Value_FB_and_FBPlus1_Not_proton2->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+		Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton2->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+		Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton2->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+		Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton2->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+		Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton2->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+		Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton2->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+		Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton2->Fill(q_val_p);
+	  
+
+	    }
+	  }
+	}
+      }
+      // Versus stuff:
+      Q_v_Phi_proton2->Fill(q_val_p,si_cluster_[0].fPos[0].Phi()*180/TMath::Pi());
+      Q_v_cosTheta_proton2->Fill(q_val_p,cos(si_array.Theta_A()));
+      Q_v_EcosTheta_proton2->Fill(q_val_p,TMath::Sqrt(si_array.E_AB())*cos(si_array.Theta_A()));
+      Q_v_Theta_proton2->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   		       
+      Q_v_E_proton2->Fill(q_val_p,si_array.E_AB());   			       
+      Q_v_RelAngle_proton2->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());  
+
+
+    }
+
+
+    //============
+    //  HI1 Only:
+    if(ionchamber::hi_check[0]){
+      //std::cout << ">   In the proton2 gate section" << std::endl;
+      
+      Q_Value_hi1->Fill(q_val_p);
+      // Theta Scan
+      Q_Value_ThetaFull_hi1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	Q_Value_Theta8_20_hi1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	Q_Value_Theta8_19_hi1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	Q_Value_Theta8_18_hi1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	Q_Value_Theta8_17_hi1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	Q_Value_Theta8_16_hi1->Fill(q_val_p); 
+      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	Q_Value_Theta8_15_hi1->Fill(q_val_p);
+      // FB Stuff
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	  Q_Value_FBNot_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FBNot_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FBNot_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FBNot_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FBNot_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FBNot_hi1->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FBNot_hi1->Fill(q_val_p);
+	
+	}
+      }
+    
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	  Q_Value_FB_Plus1Not_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FB_Plus1Not_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FB_Plus1Not_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FB_Plus1Not_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FB_Plus1Not_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FB_Plus1Not_hi1->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FB_Plus1Not_hi1->Fill(q_val_p);
+	
+	
+	}
+      }
+
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	  if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	    if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	      Q_Value_FB_and_FBPlus1_Not_hi1->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+		Q_Value_Theta8_20_FB_and_FBPlus1_Not_hi1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+		Q_Value_Theta8_19_FB_and_FBPlus1_Not_hi1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+		Q_Value_Theta8_18_FB_and_FBPlus1_Not_hi1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+		Q_Value_Theta8_17_FB_and_FBPlus1_Not_hi1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+		Q_Value_Theta8_16_FB_and_FBPlus1_Not_hi1->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+		Q_Value_Theta8_15_FB_and_FBPlus1_Not_hi1->Fill(q_val_p);
+	  
+
+	    }
+	  }
+	}
+      }
+      // Versus stuff:
+      Q_v_Phi_hi1->Fill(q_val_p,si_cluster_[0].fPos[0].Phi()*180/TMath::Pi());
+      Q_v_cosTheta_hi1->Fill(q_val_p,cos(si_array.Theta_A()));
+      Q_v_EcosTheta_hi1->Fill(q_val_p,TMath::Sqrt(si_array.E_AB())*cos(si_array.Theta_A()));
+      Q_v_Theta_hi1->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   		       
+      Q_v_E_hi1->Fill(q_val_p,si_array.E_AB());   			       
+      Q_v_RelAngle_hi1->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());  
+
+
+    }
+
+    //============
+    //  RF1 Only:
+    if(RF_analyzer::rf_check[0]){
+      //std::cout << ">   In the proton2 gate section" << std::endl;
+      
+      Q_Value_RF1->Fill(q_val_p);
+      // Theta Scan
+      Q_Value_ThetaFull_RF1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	Q_Value_Theta8_20_RF1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	Q_Value_Theta8_19_RF1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	Q_Value_Theta8_18_RF1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	Q_Value_Theta8_17_RF1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	Q_Value_Theta8_16_RF1->Fill(q_val_p); 
+      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	Q_Value_Theta8_15_RF1->Fill(q_val_p);
+      // FB Stuff
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	  Q_Value_FBNot_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FBNot_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FBNot_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FBNot_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FBNot_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FBNot_RF1->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FBNot_RF1->Fill(q_val_p);
+	
+	}
+      }
+    
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	  Q_Value_FB_Plus1Not_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FB_Plus1Not_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FB_Plus1Not_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FB_Plus1Not_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FB_Plus1Not_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FB_Plus1Not_RF1->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FB_Plus1Not_RF1->Fill(q_val_p);
+	
+	
+	}
+      }
+
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	  if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	    if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	      Q_Value_FB_and_FBPlus1_Not_RF1->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+		Q_Value_Theta8_20_FB_and_FBPlus1_Not_RF1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+		Q_Value_Theta8_19_FB_and_FBPlus1_Not_RF1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+		Q_Value_Theta8_18_FB_and_FBPlus1_Not_RF1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+		Q_Value_Theta8_17_FB_and_FBPlus1_Not_RF1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+		Q_Value_Theta8_16_FB_and_FBPlus1_Not_RF1->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+		Q_Value_Theta8_15_FB_and_FBPlus1_Not_RF1->Fill(q_val_p);
+	  
+
+	    }
+	  }
+	}
+      }
+      // Versus stuff:
+      Q_v_Phi_RF1->Fill(q_val_p,si_cluster_[0].fPos[0].Phi()*180/TMath::Pi());
+      Q_v_cosTheta_RF1->Fill(q_val_p,cos(si_array.Theta_A()));
+      Q_v_EcosTheta_RF1->Fill(q_val_p,TMath::Sqrt(si_array.E_AB())*cos(si_array.Theta_A()));
+      Q_v_Theta_RF1->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   		       
+      Q_v_E_RF1->Fill(q_val_p,si_array.E_AB());   			       
+      Q_v_RelAngle_RF1->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());  
+
+
+    }
+
+
+    //=====================
+    //  Proton1 & HI1 Only:
+    if(ionchamber::hi_check[0] && silicon::protcheck){
+      //std::cout << ">   In the proton2 gate section" << std::endl;
+      
+
+      // I want to fill the timing stuff in here, if we have 
+      // a proton and a heavy.
+      for(unsigned int iN=0;iN<neut.size();iN++){
+      
+	if(neut[iN].T()>0){
+	  
+	}
+	if(psd::rawneutcheck[iN]){
+	  
+	  Neut_RF_Time_Sum->Fill(neut[iN].T()-rftime.TMod2());
+	  Neut_Si_Time_SumA->Fill(neut[iN].T()-si_array.T_A());
+	  Neut_Si_Time_SumB->Fill(neut[iN].T()-si_array.T_B());
+	  Neut_PSD_All_Sum->Fill(neut[iN].T());
+	  NeutRF_vs_QVal->Fill(q_val_p,neut[iN].T()-rftime.TMod2());
+
+	  if(si_array.T_A()!=0 && si_array.T_B()==0){
+	    Neut_Si_Time_AorB->Fill(neut[iN].T()-si_array.T_A());
+	    NeutSiAorB_vs_QVal->Fill(q_val_p,neut[iN].T()-si_array.T_A());
+	  }
+	  else if(si_array.T_A()==0 && si_array.T_B()!=0){
+	    Neut_Si_Time_AorB->Fill(neut[iN].T()-si_array.T_B());
+	    NeutSiAorB_vs_QVal->Fill(q_val_p,neut[iN].T()-si_array.T_B());
+
+	  }
+	  else{
+	    Neut_Si_Time_AorB->Fill(neut[iN].T()-si_array.T_A());
+	    NeutSiAorB_vs_QVal->Fill(q_val_p,neut[iN].T()-si_array.T_A());	    
+
+	  }
+	    
+
+
+
+	  QVal_N_RF_All->Fill(q_val_p);
+
+	  if((neut[iN].T()-rftime.TMod2())>95 && (neut[iN].T()-rftime.TMod2())<105){
+	    QVal_N_RF_95to105->Fill(q_val_p);
+	  }
+	  else if((neut[iN].T()-rftime.TMod2())>105 && (neut[iN].T()-rftime.TMod2())<115){
+	    QVal_N_RF_105to115->Fill(q_val_p);
+	  }
+	  else if((neut[iN].T()-rftime.TMod2())>115 && (neut[iN].T()-rftime.TMod2())<130){
+	    QVal_N_RF_115to130->Fill(q_val_p);
+	  }
+	  else{
+	    QVal_N_RF_Rest->Fill(q_val_p);
+	  }
+
+
+	  if(q_val_p > 0.35 && q_val_p<0.55){
+	    Neut_RF_Time_Sum_QC1->Fill(neut[iN].T()-rftime.TMod2());
+	    Neut_Si_Time_SumA_QC1->Fill(neut[iN].T()-si_array.T_A());
+	    Neut_Si_Time_SumB_QC1->Fill(neut[iN].T()-si_array.T_B());
+	    Neut_PSD_All_Sum_QC1->Fill(neut[iN].T());
+	  }
+
+	  if(q_val_p > 0.55 && q_val_p<0.75){
+	    Neut_RF_Time_Sum_QC2->Fill(neut[iN].T()-rftime.TMod2());
+	    Neut_Si_Time_SumA_QC2->Fill(neut[iN].T()-si_array.T_A());
+	    Neut_Si_Time_SumB_QC2->Fill(neut[iN].T()-si_array.T_B());
+	    Neut_PSD_All_Sum_QC2->Fill(neut[iN].T());
+	  }
+
+	  if(q_val_p > 0.85 && q_val_p<0.95){
+	    Neut_RF_Time_Sum_QC3->Fill(neut[iN].T()-rftime.TMod2());
+	    Neut_Si_Time_SumA_QC3->Fill(neut[iN].T()-si_array.T_A());
+	    Neut_Si_Time_SumB_QC3->Fill(neut[iN].T()-si_array.T_B());
+	    Neut_PSD_All_Sum_QC3->Fill(neut[iN].T());
+	  }
+
+	  if(q_val_p > 0.95){
+	    Neut_RF_Time_Sum_QC4->Fill(neut[iN].T()-rftime.TMod2());
+	    Neut_Si_Time_SumA_QC4->Fill(neut[iN].T()-si_array.T_A());
+	    Neut_Si_Time_SumB_QC4->Fill(neut[iN].T()-si_array.T_B());
+	    Neut_PSD_All_Sum_QC4->Fill(neut[iN].T());
+	  }
+	}
+	
+      }
+
+
+
+
+
+
+
+      Q_Value_proton_hi1->Fill(q_val_p);
+
+      
+      // Theta Scan
+      Q_Value_ThetaFull_proton_hi1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	Q_Value_Theta8_20_proton_hi1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	Q_Value_Theta8_19_proton_hi1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	Q_Value_Theta8_18_proton_hi1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	Q_Value_Theta8_17_proton_hi1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	Q_Value_Theta8_16_proton_hi1->Fill(q_val_p); 
+      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	Q_Value_Theta8_15_proton_hi1->Fill(q_val_p);
+      // FB Stuff
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	  Q_Value_FBNot_proton_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FBNot_proton_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FBNot_proton_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FBNot_proton_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FBNot_proton_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FBNot_proton_hi1->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FBNot_proton_hi1->Fill(q_val_p);
+	
+	}
+      }
+    
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	  Q_Value_FB_Plus1Not_proton_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FB_Plus1Not_proton_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FB_Plus1Not_proton_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FB_Plus1Not_proton_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FB_Plus1Not_proton_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FB_Plus1Not_proton_hi1->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FB_Plus1Not_proton_hi1->Fill(q_val_p);
+	
+	
+	}
+      }
+
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	  if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	    if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	      Q_Value_vs_ICEnergy->Fill(q_val_p,ic.ERaw() + ic.DERaw());
+	      
+	      //double ICCalEn = (ic.ERaw() + ic.DERaw())*0.0231295+7.87542;// Including Target Thickness 87 MeV Beam
+	      //double ICCalEn = (ic.ERaw() + ic.DERaw())*0.0238226+8.41369;// Including Target Thickness 89 MeV Beam
+	      //double ICCalEn = (ic.ERaw() + ic.DERaw())*0.0235203+8.02406;// Including Target Thickness 88 MeV Beam
+	      //double ICCalEn = (ic.ERaw() + ic.DERaw())*0.0231295+7.87542;// Including Target Thickness 87 MeV Beam
+	      //double ICCalEn = (ic.ERaw() + ic.DERaw())*0.0229233+7.19823;// Including Target Thickness 86 MeV Beam
+	      //double ICCalEn = (ic.ERaw() + ic.DERaw())*0.0226135+6.78817;// Including Target Thickness 85 MeV Beam
+	      //double ICCalEn = (ic.ERaw() + ic.DERaw())*0.02228872+6.39426;// Including Target Thickness 84 MeV Beam
+	      //ICCalEn = 44.00970409*TMath::Power(TMath::E(),0.0106606504*ICCalEn);// Including Target Thickness
+	      
+	      //ICCalEn = ICCalEn+2.0;
+
+	      
+	      //double ICCalEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02861111176+10.66750766;// Including Target Thickness 100 MeV Beam Poly Fit
+	      //double ICCalEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02818894754+9.473799994;// Including Target Thickness 98 MeV Beam Poly Fit
+	      //double ICCalEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02775543391+8.288014919;// Including Target Thickness 96 MeV Beam Poly Fit
+	      //double ICCalEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.0306375159+2.384362376;// Including Target Thickness 94 MeV Beam Poly Fit
+	      //double ICCalEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02685000935+5.947732291;// Including Target Thickness 92 MeV Beam Poly Fit
+	      //double ICCalEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02636726014+4.802948936;// Including Target Thickness 90 MeV Beam Poly Fit
+	      //double ICCalEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02569348+2.962222;// Including Target Thickness 87 MeV Beam Poly Fit
+	      //double ICCalEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02485998842+1.407845946;// Including Target Thickness 84 MeV Beam Poly Fit
+	      //double ICCalEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.002497065691+1.618425389;// Including Target Thickness 84.4 MeV Beam Poly Fit
+	      //double ICCalEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02507482106+1.841874012;// Including Target Thickness 84.8 MeV Beam Poly Fit
+	      //double ICCalEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.025126987+1.953030427;// Including Target Thickness 85 MeV Beam Poly Fit
+	      //double ICCalEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02523036074+2.177138549;// Including Target Thickness 85.4 MeV Beam Poly Fit
+	      //double ICCalEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*0.02378059053-0.7911268205;// Including Target Thickness 80 MeV Beam Poly Fit
+	      //ICCalEn = 0.001358*(ICCalEn*ICCalEn)+0.67*ICCalEn+38.419;
+	      
+	      // This is a new way to get the calibrated IC Energy.  It was made using energy loss from SRIM, not LISE++.
+	      double ICCal_Slope = 0.0003096126*RNROOT::gReactionInfo.BeamEnergy() - 0.0012604565;
+	      double ICCal_YInt = 0.4312070068*RNROOT::gReactionInfo.BeamEnergy() - 34.2441043178;
+	      double ICCalEn = (RNROOT::ic.ERaw() + RNROOT::ic.DERaw())*ICCal_Slope + ICCal_YInt;
+	      ICCalEn = 37.9626+0.487485*ICCalEn+0.00558721*ICCalEn*ICCalEn-0.0000278791*ICCalEn*ICCalEn*ICCalEn;
+
+	      //double ICCalEn = (ic.ERaw() + ic.DERaw())*0.0232919+11.874677;
+	      //std::cout << " IC Cal Mid   : " << ICCalEn << std::endl;
+	      //ICCalEn = 41.87163*TMath::Power(TMath::E(),0.01108402*ICCalEn);
+	      //std::cout << " IC Cal Final : " << ICCalEn << std::endl;
+
+	      Q_Value_vs_ICEnergyCal->Fill(q_val_p,ICCalEn);
+	      Q_Value_vs_ICEnergyCal_plus_pEnergy->Fill(q_val_p,ICCalEn+si_array.E_AB());
+	      
+
+	      Q_Value_FB_and_FBPlus1_Not_proton_hi1->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+		Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton_hi1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+		Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton_hi1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+		Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton_hi1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+		Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton_hi1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+		Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton_hi1->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+		Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton_hi1->Fill(q_val_p);
+	  
+
+	    }
+	  }
+	}
+      }
+      // Versus stuff:
+      Q_v_Phi_proton_hi1->Fill(q_val_p,si_cluster_[0].fPos[0].Phi()*180/TMath::Pi());
+      Q_v_cosTheta_proton_hi1->Fill(q_val_p,cos(si_array.Theta_A()));
+      Q_v_EcosTheta_proton_hi1->Fill(q_val_p,TMath::Sqrt(si_array.E_AB())*cos(si_array.Theta_A()));
+      Q_v_Theta_proton_hi1->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   		       
+      Q_v_E_proton_hi1->Fill(q_val_p,si_array.E_AB());   			       
+      Q_v_RelAngle_proton_hi1->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());  
+
+
+    }
+
+
+    //=====================
+    //  Proton1 & RF1 Only:
+    if(RF_analyzer::rf_check[0] && silicon::protcheck){
+      //std::cout << ">   In the proton2 gate section" << std::endl;
+      
+      Q_Value_proton_RF1->Fill(q_val_p);
+      // Theta Scan
+      Q_Value_ThetaFull_proton_RF1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	Q_Value_Theta8_20_proton_RF1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	Q_Value_Theta8_19_proton_RF1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	Q_Value_Theta8_18_proton_RF1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	Q_Value_Theta8_17_proton_RF1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	Q_Value_Theta8_16_proton_RF1->Fill(q_val_p); 
+      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	Q_Value_Theta8_15_proton_RF1->Fill(q_val_p);
+      // FB Stuff
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	  Q_Value_FBNot_proton_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FBNot_proton_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FBNot_proton_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FBNot_proton_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FBNot_proton_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FBNot_proton_RF1->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FBNot_proton_RF1->Fill(q_val_p);
+	
+	}
+      }
+    
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	  Q_Value_FB_Plus1Not_proton_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FB_Plus1Not_proton_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FB_Plus1Not_proton_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FB_Plus1Not_proton_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FB_Plus1Not_proton_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FB_Plus1Not_proton_RF1->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FB_Plus1Not_proton_RF1->Fill(q_val_p);
+	
+	
+	}
+      }
+
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	  if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	    if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	      Q_Value_FB_and_FBPlus1_Not_proton_RF1->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+		Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton_RF1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+		Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton_RF1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+		Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton_RF1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+		Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton_RF1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+		Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton_RF1->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+		Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton_RF1->Fill(q_val_p);
+	  
+
+	    }
+	  }
+	}
+      }
+      // Versus stuff:
+      Q_v_Phi_proton_RF1->Fill(q_val_p,si_cluster_[0].fPos[0].Phi()*180/TMath::Pi());
+      Q_v_cosTheta_proton_RF1->Fill(q_val_p,cos(si_array.Theta_A()));
+      Q_v_EcosTheta_proton_RF1->Fill(q_val_p,TMath::Sqrt(si_array.E_AB())*cos(si_array.Theta_A()));
+      Q_v_Theta_proton_RF1->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   		       
+      Q_v_E_proton_RF1->Fill(q_val_p,si_array.E_AB());   			       
+      Q_v_RelAngle_proton_RF1->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());  
+
+
+    }
+
+
+    //=====================
+    //  Proton2 & HI1 Only:
+    if(ionchamber::hi_check[0] && silicon::prot2check){
+      //std::cout << ">   In the proton2 gate section" << std::endl;
+      
+      Q_Value_proton2_hi1->Fill(q_val_p);
+      // Theta Scan
+      Q_Value_ThetaFull_proton2_hi1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	Q_Value_Theta8_20_proton2_hi1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	Q_Value_Theta8_19_proton2_hi1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	Q_Value_Theta8_18_proton2_hi1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	Q_Value_Theta8_17_proton2_hi1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	Q_Value_Theta8_16_proton2_hi1->Fill(q_val_p); 
+      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	Q_Value_Theta8_15_proton2_hi1->Fill(q_val_p);
+      // FB Stuff
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	  Q_Value_FBNot_proton2_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FBNot_proton2_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FBNot_proton2_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FBNot_proton2_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FBNot_proton2_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FBNot_proton2_hi1->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FBNot_proton2_hi1->Fill(q_val_p);
+	
+	}
+      }
+    
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	  Q_Value_FB_Plus1Not_proton2_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FB_Plus1Not_proton2_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FB_Plus1Not_proton2_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FB_Plus1Not_proton2_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FB_Plus1Not_proton2_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FB_Plus1Not_proton2_hi1->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FB_Plus1Not_proton2_hi1->Fill(q_val_p);
+	
+	
+	}
+      }
+
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	  if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	    if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	      Q_Value_FB_and_FBPlus1_Not_proton2_hi1->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+		Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton2_hi1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+		Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton2_hi1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+		Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton2_hi1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+		Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton2_hi1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+		Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton2_hi1->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+		Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton2_hi1->Fill(q_val_p);
+	  
+
+	    }
+	  }
+	}
+      }
+      // Versus stuff:
+      Q_v_Phi_proton2_hi1->Fill(q_val_p,si_cluster_[0].fPos[0].Phi()*180/TMath::Pi());
+      Q_v_cosTheta_proton2_hi1->Fill(q_val_p,cos(si_array.Theta_A()));
+      Q_v_EcosTheta_proton2_hi1->Fill(q_val_p,TMath::Sqrt(si_array.E_AB())*cos(si_array.Theta_A()));
+      Q_v_Theta_proton2_hi1->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   		       
+      Q_v_E_proton2_hi1->Fill(q_val_p,si_array.E_AB());   			       
+      Q_v_RelAngle_proton2_hi1->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());  
+
+
+    }
+
+
+    //=====================
+    //  Proton2 & RF1 Only:
+    if(RF_analyzer::rf_check[0] && silicon::prot2check){
+      //std::cout << ">   In the proton2 gate section" << std::endl;
+      
+      Q_Value_proton2_RF1->Fill(q_val_p);
+      // Theta Scan
+      Q_Value_ThetaFull_proton2_RF1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	Q_Value_Theta8_20_proton2_RF1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	Q_Value_Theta8_19_proton2_RF1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	Q_Value_Theta8_18_proton2_RF1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	Q_Value_Theta8_17_proton2_RF1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	Q_Value_Theta8_16_proton2_RF1->Fill(q_val_p); 
+      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	Q_Value_Theta8_15_proton2_RF1->Fill(q_val_p);
+      // FB Stuff
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	  Q_Value_FBNot_proton2_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FBNot_proton2_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FBNot_proton2_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FBNot_proton2_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FBNot_proton2_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FBNot_proton2_RF1->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FBNot_proton2_RF1->Fill(q_val_p);
+	
+	}
+      }
+    
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	  Q_Value_FB_Plus1Not_proton2_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FB_Plus1Not_proton2_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FB_Plus1Not_proton2_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FB_Plus1Not_proton2_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FB_Plus1Not_proton2_RF1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FB_Plus1Not_proton2_RF1->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FB_Plus1Not_proton2_RF1->Fill(q_val_p);
+	
+	
+	}
+      }
+
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	  if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	    if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	      Q_Value_FB_and_FBPlus1_Not_proton2_RF1->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+		Q_Value_Theta8_20_FB_and_FBPlus1_Not_proton2_RF1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+		Q_Value_Theta8_19_FB_and_FBPlus1_Not_proton2_RF1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+		Q_Value_Theta8_18_FB_and_FBPlus1_Not_proton2_RF1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+		Q_Value_Theta8_17_FB_and_FBPlus1_Not_proton2_RF1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+		Q_Value_Theta8_16_FB_and_FBPlus1_Not_proton2_RF1->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+		Q_Value_Theta8_15_FB_and_FBPlus1_Not_proton2_RF1->Fill(q_val_p);
+	  
+
+	    }
+	  }
+	}
+      }
+      // Versus stuff:
+      Q_v_Phi_proton2_RF1->Fill(q_val_p,si_cluster_[0].fPos[0].Phi()*180/TMath::Pi());
+      Q_v_cosTheta_proton2_RF1->Fill(q_val_p,cos(si_array.Theta_A()));
+      Q_v_EcosTheta_proton2_RF1->Fill(q_val_p,TMath::Sqrt(si_array.E_AB())*cos(si_array.Theta_A()));
+      Q_v_Theta_proton2_RF1->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   		       
+      Q_v_E_proton2_RF1->Fill(q_val_p,si_array.E_AB());   			       
+      Q_v_RelAngle_proton2_RF1->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());  
+
+
+    }
+
+
+    //=====================
+    //  HI1 & RF1 Only:
+    if(RF_analyzer::rf_check[0] && ionchamber::hi_check[0]){
+      //std::cout << ">   In the proton2 gate section" << std::endl;
+      
+      Q_Value_RF1_hi1->Fill(q_val_p);
+      // Theta Scan
+      Q_Value_ThetaFull_RF1_hi1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	Q_Value_Theta8_20_RF1_hi1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	Q_Value_Theta8_19_RF1_hi1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	Q_Value_Theta8_18_RF1_hi1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	Q_Value_Theta8_17_RF1_hi1->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	Q_Value_Theta8_16_RF1_hi1->Fill(q_val_p); 
+      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	Q_Value_Theta8_15_RF1_hi1->Fill(q_val_p);
+      // FB Stuff
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	  Q_Value_FBNot_RF1_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FBNot_RF1_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FBNot_RF1_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FBNot_RF1_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FBNot_RF1_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FBNot_RF1_hi1->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FBNot_RF1_hi1->Fill(q_val_p);
+	
+	}
+      }
+    
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	  Q_Value_FB_Plus1Not_RF1_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FB_Plus1Not_RF1_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FB_Plus1Not_RF1_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FB_Plus1Not_RF1_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FB_Plus1Not_RF1_hi1->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FB_Plus1Not_RF1_hi1->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FB_Plus1Not_RF1_hi1->Fill(q_val_p);
+	
+	
+	}
+      }
+
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	  if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	    if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	      Q_Value_FB_and_FBPlus1_Not_RF1_hi1->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+		Q_Value_Theta8_20_FB_and_FBPlus1_Not_RF1_hi1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+		Q_Value_Theta8_19_FB_and_FBPlus1_Not_RF1_hi1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+		Q_Value_Theta8_18_FB_and_FBPlus1_Not_RF1_hi1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+		Q_Value_Theta8_17_FB_and_FBPlus1_Not_RF1_hi1->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+		Q_Value_Theta8_16_FB_and_FBPlus1_Not_RF1_hi1->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+		Q_Value_Theta8_15_FB_and_FBPlus1_Not_RF1_hi1->Fill(q_val_p);
+	  
+
+	    }
+	  }
+	}
+      }
+      // Versus stuff:
+      Q_v_Phi_RF1_hi1->Fill(q_val_p,si_cluster_[0].fPos[0].Phi()*180/TMath::Pi());
+      Q_v_cosTheta_RF1_hi1->Fill(q_val_p,cos(si_array.Theta_A()));
+      Q_v_EcosTheta_RF1_hi1->Fill(q_val_p,TMath::Sqrt(si_array.E_AB())*cos(si_array.Theta_A()));
+      Q_v_Theta_RF1_hi1->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   		       
+      Q_v_E_RF1_hi1->Fill(q_val_p,si_array.E_AB());   			       
+      Q_v_RelAngle_RF1_hi1->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());  
+
+
+    }
+
+
+    //==========================
+    //  proton1 &HI1 & RF1 Only:
+    if(RF_analyzer::rf_check[0] && ionchamber::hi_check[0] && silicon::protcheck){
+      //std::cout << ">   In the proton2 gate section" << std::endl;
+      
+      Q_Value_RF1_hi1_proton->Fill(q_val_p);
+      // Theta Scan
+      Q_Value_ThetaFull_RF1_hi1_proton->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	Q_Value_Theta8_20_RF1_hi1_proton->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	Q_Value_Theta8_19_RF1_hi1_proton->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	Q_Value_Theta8_18_RF1_hi1_proton->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	Q_Value_Theta8_17_RF1_hi1_proton->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	Q_Value_Theta8_16_RF1_hi1_proton->Fill(q_val_p); 
+      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	Q_Value_Theta8_15_RF1_hi1_proton->Fill(q_val_p);
+      // FB Stuff
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	  Q_Value_FBNot_RF1_hi1_proton->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FBNot_RF1_hi1_proton->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FBNot_RF1_hi1_proton->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FBNot_RF1_hi1_proton->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FBNot_RF1_hi1_proton->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FBNot_RF1_hi1_proton->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FBNot_RF1_hi1_proton->Fill(q_val_p);
+	
+	}
+      }
+    
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	  Q_Value_FB_Plus1Not_RF1_hi1_proton->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FB_Plus1Not_RF1_hi1_proton->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FB_Plus1Not_RF1_hi1_proton->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FB_Plus1Not_RF1_hi1_proton->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FB_Plus1Not_RF1_hi1_proton->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FB_Plus1Not_RF1_hi1_proton->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FB_Plus1Not_RF1_hi1_proton->Fill(q_val_p);
+	
+	
+	}
+      }
+
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	  if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	    if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	      Q_Value_FB_and_FBPlus1_Not_RF1_hi1_proton->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+		Q_Value_Theta8_20_FB_and_FBPlus1_Not_RF1_hi1_proton->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+		Q_Value_Theta8_19_FB_and_FBPlus1_Not_RF1_hi1_proton->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+		Q_Value_Theta8_18_FB_and_FBPlus1_Not_RF1_hi1_proton->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+		Q_Value_Theta8_17_FB_and_FBPlus1_Not_RF1_hi1_proton->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+		Q_Value_Theta8_16_FB_and_FBPlus1_Not_RF1_hi1_proton->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+		Q_Value_Theta8_15_FB_and_FBPlus1_Not_RF1_hi1_proton->Fill(q_val_p);
+	  
+
+	    }
+	  }
+	}
+      }
+      // Versus stuff:
+      Q_v_Phi_RF1_hi1_proton->Fill(q_val_p,si_cluster_[0].fPos[0].Phi()*180/TMath::Pi());
+      Q_v_cosTheta_RF1_hi1_proton->Fill(q_val_p,cos(si_array.Theta_A()));
+      Q_v_EcosTheta_RF1_hi1_proton->Fill(q_val_p,TMath::Sqrt(si_array.E_AB())*cos(si_array.Theta_A()));
+      Q_v_Theta_RF1_hi1_proton->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   		       
+      Q_v_E_RF1_hi1_proton->Fill(q_val_p,si_array.E_AB());   			       
+      Q_v_RelAngle_RF1_hi1_proton->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());  
+
+
+    }
+
+
+   //==========================
+    //  proton1 &HI1 & RF1 Only:
+    if(RF_analyzer::rf_check[0] && ionchamber::hi_check[0] && silicon::prot2check){
+      //std::cout << ">   In the proton2 gate section" << std::endl;
+      
+      Q_Value_RF1_hi1_proton2->Fill(q_val_p);
+      // Theta Scan
+      Q_Value_ThetaFull_RF1_hi1_proton2->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	Q_Value_Theta8_20_RF1_hi1_proton2->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	Q_Value_Theta8_19_RF1_hi1_proton2->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	Q_Value_Theta8_18_RF1_hi1_proton2->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	Q_Value_Theta8_17_RF1_hi1_proton2->Fill(q_val_p);
+      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	Q_Value_Theta8_16_RF1_hi1_proton2->Fill(q_val_p); 
+      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	Q_Value_Theta8_15_RF1_hi1_proton2->Fill(q_val_p);
+      // FB Stuff
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	  Q_Value_FBNot_RF1_hi1_proton2->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FBNot_RF1_hi1_proton2->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FBNot_RF1_hi1_proton2->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FBNot_RF1_hi1_proton2->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FBNot_RF1_hi1_proton2->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FBNot_RF1_hi1_proton2->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FBNot_RF1_hi1_proton2->Fill(q_val_p);
+	
+	}
+      }
+    
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	  Q_Value_FB_Plus1Not_RF1_hi1_proton2->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	    Q_Value_Theta8_20_FB_Plus1Not_RF1_hi1_proton2->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	    Q_Value_Theta8_19_FB_Plus1Not_RF1_hi1_proton2->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	    Q_Value_Theta8_18_FB_Plus1Not_RF1_hi1_proton2->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	    Q_Value_Theta8_17_FB_Plus1Not_RF1_hi1_proton2->Fill(q_val_p);
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	    Q_Value_Theta8_16_FB_Plus1Not_RF1_hi1_proton2->Fill(q_val_p); 
+	  if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	    Q_Value_Theta8_15_FB_Plus1Not_RF1_hi1_proton2->Fill(q_val_p);
+	
+	
+	}
+      }
+
+      if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+	if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	  if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	    if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	      Q_Value_FB_and_FBPlus1_Not_RF1_hi1_proton2->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+		Q_Value_Theta8_20_FB_and_FBPlus1_Not_RF1_hi1_proton2->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+		Q_Value_Theta8_19_FB_and_FBPlus1_Not_RF1_hi1_proton2->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+		Q_Value_Theta8_18_FB_and_FBPlus1_Not_RF1_hi1_proton2->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+		Q_Value_Theta8_17_FB_and_FBPlus1_Not_RF1_hi1_proton2->Fill(q_val_p);
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+		Q_Value_Theta8_16_FB_and_FBPlus1_Not_RF1_hi1_proton2->Fill(q_val_p); 
+	      if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+		Q_Value_Theta8_15_FB_and_FBPlus1_Not_RF1_hi1_proton2->Fill(q_val_p);
+	  
+
+	    }
+	  }
+	}
+      }
+      // Versus stuff:
+      Q_v_Phi_RF1_hi1_proton2->Fill(q_val_p,si_cluster_[0].fPos[0].Phi()*180/TMath::Pi());
+      Q_v_cosTheta_RF1_hi1_proton2->Fill(q_val_p,cos(si_array.Theta_A()));
+      Q_v_EcosTheta_RF1_hi1_proton2->Fill(q_val_p,TMath::Sqrt(si_array.E_AB())*cos(si_array.Theta_A()));
+      Q_v_Theta_RF1_hi1_proton2->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   		       
+      Q_v_E_RF1_hi1_proton2->Fill(q_val_p,si_array.E_AB());   			       
+      Q_v_RelAngle_RF1_hi1_proton2->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());  
+
+
+    }
+
+
+
+    //===============================================================================
+    // Old Stuff
+    //Q_Value parameter histograms
+    /*Q_Value->Fill(q_val_p);
     Q_v_Phi->Fill(q_val_p,si_cluster_[0].fPos[0].Phi()*180/TMath::Pi());
     Q_v_cosTheta->Fill(q_val_p,cos(si_array.Theta_A()));
     Q_v_EcosTheta->Fill(q_val_p,TMath::Sqrt(si_array.E_AB())*cos(si_array.Theta_A()));
 
-    if(silicon::protcheck){
-      Q_Value_proton->Fill(q_val_p);
-      Q_v_pTheta->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   		       
-      Q_v_pE->Fill(q_val_p,si_array.E_AB());   			       
-      Q_v_pRelAngle->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   		       
-      
-      if(ionchamber::hi_check[0]){
-	Q_Value_proton_hi1->Fill(q_val_p);
-	Q_v_pTheta_proton_hi1->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   	       
-	Q_v_pE_proton_hi1->Fill(q_val_p,si_array.E_AB());   	       
-	Q_v_pRelAngle_proton_hi1->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   
+    
+    Q_Value_ThetaFull->Fill(q_val_p);
+    if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+      Q_Value_Theta8_20->Fill(q_val_p);
+    if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+      Q_Value_Theta8_19->Fill(q_val_p);
+    if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+      Q_Value_Theta8_18->Fill(q_val_p);
+    if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+      Q_Value_Theta8_17->Fill(q_val_p);
+    if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+      Q_Value_Theta8_16->Fill(q_val_p); 
+    if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+      Q_Value_Theta8_15->Fill(q_val_p);
+
+    if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+      if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	Q_Value_FBNot->Fill(q_val_p);
+	if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	  Q_Value_Theta8_20_FBNot->Fill(q_val_p);
+	if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	  Q_Value_Theta8_19_FBNot->Fill(q_val_p);
+	if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	  Q_Value_Theta8_18_FBNot->Fill(q_val_p);
+	if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	  Q_Value_Theta8_17_FBNot->Fill(q_val_p);
+	if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	  Q_Value_Theta8_16_FBNot->Fill(q_val_p); 
+	if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	  Q_Value_Theta8_15_FBNot->Fill(q_val_p);
 	
       }
+    }
+
+    
+    if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+      if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	Q_Value_FB_Plus1Not->Fill(q_val_p);
+	if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	  Q_Value_Theta8_20_FB_Plus1Not->Fill(q_val_p);
+	if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	  Q_Value_Theta8_19_FB_Plus1Not->Fill(q_val_p);
+	if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	  Q_Value_Theta8_18_FB_Plus1Not->Fill(q_val_p);
+	if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	  Q_Value_Theta8_17_FB_Plus1Not->Fill(q_val_p);
+	if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	  Q_Value_Theta8_16_FB_Plus1Not->Fill(q_val_p); 
+	if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	  Q_Value_Theta8_15_FB_Plus1Not->Fill(q_val_p);
+	
+	
+      }
+    }
+
+    if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()){
+      if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()){
+	if(si_cluster_[0].ChFront()!=si_cluster_[0].ChBack()+1){
+	  if(si_cluster_[1].ChFront()!=si_cluster_[1].ChBack()+1){
+	    Q_Value_FB_and_FBPlus1_Not->Fill(q_val_p); 
+	    if(si_array.Theta_A()*180.0/TMath::Pi()<20.0)
+	      Q_Value_Theta8_20_FB_and_FBPlus1_Not->Fill(q_val_p);
+	    if(si_array.Theta_A()*180.0/TMath::Pi()<19.0)
+	      Q_Value_Theta8_19_FB_and_FBPlus1_Not->Fill(q_val_p);
+	    if(si_array.Theta_A()*180.0/TMath::Pi()<18.0)
+	      Q_Value_Theta8_18_FB_and_FBPlus1_Not->Fill(q_val_p);
+	    if(si_array.Theta_A()*180.0/TMath::Pi()<17.0)
+	      Q_Value_Theta8_17_FB_and_FBPlus1_Not->Fill(q_val_p);
+	    if(si_array.Theta_A()*180.0/TMath::Pi()<16.0) 
+	      Q_Value_Theta8_16_FB_and_FBPlus1_Not->Fill(q_val_p); 
+	    if(si_array.Theta_A()*180.0/TMath::Pi()<15.0)
+	      Q_Value_Theta8_15_FB_and_FBPlus1_Not->Fill(q_val_p);
+	  
+
+	  }
+	}
+      }
+    }
+
+    if(silicon::protcheck){
+      Q_Value_proton->Fill(q_val_p);
+
+
+
+      
+      // THESE SHOULD NOT BE IN PROTON CHECK!!!!!!!!!!!!!!!!
+      Q_v_Theta->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   		       
+      Q_v_E->Fill(q_val_p,si_array.E_AB());   			       
+      Q_v_RelAngle->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   		       
+      // THESE SHOULD NOT BE IN PROTON CHECK!!!!!!!!!!!!!!!!
+
+
+
+    */
+    //if(ionchamber::hi_check[0]){
+    //Q_Value_proton_hi1->Fill(q_val_p);
+	/*Q_v_pTheta_proton_hi1->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   	       
+	Q_v_pE_proton_hi1->Fill(q_val_p,si_array.E_AB());   	       
+	Q_v_pRelAngle_proton_hi1->Fill(q_val_p,si_array.Theta_A()*TMath::RadToDeg());   
+	*/
+    /* }
       if(ionchamber::hi_check[1]){
-	Q_Value_proton_hi2->Fill(q_val_p);
+	//Q_Value_proton_hi2->Fill(q_val_p);
       }
 
-    }
+      if(RF_analyzer::rf_check[0])
+	Q_Value_RF1->Fill(q_val_p);
+
+
+      if(RF_analyzer::rf_check[1]){
+	//Q_Val_RF2->Fill(q_val_p);
+      }
+
+      if(RF_analyzer::rf_check[2]){
+	//Q_Val_RF3->Fill(q_val_p);
+      }
+
+      }*/
 
 
 		       

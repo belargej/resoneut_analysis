@@ -257,7 +257,7 @@ int RN_NeutDetectorArray::InsertHit(const double& q_long,const double& q_short,c
 
 
 
-bool RN_NeutDetector::inDet(const TVector3& v){
+bool RN_NeutDetector::inDet(const TVector3& v, const TVector3& beamspot){
   //first see if it intersects the plane of the detector
   // double udotnormv = (v.Unit()).Dot(fPos.Unit());
   TVector3 normv(0,0,fPos.Z());
@@ -279,7 +279,7 @@ bool RN_NeutDetector::inDet(const TVector3& v){
   v_to_det.SetMag(vdist);
 
   //create vector from detector origin to interaction point on plane of detector
-  TVector3 ch_vect = v_to_det - posvect;
+  TVector3 ch_vect = v_to_det + beamspot - posvect;
 
   //see if it is within the detector area
   if((ch_vect.Mag()) > fRadius){
@@ -289,14 +289,14 @@ bool RN_NeutDetector::inDet(const TVector3& v){
 }
 
 
-int RN_NeutDetector::NeutIn(TLorentzVector nLV,double& t,double& e){
+int RN_NeutDetector::NeutIn(TLorentzVector nLV,double& t,double& e,const TVector3& beamspot){
   TLorentzVector inLV = nLV;
   double pz=nLV.Pz(), px=nLV.Px(),py=nLV.Py();
   double psqr=px*px+py*py+pz*pz;
   double tof=(fPos.Z())*M_N/(pz*3*100);//tof to front of detector
   fDt=0;//time to first reaction
-  double x_pos=(px*tof*300/(M_N))-fPos.X();
-  double y_pos=(py*tof*300/(M_N))-fPos.Y();
+  double x_pos=(px*tof*300/(M_N))-fPos.X() + beamspot.X();
+  double y_pos=(py*tof*300/(M_N))-fPos.Y() + beamspot.Y();
   fHitPos.SetXYZ(x_pos+fPos.X(),y_pos+fPos.Y(),fPos.Z());
   double radial_pos=sqrt(x_pos*x_pos+y_pos*y_pos);  
 

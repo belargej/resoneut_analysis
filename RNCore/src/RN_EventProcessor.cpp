@@ -39,12 +39,28 @@ void RN_EventProcessor::InitRootFile(TString rootfilename)
    // Init() will be called many times when running on PROOF
    // (once per file to be processed)
 
+  fChain=new TChain("DataTree");
+  fChain->Add(rootfilename);
+  if(TotEntries()<=0){
+    std::cout<<"Initial Root File not found \n Press 1 to continue, 0 to Exit ROOT \n";
+    int option = -1;
+    while(option<0 || option >1){
+      std::cin>>option;
+    }
+    if (option==0){
+      exit(EXIT_FAILURE);
+    }
+    if (option==1){
+      return ;
+    }
+  }
+    
+  
+
   if(!RNROOT::RN_RootSet)
     RNROOT::Initialize();
   
-  fChain=new TChain("DataTree");
-  fChain->Add(rootfilename);
-  
+ 
   if(fChain->GetBranch("Event"))
     fChain->SetBranchAddress("Event",&fEvent, &b_Event);
   else
@@ -119,7 +135,7 @@ void RN_EventProcessor::Loop(Long64_t start, Long64_t evnum){
   if (start!=0&&evnum!=0)
     if(start+evnum<totentries)
       totentries=start+evnum;
-
+  
   
   // Begin => This just returns 1.
   Begin();
@@ -131,6 +147,7 @@ void RN_EventProcessor::Loop(Long64_t start, Long64_t evnum){
   //   in this class creates a TIter class which has the fRNStack as its collection.
   RNROOT::gAnalyzer_stack.Begin();
   
+  std::cout << " Going into loop over entries " << std::endl;
   for (Long64_t i=start;i<totentries;i++){
     Reset();
     RNROOT::gAnalyzer_stack.Reset();
@@ -139,18 +156,48 @@ void RN_EventProcessor::Loop(Long64_t start, Long64_t evnum){
     if(!GetEntry(i)){
       continue;
     }
-    if(i%30000==0)std::cout<<i<<std::endl;
+    // if(i%30000==0)std::cout<<i<<std::endl;
+    if(i == TMath::Nint(0.01*totentries)) std::cout << " 1% through data. " << std::endl;
+    if(i == TMath::Nint(0.1*totentries)) std::cout << " 10% through data. " << std::endl;
+    if(i == TMath::Nint(0.2*totentries)) std::cout << " 20% through data. " << std::endl;
+    if(i == TMath::Nint(0.3*totentries)) std::cout << " 30% through data. " << std::endl;
+    if(i == TMath::Nint(0.4*totentries)) std::cout << " 40% through data. " << std::endl;
+    if(i == TMath::Nint(0.5*totentries)) std::cout << " 50% through data. " << std::endl;
+    if(i == TMath::Nint(0.6*totentries)) std::cout << " 60% through data. " << std::endl;
+    if(i == TMath::Nint(0.7*totentries)) std::cout << " 70% through data. " << std::endl;
+    if(i == TMath::Nint(0.8*totentries)) std::cout << " 80% through data. " << std::endl;
+    if(i == TMath::Nint(0.9*totentries)) std::cout << " 90% through data. " << std::endl;
+    if(i == TMath::Nint(0.99*totentries)) std::cout << " 99% through data. " << std::endl;
 
+
+
+    // JAB HACK!!!!!!!
+    /*if(i == 350385){
+      std::cout << "> On Event : " << i << " HACK WORKING!" << std::endl;
+      RNROOT::gVariableMap.ClearParams();
+      RNROOT::LoadVariableFile("/data1/res048/analysis/config/DetConfig_9242014-After.in");
+      RNROOT::SetCalibrations();
+      }*/
+
+    /*if(i<10000){
+    std::cout << "=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-" << std::endl;
+    std::cout << " Getting detector entry for number : " << i << std::endl;
+    }*/
     GetDetectorEntry();
+
+    if(i<10000)
+      //std::cout << " Processing for event number : " << i << std::endl;
     Process();
     if(RNROOT::gAnalyzer_stack.Process()){
       //only if Process returns true do we move to all of the ProcessFill
+      if(i<10000)
+	//std::cout << " Process filling for event number : " << i << std::endl;
       ProcessFill();
       RNROOT::gAnalyzer_stack.ProcessFill();
     }
   }
 
-
+  
   RNROOT::gAnalyzer_stack.Terminate();
   Terminate();
 
@@ -369,7 +416,7 @@ int RN_EventProcessor::Convert2Root(std::vector<std::string>&run_number,std::str
     fEvtFile.open(name.c_str(),std::ios::binary);      
     if (!fEvtFile.is_open()){
       std::cout << "  Could not open " << name << std::endl;
-      exit(EXIT_FAILURE);
+      return 1;
     }
     else 
       std::cout << "  Converting " << name << " ..." << std::endl;
@@ -417,7 +464,7 @@ int RN_EventProcessor::Convert2Root(const std::string& name,std::string output_f
   fEvtFile.open(name.c_str(),std::ios::binary);      
   if (!fEvtFile.is_open()){
     std::cout << "  Could not open " << name << std::endl;
-    exit(EXIT_FAILURE);
+    return 0;
   }
   else 
     std::cout << "  Converting " << name << " ..." << std::endl;

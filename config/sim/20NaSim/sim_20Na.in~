@@ -1,0 +1,39 @@
+#fOutput		sim19Ne_GARBAGE.root sim19Ne_GARBAGE.log
+fOutput		sim19Ne_650keV_1plus_85MeV_NKMir_ICSig1p0_ICAftTarg.root sim19Ne_650keV_1plus_85MeV_NKMir_ICSig1p0_ICAftTarg.log
+#fDWBA		DWBA_Files/0p45_19Ne+p/DW4_l2_3+.txt_Scaled
+#fDWBA		DWBA_Files/0p45_19Ne+p/DW4_l0_1+_1Node.txt_Scaled
+#fDWBA		DWBA_Files/0p65_19Ne+p/dn_2.849_mirror_3plus
+fDWBA		DWBA_Files/0p65_19Ne+p/dn_2.849_mirror_1plus
+fEvents		100000
+fReaction	19Ne 2H n 20Na 1H 19Ne
+
+fParam		ReactionInfo.TargetMaterial     1
+fParam		ReactionInfo.TargetThickness	0.516
+fParam		ReactionInfo.ELoss_EMax	        100
+fParam		ReactionInfo.ELoss_Steps	100	
+fParam		SiliconSigma   0.042466   
+#fParam		SiliconSigma   0.01  
+#fParam		ICSigma	       1.2812  
+fParam		ICSigma	       1.0
+fParam		SiAngSigma     0.00001
+fParam		ReactionInfo.beam_e	85
+fParam		ReactionInfo.beam_eloss	0
+fParam		ReactionInfo.d_ex_set 	0.0
+fParam		ReactionInfo.hi_ex_set	2.850
+fParam		ReactionInfo.E_fragment	83
+fParam		all.radius	34
+fParam		neut0.thickness	25.4
+fParam		neut1.thickness	12.7
+fParam		neut2.thickness	12.7
+fParam		neut3.thickness	25.4
+fParam		neut4.thickness	25.4
+fParam		neut5.thickness	25.4
+fParam		neut6.thickness	25.4
+fParam		neut7.thickness	25.4
+fParam		neut8.thickness	12.7
+fParam		neut9.thickness	25.4
+fParam		all.threshold	0.1
+fParam		neutarray.zpos	-228.7
+fParam		si_a.zpos	75
+fParam		si_b.zpos	91
+		 

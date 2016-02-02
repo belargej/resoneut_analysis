@@ -8,7 +8,8 @@ SRCFILES=RN_BaseDetector.cpp RN_NeutDetectorArray.cpp \
 	RN_Calibrator.cpp RN_Timing.cpp RN_Analyzer.cpp sak_ReadBuffer.cpp\
 	RN_MassTable.cpp RN_Particle.cpp RN_NaIArray.cpp RN_TriggerBit.cpp\
         RN_Root.cpp RN_Sim.cpp RN_SimPhysics.cpp RN_BaseClass.cpp RN_Module.cpp\
-	RN_Parameters.cpp RN_EventProcessor.cpp RN_ReactionInfo.cpp
+	RN_Parameters.cpp RN_EventProcessor.cpp RN_ReactionInfo.cpp\
+	RN_Sim_NEON.cpp RN_EnergyLoss.cpp
 ########Directories and Files###########################################################
 SRCDIR=src
 HDRDIR=include

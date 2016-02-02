@@ -19,6 +19,11 @@ void RN_TriggerBit::SetCalibrations(RN_VariableMap& detvar){
 }
 
 int RN_TriggerBit::Check(){
+
+  //std::cout << " Bit Min : " << bitmin << std::endl;
+  //std::cout << " Bit Max : " << bitmax << std::endl;
+  //std::cout << " fBit    : " << fBit << std::endl;
+
   if(fBit > bitmin && fBit < bitmax)
     return 1;
   else

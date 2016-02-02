@@ -4,10 +4,10 @@ fEvents		100000
 fReaction	19Ne 2H n 20Na 1H 19Ne
 
 
-fParam		ReactionInfo.beam_e	89.1
+fParam		ReactionInfo.beam_e	86.0
 fParam		ReactionInfo.beam_eloss	2
 fParam		ReactionInfo.hi_ex_set	2.65
-fParam		ReactionInfo.E_fragment	85
+fParam		ReactionInfo.E_fragment	82
 fParam		all.radius	34
 fParam		neut0.thickness	25.4
 fParam		neut1.thickness	12.7

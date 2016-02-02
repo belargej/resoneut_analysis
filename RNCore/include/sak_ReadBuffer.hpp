@@ -17,8 +17,10 @@
 
 
 namespace sak{
+  const static int kNODEBUG = 0;
+  const static int kDEBUG = 1;
   
-  const char* ReadLine(std::ifstream& a,std::vector<std::string>& b,const unsigned int& ent=0);
+  const char* ReadLine(std::ifstream& a,std::vector<std::string>& b,const unsigned int& ent=0,int debug = kDEBUG);
   double string_to_double( const std::string& s );  
   int string_to_int( const std::string& s );
   

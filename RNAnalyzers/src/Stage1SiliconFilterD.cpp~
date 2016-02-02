@@ -45,9 +45,9 @@ namespace RNfilters{
     } 
     
     //require an IC timing
-    if(!(ic.T()>0)){
+    /*if(!(ic.T()>0)){
       return 0;
-    }
+      }*/
     
     
     

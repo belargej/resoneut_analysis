@@ -1,0 +1,4 @@
+set term postscript eps color enhanced
+set output "3Plus3_2p645.eps"
+set logscale y
+plot 'dn_2.645.dat' u 1:2

@@ -1,0 +1,104 @@
+/***********************************************************/
+//Class: SiChanFilter
+//
+//Author:Belarge
+//
+// Filter events that to not have a nonzero IC time.
+///***********************************************************/
+
+#ifndef _SiChanFilter_CXX
+#define _SiChanFilter_CXX
+
+#include "SiChanFilter.hpp"
+#include "RN_Root.hpp"
+
+using namespace RNROOT;
+using namespace TMath;
+
+namespace RNfilters{
+  
+
+  SiChanFilter::SiChanFilter():KillBackEquFront(0),
+			       KillBackEquFrontPlusOne(0)
+  {
+    
+  }
+  
+  void SiChanFilter::Reset(){
+  
+  }
+
+  
+  bool SiChanFilter::Begin(){   
+  
+    return 1;
+  }  
+  
+  
+
+  bool SiChanFilter::Process(){
+    
+    //std::cout << " DEBUG SiChanFilter ----" << std::endl;
+    //std::cout << " Kill_BEF Bool   : " << KillBackEquFront << std::endl;
+    //std::cout << " Kill_BEF+1 Bool : " << KillBackEquFrontPlusOne << std::endl;
+    //std::cout << " Det A Front Chan: " << si_cluster_[0].ChFront() << std::endl;
+    //std::cout << " Det A Back Chan : " << si_cluster_[0].ChBack() << std::endl;
+    //std::cout << " Det B Front Chan: " << si_cluster_[1].ChFront() << std::endl;
+    //std::cout << " Det B Back Chan : " << si_cluster_[1].ChBack() << std::endl;
+
+
+    if(KillBackEquFront){
+      
+      //std::cout << "  In Kill_BEF " << std::endl;
+      
+      if(si_cluster_[0].ChFront()==si_cluster_[0].ChBack()){	
+	//std::cout << "   Killing this bc of Det A" << std::endl;
+	return 0;
+      }
+       else if(si_cluster_[1].ChFront()==si_cluster_[1].ChBack()){
+	//std::cout << "   Killing this bc of Det B " << std::endl;
+	return 0;
+      }
+      //std::cout << "   Letting this live. " << std::endl;
+     
+    }
+    
+    if(KillBackEquFrontPlusOne){
+      //std::cout << "  In Kill_BEF+1" << std::endl;
+      if(si_cluster_[0].ChFront()+1.0==si_cluster_[0].ChBack()){	
+	//std::cout << "   Killing this bc of Det A " << std::endl;
+	return 0;
+      }
+      else if(si_cluster_[1].ChFront()+1.0==si_cluster_[1].ChBack()){
+	//std::cout << "   Killing this bc of Det B" << std::endl;
+	return 0;
+      }
+      //std::cout << "   Letting this live." << std::endl;
+    }
+
+    //std::cout << " Everyone Lives. " << std::endl;
+   
+
+    return 1;
+  }
+  bool SiChanFilter::ProcessFill(){
+     
+    return 1;
+    
+  }
+
+
+  bool SiChanFilter::Terminate(){
+    return 1;
+  }
+
+  void SiChanFilter::Clear(){
+    
+  }
+
+  
+  
+}
+
+
+#endif
